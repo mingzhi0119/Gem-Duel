@@ -378,6 +378,12 @@ export const useGameInteractions = (
         }
     }, [canLocalInteract, networkDispatch]);
 
+    const handleCancelSelection = useCallback(() => {
+        if (canLocalInteract) {
+            setSelectedGems([]);
+        }
+    }, [canLocalInteract]);
+
     const activatePrivilegeMode = useCallback(() => {
         if (!canLocalInteract || gameState.phase !== 'IDLE') return;
         const hasPrivilege =
@@ -558,6 +564,7 @@ export const useGameInteractions = (
             handleSelectBonusColor,
             handleSelectRoyal,
             handleCancelReserve,
+            handleCancelSelection,
             handleCancelPrivilege,
             activatePrivilegeMode,
             checkAndInitiateBuyReserved,
@@ -584,6 +591,7 @@ export const useGameInteractions = (
             handleSelectBonusColor,
             handleSelectRoyal,
             handleCancelReserve,
+            handleCancelSelection,
             handleCancelPrivilege,
             activatePrivilegeMode,
             checkAndInitiateBuyReserved,

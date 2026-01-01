@@ -1,7 +1,7 @@
 {
     "name": "gem-duel",
     "private": true,
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "A competitive strategy gem-collecting game built with React and Electron.",
     "author": "Mingzhi",
     "main": "electron/main.js",
@@ -18,7 +18,8 @@
         "test:coverage": "vitest --coverage",
         "prepare": "husky",
         "postinstall": "node scripts/patch-peer.js",
-        "prebuild": "node scripts/patch-peer.js"
+        "prebuild": "node scripts/patch-peer.js",
+        "pack:win": "npm run build && electron-builder --win"
     },
     "build": {
         "appId": "com.gemduel.game",
@@ -40,7 +41,7 @@
             "target": [
                 "nsis"
             ],
-            "icon": "build/icon.ico"
+            "icon": "build/GameIcon.png"
         },
         "nsis": {
             "oneClick": false,

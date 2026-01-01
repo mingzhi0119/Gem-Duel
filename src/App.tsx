@@ -113,6 +113,7 @@ export default function GemDuelBoard() {
         initiateBuy,
         handleSelectRoyal,
         handleCancelReserve,
+        handleCancelSelection,
         handleCancelPrivilege,
         activatePrivilegeMode,
         checkAndInitiateBuyReserved,
@@ -318,14 +319,14 @@ export default function GemDuelBoard() {
             {(showDebug ||
                 (state.mode !== 'ONLINE_MULTIPLAYER' &&
                     (state.mode === 'PVE' || historyControls.historyLength === 0))) && (
-                <button
-                    onClick={() => setShowDebug(!showDebug)}
-                    className={`fixed top-24 left-4 z-[100] p-2 rounded border text-[10px] transition-colors shadow-none 
+                    <button
+                        onClick={() => setShowDebug(!showDebug)}
+                        className={`fixed top-24 left-4 z-[100] p-2 rounded border text-[10px] transition-colors shadow-none 
                     ${theme === 'dark' ? 'bg-transparent hover:bg-white/10 text-slate-400 hover:text-slate-100 border-white/10 hover:border-white/20' : 'bg-white/80 hover:bg-red-100 text-stone-600 border-stone-300'}`}
-                >
-                    {showDebug ? 'CLOSE DEBUG' : 'OPEN DEBUG'}
-                </button>
-            )}
+                    >
+                        {showDebug ? 'CLOSE DEBUG' : 'OPEN DEBUG'}
+                    </button>
+                )}
 
             {showDebug && state.mode !== 'ONLINE_MULTIPLAYER' && (
                 <div className="fixed left-4 top-36 z-[90] flex flex-col gap-4 animate-in slide-in-from-left duration-300">
@@ -477,6 +478,7 @@ export default function GemDuelBoard() {
                                 handleConfirmTake={handleConfirmTake}
                                 selectedGems={selectedGems}
                                 handleCancelReserve={handleCancelReserve}
+                                handleCancelSelection={handleCancelSelection}
                                 handleCancelPrivilege={handleCancelPrivilege}
                                 theme={theme}
                                 canInteract={isMyTurn}
@@ -521,13 +523,12 @@ export default function GemDuelBoard() {
             >
                 <div
                     className={`flex-1 relative transition-all duration-500 border-2
-                    ${
-                        theme === 'dark'
+                    ${theme === 'dark'
                             ? 'border-white/5 bg-emerald-900/10'
                             : turn === 'p1' && !winner
-                              ? 'animate-breathe-emerald bg-emerald-50/30'
-                              : 'border-emerald-50 bg-emerald-50/30'
-                    }`}
+                                ? 'animate-breathe-emerald bg-emerald-50/30'
+                                : 'border-emerald-50 bg-emerald-50/30'
+                        }`}
                 >
                     <div
                         className={`w-full h-full transform ${settings.zoneScale} origin-center lg:scale-100`}
@@ -561,13 +562,12 @@ export default function GemDuelBoard() {
 
                 <div
                     className={`flex-1 relative transition-all duration-500 border-2
-                    ${
-                        theme === 'dark'
+                    ${theme === 'dark'
                             ? 'border-white/5 bg-blue-900/10'
                             : turn === 'p2' && !winner
-                              ? 'animate-breathe-blue bg-slate-50/30'
-                              : 'border-blue-50 bg-slate-50/30'
-                    }`}
+                                ? 'animate-breathe-blue bg-slate-50/30'
+                                : 'border-blue-50 bg-slate-50/30'
+                        }`}
                 >
                     <div
                         className={`w-full h-full transform ${settings.zoneScale} origin-center lg:scale-100`}
