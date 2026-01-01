@@ -21,8 +21,8 @@
         "prebuild": "node scripts/patch-peer.js"
     },
     "build": {
-        "appId": "com.gemduel.app",
-        "productName": "GemDuel",
+        "appId": "com.gemduel.game",
+        "productName": "Gem Duel",
         "directories": {
             "output": "dist_electron"
         },
@@ -32,17 +32,21 @@
             "package.json"
         ],
         "publish": {
-            "provider": "github"
+            "provider": "github",
+            "owner": "mingzhi0119",
+            "repo": "Gem-Duel"
         },
         "win": {
             "target": [
                 "nsis"
-            ]
+            ],
+            "icon": "build/icon.ico"
         },
         "nsis": {
             "oneClick": false,
             "allowToChangeInstallationDirectory": true,
-            "createDesktopShortcut": true
+            "createDesktopShortcut": true,
+            "shortcutName": "Gem Duel"
         }
     },
     "lint-staged": {
