@@ -1,0 +1,78 @@
+/**
+ * Miscellaneous Action Handlers
+ *
+ * Debug utilities, modals, and special actions
+ */
+
+import { addFeedback } from '../stateHelpers';
+import { finalizeTurn } from '../turnManager';
+import { GameState, PlayerKey, PeekDeckPayload } from '../../types';
+
+/**
+ * Debug: Add crowns to a player
+ */
+export const handleDebugAddCrowns = (state: GameState, payload: PlayerKey): GameState => {
+    const pid = payload;
+    if (!state.extraCrowns) state.extraCrowns = { p1: 0, p2: 0 };
+    state.extraCrowns[pid] = (state.extraCrowns[pid] || 0) + 1;
+    addFeedback(state, pid, 'crown', 1);
+    finalizeTurn(state, state.turn);
+    return state;
+};
+
+/**
+ * Debug: Add points to a player
+ */
+export const handleDebugAddPoints = (state: GameState, payload: PlayerKey): GameState => {
+    const pid = payload;
+    if (!state.extraPoints) state.extraPoints = { p1: 0, p2: 0 };
+    state.extraPoints[pid] = (state.extraPoints[pid] || 0) + 1;
+    finalizeTurn(state, state.turn);
+    return state;
+};
+
+/**
+ * Debug: Add privilege scroll to a player
+ */
+export const handleDebugAddPrivilege = (state: GameState, payload: PlayerKey): GameState => {
+    const pid = payload;
+    const total = state.privileges.p1 + state.privileges.p2;
+    if (total < 3) {
+        state.privileges[pid]++;
+        addFeedback(state, pid, 'privilege', 1);
+    } else {
+        const opponent = pid === 'p1' ? 'p2' : 'p1';
+        if (state.privileges[opponent] > 0) {
+            state.privileges[opponent]--;
+            state.privileges[pid]++;
+            addFeedback(state, pid, 'privilege', 1);
+            addFeedback(state, opponent, 'privilege', -1);
+        }
+    }
+    return state;
+};
+
+/**
+ * Peek at top 3 cards of a deck (Intelligence ability)
+ */
+export const handlePeekDeck = (draft: GameState, payload: PeekDeckPayload): void => {
+    const { level } = payload;
+    const deck = draft.decks[level];
+    const top3 = deck.slice(-3).reverse();
+
+    draft.activeModal = {
+        type: 'PEEK',
+        data: {
+            cards: top3,
+            initiator: draft.turn,
+        },
+    };
+};
+
+/**
+ * Close any active modal
+ */
+export const handleCloseModal = (state: GameState): GameState => {
+    state.activeModal = null;
+    return state;
+};
