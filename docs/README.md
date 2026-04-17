@@ -12,6 +12,7 @@
 - [`10-architecture/README.md`](./10-architecture/README.md): 分层与目录标准
 - [`10-architecture/engineering-standards.md`](./10-architecture/engineering-standards.md): 工程规范与 Git 策略
 - [`10-architecture/agent-guardrails-matrix.md`](./10-architecture/agent-guardrails-matrix.md): Agent 边界、机械化护栏与分层 AGENTS 设计
+- [`10-architecture/web-desktop-application-integration.md`](./10-architecture/web-desktop-application-integration.md): Step 06 Web/Desktop 通过 application/ui 共享视图模型与交互边界
 - [`20-domain/README.md`](./20-domain/README.md): 领域模型、状态机与规则版本
 - [`20-domain/determinism-and-replay-discipline.md`](./20-domain/determinism-and-replay-discipline.md): 确定性、回放与性质测试纪律
 - [`20-domain/buff-hook-system.md`](./20-domain/buff-hook-system.md): Buff/Roguelike hook 原语、顺序与组合规则
@@ -21,6 +22,7 @@
 - [`30-contracts/step-03-phase-replay-migration-note.md`](./30-contracts/step-03-phase-replay-migration-note.md): Step 03 phase surface 与 replay/hash ownership 迁移说明
 - [`30-contracts/step-04-classic-rules-migration-note.md`](./30-contracts/step-04-classic-rules-migration-note.md): Step 04 classic command/snapshot/victory 迁移说明
 - [`30-contracts/step-05-room-service-authority-migration-note.md`](./30-contracts/step-05-room-service-authority-migration-note.md): Step 05 room-service authority、server-bound seat 与 room error 迁移说明
+- [`30-contracts/step-06-shell-ui-migration-note.md`](./30-contracts/step-06-shell-ui-migration-note.md): Step 06 shared shell/UI integration 与 viewer-scoped `availableActions` 迁移说明
 - [`40-operations/README.md`](./40-operations/README.md): 部署、观测、CI/CD 与运行策略
 - [`40-operations/room-service-authority-semantics.md`](./40-operations/room-service-authority-semantics.md): Step 05 room-service 权威语义、连接绑定、广播与 replay 存储触发
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent 工具、CI 护栏与 `.codex`/MCP 规划
@@ -44,6 +46,7 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`10-architecture/README.md`](./10-architecture/README.md): Layering and directory standards
 - [`10-architecture/engineering-standards.md`](./10-architecture/engineering-standards.md): Engineering standards and Git policy
 - [`10-architecture/agent-guardrails-matrix.md`](./10-architecture/agent-guardrails-matrix.md): Agent boundaries, mechanical guardrails, and layered AGENTS design
+- [`10-architecture/web-desktop-application-integration.md`](./10-architecture/web-desktop-application-integration.md): Step 06 Web/Desktop composition through shared application/ui boundaries
 - [`20-domain/README.md`](./20-domain/README.md): Domain model, state machine, and ruleset versioning
 - [`20-domain/determinism-and-replay-discipline.md`](./20-domain/determinism-and-replay-discipline.md): Determinism, replay, and property-testing discipline
 - [`20-domain/buff-hook-system.md`](./20-domain/buff-hook-system.md): Buff/Roguelike hook primitives, ordering, and composition rules
@@ -53,6 +56,7 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`30-contracts/step-03-phase-replay-migration-note.md`](./30-contracts/step-03-phase-replay-migration-note.md): Step 03 migration note for the phase surface and replay/hash ownership
 - [`30-contracts/step-04-classic-rules-migration-note.md`](./30-contracts/step-04-classic-rules-migration-note.md): Step 04 migration note for classic commands, snapshot shape, and victory metadata
 - [`30-contracts/step-05-room-service-authority-migration-note.md`](./30-contracts/step-05-room-service-authority-migration-note.md): Step 05 migration note for room-service authority, server-bound seats, and room errors
+- [`30-contracts/step-06-shell-ui-migration-note.md`](./30-contracts/step-06-shell-ui-migration-note.md): Step 06 migration note for shared shell/UI integration and viewer-scoped `availableActions`
 - [`40-operations/README.md`](./40-operations/README.md): Deployment, observability, CI/CD, and runtime strategy
 - [`40-operations/room-service-authority-semantics.md`](./40-operations/room-service-authority-semantics.md): Step 05 room-service authority semantics, connection binding, broadcast rules, and replay persistence
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent tooling, CI guardrails, and `.codex`/MCP planning

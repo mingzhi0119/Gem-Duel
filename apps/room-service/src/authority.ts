@@ -8,9 +8,9 @@ import type {
     ReplayBundle,
     RoomDetail,
     RoomWsMessage,
+    SpectatorSnapshot,
     TypedResult,
 } from '@gem-duel/contracts';
-import { toPlayerSnapshot, toSpectatorSnapshot } from '@gem-duel/contracts';
 import { createRoomError } from './errors';
 import {
     createInMemoryRoomAuthorityStore,
@@ -81,20 +81,25 @@ const buildRoomDetail = (
     room: RoomRuntime,
     wsUrl: string,
     binding: ViewerBinding = { kind: 'unbound' }
-): RoomDetail => ({
-    roomId: room.roomId,
-    hostPlayer: room.hostPlayer,
-    playerCount: countBoundPlayers(room),
-    status: getRoomStatus(room),
-    mode: room.request.mode,
-    createdAt: room.createdAt,
-    snapshot:
+) => {
+    const viewModel =
         binding.kind === 'player'
-            ? toPlayerSnapshot(room.session.snapshot(), binding.playerId)
-            : toSpectatorSnapshot(room.session.snapshot()),
-    canJoin: isRoomJoinable(room),
-    wsUrl,
-});
+            ? room.session.viewModel(binding.playerId)
+            : room.session.viewModel('spectator');
+
+    return {
+        roomId: room.roomId,
+        hostPlayer: room.hostPlayer,
+        playerCount: countBoundPlayers(room),
+        status: getRoomStatus(room),
+        mode: room.request.mode,
+        createdAt: room.createdAt,
+        snapshot: viewModel.snapshot,
+        availableActions: viewModel.availableActions,
+        canJoin: isRoomJoinable(room),
+        wsUrl,
+    };
+};
 
 const findRequestedSeat = (room: RoomRuntime, preferredSeat?: PlayerId): TypedResult<PlayerId> => {
     if (preferredSeat && room.seatBindings[preferredSeat]) {
@@ -142,26 +147,32 @@ const findRequestedSeat = (room: RoomRuntime, preferredSeat?: PlayerId): TypedRe
 
 const createMatchPatchSet = (room: RoomRuntime): CachedCommandResult['playerPatches'] => {
     const snapshot = room.session.snapshot();
+    const p1View = room.session.viewModel('p1');
+    const p2View = room.session.viewModel('p2');
     return {
         p1: {
             type: 'match.patch',
             seq: snapshot.sequence,
-            snapshot: toPlayerSnapshot(snapshot, 'p1'),
+            snapshot: p1View.snapshot as PlayerSnapshot,
+            availableActions: p1View.availableActions,
         },
         p2: {
             type: 'match.patch',
             seq: snapshot.sequence,
-            snapshot: toPlayerSnapshot(snapshot, 'p2'),
+            snapshot: p2View.snapshot as PlayerSnapshot,
+            availableActions: p2View.availableActions,
         },
     };
 };
 
 const createSpectatorMessage = (room: RoomRuntime): CachedCommandResult['spectatorMessage'] => {
     const snapshot = room.session.snapshot();
+    const spectatorView = room.session.viewModel('spectator');
     return {
         type: 'match.observe',
         seq: snapshot.sequence,
-        snapshot: toSpectatorSnapshot(snapshot),
+        snapshot: spectatorView.snapshot as SpectatorSnapshot,
+        availableActions: spectatorView.availableActions,
     };
 };
 
@@ -478,6 +489,22 @@ export const createRoomAuthority = (options: RoomAuthorityOptions): RoomAuthorit
 
                     const envelope: MatchCommandEnvelope = message.command;
                     const currentSnapshot = room.session.snapshot();
+                    if (connection.binding.playerId !== currentSnapshot.context.currentPlayer) {
+                        sendRoomError(
+                            connection,
+                            createRoomError(
+                                'ROOM_COMMAND_FORBIDDEN',
+                                `Seat ${connection.binding.playerId} cannot act while ${currentSnapshot.context.currentPlayer} owns the turn in room ${room.roomId}.`,
+                                {
+                                    roomId: room.roomId,
+                                    actingSeat: connection.binding.playerId,
+                                    currentPlayer: currentSnapshot.context.currentPlayer,
+                                }
+                            ),
+                            currentSnapshot.sequence
+                        );
+                        return;
+                    }
                     const cached = room.processedCommands.get(envelope.clientCommandId);
 
                     if (cached) {
@@ -502,13 +529,12 @@ export const createRoomAuthority = (options: RoomAuthorityOptions): RoomAuthorit
                     }
 
                     if (envelope.expectedSeq !== currentSnapshot.sequence) {
+                        const playerView = room.session.viewModel(connection.binding.playerId);
                         connection.send({
                             type: 'match.resync',
                             lastKnownSeq: envelope.expectedSeq,
-                            snapshot: toPlayerSnapshot(
-                                currentSnapshot,
-                                connection.binding.playerId
-                            ),
+                            snapshot: playerView.snapshot,
+                            availableActions: playerView.availableActions,
                         });
                         return;
                     }

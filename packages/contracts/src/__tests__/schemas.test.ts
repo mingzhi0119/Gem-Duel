@@ -9,10 +9,14 @@ import {
     GameEventSchema,
     GameCommandSchema,
     MatchCommandEnvelopeSchema,
+    MatchPatchMessageSchema,
     PlayerSnapshotSchema,
     ReplayBundleSchema,
+    RoomDetailSchema,
     SCHEMA_VERSION,
+    UiActionDescriptorSchema,
     toPlayerSnapshot,
+    toSpectatorSnapshot,
 } from '../index';
 import { createAuthoritativeSnapshotFixture, createReplayBundleFixture } from './fixtures';
 
@@ -88,12 +92,40 @@ describe('contracts schemas', () => {
             issuedBy: 'p1',
             command: { type: 'BEGIN_GEM_SELECTION' },
         });
+        const snapshot = createAuthoritativeSnapshotFixture();
+        const playerSnapshot = toPlayerSnapshot(snapshot, 'p1');
+        const spectatorSnapshot = toSpectatorSnapshot(snapshot);
+        const action = UiActionDescriptorSchema.parse({
+            id: 'begin-gem-selection',
+            label: 'Begin Gem Selection',
+            command: { type: 'BEGIN_GEM_SELECTION' },
+        });
 
         const replay = ReplayBundleSchema.parse({
             ...createReplayBundleFixture(),
             commands: [envelope],
         });
+        const roomDetail = RoomDetailSchema.parse({
+            roomId: 'room-1',
+            hostPlayer: 'p1',
+            playerCount: 1,
+            status: 'waiting',
+            mode: 'online',
+            createdAt: '2026-04-17T17:00:00.000Z',
+            snapshot: spectatorSnapshot,
+            availableActions: [],
+            canJoin: true,
+            wsUrl: 'ws://127.0.0.1:8787/ws/rooms/room-1',
+        });
+        const patch = MatchPatchMessageSchema.parse({
+            type: 'match.patch',
+            seq: playerSnapshot.sequence,
+            snapshot: playerSnapshot,
+            availableActions: [action],
+        });
 
         expect(replay.engineVersion).toBe(ENGINE_VERSION);
+        expect(roomDetail.availableActions).toEqual([]);
+        expect(patch.availableActions[0]?.id).toBe('begin-gem-selection');
     });
 });

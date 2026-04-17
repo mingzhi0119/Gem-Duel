@@ -1,6 +1,6 @@
 import type { AddressInfo } from 'node:net';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createMatchSession, type MatchSession } from '@gem-duel/application';
+import { buildUiViewModel, createMatchSession, type MatchSession } from '@gem-duel/application';
 import { createEnginePorts } from '@gem-duel/adapters';
 import type {
     CreateRoomRequest,
@@ -178,7 +178,7 @@ const createCompletingSession = (request: CreateRoomRequest): TypedResult<MatchS
                 return replayBundle;
             },
             viewModel(viewer) {
-                return base.value.viewModel(viewer);
+                return buildUiViewModel(currentSnapshot, viewer ?? 'p1');
             },
         },
     };
@@ -205,6 +205,7 @@ describe('buildRoomServiceApp', () => {
         expect(created.playerCount).toBe(0);
         expect(created.status).toBe('waiting');
         expect(created.snapshot?.visibility).toBe('spectator');
+        expect(created.availableActions).toEqual([]);
 
         const joinResponse = await fetch(`${urlBase}/rooms/${created.roomId}/join`, {
             method: 'POST',
@@ -241,6 +242,7 @@ describe('buildRoomServiceApp', () => {
         expect(p1State.room.snapshot.viewer).toBe('p1');
         expect(p1State.room.playerCount).toBe(1);
         expect(p1State.room.status).toBe('waiting');
+        expect(p1State.room.availableActions.length).toBeGreaterThan(0);
 
         p2.send({
             type: 'room.join',
@@ -255,6 +257,7 @@ describe('buildRoomServiceApp', () => {
         expect(p2State.room.snapshot.viewer).toBe('p2');
         expect(p2State.room.playerCount).toBe(2);
         expect(p2State.room.status).toBe('active');
+        expect(p2State.room.availableActions).toEqual([]);
 
         challenger.send({
             type: 'room.join',
@@ -309,6 +312,7 @@ describe('buildRoomServiceApp', () => {
         ) {
             throw new Error('Expected spectator room.state.');
         }
+        expect(spectatorState.room.availableActions).toEqual([]);
 
         spectator.send({
             type: 'match.command',
@@ -363,7 +367,7 @@ describe('buildRoomServiceApp', () => {
         await player.close();
     });
 
-    it('ignores client-issuedBy, replays duplicate commands idempotently, and resyncs stale seq values', async () => {
+    it('ignores client-issuedBy, scopes actions per viewer, replays duplicate commands idempotently, and resyncs stale seq values', async () => {
         const room = await createRoom(urlBase);
         const [p1, p2, spectator] = await openSockets(port, room.roomId);
 
@@ -423,6 +427,9 @@ describe('buildRoomServiceApp', () => {
         expect(p1Patch.snapshot.viewer).toBe('p1');
         expect(p2Patch.snapshot.viewer).toBe('p2');
         expect(spectatorObserve.snapshot.visibility).toBe('spectator');
+        expect(p1Patch.availableActions.length).toBeGreaterThan(0);
+        expect(p2Patch.availableActions).toEqual([]);
+        expect(spectatorObserve.availableActions).toEqual([]);
 
         p1.send({
             type: 'match.command',
@@ -457,8 +464,51 @@ describe('buildRoomServiceApp', () => {
         expect(resync.snapshot.visibility).toBe('player');
         expect(resync.snapshot.viewer).toBe('p1');
         expect(resync.snapshot.sequence).toBe(p1Patch.snapshot.sequence);
+        expect(resync.availableActions).toEqual(p1Patch.availableActions);
 
         await Promise.all([p1.close(), p2.close(), spectator.close()]);
+    });
+
+    it('forbids a bound player from acting when the other seat owns the turn', async () => {
+        const room = await createRoom(urlBase);
+        const [p1, p2] = await Promise.all([
+            SocketHarness.connect(`ws://127.0.0.1:${port}/ws/rooms/${room.roomId}`),
+            SocketHarness.connect(`ws://127.0.0.1:${port}/ws/rooms/${room.roomId}`),
+        ]);
+
+        p1.send({
+            type: 'room.join',
+            roomId: room.roomId,
+            playerName: 'Alice',
+        });
+        const p1State = await p1.nextMessage();
+        p2.send({
+            type: 'room.join',
+            roomId: room.roomId,
+            playerName: 'Bob',
+        });
+        const p2State = await p2.nextMessage();
+
+        if (p1State.type !== 'room.state' || p2State.type !== 'room.state') {
+            throw new Error('Expected initial room.state messages.');
+        }
+
+        p2.send({
+            type: 'match.command',
+            command: {
+                clientCommandId: 'cmd-out-of-turn',
+                expectedSeq: p2State.room!.snapshot!.sequence,
+                command: { type: 'BEGIN_GEM_SELECTION' },
+            },
+        });
+        const forbidden = await p2.nextMessage();
+        expect(forbidden.type).toBe('room.error');
+        if (forbidden.type !== 'room.error') {
+            throw new Error('Expected room.error.');
+        }
+        expect(forbidden.error.code).toBe('ROOM_COMMAND_FORBIDDEN');
+
+        await Promise.all([p1.close(), p2.close()]);
     });
 
     it('returns rooms to waiting on room.leave and disconnect while keeping HTTP state spectator-safe', async () => {
@@ -579,6 +629,7 @@ describe('buildRoomServiceApp', () => {
             await (await fetch(`${urlBase}/rooms/${room.roomId}`)).text()
         );
         expect(roomAfterCompletion.status).toBe('completed');
+        expect(roomAfterCompletion.availableActions).toEqual([]);
 
         await Promise.all([p1.close(), p2.close()]);
     });

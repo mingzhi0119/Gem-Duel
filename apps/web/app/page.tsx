@@ -17,15 +17,16 @@ export default function HomePage() {
                     <p className="gd-muted">EN</p>
                     <p>
                         The repo now runs on a monorepo layout with a deterministic engine, typed
-                        contracts, a Next.js shell, an Electron shell, and a Fastify room-service
-                        scaffold.
+                        contracts, a shared Web/Desktop shell boundary, and an authoritative
+                        room-service that can drive local, AI, online, and spectator flows through
+                        the same application-layer view models.
                     </p>
                     <div className="gd-action-list">
                         <Link className="gd-link" href="/play/local">
                             Launch Local Demo
                         </Link>
                         <Link className="gd-link" href="/rooms">
-                            Inspect Room APIs
+                            Create or Join a Room
                         </Link>
                         <Link className="gd-link" href="/rulebook">
                             Read Rulebook Strategy

@@ -108,6 +108,10 @@ main {
     background: var(--accent);
 }
 
+.gd-button-muted {
+    background: #475569;
+}
+
 .gd-table {
     width: 100%;
     border-collapse: collapse;
@@ -124,10 +128,47 @@ main {
     color: var(--muted);
 }
 
+.gd-error {
+    color: #a11212;
+    font-weight: 600;
+}
+
 .gd-log {
     max-height: 320px;
     overflow: auto;
     padding-left: 1rem;
+}
+
+.gd-form-stack {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.gd-form-field {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.gd-form-field input {
+    padding: 0.75rem 0.9rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #fffefa;
+    color: var(--text);
+}
+
+.gd-shell-badge {
+    display: inline-flex;
+    margin-top: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
 @media (max-width: 900px) {

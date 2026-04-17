@@ -3,6 +3,7 @@ import { GameModeSchema, PlayerIdSchema } from './shared/enums';
 import { MatchFlagsSchema } from './shared/base';
 import { ReplayBundleSchema } from './replay';
 import { VisibleSnapshotSchema } from './snapshots';
+import { UiActionDescriptorSchema } from './ui';
 
 export const RoomSummarySchema = z.object({
     roomId: z.string().min(1),
@@ -15,6 +16,7 @@ export const RoomSummarySchema = z.object({
 
 export const RoomDetailSchema = RoomSummarySchema.extend({
     snapshot: VisibleSnapshotSchema.nullable(),
+    availableActions: z.array(UiActionDescriptorSchema),
     canJoin: z.boolean(),
     wsUrl: z.string().url(),
 });

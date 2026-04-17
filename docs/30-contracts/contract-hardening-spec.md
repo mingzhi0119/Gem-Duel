@@ -96,6 +96,9 @@
 - stale `expectedSeq` 必须返回 `match.resync` 与当前完整的 viewer-filtered snapshot；这不是 `room.error` 分支。
 - `GET /rooms/:roomId` 只允许返回 public / spectator-safe `RoomDetail`；玩家私有视角只能通过绑定后的 websocket `room.state` / `match.patch` 下发。
 - spectator 连接只允许收到 `room.state` 与后续 `match.observe`，不得收到任何玩家私有 `match.patch`。
+- Step 06 起，`UiActionDescriptor` 是 schema-backed contract，可通过 room/UI payload 传输。
+- Step 06 起，`RoomDetail`、`match.patch`、`match.resync` 与 `match.observe` 必须携带 viewer-scoped `availableActions`。
+- spectator 与非当前行动玩家的 `availableActions` 必须为空数组；客户端不得依据可见 snapshot 自行推断 turn ownership 或隐藏 deck legality。
 
 ## 修改顺序
 
@@ -208,6 +211,9 @@ This document defines the hardening path for `packages/contracts`. Contracts mus
 - Stale `expectedSeq` values must return `match.resync` with the full current viewer-filtered snapshot; this is not a `room.error` branch.
 - `GET /rooms/:roomId` may return only public / spectator-safe `RoomDetail`; player-private views may be delivered only through bound websocket `room.state` / `match.patch` flows.
 - Spectator connections may receive `room.state` and later `match.observe` only and may never receive player-private `match.patch` payloads.
+- Starting in Step 06, `UiActionDescriptor` is a schema-backed contract that may travel through room/UI payloads.
+- Starting in Step 06, `RoomDetail`, `match.patch`, `match.resync`, and `match.observe` must carry viewer-scoped `availableActions`.
+- Spectators and non-active players must receive `availableActions: []`; clients may not infer turn ownership or hidden-deck legality from visible snapshots alone.
 
 ## Change Order
 

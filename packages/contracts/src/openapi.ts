@@ -31,6 +31,7 @@ import {
     SpectatorSnapshotSchema,
     VisibleSnapshotSchema,
 } from './snapshots';
+import { UiActionDescriptorSchema, UiViewModelSchema } from './ui';
 import {
     MatchCommandEnvelopeSchema,
     MatchCommandMessageSchema,
@@ -64,6 +65,8 @@ registry.register('PlayerSnapshot', PlayerSnapshotSchema);
 registry.register('SpectatorSnapshot', SpectatorSnapshotSchema);
 registry.register('VisibleSnapshot', VisibleSnapshotSchema);
 registry.register('GameSnapshot', GameSnapshotSchema);
+registry.register('UiActionDescriptor', UiActionDescriptorSchema);
+registry.register('UiViewModel', UiViewModelSchema);
 registry.register('ReplayCommand', ReplayCommandSchema);
 registry.register('ReplayBundle', ReplayBundleSchema);
 registry.register(

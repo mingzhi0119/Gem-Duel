@@ -3,9 +3,11 @@ import {
     type GameSnapshot,
     type ReplayBundle,
     type ReplayCommand,
+    type RoomDetail,
     type TypedResult,
     type UiActionDescriptor,
     type UiViewModel,
+    type VisibleSnapshot,
     toPlayerSnapshot,
     toSpectatorSnapshot,
 } from '@gem-duel/contracts';
@@ -21,7 +23,7 @@ import {
 } from '@gem-duel/core-engine';
 import { type GameMode, type MatchFlags } from '@gem-duel/domain';
 
-type ViewerId = GameSnapshot['context']['currentPlayer'] | 'spectator';
+export type ViewerId = GameSnapshot['context']['currentPlayer'] | 'spectator';
 
 export interface MatchSession {
     dispatch(command: GameCommand): TypedResult<GameSnapshot>;
@@ -334,12 +336,35 @@ const createReplayCommand = (
 const buildVisibleSnapshot = (snapshot: GameSnapshot, viewer: ViewerId) =>
     viewer === 'spectator' ? toSpectatorSnapshot(snapshot) : toPlayerSnapshot(snapshot, viewer);
 
-export const buildUiViewModel = (snapshot: GameSnapshot, viewer: ViewerId = 'p1'): UiViewModel => ({
-    title: `Gem Duel ${snapshot.context.mode.toUpperCase()} Match`,
-    subtitle: `Phase: ${snapshot.context.phase} | Turn: ${snapshot.context.currentPlayer} | Segment: ${snapshot.context.turn.segment}`,
-    snapshot: buildVisibleSnapshot(snapshot, viewer),
-    availableActions: buildActions(snapshot),
+const buildUiTitle = (snapshot: VisibleSnapshot | GameSnapshot) =>
+    `Gem Duel ${snapshot.context.mode.toUpperCase()} Match`;
+
+const buildUiSubtitle = (snapshot: VisibleSnapshot | GameSnapshot) =>
+    `Phase: ${snapshot.context.phase} | Turn: ${snapshot.context.currentPlayer} | Segment: ${snapshot.context.turn.segment}`;
+
+export const buildVisibleUiViewModel = (
+    snapshot: VisibleSnapshot,
+    availableActions: UiActionDescriptor[] = []
+): UiViewModel => ({
+    title: buildUiTitle(snapshot),
+    subtitle: buildUiSubtitle(snapshot),
+    snapshot,
+    availableActions,
 });
+
+export const buildRoomUiViewModel = (
+    room: Pick<RoomDetail, 'snapshot' | 'availableActions'>
+): UiViewModel | null =>
+    room.snapshot ? buildVisibleUiViewModel(room.snapshot, room.availableActions) : null;
+
+const canViewerAct = (snapshot: GameSnapshot, viewer: ViewerId) =>
+    viewer !== 'spectator' && viewer === snapshot.context.currentPlayer;
+
+export const buildUiViewModel = (snapshot: GameSnapshot, viewer: ViewerId = 'p1'): UiViewModel =>
+    buildVisibleUiViewModel(
+        buildVisibleSnapshot(snapshot, viewer),
+        canViewerAct(snapshot, viewer) ? buildActions(snapshot) : []
+    );
 
 export const createMatchSession = (
     input: MatchSessionInput,

@@ -4,6 +4,7 @@ import type {
     PlayerSnapshot,
     ReplayBundle,
     SpectatorSnapshot,
+    UiActionDescriptor,
 } from '@gem-duel/contracts';
 
 type PlayerId = PlayerSnapshot['viewer'];
@@ -16,12 +17,14 @@ export interface CachedCommandResult {
             type: 'match.patch';
             seq: number;
             snapshot: PlayerSnapshot;
+            availableActions: UiActionDescriptor[];
         }
     >;
     spectatorMessage: {
         type: 'match.observe';
         seq: number;
         snapshot: SpectatorSnapshot;
+        availableActions: UiActionDescriptor[];
     };
 }
 

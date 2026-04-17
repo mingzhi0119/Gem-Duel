@@ -4,6 +4,7 @@ import { PlayerIdSchema } from './shared/enums';
 import { GameCommandSchema } from './game';
 import { RoomDetailSchema } from './http';
 import { PlayerSnapshotSchema, SpectatorSnapshotSchema, VisibleSnapshotSchema } from './snapshots';
+import { UiActionDescriptorSchema } from './ui';
 
 export const MatchCommandEnvelopeSchema = z.object({
     clientCommandId: z.string().min(1),
@@ -39,18 +40,21 @@ export const MatchPatchMessageSchema = z.object({
     type: z.literal('match.patch'),
     seq: z.number().int().min(0),
     snapshot: VisibleSnapshotSchema,
+    availableActions: z.array(UiActionDescriptorSchema),
 });
 
 export const MatchResyncMessageSchema = z.object({
     type: z.literal('match.resync'),
     lastKnownSeq: z.number().int().min(0),
     snapshot: VisibleSnapshotSchema,
+    availableActions: z.array(UiActionDescriptorSchema),
 });
 
 export const MatchObserveMessageSchema = z.object({
     type: z.literal('match.observe'),
     seq: z.number().int().min(0),
     snapshot: SpectatorSnapshotSchema,
+    availableActions: z.array(UiActionDescriptorSchema),
 });
 
 export const RoomLeaveMessageSchema = z.object({

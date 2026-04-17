@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { createAiMatchSession, createLocalMatchSession } from '@gem-duel/application';
 import type { UiActionDescriptor } from '@gem-duel/contracts';
-import { ActionList, Section, SnapshotSummary } from '@gem-duel/ui';
+import { MatchView, Section } from '@gem-duel/ui';
 
 export function MatchPlayground({
     mode,
@@ -58,29 +58,16 @@ export function MatchPlayground({
     };
 
     return (
-        <>
-            <Section title={`Interactive ${mode.toUpperCase()} Session`}>
+        <MatchView
+            viewModel={snapshot}
+            onSelect={handleAction}
+            error={error}
+            note={
                 <p className="gd-muted">
                     ZH: 这是应用层 session 直接驱动核心引擎的最小闭环。 EN: This is the minimal
                     vertical slice from the application layer to the deterministic core engine.
                 </p>
-                {error && <p>{error}</p>}
-                <SnapshotSummary snapshot={snapshot.snapshot} />
-            </Section>
-
-            <Section title="Available Actions">
-                <ActionList actions={snapshot.availableActions} onSelect={handleAction} />
-            </Section>
-
-            <Section title="Event Log">
-                <ol className="gd-log">
-                    {snapshot.snapshot.eventLog.map((event, index) => (
-                        <li key={`${event.type}-${index}`}>
-                            <code>{event.type}</code>
-                        </li>
-                    ))}
-                </ol>
-            </Section>
-        </>
+            }
+        />
     );
 }
