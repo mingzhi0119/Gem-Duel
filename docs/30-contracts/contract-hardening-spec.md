@@ -68,6 +68,7 @@
 - repo 中提交的 replay fixtures / golden fixtures 是权威 replay bundle 的 JSON debug/export 视图，而不是对 `MessagePack` authority 的否定。
 - 生成命令：`pnpm contracts:generate`
 - 漂移校验命令：`pnpm contracts:verify`
+- OpenAPI JSON 生成产物与其 committed fixture 必须保持 byte-stable，并从通用 `prettier --write` / `lint-staged` JSON 格式化中排除；否则提交护栏会制造假 drift 并破坏 `pnpm contracts:verify`。
 
 ## Replay Bundle
 
@@ -186,6 +187,7 @@ This document defines the hardening path for `packages/contracts`. Contracts mus
 - Replay fixtures and repo golden fixtures remain JSON debug/export views of the authoritative replay bundle rather than a replacement for `MessagePack` authority.
 - Generation command: `pnpm contracts:generate`
 - Drift verification command: `pnpm contracts:verify`
+- The committed OpenAPI JSON artifact and its fixture must stay byte-stable and must be excluded from generic `prettier --write` / `lint-staged` JSON formatting; otherwise the commit guardrails create false drift and break `pnpm contracts:verify`.
 
 ## Replay Bundle
 
