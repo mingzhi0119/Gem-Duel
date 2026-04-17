@@ -110,9 +110,16 @@
 
 #### Phase 2 - 交互范式 ADR + `UiViewModel` 2.0 契约扩展
 
+状态：`In Progress`（2026-04-17）。日志：[`logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md`](./logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md)
+
 目标：先决定“多选盘面交互怎么表达”，再做 board-facing projection。
 
 覆盖发现：F3、F4、F6。
+
+治理主文档：
+
+- [`phase-2-interaction-and-uiviewmodel-plan.md`](./phase-2-interaction-and-uiviewmodel-plan.md)
+- [`../30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md`](../30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md)
 
 本阶段前置门：
 
@@ -415,9 +422,16 @@ Done criteria:
 
 #### Phase 2 - Interaction ADR + `UiViewModel` 2.0 Contract Expansion
 
+Status: `In Progress` (2026-04-17). Log: [`logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md`](./logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md)
+
 Goal: decide how multi-step board interaction is represented before building the board-facing projection.
 
 Covers: F3, F4, F6.
+
+Governance docs:
+
+- [`phase-2-interaction-and-uiviewmodel-plan.md`](./phase-2-interaction-and-uiviewmodel-plan.md)
+- [`../30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md`](../30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md)
 
 Entry gate:
 

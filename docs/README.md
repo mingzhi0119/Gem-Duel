@@ -16,6 +16,7 @@
 - [`10-architecture/web-desktop-application-integration.md`](./10-architecture/web-desktop-application-integration.md): Step 06 Web/Desktop 通过 application/ui 共享视图模型与交互边界
 - [`10-architecture/full-board-ui-roadmap.md`](./10-architecture/full-board-ui-roadmap.md): Opus 4.7 审计后的 full-board UI 发现清单、整改归属与按 Phase 排序路线图
 - [`10-architecture/phase-1-application-ui-structure-plan.md`](./10-architecture/phase-1-application-ui-structure-plan.md): Phase 1 的 `application/ui` 结构清理目标目录、write-scope、迁移顺序与非目标
+- [`10-architecture/phase-2-interaction-and-uiviewmodel-plan.md`](./10-architecture/phase-2-interaction-and-uiviewmodel-plan.md): Phase 2 的交互范式决策门、迁移顺序、write-scope 与非目标
 - [`20-domain/README.md`](./20-domain/README.md): 领域模型、状态机与规则版本
 - [`20-domain/determinism-and-replay-discipline.md`](./20-domain/determinism-and-replay-discipline.md): 确定性、回放与性质测试纪律
 - [`20-domain/buff-hook-system.md`](./20-domain/buff-hook-system.md): Buff/Roguelike hook 原语、顺序与组合规则
@@ -27,6 +28,7 @@
 - [`30-contracts/step-05-room-service-authority-migration-note.md`](./30-contracts/step-05-room-service-authority-migration-note.md): Step 05 room-service authority、server-bound seat 与 room error 迁移说明
 - [`30-contracts/step-06-shell-ui-migration-note.md`](./30-contracts/step-06-shell-ui-migration-note.md): Step 06 shared shell/UI integration 与 viewer-scoped `availableActions` 迁移说明
 - [`30-contracts/step-07-run-buff-replay-migration-note.md`](./30-contracts/step-07-run-buff-replay-migration-note.md): Step 07 run/buff contract surface、snapshot `runContext` 与 replay inspector 迁移说明
+- [`30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md`](./30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md): Phase 2 的 `UiViewModel` 2.0 字段清单、受影响 payload 与 contract PR checklist
 - [`40-operations/README.md`](./40-operations/README.md): 部署、观测、CI/CD 与运行策略
 - [`40-operations/release-prep.md`](./40-operations/release-prep.md): Step 08 release-ready 定义、engineering release 与产品 GA 的边界、最终验收门禁与当前产物范围
 - [`40-operations/room-service-authority-semantics.md`](./40-operations/room-service-authority-semantics.md): Step 05 room-service 权威语义、连接绑定、广播与 replay 存储触发
@@ -55,6 +57,7 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`10-architecture/web-desktop-application-integration.md`](./10-architecture/web-desktop-application-integration.md): Step 06 Web/Desktop composition through shared application/ui boundaries
 - [`10-architecture/full-board-ui-roadmap.md`](./10-architecture/full-board-ui-roadmap.md): Opus 4.7 audit findings, remediation ownership, and the phase-sorted roadmap from the current validation shell to a full playable board UI
 - [`10-architecture/phase-1-application-ui-structure-plan.md`](./10-architecture/phase-1-application-ui-structure-plan.md): Target layout, write scopes, migration order, and non-goals for the Phase 1 `application/ui` cleanup
+- [`10-architecture/phase-2-interaction-and-uiviewmodel-plan.md`](./10-architecture/phase-2-interaction-and-uiviewmodel-plan.md): Interaction-model decision gate, migration order, write scopes, and non-goals for Phase 2
 - [`20-domain/README.md`](./20-domain/README.md): Domain model, state machine, and ruleset versioning
 - [`20-domain/determinism-and-replay-discipline.md`](./20-domain/determinism-and-replay-discipline.md): Determinism, replay, and property-testing discipline
 - [`20-domain/buff-hook-system.md`](./20-domain/buff-hook-system.md): Buff/Roguelike hook primitives, ordering, and composition rules
@@ -66,6 +69,7 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`30-contracts/step-05-room-service-authority-migration-note.md`](./30-contracts/step-05-room-service-authority-migration-note.md): Step 05 migration note for room-service authority, server-bound seats, and room errors
 - [`30-contracts/step-06-shell-ui-migration-note.md`](./30-contracts/step-06-shell-ui-migration-note.md): Step 06 migration note for shared shell/UI integration and viewer-scoped `availableActions`
 - [`30-contracts/step-07-run-buff-replay-migration-note.md`](./30-contracts/step-07-run-buff-replay-migration-note.md): Step 07 migration note for the run/buff contract surface, snapshot `runContext`, and the replay inspector
+- [`30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md`](./30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md): Phase 2 `UiViewModel` 2.0 field inventory, affected payloads, and the contract-PR checklist
 - [`40-operations/README.md`](./40-operations/README.md): Deployment, observability, CI/CD, and runtime strategy
 - [`40-operations/release-prep.md`](./40-operations/release-prep.md): Step 08 release-ready definition, the engineering-release vs product-GA boundary, final acceptance gates, and current artifact scope
 - [`40-operations/room-service-authority-semantics.md`](./40-operations/room-service-authority-semantics.md): Step 05 room-service authority semantics, connection binding, broadcast rules, and replay persistence
