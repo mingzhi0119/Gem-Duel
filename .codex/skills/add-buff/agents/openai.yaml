@@ -1,0 +1,4 @@
+interface:
+  display_name: "Add Buff"
+  short_description: "Use when adding or changing Buff files, Buff registries, or Buff replay behavior."
+  default_prompt: "Use this skill to add or revise a Buff under the frozen hook/effect model."

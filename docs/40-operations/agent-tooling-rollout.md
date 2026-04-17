@@ -4,6 +4,8 @@
 
 本文件记录 Agent 协作护栏的分波次落地顺序。当前步骤只做文档治理，不在本文件中直接接线工具。
 
+项目本地 Skills 的规范、触发和步骤映射另见 [`skills-governance.md`](./skills-governance.md)。
+
 ## Wave 1
 
 - `dependency-cruiser`：作为单向依赖 hard gate。
@@ -44,6 +46,8 @@
 ## EN
 
 This document records the rollout order for agent-collaboration guardrails. The current step is documentation-only and does not wire the tools yet.
+
+Project-local skill quality rules, triggers, and step mapping live in [`skills-governance.md`](./skills-governance.md).
 
 ## Wave 1
 

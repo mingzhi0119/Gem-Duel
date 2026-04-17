@@ -19,6 +19,7 @@
 - [`30-contracts/contract-hardening-spec.md`](./30-contracts/contract-hardening-spec.md): 契约硬化、schema 真相源与生成策略
 - [`40-operations/README.md`](./40-operations/README.md): 部署、观测、CI/CD 与运行策略
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent 工具、CI 护栏与 `.codex`/MCP 规划
+- [`40-operations/skills-governance.md`](./40-operations/skills-governance.md): 项目本地 Skills 的质量标准、步骤映射与目录治理
 - [`90-adr/ADR-0001-greenfield-monorepo.md`](./90-adr/ADR-0001-greenfield-monorepo.md): 首个架构决策记录
 - [`90-adr/ADR-0002-mechanical-agent-guardrails.md`](./90-adr/ADR-0002-mechanical-agent-guardrails.md): Agent 机械化护栏决策
 - [`90-adr/ADR-0003-actor-effects-and-information-sets.md`](./90-adr/ADR-0003-actor-effects-and-information-sets.md): 连锁效果、信息集与 replay 流设计决策
@@ -43,6 +44,7 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`30-contracts/contract-hardening-spec.md`](./30-contracts/contract-hardening-spec.md): Contract hardening, schema truth sources, and generation strategy
 - [`40-operations/README.md`](./40-operations/README.md): Deployment, observability, CI/CD, and runtime strategy
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent tooling, CI guardrails, and `.codex`/MCP planning
+- [`40-operations/skills-governance.md`](./40-operations/skills-governance.md): Quality bar, step mapping, and directory governance for project-local skills
 - [`90-adr/ADR-0001-greenfield-monorepo.md`](./90-adr/ADR-0001-greenfield-monorepo.md): Initial architecture decision record
 - [`90-adr/ADR-0002-mechanical-agent-guardrails.md`](./90-adr/ADR-0002-mechanical-agent-guardrails.md): Mechanical guardrails for agents
 - [`90-adr/ADR-0003-actor-effects-and-information-sets.md`](./90-adr/ADR-0003-actor-effects-and-information-sets.md): Actor effects, information sets, and replay-stream design decision

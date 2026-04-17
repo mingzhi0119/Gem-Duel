@@ -180,3 +180,34 @@
     - If Step 02/02.5/03 do not implement the frozen primitives exactly, Step 07 could still regress into bottom-layer rewrites
 - Next step: enter `Step 02`, freeze contracts/domain boundaries, then `Step 02.5` to lock the effect and hook primitives before engine work starts
 - Commit reference: `docs(governance): deepen refactor docs for effects, snapshots, and replay`
+
+### Additional Entry: 2026-04-17 (Skills Governance)
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 01
+- Goal: formalize project-local Codex skills so the rebuild has reusable workflows for contracts, phases, Buffs, legacy archaeology, and replay regression.
+- Actual changes:
+    - Added project-local skills under `.codex/skills/` for `contract-change`, `add-buff`, `add-phase-transition`, `legacy-mine`, and `replay-golden`
+    - Added `.codex/skills/AGENTS.md` to freeze local skill quality rules such as `Use when ...`, progressive disclosure, and required references/templates/scripts
+    - Added `docs/40-operations/skills-governance.md` as the source of truth for skill quality, directory rules, and step mapping
+    - Updated the rebuild tracker to map each skill onto the rebuild steps it supports
+    - Updated the root `AGENTS.md` and operations indexes so project-local skills are part of the official governance path rather than ad hoc helper files
+- Touched paths:
+    - `.codex/skills/`
+    - `.codex/skills/AGENTS.md`
+    - `docs/40-operations/skills-governance.md`
+    - `docs/40-operations/README.md`
+    - `docs/40-operations/agent-tooling-rollout.md`
+    - `docs/README.md`
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+    - `AGENTS.md`
+- Key decisions:
+    - Keep project-local skills versioned inside the repo under `.codex/skills/`
+    - Require every skill to include a `Use when ...` description plus at least one reference, one template/example, and one script
+    - Keep each `SKILL.md` within a 200-line cap and push detail into `references/`
+- Risks / blockers:
+    - The current scripts are governance scaffolds, not fully wired product tooling yet
+    - Future skill additions must keep the tracker mapping current or the governance layer will drift
+- Next step: enter `Step 02` and turn the documented contract, phase, replay, and Buff workflows into executable repo guardrails
+- Commit reference: `docs(governance): add project-local skills for refactor workflows`

@@ -19,6 +19,7 @@
 - Add tests, replay samples, and contract examples together with new rules or protocol changes. 新规则或协议变化应同时补测试、replay 样例与契约示例。
 - Put detailed process rules in `docs/` when they are not yet mechanically enforceable in CI. 尚未能在 CI 机械校验的细节规则，应沉到 `docs/`。
 - Prefer the closest directory `AGENTS.md` for local constraints and keep root rules short. 本地约束优先写在最近目录的 `AGENTS.md`，根规则保持简洁。
+- Prefer the matching project-local skill under `.codex/skills/` when a task fits an established workflow such as contract changes, phase transitions, legacy extraction, Buff additions, or replay golden maintenance. 当任务符合既有流程时，优先使用 `.codex/skills/` 中对应的项目本地 Skill，例如契约修改、phase 迁移、legacy 考古、Buff 新增或 golden replay 维护。
 
 ## INFO / 说明
 

@@ -1,0 +1,10 @@
+export const buffDefinition = {
+  id: "your-buff-id",
+  rarity: "common",
+  scope: "self",
+  hookPoint: "AFTER_TAKE_TOKENS",
+  stacking: "replace-with-project-rule",
+  apply(state, event) {
+    return state;
+  }
+} as const;

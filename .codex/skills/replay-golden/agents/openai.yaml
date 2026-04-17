@@ -1,0 +1,4 @@
+interface:
+  display_name: "Replay Golden"
+  short_description: "Use when capturing, verifying, or migrating golden replays and final-state hashes."
+  default_prompt: "Use this skill to maintain replay fixtures and deterministic regression guarantees."

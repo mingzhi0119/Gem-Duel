@@ -1,0 +1,4 @@
+interface:
+  display_name: "Contract Change"
+  short_description: "Use when updating contracts, error codes, WebSocket messages, or replay schemas."
+  default_prompt: "Use $contract-change when changing packages/contracts, WebSocket messages, error codes, snapshot types, or replay schemas."

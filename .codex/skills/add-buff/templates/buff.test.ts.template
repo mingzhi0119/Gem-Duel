@@ -1,0 +1,5 @@
+describe("your-buff-id", () => {
+  it("applies the base effect", () => {});
+  it("resolves correctly with another Buff in order", () => {});
+  it("handles the edge case documented for this Buff", () => {});
+});
