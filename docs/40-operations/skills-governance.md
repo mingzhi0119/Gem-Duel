@@ -27,8 +27,8 @@
     - 触发：新增或修改 phase、command、phase guard、effect actor handoff
     - 主要步骤：Step 03、Step 04
 - `legacy-mine`
-    - 触发：需要从 `old/legacy-vite-electron/` 提取规则本质
-    - 主要步骤：Step 04、Step 07
+    - 触发：需要从 `docs/99-legacy/` 与 git 历史提取规则本质；若旧归档仍存在，也只作为只读补充
+    - 主要步骤：Step 04、Step 07、Step 08
 - `replay-golden`
     - 触发：新增、验证或迁移 golden replay；处理 `finalStateHash` 变更
     - 主要步骤：Step 03、Step 04、Step 05、Step 07
@@ -74,8 +74,8 @@ This document defines the quality bar, directory rules, and step mapping for Gem
     - Trigger: changing phases, commands, phase guards, or effect-actor handoff
     - Primary steps: Step 03, Step 04
 - `legacy-mine`
-    - Trigger: extracting rule intent from `old/legacy-vite-electron/`
-    - Primary steps: Step 04, Step 07
+    - Trigger: extracting rule intent from `docs/99-legacy/` and git history; if the old archive still exists, it is only a read-only supplement
+    - Primary steps: Step 04, Step 07, Step 08
 - `replay-golden`
     - Trigger: adding, verifying, or migrating golden replays; handling `finalStateHash` changes
     - Primary steps: Step 03, Step 04, Step 05, Step 07

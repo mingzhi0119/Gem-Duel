@@ -26,7 +26,7 @@
         "typecheck": "node ./tools/run-turbo.mjs run typecheck",
         "format": "prettier --write .",
         "prepare": "husky",
-        "legacy:notes": "node -e \"console.log('Legacy Vite/Electron source lives in ./old/legacy-vite-electron and is read-only reference during the greenfield rebuild.')\""
+        "legacy:notes": "node -e \"console.log('Legacy extracts now live in ./docs/99-legacy and deeper archaeology should use git history rather than a live legacy source tree.')\""
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx,mjs,cjs,json,md,css}": [

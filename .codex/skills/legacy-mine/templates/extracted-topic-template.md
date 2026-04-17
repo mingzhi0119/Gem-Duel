@@ -2,7 +2,8 @@
 
 ## Source Files
 
-- `old/legacy-vite-electron/...`
+- `docs/99-legacy/extracted-...`
+- `git log` / `git show` history reference when needed
 
 ## Rule Intent
 

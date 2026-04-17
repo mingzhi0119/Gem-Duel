@@ -1,0 +1,91 @@
+# Step 08 Log - Final Acceptance, Remove Legacy Archive, and Release Prep
+
+## ZH
+
+- 日期：2026-04-17
+- 作者：Codex
+- Step ID：Step 08
+- 本步目标：完成全量重构的最终收口，补齐 release-prep gate 与文档入口，删除 live legacy source archive，并在 post-deletion 树上重新通过总体验收。
+- 实施顺序：
+    - 先创建 Step 08 log，并将 tracker 切到 `进行中`；
+    - 再收口 release-prep workflow / docs、legacy docs / skill wording 与 root help text；
+    - 然后删除 `old/legacy-vite-electron/`；
+    - 最后在删除后的工作树上重跑 `contracts:generate`、`contracts:verify`、`check-deps`、`check-boundaries`、`check-contracts`、`lint`、`typecheck`、`test`、`build`。
+- 当前状态：已完成。
+- 关键前置：
+    - Step 00-07 已完成并封口，当前工作树可直接进入最终 closure。
+    - Step 08 不创建 tag，不直接发布，只让仓库进入 release-ready 状态。
+- 风险/边界：
+    - 历史 step logs、ADR 与 extracted legacy notes 必须保留，不得把“删除 old”错误地扩大成“删除历史记录”。
+    - 活跃入口文档、skills 与 workflow 不得继续依赖 `old/legacy-vite-electron/` 作为存在中的目录。
+    - release-prep hardening 不得引入新的 gameplay、contract 或 protocol-family 变更。
+- 目标落点：
+    - tracker / step log：Step 08 状态切换与最终 closure 记录。
+    - legacy follow-through：root docs、governance docs、`docs/99-legacy/`、`.codex/skills/legacy-mine/`。
+    - release prep：`.github/workflows/release.yml`、`RELEASE_NOTES.md`、`docs/40-operations/release-prep.md`。
+    - final cleanup：删除 `old/legacy-vite-electron/` 并完成 post-deletion 验收。
+- 完成结果：
+    - 已创建 Step 08 log，并将 tracker 在入场时切到 `进行中`、在收口后切到 `已完成`。
+    - 已补齐 `docs/40-operations/release-prep.md`、更新 `docs/40-operations/README.md` 与 `RELEASE_NOTES.md`，并把 `.github/workflows/release.yml` 收紧到完整最终验收 gate。
+    - 已将 root docs、governance docs、`docs/99-legacy/README.md` 与 `.codex/skills/legacy-mine/` 重定向到 `docs/99-legacy/ + git history`，不再依赖 live legacy source tree。
+    - 已安全删除 `old/legacy-vite-electron/`，仅保留 extracted notes、历史 step logs、ADR 与 git 历史作为可追溯记录。
+- Legacy removal verification：
+    - 活跃入口、skills、workflow 与 governance docs 已不再要求 `old/legacy-vite-electron/` 存在。
+    - 历史 step logs 与 extracted notes 仍保留对旧路径的来源引用，用作历史审计，不作为现行依赖。
+- 验收：
+    - `pnpm contracts:generate`
+    - `pnpm contracts:verify`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+- Tag / release point：
+    - 自本步提交封口且 tracker 标记 `Step 08 = 已完成` 之后，未来的 tag-based release flow 被允许重新启用。
+
+## EN
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 08
+- Goal: close the rebuild safely by hardening the release-prep gate and documentation, removing the live legacy source archive, and rerunning full acceptance on the post-deletion tree.
+- Execution order:
+    - first create the Step 08 log and flip the tracker to `进行中`;
+    - then close the release-prep workflow/docs, legacy docs/skill wording, and root help text;
+    - then delete `old/legacy-vite-electron/`;
+    - finally rerun `contracts:generate`, `contracts:verify`, `check-deps`, `check-boundaries`, `check-contracts`, `lint`, `typecheck`, `test`, and `build` on the post-deletion tree.
+- Current status: completed.
+- Key preconditions:
+    - Step 00-07 are already complete and sealed, so the repo can enter final closure directly.
+    - Step 08 does not create tags or publish a release; it only makes the repo release-ready.
+- Risks / boundaries:
+    - Historical step logs, ADRs, and extracted legacy notes must remain; deleting `old/legacy-vite-electron/` must not erase the project history.
+    - Active entry docs, skills, and workflows may not keep depending on `old/legacy-vite-electron/` as a live directory.
+    - Release-prep hardening must not introduce new gameplay, contract, or protocol-family changes.
+- Target landing areas:
+    - tracker / step log: Step 08 state transitions and final closure record.
+    - legacy follow-through: root docs, governance docs, `docs/99-legacy/`, and `.codex/skills/legacy-mine/`.
+    - release prep: `.github/workflows/release.yml`, `RELEASE_NOTES.md`, and `docs/40-operations/release-prep.md`.
+    - final cleanup: delete `old/legacy-vite-electron/` and complete the post-deletion acceptance pass.
+- Completion outcome:
+    - The Step 08 log was created, the tracker entered `进行中` at step entry, and the step was closed as `已完成` after the post-deletion acceptance pass.
+    - `docs/40-operations/release-prep.md`, `docs/40-operations/README.md`, and `RELEASE_NOTES.md` now expose the release-prep entrypoint, and `.github/workflows/release.yml` now enforces the full final-acceptance gate set.
+    - Root docs, governance docs, `docs/99-legacy/README.md`, and `.codex/skills/legacy-mine/` now point to `docs/99-legacy` plus git history instead of a live legacy source tree.
+    - `old/legacy-vite-electron/` has been safely removed, leaving extracted notes, historical step logs, ADRs, and git history as the surviving audit trail.
+- Legacy removal verification:
+    - Active entry docs, skills, workflows, and governance docs no longer require `old/legacy-vite-electron/` to exist.
+    - Historical step logs and extracted notes still cite the old path as source history only, not as a live dependency.
+- Acceptance:
+    - `pnpm contracts:generate`
+    - `pnpm contracts:verify`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+- Tag / release point:
+    - Future tag-based release flow becomes allowed only after this closing commit lands and the tracker records `Step 08 = 已完成`.

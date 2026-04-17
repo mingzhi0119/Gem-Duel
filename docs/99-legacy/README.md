@@ -1,18 +1,14 @@
-# Legacy Archive
+# Legacy Extracts
 
 ## ZH
 
-这里记录旧版单包 `Vite + Electron` 实现的归档入口。旧代码统一保存在 `old/legacy-vite-electron/` 下，只作为人工参考，不再是新架构真相。
+这里记录旧版单包 `Vite + Electron` 实现提炼出的 legacy 规则笔记。Step 08 已删除 live legacy source tree，当前首选入口是本目录下的 extraction notes，其次是 git 历史。
 
 ### 归档条目
 
-- `old/legacy-vite-electron/src/`: 旧版 React/Vite 单包实现
-- `old/legacy-vite-electron/electron/`: 旧版 Electron 入口
-- `old/legacy-vite-electron/public/`: 旧版静态资源
-- `old/legacy-vite-electron/scripts/`: 旧版构建辅助脚本
-- `old/legacy-vite-electron/build/`: 旧版发行资源
-- `old/legacy-vite-electron/.vite/`: 旧版被跟踪的缓存产物归档
-- 根级 `README.md`、`TESTING.md`、`RELEASE_NOTES.md`: 已改写为索引文档，详细旧语义以 git 历史和旧目录为准
+- `docs/99-legacy/extracted-*.md`: 已提炼的 legacy 规则笔记
+- git 历史：当当前笔记还不够时，回看重构前的提交与变更片段
+- 根级 `README.md`、`TESTING.md`、`RELEASE_NOTES.md`: 已改写为索引文档，正式的 legacy 语义应优先落在本目录与 git 历史中
 
 ### Step 04 抽取笔记
 
@@ -31,17 +27,13 @@
 
 ## EN
 
-This directory indexes the legacy single-package `Vite + Electron` implementation. The old code now lives under `old/legacy-vite-electron/` and is preserved strictly as read-only reference material rather than active architecture truth.
+This directory indexes the legacy rule notes distilled from the old single-package `Vite + Electron` implementation. Step 08 removed the live legacy source tree, so the primary entrypoint is now the extraction notes in this directory, followed by git history.
 
 ### Archive Entries
 
-- `old/legacy-vite-electron/src/`: legacy React/Vite implementation
-- `old/legacy-vite-electron/electron/`: legacy Electron entrypoint
-- `old/legacy-vite-electron/public/`: legacy static assets
-- `old/legacy-vite-electron/scripts/`: legacy helper scripts
-- `old/legacy-vite-electron/build/`: legacy release assets
-- `old/legacy-vite-electron/.vite/`: archived tracked cache artifacts
-- root `README.md`, `TESTING.md`, and `RELEASE_NOTES.md`: rewritten as index documents; detailed legacy semantics live in git history and the archived directories
+- `docs/99-legacy/extracted-*.md`: extracted legacy rule notes
+- git history: use when the current note needs broader historical context from the pre-rebuild source tree
+- root `README.md`, `TESTING.md`, and `RELEASE_NOTES.md`: rewritten as index documents; the durable legacy semantics now live in this directory and in git history
 
 ### Step 04 Extraction Notes
 

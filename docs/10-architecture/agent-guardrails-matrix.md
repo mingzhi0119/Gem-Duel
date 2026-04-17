@@ -19,7 +19,7 @@
 - `packages/core-engine/AGENTS.md`：确定性状态推进、actor-based effect resolution 与 replay 纪律。
 - `apps/room-service/AGENTS.md`：共享引擎、幂等、seq/resync、spectator 与信息过滤。
 - `apps/web/app/api/AGENTS.md`：BFF-only，禁止规则结算。
-- `old/legacy-vite-electron/AGENTS.md`：只读参考，禁止 import 与照抄。
+- `docs/99-legacy/README.md`：legacy extracts 与 git-history 入口，只读参考，禁止 import 与照抄。
 
 ## 护栏矩阵
 
@@ -69,7 +69,7 @@ This document splits agent governance into three layers: written rules, mechanic
 - `packages/core-engine/AGENTS.md`: deterministic state progression, actor-based effect resolution, and replay discipline.
 - `apps/room-service/AGENTS.md`: shared engine rules, idempotency, seq/resync, spectator flow, and information filtering.
 - `apps/web/app/api/AGENTS.md`: BFF only, no rule resolution.
-- `old/legacy-vite-electron/AGENTS.md`: read-only archive, no imports, no verbatim copying.
+- `docs/99-legacy/README.md`: legacy extracts plus git-history entrypoint, read-only reference, no imports, no verbatim copying.
 
 ## Guardrail Matrix
 

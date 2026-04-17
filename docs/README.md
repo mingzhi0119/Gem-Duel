@@ -2,7 +2,7 @@
 
 ## ZH
 
-本目录是 Gem Duel 全量重构后的唯一架构真相来源。所有目录规则、契约定义、运维策略、ADR 决策和 legacy 归档都应在此维护。
+本目录是 Gem Duel 全量重构后的唯一架构真相来源。所有目录规则、契约定义、运维策略、ADR 决策，以及 surviving legacy extracts / git-history pointers 都应在此维护。
 
 ### 文档索引
 
@@ -25,6 +25,7 @@
 - [`30-contracts/step-06-shell-ui-migration-note.md`](./30-contracts/step-06-shell-ui-migration-note.md): Step 06 shared shell/UI integration 与 viewer-scoped `availableActions` 迁移说明
 - [`30-contracts/step-07-run-buff-replay-migration-note.md`](./30-contracts/step-07-run-buff-replay-migration-note.md): Step 07 run/buff contract surface、snapshot `runContext` 与 replay inspector 迁移说明
 - [`40-operations/README.md`](./40-operations/README.md): 部署、观测、CI/CD 与运行策略
+- [`40-operations/release-prep.md`](./40-operations/release-prep.md): Step 08 release-ready 定义、最终验收门禁与当前发布产物范围
 - [`40-operations/room-service-authority-semantics.md`](./40-operations/room-service-authority-semantics.md): Step 05 room-service 权威语义、连接绑定、广播与 replay 存储触发
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent 工具、CI 护栏与 `.codex`/MCP 规划
 - [`40-operations/skills-governance.md`](./40-operations/skills-governance.md): 项目本地 Skills 的质量标准、步骤映射与目录治理
@@ -33,11 +34,11 @@
 - [`90-adr/ADR-0003-actor-effects-and-information-sets.md`](./90-adr/ADR-0003-actor-effects-and-information-sets.md): 连锁效果、信息集与 replay 流设计决策
 - [`90-adr/ADR-0004-step-02.5-effect-hook-freeze.md`](./90-adr/ADR-0004-step-02.5-effect-hook-freeze.md): Step 02.5 Effect/Hook 原语冻结决策
 - [`90-adr/ADR-0005-step-03-phase-tightening-and-replay-authority.md`](./90-adr/ADR-0005-step-03-phase-tightening-and-replay-authority.md): Step 03 phase 收紧与 replay/hash 权责下沉决策
-- [`99-legacy/README.md`](./99-legacy/README.md): 旧实现与旧文档归档入口
+- [`99-legacy/README.md`](./99-legacy/README.md): legacy 规则抽取笔记与 git-history 追溯入口
 
 ## EN
 
-This directory is the single source of truth for the Gem Duel rebuild. All architecture rules, contracts, operations guidance, ADRs, and legacy archives must be maintained here.
+This directory is the single source of truth for the Gem Duel rebuild. All architecture rules, contracts, operations guidance, ADRs, and the surviving legacy extracts / git-history pointers live here.
 
 ### Documentation Index
 
@@ -60,6 +61,7 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`30-contracts/step-06-shell-ui-migration-note.md`](./30-contracts/step-06-shell-ui-migration-note.md): Step 06 migration note for shared shell/UI integration and viewer-scoped `availableActions`
 - [`30-contracts/step-07-run-buff-replay-migration-note.md`](./30-contracts/step-07-run-buff-replay-migration-note.md): Step 07 migration note for the run/buff contract surface, snapshot `runContext`, and the replay inspector
 - [`40-operations/README.md`](./40-operations/README.md): Deployment, observability, CI/CD, and runtime strategy
+- [`40-operations/release-prep.md`](./40-operations/release-prep.md): Step 08 release-ready definition, final acceptance gates, and current artifact scope
 - [`40-operations/room-service-authority-semantics.md`](./40-operations/room-service-authority-semantics.md): Step 05 room-service authority semantics, connection binding, broadcast rules, and replay persistence
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent tooling, CI guardrails, and `.codex`/MCP planning
 - [`40-operations/skills-governance.md`](./40-operations/skills-governance.md): Quality bar, step mapping, and directory governance for project-local skills
@@ -68,4 +70,4 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`90-adr/ADR-0003-actor-effects-and-information-sets.md`](./90-adr/ADR-0003-actor-effects-and-information-sets.md): Actor effects, information sets, and replay-stream design decision
 - [`90-adr/ADR-0004-step-02.5-effect-hook-freeze.md`](./90-adr/ADR-0004-step-02.5-effect-hook-freeze.md): Step 02.5 decision for effect/hook primitive freeze
 - [`90-adr/ADR-0005-step-03-phase-tightening-and-replay-authority.md`](./90-adr/ADR-0005-step-03-phase-tightening-and-replay-authority.md): Step 03 decision for phase tightening and replay/hash authority
-- [`99-legacy/README.md`](./99-legacy/README.md): Legacy implementation and document archive index
+- [`99-legacy/README.md`](./99-legacy/README.md): Legacy rule extracts and git-history entrypoint

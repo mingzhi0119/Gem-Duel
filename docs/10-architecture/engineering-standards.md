@@ -22,12 +22,11 @@
 - `apps/room-service`：只允许依赖 `packages/application`、`packages/contracts`、`packages/adapters`。
 - 该矩阵由 `dependency-cruiser` 与 `eslint-plugin-boundaries` 共同阻断；文档、代码与 CI 以此为准。
 
-### Legacy 归档规则
+### Legacy 历史规则
 
-- `old/legacy-vite-electron/` 是旧实现的唯一归档位置。
-- `old/legacy-vite-electron/` 在 `Step 08` 完成前不得删除。
-- 新架构代码不得引用 `old/legacy-vite-electron/**`。
-- 若需要借鉴 legacy 实现，必须先重构成新的领域模型、契约或应用层接口，再进入新目录。
+- live legacy source tree 已在 `Step 08` 删除；legacy 参考入口固定为 `docs/99-legacy/` 与 git 历史。
+- 新架构代码不得重新引入 pre-rebuild history 的 import 或逐字复制。
+- 若需要借鉴 legacy 行为，必须先提炼成新的领域模型、契约或应用层接口，再进入现行目录。
 
 ### 步骤、日志与提交
 
@@ -38,9 +37,9 @@
 
 ### Git 与发布策略
 
-- 重构完成前禁止创建或更新 git tag。
+- 在 tracker 标记 `Step 08` 完成前，禁止创建或更新 git tag。
 - 允许 Push 和 Merge，但不得把 tag 用作阶段性里程碑或版本发布信号。
-- 只有 `Step 08` 完成后，才允许移除 `old/legacy-vite-electron/` 并进入正式发布准备。
+- Step 08 完成后，仓库进入 release-ready 状态，允许后续 tag-based release flow，但 Step 08 本身不创建 tag。
 
 ### 文档与命名规范
 
@@ -93,11 +92,10 @@
 - `apps/room-service`: may depend only on `packages/application`, `packages/contracts`, and `packages/adapters`.
 - This matrix is enforced jointly by `dependency-cruiser` and `eslint-plugin-boundaries`; docs, code, and CI must all reflect it.
 
-### Legacy Archive Policy
+### Legacy History Policy
 
-- `old/legacy-vite-electron/` is the only supported archive location for the legacy implementation.
-- `old/legacy-vite-electron/` may not be deleted before `Step 08` is completed.
-- New-architecture code may not reference `old/legacy-vite-electron/**`.
+- The live legacy source tree was removed in `Step 08`; the surviving legacy reference entrypoints are `docs/99-legacy/` plus git history.
+- New-architecture code may not reintroduce imports from, or verbatim copies of, pre-rebuild history.
 - If legacy behavior is used as input, it must first be refactored into new domain, contract, or application-layer structures before entering the active architecture.
 
 ### Steps, Logs, and Commits
@@ -109,9 +107,9 @@
 
 ### Git and Release Policy
 
-- Do not create or update git tags before the rebuild is complete.
+- Do not create or update git tags until `Step 08` is marked complete in the tracker.
 - Pushes and merges are allowed, but tags may not be used as interim milestone or release signals.
-- Only after `Step 08` is complete may `old/legacy-vite-electron/` be removed and the project enter formal release preparation.
+- After `Step 08` closes, the repo is release-ready and future tag-based release flow is allowed, but Step 08 itself does not create tags.
 
 ### Documentation and Naming Standards
 

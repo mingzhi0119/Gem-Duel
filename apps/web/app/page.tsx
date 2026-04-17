@@ -59,7 +59,7 @@ export default function HomePage() {
                     </div>
                     <div className="gd-card">
                         <strong>Legacy</strong>
-                        <span>Existing old/legacy-vite-electron remains read-only reference</span>
+                        <span>Legacy extracts now live in docs/99-legacy and git history</span>
                     </div>
                 </div>
             </Section>
