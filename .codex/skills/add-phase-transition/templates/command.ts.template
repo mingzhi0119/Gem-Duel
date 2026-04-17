@@ -1,0 +1,4 @@
+export const commandShape = {
+  type: "YOUR_COMMAND",
+  payload: "define-in-contracts-first"
+} as const;

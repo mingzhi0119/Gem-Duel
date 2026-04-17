@@ -1,0 +1,4 @@
+interface:
+  display_name: "Add Phase Transition"
+  short_description: "Use when changing phases, command legality, guards, or effect-actor handoff behavior."
+  default_prompt: "Use this skill to update a deterministic phase transition with matching guardrails and docs."

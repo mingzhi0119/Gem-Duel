@@ -1,0 +1,213 @@
+# Step 01 Log - Governance Bootstrap
+
+## ZH
+
+- 日期：2026-04-16
+- 作者：Codex
+- Step ID：Step 01
+- 本步目标：建立可执行的重构治理体系，让后续每一步都能按状态、日志和提交边界推进。
+- 实际改动内容：
+    - 新增重构执行总表
+    - 新增日志目录、日志规范与两份分步日志
+    - 新增工程规范文档
+    - 强化 `AGENTS.md` 中关于 legacy 归档、步骤对齐、提交粒度与 git tag 的规则
+    - 更新 docs 索引与 architecture 索引，把新治理文档纳入入口
+- 涉及路径：
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+    - `docs/00-refactor/logs/`
+    - `docs/10-architecture/engineering-standards.md`
+    - `docs/README.md`
+    - `docs/10-architecture/README.md`
+    - `AGENTS.md`
+- 关键决策：
+    - 采用“分步独立日志”而不是单一总日志
+    - 将工程规范放在 `docs/10-architecture/engineering-standards.md`
+    - 重构完成前禁止 git tag，但保留 Push 与 Merge
+- 风险/阻塞：
+    - 当前治理体系已经就位，但后续步骤仍需严格按 tracker 边界执行
+    - 如果后续步骤跳过日志或状态同步，会破坏治理一致性
+- 下一步：进入 `Step 02`，冻结 `contracts/domain` 边界与公开接口
+- 对应 Commit：`docs(refactor): add execution tracker, logs, engineering standards, and agent rules`
+
+### 追加记录：2026-04-17
+
+- 日期：2026-04-17
+- 作者：Codex
+- Step ID：Step 01
+- 本步目标：把 Opus 4.7 的 Agent 治理建议沉淀为正式文档、分层规则与后续落地清单。
+- 实际改动内容：
+    - 将根 `AGENTS.md` 重构为 `MUST / SHOULD / INFO / COMMANDS / NEVER DO / PROOF OF DONE`
+    - 为 `docs/`、核心包、应用壳、BFF API 与 legacy 归档新增局部 `AGENTS.md`
+    - 新增 Agent 护栏矩阵、确定性与回放纪律、契约硬化规范、工具 rollout 文档
+    - 新增 `ADR-0002` 记录“文档 + 机械化强制 + 可执行契约”的治理决策
+    - 更新文档索引、工程规范与执行总表，使 Step 02/03 明确承接后续工具接线
+- 涉及路径：
+    - `AGENTS.md`
+    - `docs/AGENTS.md`
+    - `packages/*/AGENTS.md`
+    - `apps/*/AGENTS.md`
+    - `old/legacy-vite-electron/AGENTS.md`
+    - `docs/10-architecture/agent-guardrails-matrix.md`
+    - `docs/20-domain/determinism-and-replay-discipline.md`
+    - `docs/30-contracts/contract-hardening-spec.md`
+    - `docs/40-operations/agent-tooling-rollout.md`
+    - `docs/90-adr/ADR-0002-mechanical-agent-guardrails.md`
+    - `docs/README.md`
+    - `docs/10-architecture/README.md`
+    - `docs/20-domain/README.md`
+    - `docs/30-contracts/README.md`
+    - `docs/40-operations/README.md`
+    - `docs/10-architecture/engineering-standards.md`
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+- 关键决策：
+    - 采用分层 `AGENTS.md` 而不是继续把所有约束堆在根文件里
+    - 将 `dependency-cruiser` + `eslint-plugin-boundaries` 记录为依赖边界双重防线
+    - 将 `pure-rand` 记录为 seeded PRNG 首选
+    - 在重构期先采用 `JSON + JSON Schema` 约束 replay，再在后续评估二进制格式
+- 风险/阻塞：
+    - 本次仅完成文档治理，尚未把机械化护栏真正接入代码库与 CI
+    - Step 02/03 若未按文档执行工具接线，治理会再次退化为纯文字约束
+- 下一步：进入 `Step 02`，将依赖边界、契约快照、OpenAPI/AsyncAPI 和 commit gate 变成可执行检查
+- 对应 Commit：`docs(governance): land Opus 4.7 guardrails and layered agents`
+
+## EN
+
+- Date: 2026-04-16
+- Author: Codex
+- Step ID: Step 01
+- Goal: establish an executable refactor governance system so every following step advances with explicit status, log, and commit boundaries.
+- Actual changes:
+    - Added the rebuild execution tracker
+    - Added the log directory, log conventions, and two per-step logs
+    - Added the engineering standards document
+    - Strengthened `AGENTS.md` with rules for the legacy archive, step alignment, commit size, and git-tag restrictions
+    - Updated the docs index and architecture index so the new governance documents are first-class entry points
+- Touched paths:
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+    - `docs/00-refactor/logs/`
+    - `docs/10-architecture/engineering-standards.md`
+    - `docs/README.md`
+    - `docs/10-architecture/README.md`
+    - `AGENTS.md`
+- Key decisions:
+    - Chose per-step dedicated logs instead of a single rolling logbook
+    - Placed engineering standards in `docs/10-architecture/engineering-standards.md`
+    - Prohibited git tags before rebuild completion while still allowing pushes and merges
+- Risks / blockers:
+    - The governance layer is ready, but future steps still need to obey tracker boundaries strictly
+    - Skipping status/log synchronization in later steps would break governance consistency
+- Next step: enter `Step 02` and freeze `contracts/domain` boundaries plus public interfaces
+- Commit reference: `docs(refactor): add execution tracker, logs, engineering standards, and agent rules`
+
+### Additional Entry: 2026-04-17
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 01
+- Goal: turn the Opus 4.7 agent-governance recommendations into formal docs, layered rules, and an explicit rollout backlog.
+- Actual changes:
+    - Restructured the root `AGENTS.md` into `MUST / SHOULD / INFO / COMMANDS / NEVER DO / PROOF OF DONE`
+    - Added local `AGENTS.md` files for `docs/`, core packages, app shells, the BFF API surface, and the legacy archive
+    - Added the guardrail matrix, determinism/replay discipline, contract hardening spec, and tooling-rollout docs
+    - Added `ADR-0002` to record the “docs + mechanical enforcement + executable contracts” governance model
+    - Updated indexes, engineering standards, and the execution tracker so Step 02/03 explicitly inherit the tooling rollout
+- Touched paths:
+    - `AGENTS.md`
+    - `docs/AGENTS.md`
+    - `packages/*/AGENTS.md`
+    - `apps/*/AGENTS.md`
+    - `old/legacy-vite-electron/AGENTS.md`
+    - `docs/10-architecture/agent-guardrails-matrix.md`
+    - `docs/20-domain/determinism-and-replay-discipline.md`
+    - `docs/30-contracts/contract-hardening-spec.md`
+    - `docs/40-operations/agent-tooling-rollout.md`
+    - `docs/90-adr/ADR-0002-mechanical-agent-guardrails.md`
+    - `docs/README.md`
+    - `docs/10-architecture/README.md`
+    - `docs/20-domain/README.md`
+    - `docs/30-contracts/README.md`
+    - `docs/40-operations/README.md`
+    - `docs/10-architecture/engineering-standards.md`
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+- Key decisions:
+    - Use layered `AGENTS.md` files instead of continuing to grow the root file
+    - Record `dependency-cruiser` + `eslint-plugin-boundaries` as the dual dependency-boundary stack
+    - Record `pure-rand` as the preferred seeded PRNG
+    - Use `JSON + JSON Schema` for replay governance during the rebuild, with binary formats evaluated later
+- Risks / blockers:
+    - This pass is documentation-only; the mechanical guardrails are not yet wired into the repository or CI
+    - If Step 02/03 do not implement the documented tooling, governance will regress into text-only policy again
+- Next step: enter `Step 02` and turn dependency boundaries, contract snapshots, OpenAPI/AsyncAPI, and commit gates into executable checks
+- Commit reference: `docs(governance): land Opus 4.7 guardrails and layered agents`
+
+### Additional Entry: 2026-04-17 (Deep Refactor Details)
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 01
+- Goal: absorb the Splendor Duel and Roguelike-specific Opus 4.7 refactor details into the official governance docs before implementation begins.
+- Actual changes:
+    - Rewrote the rebuild tracker so Step 02 freezes snapshot tiers, replay metadata, and namespaced RNG interfaces
+    - Inserted `Step 02.5` to freeze `EffectAtom`, `EffectHookPoint`, actor lifecycle, and hook ordering before classic rules land
+    - Rewrote the full rebuild plan around `XState v5 actor model`, information-set filtering, and room-service reuse of shared `packages/core-engine`
+    - Upgraded replay governance from `JSON + JSON Schema` to authoritative `MessagePack` with `commands[]`, `events[]`, `engineVersion`, and `finalStateHash`
+    - Added the Buff hook system doc plus `ADR-0003` to freeze actor effects, snapshot tiers, replay streams, and namespaced RNG streams
+    - Tightened `AGENTS.md`, `packages/core-engine/AGENTS.md`, `packages/contracts/AGENTS.md`, and `apps/room-service/AGENTS.md` around hidden random sources, English-only identifiers, shared-engine rules, and spectator filtering
+- Touched paths:
+    - `AGENTS.md`
+    - `packages/core-engine/AGENTS.md`
+    - `packages/contracts/AGENTS.md`
+    - `apps/room-service/AGENTS.md`
+    - `docs/00-refactor/full-rebuild-plan.md`
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+    - `docs/10-architecture/agent-guardrails-matrix.md`
+    - `docs/10-architecture/engineering-standards.md`
+    - `docs/20-domain/determinism-and-replay-discipline.md`
+    - `docs/20-domain/buff-hook-system.md`
+    - `docs/20-domain/README.md`
+    - `docs/30-contracts/contract-hardening-spec.md`
+    - `docs/30-contracts/README.md`
+    - `docs/40-operations/agent-tooling-rollout.md`
+    - `docs/90-adr/ADR-0003-actor-effects-and-information-sets.md`
+    - `docs/README.md`
+- Key decisions:
+    - Superseded the earlier rebuild-phase replay default of `JSON + JSON Schema` with authoritative `MessagePack`
+    - Promoted `namespaced RNG streams` over generic seeded RNG as the formal determinism contract
+    - Chose `XState v5 actor model` as the single official solution for chained effects, royal rewards, and extra turns
+    - Moved spectator support, seq, resync, idempotency, and information filtering into the formal Step 05 definition
+- Risks / blockers:
+    - This pass is still documentation-only; the repo does not yet mechanically enforce the newly documented replay, actor, or snapshot rules
+    - If Step 02/02.5/03 do not implement the frozen primitives exactly, Step 07 could still regress into bottom-layer rewrites
+- Next step: enter `Step 02`, freeze contracts/domain boundaries, then `Step 02.5` to lock the effect and hook primitives before engine work starts
+- Commit reference: `docs(governance): deepen refactor docs for effects, snapshots, and replay`
+
+### Additional Entry: 2026-04-17 (Skills Governance)
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 01
+- Goal: formalize project-local Codex skills so the rebuild has reusable workflows for contracts, phases, Buffs, legacy archaeology, and replay regression.
+- Actual changes:
+    - Added project-local skills under `.codex/skills/` for `contract-change`, `add-buff`, `add-phase-transition`, `legacy-mine`, and `replay-golden`
+    - Added `.codex/skills/AGENTS.md` to freeze local skill quality rules such as `Use when ...`, progressive disclosure, and required references/templates/scripts
+    - Added `docs/40-operations/skills-governance.md` as the source of truth for skill quality, directory rules, and step mapping
+    - Updated the rebuild tracker to map each skill onto the rebuild steps it supports
+    - Updated the root `AGENTS.md` and operations indexes so project-local skills are part of the official governance path rather than ad hoc helper files
+- Touched paths:
+    - `.codex/skills/`
+    - `.codex/skills/AGENTS.md`
+    - `docs/40-operations/skills-governance.md`
+    - `docs/40-operations/README.md`
+    - `docs/40-operations/agent-tooling-rollout.md`
+    - `docs/README.md`
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+    - `AGENTS.md`
+- Key decisions:
+    - Keep project-local skills versioned inside the repo under `.codex/skills/`
+    - Require every skill to include a `Use when ...` description plus at least one reference, one template/example, and one script
+    - Keep each `SKILL.md` within a 200-line cap and push detail into `references/`
+- Risks / blockers:
+    - The current scripts are governance scaffolds, not fully wired product tooling yet
+    - Future skill additions must keep the tracker mapping current or the governance layer will drift
+- Next step: enter `Step 02` and turn the documented contract, phase, replay, and Buff workflows into executable repo guardrails
+- Commit reference: `docs(governance): add project-local skills for refactor workflows`

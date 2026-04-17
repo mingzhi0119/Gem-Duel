@@ -1,0 +1,4 @@
+interface:
+  display_name: "Legacy Mine"
+  short_description: "Use when reading legacy files to extract rule intent without copying implementation."
+  default_prompt: "Use this skill to mine legacy rule intent and write a clean-room extraction note."

@@ -1,0 +1,5 @@
+describe("YOUR_COMMAND phase guard", () => {
+  it("accepts the allowed source phase", () => {});
+  it("rejects a disallowed source phase with a typed error", () => {});
+  it("records the replay-visible transition outcome", () => {});
+});

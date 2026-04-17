@@ -1,0 +1,19 @@
+# Domain
+
+## ZH
+
+- `packages/domain` 保存规则版本、phase、player、gem、错误分类和值对象。
+- `packages/core-engine` 保存状态机与命令处理，但不得拥有宿主依赖。
+- 未来全量玩法迁移应以“规则目录 + phase + replay 示例”为单元推进。
+- 确定性输入、golden replay 与性质测试纪律请参考 [`determinism-and-replay-discipline.md`](./determinism-and-replay-discipline.md)。
+- Roguelike / Buff 的 hook 原语、顺序与组合规则请参考 [`buff-hook-system.md`](./buff-hook-system.md)。
+- 官方 Splendor Duel 规则摘要与领域建模结论请参考 [`splendor-duel-official-rulebook.md`](./splendor-duel-official-rulebook.md)。
+
+## EN
+
+- `packages/domain` owns ruleset versions, phases, players, gems, error categories, and value objects.
+- `packages/core-engine` owns the state machine and command handling without host dependencies.
+- Future parity migration should move rule sets in units of rule directory + phase coverage + replay examples.
+- See [`determinism-and-replay-discipline.md`](./determinism-and-replay-discipline.md) for deterministic inputs, golden replays, and property-testing discipline.
+- See [`buff-hook-system.md`](./buff-hook-system.md) for roguelike Buff hooks, ordering, and composition rules.
+- See [`splendor-duel-official-rulebook.md`](./splendor-duel-official-rulebook.md) for the official Splendor Duel rules digest and rebuild-facing modeling notes.

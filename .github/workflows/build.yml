@@ -1,31 +1,40 @@
-name: Build and Release
+name: CI
 
 on:
   push:
-    tags:
-      - 'v*'
-  workflow_dispatch:
+    branches:
+      - main
+      - master
+  pull_request:
 
 jobs:
-  release:
-    runs-on: windows-latest
-    permissions:
-      contents: write
+  test-and-build:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: 24
+          cache: pnpm
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Enable Corepack
+        run: corepack enable
 
-      - name: Build and Publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run electron:build -- -p always
+      - name: Activate pnpm
+        run: corepack prepare pnpm@10.33.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build

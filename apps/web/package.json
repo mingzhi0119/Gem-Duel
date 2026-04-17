@@ -1,0 +1,23 @@
+{
+    "name": "@gem-duel/web",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "eslint . --ext .ts,.tsx",
+        "test": "vitest run --passWithNoTests",
+        "typecheck": "tsc -p tsconfig.json --noEmit"
+    },
+    "dependencies": {
+        "@gem-duel/application": "workspace:*",
+        "@gem-duel/contracts": "workspace:*",
+        "@gem-duel/adapters": "workspace:*",
+        "@gem-duel/ui": "workspace:*",
+        "next": "^16.0.0",
+        "react": "^19.2.0",
+        "react-dom": "^19.2.0"
+    }
+}
