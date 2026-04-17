@@ -90,6 +90,12 @@
 - `match.patch.seq`: 服务端单调递增 patch 序号。
 - `match.resync.lastKnownSeq`: 客户端已知最后一个 seq。
 - `room.watch` / `match.observe`: 观战入口与观战态协议事件。
+- Step 05 起，`room.join` 是唯一权威的实时 seat claim；`POST /rooms/:roomId/join` 只保留兼容 shim，不建立 live websocket binding。
+- Step 05 起，服务端必须忽略 `match.command.command.issuedBy` 的 seat authority，实际命令归属来自 websocket 绑定的玩家座位。
+- duplicate `clientCommandId` 必须返回同一份原始 `match.patch` 给请求方，不推进状态，也不再次广播。
+- stale `expectedSeq` 必须返回 `match.resync` 与当前完整的 viewer-filtered snapshot；这不是 `room.error` 分支。
+- `GET /rooms/:roomId` 只允许返回 public / spectator-safe `RoomDetail`；玩家私有视角只能通过绑定后的 websocket `room.state` / `match.patch` 下发。
+- spectator 连接只允许收到 `room.state` 与后续 `match.observe`，不得收到任何玩家私有 `match.patch`。
 
 ## 修改顺序
 
@@ -196,6 +202,12 @@ This document defines the hardening path for `packages/contracts`. Contracts mus
 - `match.patch.seq`: monotonic server patch sequence number.
 - `match.resync.lastKnownSeq`: the last seq known by the client.
 - `room.watch` / `match.observe`: spectator entrypoint and spectator protocol events.
+- Starting in Step 05, `room.join` is the only authoritative live seat-claim path; `POST /rooms/:roomId/join` remains a compatibility shim only and does not create a live websocket binding.
+- Starting in Step 05, the server must ignore the seat authority of `match.command.command.issuedBy`; actual command ownership comes from the websocket-bound player seat.
+- Duplicate `clientCommandId` values must return the same original `match.patch` to the requester without advancing state or rebroadcasting.
+- Stale `expectedSeq` values must return `match.resync` with the full current viewer-filtered snapshot; this is not a `room.error` branch.
+- `GET /rooms/:roomId` may return only public / spectator-safe `RoomDetail`; player-private views may be delivered only through bound websocket `room.state` / `match.patch` flows.
+- Spectator connections may receive `room.state` and later `match.observe` only and may never receive player-private `match.patch` payloads.
 
 ## Change Order
 

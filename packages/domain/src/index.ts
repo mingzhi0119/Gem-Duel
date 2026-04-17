@@ -110,6 +110,15 @@ export const ERROR_CATEGORIES = [
     'authz',
     'desync',
 ] as const;
+export const ROOM_ERROR_CODES = [
+    'ROOM_NOT_FOUND',
+    'ROOM_FULL',
+    'ROOM_SEAT_TAKEN',
+    'ROOM_BINDING_REQUIRED',
+    'ROOM_COMMAND_FORBIDDEN',
+    'ROOM_ALREADY_BOUND',
+    'ROOM_WAITING_FOR_PLAYERS',
+] as const;
 
 const BOARD_POSITION_COORDINATES = Object.freeze({
     r0c0: { row: 0, col: 0 },
@@ -168,6 +177,7 @@ export type EffectExecutionScope = (typeof EFFECT_EXECUTION_SCOPES)[number];
 export type EffectLifecycleStage = (typeof EFFECT_LIFECYCLE_STAGES)[number];
 export type EffectOutcome = (typeof EFFECT_OUTCOMES)[number];
 export type ErrorCategory = (typeof ERROR_CATEGORIES)[number];
+export type RoomErrorCode = (typeof ROOM_ERROR_CODES)[number];
 
 export interface DomainError {
     code: string;
@@ -176,6 +186,16 @@ export interface DomainError {
     recoverable: boolean;
     details?: Record<string, unknown>;
 }
+
+export const ROOM_ERROR_CATEGORY_BY_CODE = Object.freeze({
+    ROOM_NOT_FOUND: 'validation',
+    ROOM_FULL: 'conflict',
+    ROOM_SEAT_TAKEN: 'conflict',
+    ROOM_BINDING_REQUIRED: 'authz',
+    ROOM_COMMAND_FORBIDDEN: 'authz',
+    ROOM_ALREADY_BOUND: 'conflict',
+    ROOM_WAITING_FOR_PLAYERS: 'conflict',
+}) satisfies Record<RoomErrorCode, ErrorCategory>;
 
 export interface GemInventory {
     blue: number;

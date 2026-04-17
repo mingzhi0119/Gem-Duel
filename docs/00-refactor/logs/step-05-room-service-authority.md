@@ -1,0 +1,73 @@
+# Step 05 Log - Room-Service Authority
+
+## ZH
+
+- 日期：2026-04-17
+- 作者：Codex
+- Step ID：Step 05
+- 本步目标：把 `apps/room-service` 从在线骨架收紧为真正的权威裁判层，补齐 server-bound seat、房间生命周期、seq/resync、幂等缓存、spectator-safe fanout 与 replay 存储触发，同时继续强制复用共享 `packages/core-engine` 语义。
+- 实施顺序：
+    - 先补 tracker、Step log、contract migration note、operations 语义文档与错误码基线；
+    - 再收紧 `docs/30-contracts` 对 duplicate-command、seq mismatch、server-bound seat 与 spectator filtering 的协议语义；
+    - 然后拆 `apps/room-service` 为 app factory、authority state、in-memory store seam 与 HTTP/WS handler；
+    - 最后补 HTTP/WS 集成测试并执行全量验收。
+- 当前状态：已完成。
+- 关键前置：
+    - Step 04 已先以独立提交 `9004549` 封口，避免与 Step 05 混入同一提交边界。
+    - Step 05 不扩 wire shape，不 bump `SCHEMA_VERSION`、`ENGINE_VERSION` 或 `RULESET_VERSION`；本步优先收紧语义。
+- 风险/边界：
+    - Step 05 只落地 `in-memory + seam`，不接入 Postgres、Redis、跨进程广播、多实例恢复或真实认证。
+    - `POST /rooms/:roomId/join` 只保留兼容 shim；实时 seat claim 的唯一权威入口是 WebSocket `room.join`。
+    - `apps/room-service` 仍只能依赖 `@gem-duel/application`、`@gem-duel/contracts` 与 `@gem-duel/adapters`，不得直接碰 `core-engine` / `domain`。
+- 落地结果：
+    - `apps/room-service` 已从单文件 demo 拆为 app factory、authority state、room store seam、room error helper 与 HTTP/WS 集成测试，可在不直连 `core-engine` / `domain` 的前提下完成权威在线编排。
+    - WebSocket `room.join` 已成为唯一权威 seat claim；服务端按 socket binding 决定玩家身份，忽略客户端 `issuedBy` 的 seat authority。
+    - `match.command` 已具备 duplicate-command 返回同一原始 patch、stale seq 返回 `match.resync`、未绑定/观战/房间未 ready 返回标准房间错误的正式语义。
+    - `POST /rooms/:roomId/join` 已收紧为兼容 shim，不再改变 live player binding；`GET /rooms/:roomId` 始终返回 spectator-safe 视角。
+    - `room-service` 已在比赛进入 terminal 时把 replay bundle 写入 in-memory store，并由 `/replays/:roomId` 优先返回已存储 replay。
+    - Step 05 一并收口了当前 OpenAPI 生成物漂移，并同步更新了 expected fixture。
+- 验收：
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+- 对应 Commit：Step 04 已保持独立提交 `9004549`；Step 05 代码边界、日志与验收记录已完成同步。
+
+## EN
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 05
+- Goal: tighten `apps/room-service` from an online skeleton into the authoritative referee layer by landing server-bound seat binding, room lifecycle handling, seq/resync, idempotency caching, spectator-safe fanout, and replay persistence triggers while still reusing the shared `packages/core-engine` semantics indirectly.
+- Execution order:
+    - first land the tracker, Step log, Step 05 contract migration note, operations semantics doc, and the room-error baseline;
+    - then tighten the `docs/30-contracts` semantics for duplicate-command handling, seq mismatch, server-bound seats, and spectator filtering;
+    - then split `apps/room-service` into an app factory, authority state, in-memory store seam, and HTTP/WS handlers;
+    - finally add HTTP/WS integration tests and run the full acceptance suite.
+- Current status: complete.
+- Key preconditions:
+    - Step 04 was sealed first as commit `9004549` so Step 05 does not mix boundaries.
+    - Step 05 does not expand the wire shape and does not bump `SCHEMA_VERSION`, `ENGINE_VERSION`, or `RULESET_VERSION`; the focus is semantic tightening.
+- Risks / boundaries:
+    - Step 05 lands `in-memory + seam` only and does not add Postgres, Redis, cross-process fanout, multi-instance recovery, or a real authentication provider.
+    - `POST /rooms/:roomId/join` remains a compatibility shim only; the sole authoritative live seat-claim path is WebSocket `room.join`.
+    - `apps/room-service` must continue to depend only on `@gem-duel/application`, `@gem-duel/contracts`, and `@gem-duel/adapters`, without direct `core-engine` / `domain` imports.
+- Landed results:
+    - `apps/room-service` now moves beyond the single-file demo into an app factory, authority state, room-store seam, room-error helper, and HTTP/WS integration tests without directly importing `core-engine` or `domain`.
+    - WebSocket `room.join` is now the sole authoritative live seat-claim path; server-side socket binding determines the acting player and ignores client-provided seat authority in `issuedBy`.
+    - `match.command` now has sealed semantics for duplicate-command replay, stale-seq `match.resync`, and standardized room errors for unbound, spectator, and not-ready cases.
+    - `POST /rooms/:roomId/join` is now a compatibility shim only and no longer changes live player binding; `GET /rooms/:roomId` is always spectator-safe.
+    - `room-service` now stores the replay bundle into the in-memory replay store when the match reaches terminal state, and `/replays/:roomId` reads the stored replay first.
+    - Step 05 also absorbed the current OpenAPI generated-artifact drift and synchronized the expected fixture.
+- Validation:
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+- Commit reference: Step 04 remains sealed as its own commit `9004549`; the Step 05 code boundary, logs, and acceptance record are now synchronized.

@@ -12,6 +12,7 @@
 - 三类 Snapshot、effect/hook 契约、MessagePack replay 与在线协议字段也以 [`contract-hardening-spec.md`](./contract-hardening-spec.md) 为准。
 - Step 03 对 `royalResolution` phase surface 与 replay/hash ownership 的破坏性变更说明请参考 [`step-03-phase-replay-migration-note.md`](./step-03-phase-replay-migration-note.md)。
 - Step 04 对 classic command surface、snapshot shape 与 victory metadata 的迁移说明请参考 [`step-04-classic-rules-migration-note.md`](./step-04-classic-rules-migration-note.md)。
+- Step 05 对 room-service authority、server-bound seat、seq/resync 与 room error semantics 的迁移说明请参考 [`step-05-room-service-authority-migration-note.md`](./step-05-room-service-authority-migration-note.md)。
 
 ## EN
 
@@ -25,3 +26,4 @@
 - Snapshot tiers, effect/hook contracts, MessagePack replay rules, and online protocol fields also follow [`contract-hardening-spec.md`](./contract-hardening-spec.md).
 - See [`step-03-phase-replay-migration-note.md`](./step-03-phase-replay-migration-note.md) for the Step 03 breaking changes to the public phase surface and replay/hash ownership.
 - See [`step-04-classic-rules-migration-note.md`](./step-04-classic-rules-migration-note.md) for the Step 04 migration of the classic command surface, snapshot shape, and victory metadata.
+- See [`step-05-room-service-authority-migration-note.md`](./step-05-room-service-authority-migration-note.md) for the Step 05 migration of room-service authority, server-bound seats, seq/resync, and room-error semantics.
