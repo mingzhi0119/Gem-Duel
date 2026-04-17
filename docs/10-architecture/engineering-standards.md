@@ -7,6 +7,7 @@
 - 先文档/契约，后跨层实现。
 - 任何实现都必须服从状态机、确定性、契约优先和边界隔离。
 - legacy 代码只允许参考，不允许 import，不允许原样照抄。
+- 机械可验证的规则应优先落到工具与 CI；无法机械验证的细节放到 `docs/`，只在 `AGENTS.md` 保留摘要。
 
 ### Legacy 归档规则
 
@@ -33,6 +34,14 @@
 - 核心治理文档默认双语维护。
 - 术语、接口名、错误码、事件名保留英文原名。
 - 任何目录、依赖方向、公共接口或执行策略变化，都必须先更新对应文档或 ADR。
+- 根 `AGENTS.md` 保持短小，子目录 `AGENTS.md` 只补本地特有约束，避免重复和规则噪音。
+
+### 计划中的机械化护栏
+
+- 依赖边界计划由 `dependency-cruiser` 与 `eslint-plugin-boundaries` 双重约束。
+- core-engine/domain 的纯度计划由 ESLint restricted rules 落地，必要时补 `Semgrep`。
+- 契约层计划以 `zod`、OpenAPI、AsyncAPI 与 snapshot tests 收紧。
+- replay 与确定性计划以 seeded PRNG、golden replays 与性质测试收紧。
 
 ## EN
 
@@ -41,6 +50,7 @@
 - Docs and contracts come before cross-layer implementation.
 - Every implementation must obey the state-machine, determinism, contract-first, and boundary-isolation rules.
 - Legacy code may be referenced, but it may not be imported or copied verbatim.
+- Mechanically enforceable rules should move into tooling and CI first; details that cannot yet be enforced belong in `docs/`, with only a summary kept in `AGENTS.md`.
 
 ### Legacy Archive Policy
 
@@ -67,3 +77,11 @@
 - Core governance documents are bilingual by default.
 - Terms, interface names, error codes, and event names keep their English identifiers.
 - Any change to directories, dependency direction, public interfaces, or execution policy must update the matching docs or ADR first.
+- Root `AGENTS.md` stays short, while subdirectory `AGENTS.md` files add only local constraints to reduce noise and repetition.
+
+### Planned Mechanical Guardrails
+
+- Dependency boundaries are planned to be enforced by `dependency-cruiser` and `eslint-plugin-boundaries`.
+- Pure core restrictions for core-engine/domain are planned through restricted ESLint rules, with `Semgrep` as a later extension if needed.
+- Contract hardening is planned around `zod`, OpenAPI, AsyncAPI, and snapshot tests.
+- Replay and determinism hardening is planned around seeded PRNG, golden replays, and property tests.

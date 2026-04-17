@@ -29,6 +29,47 @@
 - 下一步：进入 `Step 02`，冻结 `contracts/domain` 边界与公开接口
 - 对应 Commit：`docs(refactor): add execution tracker, logs, engineering standards, and agent rules`
 
+### 追加记录：2026-04-17
+
+- 日期：2026-04-17
+- 作者：Codex
+- Step ID：Step 01
+- 本步目标：把 Opus 4.7 的 Agent 治理建议沉淀为正式文档、分层规则与后续落地清单。
+- 实际改动内容：
+    - 将根 `AGENTS.md` 重构为 `MUST / SHOULD / INFO / COMMANDS / NEVER DO / PROOF OF DONE`
+    - 为 `docs/`、核心包、应用壳、BFF API 与 legacy 归档新增局部 `AGENTS.md`
+    - 新增 Agent 护栏矩阵、确定性与回放纪律、契约硬化规范、工具 rollout 文档
+    - 新增 `ADR-0002` 记录“文档 + 机械化强制 + 可执行契约”的治理决策
+    - 更新文档索引、工程规范与执行总表，使 Step 02/03 明确承接后续工具接线
+- 涉及路径：
+    - `AGENTS.md`
+    - `docs/AGENTS.md`
+    - `packages/*/AGENTS.md`
+    - `apps/*/AGENTS.md`
+    - `old/legacy-vite-electron/AGENTS.md`
+    - `docs/10-architecture/agent-guardrails-matrix.md`
+    - `docs/20-domain/determinism-and-replay-discipline.md`
+    - `docs/30-contracts/contract-hardening-spec.md`
+    - `docs/40-operations/agent-tooling-rollout.md`
+    - `docs/90-adr/ADR-0002-mechanical-agent-guardrails.md`
+    - `docs/README.md`
+    - `docs/10-architecture/README.md`
+    - `docs/20-domain/README.md`
+    - `docs/30-contracts/README.md`
+    - `docs/40-operations/README.md`
+    - `docs/10-architecture/engineering-standards.md`
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+- 关键决策：
+    - 采用分层 `AGENTS.md` 而不是继续把所有约束堆在根文件里
+    - 将 `dependency-cruiser` + `eslint-plugin-boundaries` 记录为依赖边界双重防线
+    - 将 `pure-rand` 记录为 seeded PRNG 首选
+    - 在重构期先采用 `JSON + JSON Schema` 约束 replay，再在后续评估二进制格式
+- 风险/阻塞：
+    - 本次仅完成文档治理，尚未把机械化护栏真正接入代码库与 CI
+    - Step 02/03 若未按文档执行工具接线，治理会再次退化为纯文字约束
+- 下一步：进入 `Step 02`，将依赖边界、契约快照、OpenAPI/AsyncAPI 和 commit gate 变成可执行检查
+- 对应 Commit：`docs(governance): land Opus 4.7 guardrails and layered agents`
+
 ## EN
 
 - Date: 2026-04-16
@@ -57,3 +98,44 @@
     - Skipping status/log synchronization in later steps would break governance consistency
 - Next step: enter `Step 02` and freeze `contracts/domain` boundaries plus public interfaces
 - Commit reference: `docs(refactor): add execution tracker, logs, engineering standards, and agent rules`
+
+### Additional Entry: 2026-04-17
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 01
+- Goal: turn the Opus 4.7 agent-governance recommendations into formal docs, layered rules, and an explicit rollout backlog.
+- Actual changes:
+    - Restructured the root `AGENTS.md` into `MUST / SHOULD / INFO / COMMANDS / NEVER DO / PROOF OF DONE`
+    - Added local `AGENTS.md` files for `docs/`, core packages, app shells, the BFF API surface, and the legacy archive
+    - Added the guardrail matrix, determinism/replay discipline, contract hardening spec, and tooling-rollout docs
+    - Added `ADR-0002` to record the “docs + mechanical enforcement + executable contracts” governance model
+    - Updated indexes, engineering standards, and the execution tracker so Step 02/03 explicitly inherit the tooling rollout
+- Touched paths:
+    - `AGENTS.md`
+    - `docs/AGENTS.md`
+    - `packages/*/AGENTS.md`
+    - `apps/*/AGENTS.md`
+    - `old/legacy-vite-electron/AGENTS.md`
+    - `docs/10-architecture/agent-guardrails-matrix.md`
+    - `docs/20-domain/determinism-and-replay-discipline.md`
+    - `docs/30-contracts/contract-hardening-spec.md`
+    - `docs/40-operations/agent-tooling-rollout.md`
+    - `docs/90-adr/ADR-0002-mechanical-agent-guardrails.md`
+    - `docs/README.md`
+    - `docs/10-architecture/README.md`
+    - `docs/20-domain/README.md`
+    - `docs/30-contracts/README.md`
+    - `docs/40-operations/README.md`
+    - `docs/10-architecture/engineering-standards.md`
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+- Key decisions:
+    - Use layered `AGENTS.md` files instead of continuing to grow the root file
+    - Record `dependency-cruiser` + `eslint-plugin-boundaries` as the dual dependency-boundary stack
+    - Record `pure-rand` as the preferred seeded PRNG
+    - Use `JSON + JSON Schema` for replay governance during the rebuild, with binary formats evaluated later
+- Risks / blockers:
+    - This pass is documentation-only; the mechanical guardrails are not yet wired into the repository or CI
+    - If Step 02/03 do not implement the documented tooling, governance will regress into text-only policy again
+- Next step: enter `Step 02` and turn dependency boundaries, contract snapshots, OpenAPI/AsyncAPI, and commit gates into executable checks
+- Commit reference: `docs(governance): land Opus 4.7 guardrails and layered agents`
