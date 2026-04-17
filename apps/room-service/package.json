@@ -1,0 +1,22 @@
+{
+    "name": "@gem-duel/room-service",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "tsx watch src/index.ts",
+        "build": "tsc -p tsconfig.json",
+        "start": "node dist/index.js",
+        "lint": "eslint src --ext .ts",
+        "test": "vitest run --passWithNoTests",
+        "typecheck": "tsc -p tsconfig.json --noEmit"
+    },
+    "dependencies": {
+        "@fastify/cors": "^11.1.0",
+        "@fastify/websocket": "^11.2.0",
+        "@gem-duel/application": "workspace:*",
+        "@gem-duel/contracts": "workspace:*",
+        "@gem-duel/adapters": "workspace:*",
+        "fastify": "^5.6.1"
+    }
+}

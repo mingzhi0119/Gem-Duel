@@ -1,48 +1,48 @@
 {
-  "name": "gem-duel-monorepo",
-  "private": true,
-  "version": "2.0.0",
-  "description": "Greenfield Gem Duel monorepo with a deterministic core engine, Next.js web app, room service, and Electron shell.",
-  "packageManager": "pnpm@10.33.0",
-  "engines": {
-    "node": ">=22.0.0"
-  },
-  "scripts": {
-    "dev": "node ./tools/run-turbo.mjs run dev --parallel",
-    "dev:web": "corepack pnpm --filter @gem-duel/web dev",
-    "dev:room": "corepack pnpm --filter @gem-duel/room-service dev",
-    "dev:desktop": "corepack pnpm --filter @gem-duel/desktop dev",
-    "build": "node ./tools/run-turbo.mjs run build",
-    "build:web": "corepack pnpm --filter @gem-duel/web build",
-    "build:room": "corepack pnpm --filter @gem-duel/room-service build",
-    "build:desktop": "corepack pnpm --filter @gem-duel/desktop build",
-    "lint": "node ./tools/run-turbo.mjs run lint",
-    "test": "node ./tools/run-turbo.mjs run test",
-    "typecheck": "node ./tools/run-turbo.mjs run typecheck",
-    "format": "prettier --write .",
-    "prepare": "husky",
-    "legacy:notes": "node -e \"console.log('Legacy Vite/Electron source lives in ./old/legacy-vite-electron and is read-only reference during the greenfield rebuild.')\""
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs,json,md,css}": [
-      "prettier --write"
-    ]
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.38.0",
-    "@types/node": "^24.6.0",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "eslint": "^9.38.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "globals": "^16.4.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.2.0",
-    "prettier": "^3.6.2",
-    "tsx": "^4.20.6",
-    "turbo": "^2.5.8",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.1",
-    "vitest": "^3.2.4"
-  }
+    "name": "gem-duel-monorepo",
+    "private": true,
+    "version": "2.0.0",
+    "description": "Greenfield Gem Duel monorepo with a deterministic core engine, Next.js web app, room service, and Electron shell.",
+    "packageManager": "pnpm@10.33.0",
+    "engines": {
+        "node": ">=22.0.0"
+    },
+    "scripts": {
+        "dev": "node ./tools/run-turbo.mjs run dev --parallel",
+        "dev:web": "corepack pnpm --filter @gem-duel/web dev",
+        "dev:room": "corepack pnpm --filter @gem-duel/room-service dev",
+        "dev:desktop": "corepack pnpm --filter @gem-duel/desktop dev",
+        "build": "node ./tools/run-turbo.mjs run build",
+        "build:web": "corepack pnpm --filter @gem-duel/web build",
+        "build:room": "corepack pnpm --filter @gem-duel/room-service build",
+        "build:desktop": "corepack pnpm --filter @gem-duel/desktop build",
+        "lint": "node ./tools/run-turbo.mjs run lint",
+        "test": "node ./tools/run-turbo.mjs run test",
+        "typecheck": "node ./tools/run-turbo.mjs run typecheck",
+        "format": "prettier --write .",
+        "prepare": "husky",
+        "legacy:notes": "node -e \"console.log('Legacy Vite/Electron source lives in ./old/legacy-vite-electron and is read-only reference during the greenfield rebuild.')\""
+    },
+    "lint-staged": {
+        "*.{js,jsx,ts,tsx,mjs,cjs,json,md,css}": [
+            "prettier --write"
+        ]
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.38.0",
+        "@types/node": "^24.6.0",
+        "@types/react": "^19.2.2",
+        "@types/react-dom": "^19.2.2",
+        "eslint": "^9.38.0",
+        "eslint-plugin-react-hooks": "^5.2.0",
+        "globals": "^16.4.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.2.0",
+        "prettier": "^3.6.2",
+        "tsx": "^4.20.6",
+        "turbo": "^2.5.8",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.46.1",
+        "vitest": "^3.2.4"
+    }
 }

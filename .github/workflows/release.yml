@@ -1,9 +1,9 @@
-name: Build and Release
+name: Desktop Release
 
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
 
 jobs:
@@ -13,31 +13,36 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: 24
+          cache: pnpm
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Enable Corepack
+        run: corepack enable
 
-      - name: Build Renderer (Vite)
-        run: npm run build
+      - name: Activate pnpm
+        run: corepack prepare pnpm@10.33.0 --activate
 
-      - name: Package Electron App
-        run: npx electron-builder --win --publish never
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
 
-      - name: Upload Release Assets
+      - name: Build workspace
+        run: pnpm build
+
+      - name: Build desktop shell
+        run: pnpm --filter @gem-duel/desktop build
+
+      - name: Upload release artifacts
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           body_path: RELEASE_NOTES.md
           files: |
-            dist_electron/*.exe
-            dist_electron/*.exe.blockmap
+            apps/desktop/dist/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -15,6 +15,7 @@
 - [`20-domain/README.md`](./20-domain/README.md): 领域模型、状态机与规则版本
 - [`20-domain/determinism-and-replay-discipline.md`](./20-domain/determinism-and-replay-discipline.md): 确定性、回放与性质测试纪律
 - [`20-domain/buff-hook-system.md`](./20-domain/buff-hook-system.md): Buff/Roguelike hook 原语、顺序与组合规则
+- [`20-domain/splendor-duel-official-rulebook.md`](./20-domain/splendor-duel-official-rulebook.md): 官方规则书摘要与领域建模结论
 - [`30-contracts/README.md`](./30-contracts/README.md): HTTP、WebSocket、Replay 契约
 - [`30-contracts/contract-hardening-spec.md`](./30-contracts/contract-hardening-spec.md): 契约硬化、schema 真相源与生成策略
 - [`40-operations/README.md`](./40-operations/README.md): 部署、观测、CI/CD 与运行策略
@@ -40,6 +41,7 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`20-domain/README.md`](./20-domain/README.md): Domain model, state machine, and ruleset versioning
 - [`20-domain/determinism-and-replay-discipline.md`](./20-domain/determinism-and-replay-discipline.md): Determinism, replay, and property-testing discipline
 - [`20-domain/buff-hook-system.md`](./20-domain/buff-hook-system.md): Buff/Roguelike hook primitives, ordering, and composition rules
+- [`20-domain/splendor-duel-official-rulebook.md`](./20-domain/splendor-duel-official-rulebook.md): Official rulebook digest and rebuild-facing modeling notes
 - [`30-contracts/README.md`](./30-contracts/README.md): HTTP, WebSocket, and replay contracts
 - [`30-contracts/contract-hardening-spec.md`](./30-contracts/contract-hardening-spec.md): Contract hardening, schema truth sources, and generation strategy
 - [`40-operations/README.md`](./40-operations/README.md): Deployment, observability, CI/CD, and runtime strategy

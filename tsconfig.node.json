@@ -1,11 +1,10 @@
 {
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "composite": true,
-        "skipLibCheck": true,
-        "module": "ESNext",
-        "moduleResolution": "bundler",
-        "allowSyntheticDefaultImports": true,
-        "strict": true
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "types": ["node"]
     },
-    "include": ["vite.config.ts", "vitest.config.ts"]
+    "include": ["apps/**/*.ts", "packages/**/*.ts"],
+    "exclude": ["apps/web/**", "node_modules", "src"]
 }
