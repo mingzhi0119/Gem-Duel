@@ -139,3 +139,44 @@
     - If Step 02/03 do not implement the documented tooling, governance will regress into text-only policy again
 - Next step: enter `Step 02` and turn dependency boundaries, contract snapshots, OpenAPI/AsyncAPI, and commit gates into executable checks
 - Commit reference: `docs(governance): land Opus 4.7 guardrails and layered agents`
+
+### Additional Entry: 2026-04-17 (Deep Refactor Details)
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 01
+- Goal: absorb the Splendor Duel and Roguelike-specific Opus 4.7 refactor details into the official governance docs before implementation begins.
+- Actual changes:
+    - Rewrote the rebuild tracker so Step 02 freezes snapshot tiers, replay metadata, and namespaced RNG interfaces
+    - Inserted `Step 02.5` to freeze `EffectAtom`, `EffectHookPoint`, actor lifecycle, and hook ordering before classic rules land
+    - Rewrote the full rebuild plan around `XState v5 actor model`, information-set filtering, and room-service reuse of shared `packages/core-engine`
+    - Upgraded replay governance from `JSON + JSON Schema` to authoritative `MessagePack` with `commands[]`, `events[]`, `engineVersion`, and `finalStateHash`
+    - Added the Buff hook system doc plus `ADR-0003` to freeze actor effects, snapshot tiers, replay streams, and namespaced RNG streams
+    - Tightened `AGENTS.md`, `packages/core-engine/AGENTS.md`, `packages/contracts/AGENTS.md`, and `apps/room-service/AGENTS.md` around hidden random sources, English-only identifiers, shared-engine rules, and spectator filtering
+- Touched paths:
+    - `AGENTS.md`
+    - `packages/core-engine/AGENTS.md`
+    - `packages/contracts/AGENTS.md`
+    - `apps/room-service/AGENTS.md`
+    - `docs/00-refactor/full-rebuild-plan.md`
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+    - `docs/10-architecture/agent-guardrails-matrix.md`
+    - `docs/10-architecture/engineering-standards.md`
+    - `docs/20-domain/determinism-and-replay-discipline.md`
+    - `docs/20-domain/buff-hook-system.md`
+    - `docs/20-domain/README.md`
+    - `docs/30-contracts/contract-hardening-spec.md`
+    - `docs/30-contracts/README.md`
+    - `docs/40-operations/agent-tooling-rollout.md`
+    - `docs/90-adr/ADR-0003-actor-effects-and-information-sets.md`
+    - `docs/README.md`
+- Key decisions:
+    - Superseded the earlier rebuild-phase replay default of `JSON + JSON Schema` with authoritative `MessagePack`
+    - Promoted `namespaced RNG streams` over generic seeded RNG as the formal determinism contract
+    - Chose `XState v5 actor model` as the single official solution for chained effects, royal rewards, and extra turns
+    - Moved spectator support, seq, resync, idempotency, and information filtering into the formal Step 05 definition
+- Risks / blockers:
+    - This pass is still documentation-only; the repo does not yet mechanically enforce the newly documented replay, actor, or snapshot rules
+    - If Step 02/02.5/03 do not implement the frozen primitives exactly, Step 07 could still regress into bottom-layer rewrites
+- Next step: enter `Step 02`, freeze contracts/domain boundaries, then `Step 02.5` to lock the effect and hook primitives before engine work starts
+- Commit reference: `docs(governance): deepen refactor docs for effects, snapshots, and replay`
