@@ -60,6 +60,7 @@ export const projectSnapshotForHash = (snapshot: GameSnapshot) => ({
     eventLog: snapshot.eventLog,
     replayCursor: snapshot.replayCursor,
     sequence: snapshot.sequence,
+    runContext: snapshot.runContext,
     activeEffects: snapshot.activeEffects,
     effectPrompts: snapshot.effectPrompts,
     hiddenState: snapshot.hiddenState,

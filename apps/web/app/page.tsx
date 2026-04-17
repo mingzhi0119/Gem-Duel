@@ -25,6 +25,9 @@ export default function HomePage() {
                         <Link className="gd-link" href="/play/local">
                             Launch Local Demo
                         </Link>
+                        <Link className="gd-link" href="/play/run">
+                            Launch Roguelike Run
+                        </Link>
                         <Link className="gd-link" href="/rooms">
                             Create or Join a Room
                         </Link>

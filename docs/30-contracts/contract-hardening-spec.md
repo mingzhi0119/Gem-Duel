@@ -18,6 +18,7 @@
 - `SpectatorSnapshot`：发给观战者的视图，对局进行中不得暴露任何玩家的隐藏牌或未来牌堆信息。
 - 所有外发快照都必须从 `AuthoritativeSnapshot` 通过信息过滤投影得到，禁止直接复用权威结构下发到客户端。
 - 自 Step 04 起，classic snapshot surface 必须显式暴露 board、pyramid、royal supply、privilege supply、reserve slot occupancy、turn metadata 与 `victoryReason`，而不再依赖 placeholder score-only fields。
+- 自 Step 07 起，snapshot surface 允许包含 `runContext`，用于承载 Roguelike match 的 `runId`、战绩与 `activeBuffs` 序列化上下文；classic / online non-roguelike 对局必须显式发送 `runContext: null`。
 
 ## Effect / Hook 契约
 
@@ -81,6 +82,7 @@
     - `finalStateHash`
     - `resultSummary`
 - `events[]` 是权威裁决结果；`commands[]` 保留玩家意图与调试价值。
+- Step 07 不为 AI trace、run progression 或 reward-offer history 新增第二套 outward replay envelope；这些调试视图若需要存在，只能建立在现有 `ReplayBundle` 与 higher-layer inspector 上。
 - 任何 replay 迁移策略都必须明确说明哪些版本支持 command replay、哪些版本只支持 event playback。
 
 ## 在线协议字段
@@ -98,6 +100,7 @@
 - spectator 连接只允许收到 `room.state` 与后续 `match.observe`，不得收到任何玩家私有 `match.patch`。
 - Step 06 起，`UiActionDescriptor` 是 schema-backed contract，可通过 room/UI payload 传输。
 - Step 06 起，`RoomDetail`、`match.patch`、`match.resync` 与 `match.observe` 必须携带 viewer-scoped `availableActions`。
+- Step 07 不新增 room-service message family；run / buff 相关变化若需要外发，只能通过现有 snapshot-bearing payload 的 schema 扩展表达。
 - spectator 与非当前行动玩家的 `availableActions` 必须为空数组；客户端不得依据可见 snapshot 自行推断 turn ownership 或隐藏 deck legality。
 
 ## 修改顺序
@@ -133,6 +136,7 @@ This document defines the hardening path for `packages/contracts`. Contracts mus
 - `SpectatorSnapshot`: sent to spectators and must not reveal hidden cards or future deck information while the match is live.
 - All outbound snapshots must be projected from `AuthoritativeSnapshot` through information filtering; raw authoritative structures may never be sent externally.
 - Starting in Step 04, the classic snapshot surface must explicitly expose board, pyramid, royal supply, privilege supply, reserve-slot occupancy, turn metadata, and `victoryReason` instead of placeholder score-only fields.
+- Starting in Step 07, the snapshot surface may include `runContext` so roguelike matches can carry `runId`, win/loss progress, and serialized `activeBuffs`; classic / online non-roguelike matches must emit `runContext: null` explicitly.
 
 ## Effect / Hook Contracts
 
@@ -196,6 +200,7 @@ This document defines the hardening path for `packages/contracts`. Contracts mus
     - `finalStateHash`
     - `resultSummary`
 - `events[]` are authoritative while `commands[]` preserve player intent and debugging value.
+- Step 07 does not add a second outward replay envelope for AI traces, run progression, or reward-offer history; any such debugging views must be derived from the existing `ReplayBundle` plus a higher-layer inspector.
 - Any replay migration policy must explicitly state which version ranges support command replay and which support event playback only.
 
 ## Online Protocol Fields
@@ -213,6 +218,7 @@ This document defines the hardening path for `packages/contracts`. Contracts mus
 - Spectator connections may receive `room.state` and later `match.observe` only and may never receive player-private `match.patch` payloads.
 - Starting in Step 06, `UiActionDescriptor` is a schema-backed contract that may travel through room/UI payloads.
 - Starting in Step 06, `RoomDetail`, `match.patch`, `match.resync`, and `match.observe` must carry viewer-scoped `availableActions`.
+- Step 07 adds no new room-service message family; if run / buff state must travel outward, it must do so through the schema expansion of the existing snapshot-bearing payloads.
 - Spectators and non-active players must receive `availableActions: []`; clients may not infer turn ownership or hidden-deck legality from visible snapshots alone.
 
 ## Change Order

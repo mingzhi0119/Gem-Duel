@@ -37,6 +37,14 @@ export const SnapshotSummary = ({ snapshot }: { snapshot: SnapshotSummaryModel }
             <strong>Winner</strong>
             <span>{snapshot.context.winner ?? 'pending'}</span>
         </div>
+        <div className="gd-card">
+            <strong>Run</strong>
+            <span>
+                {snapshot.runContext
+                    ? `${snapshot.runContext.matchIndex} | ${snapshot.runContext.activeBuffs.length} buff(s)`
+                    : 'classic'}
+            </span>
+        </div>
     </div>
 );
 

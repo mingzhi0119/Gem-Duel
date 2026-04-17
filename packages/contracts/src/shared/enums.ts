@@ -1,6 +1,12 @@
 import { z } from 'zod';
 import {
     BOARD_POSITION_IDS,
+    BUFF_ACQUISITION_SOURCES,
+    BUFF_IDS,
+    BUFF_LIFECYCLES,
+    BUFF_RARITIES,
+    BUFF_SCOPES,
+    BUFF_TRIGGER_STYLES,
     BONUS_COLORS,
     CARD_LEVELS,
     DECK_LEVEL_KEYS,
@@ -18,13 +24,15 @@ import {
     OPTIONAL_TURN_STEPS,
     PLAYER_IDS,
     RESERVE_SLOT_IDS,
+    RUN_REWARD_SOURCES,
+    RUN_STATUSES,
     STEALABLE_GEM_COLORS,
     TURN_SEGMENTS,
     VICTORY_REASONS,
 } from '@gem-duel/domain';
 
-export const SCHEMA_VERSION = '5.0.0';
-export const ENGINE_VERSION = '2026.04-step4';
+export const SCHEMA_VERSION = '6.0.0';
+export const ENGINE_VERSION = '2026.04-step7';
 
 export const PlayerIdSchema = z.enum(PLAYER_IDS);
 export const GameModeSchema = z.enum(GAME_MODES);
@@ -52,3 +60,11 @@ export const EffectSourceSchema = z.enum(EFFECT_SOURCES);
 export const EffectExecutionScopeSchema = z.enum(EFFECT_EXECUTION_SCOPES);
 export const EffectLifecycleStageSchema = z.enum(EFFECT_LIFECYCLE_STAGES);
 export const EffectOutcomeSchema = z.enum(EFFECT_OUTCOMES);
+export const BuffIdSchema = z.enum(BUFF_IDS);
+export const BuffRaritySchema = z.enum(BUFF_RARITIES);
+export const BuffScopeSchema = z.enum(BUFF_SCOPES);
+export const BuffTriggerStyleSchema = z.enum(BUFF_TRIGGER_STYLES);
+export const BuffLifecycleSchema = z.enum(BUFF_LIFECYCLES);
+export const BuffAcquisitionSourceSchema = z.enum(BUFF_ACQUISITION_SOURCES);
+export const RunStatusSchema = z.enum(RUN_STATUSES);
+export const RunRewardSourceSchema = z.enum(RUN_REWARD_SOURCES);

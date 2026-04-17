@@ -34,6 +34,9 @@ export default function RootLayout({
                             <Link href="/play/ai" className="gd-link">
                                 AI
                             </Link>
+                            <Link href="/play/run" className="gd-link">
+                                Run
+                            </Link>
                             <Link href="/rooms" className="gd-link">
                                 Rooms
                             </Link>

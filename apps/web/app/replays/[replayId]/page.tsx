@@ -1,5 +1,7 @@
 import { proxyReplay } from '@/lib/room-service';
-import { Section, SnapshotSummary } from '@gem-duel/ui';
+import { buildReplayInspectorModel } from '@gem-duel/application';
+import { Section } from '@gem-duel/ui';
+import { ReplayInspectorPanel } from '../../components/session-panels';
 
 export default async function ReplayPage({ params }: { params: Promise<{ replayId: string }> }) {
     const { replayId } = await params;
@@ -18,10 +20,6 @@ export default async function ReplayPage({ params }: { params: Promise<{ replayI
                 ) : (
                     <div className="gd-grid">
                         <div className="gd-card">
-                            <strong>Final Hash</strong>
-                            <span>{body.bundle.finalStateHash}</span>
-                        </div>
-                        <div className="gd-card">
                             <strong>Winner</strong>
                             <span>{body.bundle.resultSummary.winner ?? 'pending'}</span>
                         </div>
@@ -36,11 +34,12 @@ export default async function ReplayPage({ params }: { params: Promise<{ replayI
                     </div>
                 )}
             </Section>
-            {status < 400 && 'bundle' in body ? (
-                <Section title="Initial Snapshot">
-                    <SnapshotSummary snapshot={body.bundle.initialSnapshot} />
-                </Section>
-            ) : null}
+            {status < 400 && 'bundle' in body
+                ? (() => {
+                      const inspector = buildReplayInspectorModel(body.bundle);
+                      return inspector.ok ? <ReplayInspectorPanel model={inspector.value} /> : null;
+                  })()
+                : null}
         </>
     );
 }

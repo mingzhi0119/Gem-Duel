@@ -72,6 +72,7 @@ export const createAuthoritativeSnapshotFixture = (): AuthoritativeSnapshot => (
     eventLog: [],
     replayCursor: null,
     sequence: 0,
+    runContext: null,
     activeEffects: [],
     effectPrompts: [],
     hiddenState: createHiddenState(),

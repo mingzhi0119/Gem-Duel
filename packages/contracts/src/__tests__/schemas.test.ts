@@ -10,8 +10,11 @@ import {
     GameCommandSchema,
     MatchCommandEnvelopeSchema,
     MatchPatchMessageSchema,
+    MetaStateSchema,
     PlayerSnapshotSchema,
     ReplayBundleSchema,
+    RunContextSchema,
+    RunStateSchema,
     RoomDetailSchema,
     SCHEMA_VERSION,
     UiActionDescriptorSchema,
@@ -28,8 +31,8 @@ describe('contracts schemas', () => {
         });
 
         expect(command.type).toBe('TAKE_TOKENS');
-        expect(SCHEMA_VERSION).toBe('5.0.0');
-        expect(ENGINE_VERSION).toBe('2026.04-step4');
+        expect(SCHEMA_VERSION).toBe('6.0.0');
+        expect(ENGINE_VERSION).toBe('2026.04-step7');
     });
 
     it('projects authoritative snapshots into player-safe snapshots', () => {
@@ -127,5 +130,59 @@ describe('contracts schemas', () => {
         expect(replay.engineVersion).toBe(ENGINE_VERSION);
         expect(roomDetail.availableActions).toEqual([]);
         expect(patch.availableActions[0]?.id).toBe('begin-gem-selection');
+    });
+
+    it('parses run and buff contract surfaces', () => {
+        const runContext = RunContextSchema.parse({
+            runId: 'run-1',
+            matchIndex: 1,
+            wins: 0,
+            losses: 0,
+            activeBuffs: [
+                {
+                    id: 'extortion',
+                    owner: 'p1',
+                    source: 'starter',
+                    acquiredAtMatchIndex: 1,
+                    state: {
+                        replenishCount: 1,
+                    },
+                },
+            ],
+        });
+        const runState = RunStateSchema.parse({
+            runId: 'run-1',
+            seed: 11,
+            mode: 'ai',
+            matchIndex: 1,
+            activeMatchId: 'match-1',
+            ownedBuffs: runContext.activeBuffs,
+            wins: 0,
+            losses: 0,
+            status: 'active',
+            currentOffer: {
+                offerId: 'run-1-starter',
+                source: 'starter',
+                options: ['extortion', 'down_payment', 'deep_pockets'],
+            },
+        });
+        const metaState = MetaStateSchema.parse({
+            profileId: 'local-profile',
+            unlockedBuffIds: [
+                'privilege_favor',
+                'deep_pockets',
+                'down_payment',
+                'extortion',
+                'double_agent',
+            ],
+            unlockedDifficultyIds: [],
+            completedRunIds: [],
+            totalRuns: 0,
+            lastUpdatedAt: null,
+        });
+
+        expect(runState.currentOffer?.options).toHaveLength(3);
+        expect(runContext.activeBuffs[0]?.state.replenishCount).toBe(1);
+        expect(metaState.unlockedBuffIds).toContain('double_agent');
     });
 });

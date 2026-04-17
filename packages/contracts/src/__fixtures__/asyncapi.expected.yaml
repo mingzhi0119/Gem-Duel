@@ -582,7 +582,7 @@ components:
           type: array
         engineVersion:
           enum:
-            - 2026.04-step4
+            - 2026.04-step7
           type: string
         eventLog:
           items:
@@ -2299,9 +2299,75 @@ components:
           enum:
             - "2026.1"
           type: string
+        runContext:
+          properties:
+            activeBuffs:
+              items:
+                properties:
+                  acquiredAtMatchIndex:
+                    minimum: 0
+                    type: integer
+                  id:
+                    enum:
+                      - privilege_favor
+                      - deep_pockets
+                      - down_payment
+                      - extortion
+                      - double_agent
+                    type: string
+                  owner:
+                    enum:
+                      - p1
+                      - p2
+                    type: string
+                  source:
+                    enum:
+                      - starter
+                      - reward
+                    type: string
+                  state:
+                    additionalProperties:
+                      anyOf:
+                        - type: string
+                        - type: number
+                        - type: boolean
+                        - type: "null"
+                        - type: "null"
+                    type: object
+                required:
+                  - id
+                  - owner
+                  - source
+                  - acquiredAtMatchIndex
+                  - state
+                type: object
+              type: array
+            losses:
+              maximum: 1
+              minimum: 0
+              type: integer
+            matchIndex:
+              minimum: 1
+              type: integer
+            runId:
+              minLength: 1
+              type: string
+            wins:
+              maximum: 3
+              minimum: 0
+              type: integer
+          required:
+            - runId
+            - matchIndex
+            - wins
+            - losses
+            - activeBuffs
+          type:
+            - object
+            - "null"
         schemaVersion:
           enum:
-            - 5.0.0
+            - 6.0.0
           type: string
         sequence:
           minimum: 0
@@ -2323,10 +2389,151 @@ components:
         - eventLog
         - replayCursor
         - sequence
+        - runContext
         - activeEffects
         - effectPrompts
         - visibility
         - hiddenState
+      type: object
+    BuffCatalogEntry:
+      properties:
+        description:
+          minLength: 1
+          type: string
+        effectAtoms:
+          items:
+            enum:
+              - grant_privilege
+              - take_opponent_token
+              - gain_royal
+              - take_extra_turn
+              - discard_to_limit
+              - take_board_token
+              - override_bonus_color
+            type: string
+          type: array
+        hookPoint:
+          enum:
+            - BEFORE_USE_PRIVILEGE
+            - AFTER_USE_PRIVILEGE
+            - BEFORE_REPLENISH_BOARD
+            - AFTER_REPLENISH_BOARD
+            - BEFORE_TAKE_TOKENS
+            - AFTER_TAKE_TOKENS
+            - BEFORE_RESERVE_CARD
+            - AFTER_RESERVE_CARD
+            - BEFORE_BUY_CARD
+            - AFTER_BUY_CARD
+            - BEFORE_GAIN_ROYAL
+            - AFTER_GAIN_ROYAL
+            - BEFORE_EXTRA_TURN
+            - AFTER_EXTRA_TURN
+            - BEFORE_DISCARD_TO_LIMIT
+            - AFTER_DISCARD_TO_LIMIT
+            - BEFORE_VICTORY_CHECK
+            - AFTER_VICTORY_CHECK
+            - BEFORE_MATCH_SETUP
+            - AFTER_MATCH_SETUP
+            - BEFORE_BUFF_ACQUISITION
+            - AFTER_BUFF_ACQUISITION
+            - BEFORE_RUN_REWARD_SELECTION
+            - AFTER_RUN_REWARD_SELECTION
+          type: string
+        id:
+          enum:
+            - privilege_favor
+            - deep_pockets
+            - down_payment
+            - extortion
+            - double_agent
+          type: string
+        lifecycle:
+          enum:
+            - match-only
+            - run-only
+            - meta-unlock
+          type: string
+        name:
+          minLength: 1
+          type: string
+        rarity:
+          enum:
+            - common
+            - rare
+            - boss
+            - meta-unlock
+          type: string
+        replayImpact:
+          minLength: 1
+          type: string
+        scope:
+          enum:
+            - self
+            - opponent
+            - global-run
+          type: string
+        stacking:
+          enum:
+            - unique
+          type: string
+        triggerStyle:
+          enum:
+            - passive
+            - triggered
+            - replacement
+            - stacking
+          type: string
+      required:
+        - id
+        - name
+        - description
+        - rarity
+        - scope
+        - triggerStyle
+        - lifecycle
+        - hookPoint
+        - effectAtoms
+        - stacking
+        - replayImpact
+      type: object
+    BuffInstance:
+      properties:
+        acquiredAtMatchIndex:
+          minimum: 0
+          type: integer
+        id:
+          enum:
+            - privilege_favor
+            - deep_pockets
+            - down_payment
+            - extortion
+            - double_agent
+          type: string
+        owner:
+          enum:
+            - p1
+            - p2
+          type: string
+        source:
+          enum:
+            - starter
+            - reward
+          type: string
+        state:
+          additionalProperties:
+            anyOf:
+              - type: string
+              - type: number
+              - type: boolean
+              - type: "null"
+              - type: "null"
+          type: object
+      required:
+        - id
+        - owner
+        - source
+        - acquiredAtMatchIndex
+        - state
       type: object
     CreateRoomRequest:
       properties:
@@ -4038,7 +4245,7 @@ components:
           type: array
         engineVersion:
           enum:
-            - 2026.04-step4
+            - 2026.04-step7
           type: string
         eventLog:
           items:
@@ -5755,9 +5962,75 @@ components:
           enum:
             - "2026.1"
           type: string
+        runContext:
+          properties:
+            activeBuffs:
+              items:
+                properties:
+                  acquiredAtMatchIndex:
+                    minimum: 0
+                    type: integer
+                  id:
+                    enum:
+                      - privilege_favor
+                      - deep_pockets
+                      - down_payment
+                      - extortion
+                      - double_agent
+                    type: string
+                  owner:
+                    enum:
+                      - p1
+                      - p2
+                    type: string
+                  source:
+                    enum:
+                      - starter
+                      - reward
+                    type: string
+                  state:
+                    additionalProperties:
+                      anyOf:
+                        - type: string
+                        - type: number
+                        - type: boolean
+                        - type: "null"
+                        - type: "null"
+                    type: object
+                required:
+                  - id
+                  - owner
+                  - source
+                  - acquiredAtMatchIndex
+                  - state
+                type: object
+              type: array
+            losses:
+              maximum: 1
+              minimum: 0
+              type: integer
+            matchIndex:
+              minimum: 1
+              type: integer
+            runId:
+              minLength: 1
+              type: string
+            wins:
+              maximum: 3
+              minimum: 0
+              type: integer
+          required:
+            - runId
+            - matchIndex
+            - wins
+            - losses
+            - activeBuffs
+          type:
+            - object
+            - "null"
         schemaVersion:
           enum:
-            - 5.0.0
+            - 6.0.0
           type: string
         sequence:
           minimum: 0
@@ -5779,6 +6052,7 @@ components:
         - eventLog
         - replayCursor
         - sequence
+        - runContext
         - activeEffects
         - effectPrompts
         - visibility
@@ -7784,7 +8058,7 @@ components:
               type: array
             engineVersion:
               enum:
-                - 2026.04-step4
+                - 2026.04-step7
               type: string
             eventLog:
               items:
@@ -9222,9 +9496,75 @@ components:
               enum:
                 - "2026.1"
               type: string
+            runContext:
+              properties:
+                activeBuffs:
+                  items:
+                    properties:
+                      acquiredAtMatchIndex:
+                        minimum: 0
+                        type: integer
+                      id:
+                        enum:
+                          - privilege_favor
+                          - deep_pockets
+                          - down_payment
+                          - extortion
+                          - double_agent
+                        type: string
+                      owner:
+                        enum:
+                          - p1
+                          - p2
+                        type: string
+                      source:
+                        enum:
+                          - starter
+                          - reward
+                        type: string
+                      state:
+                        additionalProperties:
+                          anyOf:
+                            - type: string
+                            - type: number
+                            - type: boolean
+                            - type: "null"
+                            - type: "null"
+                        type: object
+                    required:
+                      - id
+                      - owner
+                      - source
+                      - acquiredAtMatchIndex
+                      - state
+                    type: object
+                  type: array
+                losses:
+                  maximum: 1
+                  minimum: 0
+                  type: integer
+                matchIndex:
+                  minimum: 1
+                  type: integer
+                runId:
+                  minLength: 1
+                  type: string
+                wins:
+                  maximum: 3
+                  minimum: 0
+                  type: integer
+              required:
+                - runId
+                - matchIndex
+                - wins
+                - losses
+                - activeBuffs
+              type:
+                - object
+                - "null"
             schemaVersion:
               enum:
-                - 5.0.0
+                - 6.0.0
               type: string
             sequence:
               minimum: 0
@@ -9246,6 +9586,7 @@ components:
             - eventLog
             - replayCursor
             - sequence
+            - runContext
             - activeEffects
             - effectPrompts
             - visibility
@@ -10114,7 +10455,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step4
+                    - 2026.04-step7
                   type: string
                 eventLog:
                   items:
@@ -11552,9 +11893,75 @@ components:
                   enum:
                     - "2026.1"
                   type: string
+                runContext:
+                  properties:
+                    activeBuffs:
+                      items:
+                        properties:
+                          acquiredAtMatchIndex:
+                            minimum: 0
+                            type: integer
+                          id:
+                            enum:
+                              - privilege_favor
+                              - deep_pockets
+                              - down_payment
+                              - extortion
+                              - double_agent
+                            type: string
+                          owner:
+                            enum:
+                              - p1
+                              - p2
+                            type: string
+                          source:
+                            enum:
+                              - starter
+                              - reward
+                            type: string
+                          state:
+                            additionalProperties:
+                              anyOf:
+                                - type: string
+                                - type: number
+                                - type: boolean
+                                - type: "null"
+                                - type: "null"
+                            type: object
+                        required:
+                          - id
+                          - owner
+                          - source
+                          - acquiredAtMatchIndex
+                          - state
+                        type: object
+                      type: array
+                    losses:
+                      maximum: 1
+                      minimum: 0
+                      type: integer
+                    matchIndex:
+                      minimum: 1
+                      type: integer
+                    runId:
+                      minLength: 1
+                      type: string
+                    wins:
+                      maximum: 3
+                      minimum: 0
+                      type: integer
+                  required:
+                    - runId
+                    - matchIndex
+                    - wins
+                    - losses
+                    - activeBuffs
+                  type:
+                    - object
+                    - "null"
                 schemaVersion:
                   enum:
-                    - 5.0.0
+                    - 6.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -11710,6 +12117,7 @@ components:
                 - eventLog
                 - replayCursor
                 - sequence
+                - runContext
                 - activeEffects
                 - effectPrompts
                 - visibility
@@ -12118,7 +12526,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step4
+                    - 2026.04-step7
                   type: string
                 eventLog:
                   items:
@@ -13556,9 +13964,75 @@ components:
                   enum:
                     - "2026.1"
                   type: string
+                runContext:
+                  properties:
+                    activeBuffs:
+                      items:
+                        properties:
+                          acquiredAtMatchIndex:
+                            minimum: 0
+                            type: integer
+                          id:
+                            enum:
+                              - privilege_favor
+                              - deep_pockets
+                              - down_payment
+                              - extortion
+                              - double_agent
+                            type: string
+                          owner:
+                            enum:
+                              - p1
+                              - p2
+                            type: string
+                          source:
+                            enum:
+                              - starter
+                              - reward
+                            type: string
+                          state:
+                            additionalProperties:
+                              anyOf:
+                                - type: string
+                                - type: number
+                                - type: boolean
+                                - type: "null"
+                                - type: "null"
+                            type: object
+                        required:
+                          - id
+                          - owner
+                          - source
+                          - acquiredAtMatchIndex
+                          - state
+                        type: object
+                      type: array
+                    losses:
+                      maximum: 1
+                      minimum: 0
+                      type: integer
+                    matchIndex:
+                      minimum: 1
+                      type: integer
+                    runId:
+                      minLength: 1
+                      type: string
+                    wins:
+                      maximum: 3
+                      minimum: 0
+                      type: integer
+                  required:
+                    - runId
+                    - matchIndex
+                    - wins
+                    - losses
+                    - activeBuffs
+                  type:
+                    - object
+                    - "null"
                 schemaVersion:
                   enum:
-                    - 5.0.0
+                    - 6.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -13580,6 +14054,7 @@ components:
                 - eventLog
                 - replayCursor
                 - sequence
+                - runContext
                 - activeEffects
                 - effectPrompts
                 - visibility
@@ -14448,7 +14923,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step4
+                    - 2026.04-step7
                   type: string
                 eventLog:
                   items:
@@ -15886,9 +16361,75 @@ components:
                   enum:
                     - "2026.1"
                   type: string
+                runContext:
+                  properties:
+                    activeBuffs:
+                      items:
+                        properties:
+                          acquiredAtMatchIndex:
+                            minimum: 0
+                            type: integer
+                          id:
+                            enum:
+                              - privilege_favor
+                              - deep_pockets
+                              - down_payment
+                              - extortion
+                              - double_agent
+                            type: string
+                          owner:
+                            enum:
+                              - p1
+                              - p2
+                            type: string
+                          source:
+                            enum:
+                              - starter
+                              - reward
+                            type: string
+                          state:
+                            additionalProperties:
+                              anyOf:
+                                - type: string
+                                - type: number
+                                - type: boolean
+                                - type: "null"
+                                - type: "null"
+                            type: object
+                        required:
+                          - id
+                          - owner
+                          - source
+                          - acquiredAtMatchIndex
+                          - state
+                        type: object
+                      type: array
+                    losses:
+                      maximum: 1
+                      minimum: 0
+                      type: integer
+                    matchIndex:
+                      minimum: 1
+                      type: integer
+                    runId:
+                      minLength: 1
+                      type: string
+                    wins:
+                      maximum: 3
+                      minimum: 0
+                      type: integer
+                  required:
+                    - runId
+                    - matchIndex
+                    - wins
+                    - losses
+                    - activeBuffs
+                  type:
+                    - object
+                    - "null"
                 schemaVersion:
                   enum:
-                    - 5.0.0
+                    - 6.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -16044,6 +16585,7 @@ components:
                 - eventLog
                 - replayCursor
                 - sequence
+                - runContext
                 - activeEffects
                 - effectPrompts
                 - visibility
@@ -16452,7 +16994,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step4
+                    - 2026.04-step7
                   type: string
                 eventLog:
                   items:
@@ -17890,9 +18432,75 @@ components:
                   enum:
                     - "2026.1"
                   type: string
+                runContext:
+                  properties:
+                    activeBuffs:
+                      items:
+                        properties:
+                          acquiredAtMatchIndex:
+                            minimum: 0
+                            type: integer
+                          id:
+                            enum:
+                              - privilege_favor
+                              - deep_pockets
+                              - down_payment
+                              - extortion
+                              - double_agent
+                            type: string
+                          owner:
+                            enum:
+                              - p1
+                              - p2
+                            type: string
+                          source:
+                            enum:
+                              - starter
+                              - reward
+                            type: string
+                          state:
+                            additionalProperties:
+                              anyOf:
+                                - type: string
+                                - type: number
+                                - type: boolean
+                                - type: "null"
+                                - type: "null"
+                            type: object
+                        required:
+                          - id
+                          - owner
+                          - source
+                          - acquiredAtMatchIndex
+                          - state
+                        type: object
+                      type: array
+                    losses:
+                      maximum: 1
+                      minimum: 0
+                      type: integer
+                    matchIndex:
+                      minimum: 1
+                      type: integer
+                    runId:
+                      minLength: 1
+                      type: string
+                    wins:
+                      maximum: 3
+                      minimum: 0
+                      type: integer
+                  required:
+                    - runId
+                    - matchIndex
+                    - wins
+                    - losses
+                    - activeBuffs
+                  type:
+                    - object
+                    - "null"
                 schemaVersion:
                   enum:
-                    - 5.0.0
+                    - 6.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -17914,6 +18522,7 @@ components:
                 - eventLog
                 - replayCursor
                 - sequence
+                - runContext
                 - activeEffects
                 - effectPrompts
                 - visibility
@@ -17927,6 +18536,47 @@ components:
         - lastKnownSeq
         - snapshot
         - availableActions
+      type: object
+    MetaState:
+      properties:
+        completedRunIds:
+          items:
+            minLength: 1
+            type: string
+          type: array
+        lastUpdatedAt:
+          format: date-time
+          type:
+            - string
+            - "null"
+        profileId:
+          minLength: 1
+          type: string
+        totalRuns:
+          minimum: 0
+          type: integer
+        unlockedBuffIds:
+          items:
+            enum:
+              - privilege_favor
+              - deep_pockets
+              - down_payment
+              - extortion
+              - double_agent
+            type: string
+          type: array
+        unlockedDifficultyIds:
+          items:
+            minLength: 1
+            type: string
+          type: array
+      required:
+        - profileId
+        - unlockedBuffIds
+        - unlockedDifficultyIds
+        - completedRunIds
+        - totalRuns
+        - lastUpdatedAt
       type: object
     PlayersById:
       properties:
@@ -18979,7 +19629,7 @@ components:
           type: array
         engineVersion:
           enum:
-            - 2026.04-step4
+            - 2026.04-step7
           type: string
         eventLog:
           items:
@@ -20417,9 +21067,75 @@ components:
           enum:
             - "2026.1"
           type: string
+        runContext:
+          properties:
+            activeBuffs:
+              items:
+                properties:
+                  acquiredAtMatchIndex:
+                    minimum: 0
+                    type: integer
+                  id:
+                    enum:
+                      - privilege_favor
+                      - deep_pockets
+                      - down_payment
+                      - extortion
+                      - double_agent
+                    type: string
+                  owner:
+                    enum:
+                      - p1
+                      - p2
+                    type: string
+                  source:
+                    enum:
+                      - starter
+                      - reward
+                    type: string
+                  state:
+                    additionalProperties:
+                      anyOf:
+                        - type: string
+                        - type: number
+                        - type: boolean
+                        - type: "null"
+                        - type: "null"
+                    type: object
+                required:
+                  - id
+                  - owner
+                  - source
+                  - acquiredAtMatchIndex
+                  - state
+                type: object
+              type: array
+            losses:
+              maximum: 1
+              minimum: 0
+              type: integer
+            matchIndex:
+              minimum: 1
+              type: integer
+            runId:
+              minLength: 1
+              type: string
+            wins:
+              maximum: 3
+              minimum: 0
+              type: integer
+          required:
+            - runId
+            - matchIndex
+            - wins
+            - losses
+            - activeBuffs
+          type:
+            - object
+            - "null"
         schemaVersion:
           enum:
-            - 5.0.0
+            - 6.0.0
           type: string
         sequence:
           minimum: 0
@@ -20575,6 +21291,7 @@ components:
         - eventLog
         - replayCursor
         - sequence
+        - runContext
         - activeEffects
         - effectPrompts
         - visibility
@@ -21357,7 +22074,7 @@ components:
           type: array
         engineVersion:
           enum:
-            - 2026.04-step4
+            - 2026.04-step7
           type: string
         events:
           items:
@@ -22590,7 +23307,7 @@ components:
               type: array
             engineVersion:
               enum:
-                - 2026.04-step4
+                - 2026.04-step7
               type: string
             eventLog:
               items:
@@ -24307,9 +25024,75 @@ components:
               enum:
                 - "2026.1"
               type: string
+            runContext:
+              properties:
+                activeBuffs:
+                  items:
+                    properties:
+                      acquiredAtMatchIndex:
+                        minimum: 0
+                        type: integer
+                      id:
+                        enum:
+                          - privilege_favor
+                          - deep_pockets
+                          - down_payment
+                          - extortion
+                          - double_agent
+                        type: string
+                      owner:
+                        enum:
+                          - p1
+                          - p2
+                        type: string
+                      source:
+                        enum:
+                          - starter
+                          - reward
+                        type: string
+                      state:
+                        additionalProperties:
+                          anyOf:
+                            - type: string
+                            - type: number
+                            - type: boolean
+                            - type: "null"
+                            - type: "null"
+                        type: object
+                    required:
+                      - id
+                      - owner
+                      - source
+                      - acquiredAtMatchIndex
+                      - state
+                    type: object
+                  type: array
+                losses:
+                  maximum: 1
+                  minimum: 0
+                  type: integer
+                matchIndex:
+                  minimum: 1
+                  type: integer
+                runId:
+                  minLength: 1
+                  type: string
+                wins:
+                  maximum: 3
+                  minimum: 0
+                  type: integer
+              required:
+                - runId
+                - matchIndex
+                - wins
+                - losses
+                - activeBuffs
+              type:
+                - object
+                - "null"
             schemaVersion:
               enum:
-                - 5.0.0
+                - 6.0.0
               type: string
             sequence:
               minimum: 0
@@ -24331,6 +25114,7 @@ components:
             - eventLog
             - replayCursor
             - sequence
+            - runContext
             - activeEffects
             - effectPrompts
             - visibility
@@ -24371,7 +25155,7 @@ components:
           type: string
         schemaVersion:
           enum:
-            - 5.0.0
+            - 6.0.0
           type: string
         seed:
           minimum: 0
@@ -25293,7 +26077,7 @@ components:
               type: array
             engineVersion:
               enum:
-                - 2026.04-step4
+                - 2026.04-step7
               type: string
             events:
               items:
@@ -26526,7 +27310,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step4
+                    - 2026.04-step7
                   type: string
                 eventLog:
                   items:
@@ -28243,9 +29027,75 @@ components:
                   enum:
                     - "2026.1"
                   type: string
+                runContext:
+                  properties:
+                    activeBuffs:
+                      items:
+                        properties:
+                          acquiredAtMatchIndex:
+                            minimum: 0
+                            type: integer
+                          id:
+                            enum:
+                              - privilege_favor
+                              - deep_pockets
+                              - down_payment
+                              - extortion
+                              - double_agent
+                            type: string
+                          owner:
+                            enum:
+                              - p1
+                              - p2
+                            type: string
+                          source:
+                            enum:
+                              - starter
+                              - reward
+                            type: string
+                          state:
+                            additionalProperties:
+                              anyOf:
+                                - type: string
+                                - type: number
+                                - type: boolean
+                                - type: "null"
+                                - type: "null"
+                            type: object
+                        required:
+                          - id
+                          - owner
+                          - source
+                          - acquiredAtMatchIndex
+                          - state
+                        type: object
+                      type: array
+                    losses:
+                      maximum: 1
+                      minimum: 0
+                      type: integer
+                    matchIndex:
+                      minimum: 1
+                      type: integer
+                    runId:
+                      minLength: 1
+                      type: string
+                    wins:
+                      maximum: 3
+                      minimum: 0
+                      type: integer
+                  required:
+                    - runId
+                    - matchIndex
+                    - wins
+                    - losses
+                    - activeBuffs
+                  type:
+                    - object
+                    - "null"
                 schemaVersion:
                   enum:
-                    - 5.0.0
+                    - 6.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -28267,6 +29117,7 @@ components:
                 - eventLog
                 - replayCursor
                 - sequence
+                - runContext
                 - activeEffects
                 - effectPrompts
                 - visibility
@@ -28307,7 +29158,7 @@ components:
               type: string
             schemaVersion:
               enum:
-                - 5.0.0
+                - 6.0.0
               type: string
             seed:
               minimum: 0
@@ -29204,7 +30055,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step4
+                    - 2026.04-step7
                   type: string
                 eventLog:
                   items:
@@ -30642,9 +31493,75 @@ components:
                   enum:
                     - "2026.1"
                   type: string
+                runContext:
+                  properties:
+                    activeBuffs:
+                      items:
+                        properties:
+                          acquiredAtMatchIndex:
+                            minimum: 0
+                            type: integer
+                          id:
+                            enum:
+                              - privilege_favor
+                              - deep_pockets
+                              - down_payment
+                              - extortion
+                              - double_agent
+                            type: string
+                          owner:
+                            enum:
+                              - p1
+                              - p2
+                            type: string
+                          source:
+                            enum:
+                              - starter
+                              - reward
+                            type: string
+                          state:
+                            additionalProperties:
+                              anyOf:
+                                - type: string
+                                - type: number
+                                - type: boolean
+                                - type: "null"
+                                - type: "null"
+                            type: object
+                        required:
+                          - id
+                          - owner
+                          - source
+                          - acquiredAtMatchIndex
+                          - state
+                        type: object
+                      type: array
+                    losses:
+                      maximum: 1
+                      minimum: 0
+                      type: integer
+                    matchIndex:
+                      minimum: 1
+                      type: integer
+                    runId:
+                      minLength: 1
+                      type: string
+                    wins:
+                      maximum: 3
+                      minimum: 0
+                      type: integer
+                  required:
+                    - runId
+                    - matchIndex
+                    - wins
+                    - losses
+                    - activeBuffs
+                  type:
+                    - object
+                    - "null"
                 schemaVersion:
                   enum:
-                    - 5.0.0
+                    - 6.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -30800,6 +31717,7 @@ components:
                 - eventLog
                 - replayCursor
                 - sequence
+                - runContext
                 - activeEffects
                 - effectPrompts
                 - visibility
@@ -31208,7 +32126,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step4
+                    - 2026.04-step7
                   type: string
                 eventLog:
                   items:
@@ -32646,9 +33564,75 @@ components:
                   enum:
                     - "2026.1"
                   type: string
+                runContext:
+                  properties:
+                    activeBuffs:
+                      items:
+                        properties:
+                          acquiredAtMatchIndex:
+                            minimum: 0
+                            type: integer
+                          id:
+                            enum:
+                              - privilege_favor
+                              - deep_pockets
+                              - down_payment
+                              - extortion
+                              - double_agent
+                            type: string
+                          owner:
+                            enum:
+                              - p1
+                              - p2
+                            type: string
+                          source:
+                            enum:
+                              - starter
+                              - reward
+                            type: string
+                          state:
+                            additionalProperties:
+                              anyOf:
+                                - type: string
+                                - type: number
+                                - type: boolean
+                                - type: "null"
+                                - type: "null"
+                            type: object
+                        required:
+                          - id
+                          - owner
+                          - source
+                          - acquiredAtMatchIndex
+                          - state
+                        type: object
+                      type: array
+                    losses:
+                      maximum: 1
+                      minimum: 0
+                      type: integer
+                    matchIndex:
+                      minimum: 1
+                      type: integer
+                    runId:
+                      minLength: 1
+                      type: string
+                    wins:
+                      maximum: 3
+                      minimum: 0
+                      type: integer
+                  required:
+                    - runId
+                    - matchIndex
+                    - wins
+                    - losses
+                    - activeBuffs
+                  type:
+                    - object
+                    - "null"
                 schemaVersion:
                   enum:
-                    - 5.0.0
+                    - 6.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -32670,6 +33654,7 @@ components:
                 - eventLog
                 - replayCursor
                 - sequence
+                - runContext
                 - activeEffects
                 - effectPrompts
                 - visibility
@@ -33648,7 +34633,7 @@ components:
                       type: array
                     engineVersion:
                       enum:
-                        - 2026.04-step4
+                        - 2026.04-step7
                       type: string
                     eventLog:
                       items:
@@ -35086,9 +36071,75 @@ components:
                       enum:
                         - "2026.1"
                       type: string
+                    runContext:
+                      properties:
+                        activeBuffs:
+                          items:
+                            properties:
+                              acquiredAtMatchIndex:
+                                minimum: 0
+                                type: integer
+                              id:
+                                enum:
+                                  - privilege_favor
+                                  - deep_pockets
+                                  - down_payment
+                                  - extortion
+                                  - double_agent
+                                type: string
+                              owner:
+                                enum:
+                                  - p1
+                                  - p2
+                                type: string
+                              source:
+                                enum:
+                                  - starter
+                                  - reward
+                                type: string
+                              state:
+                                additionalProperties:
+                                  anyOf:
+                                    - type: string
+                                    - type: number
+                                    - type: boolean
+                                    - type: "null"
+                                    - type: "null"
+                                type: object
+                            required:
+                              - id
+                              - owner
+                              - source
+                              - acquiredAtMatchIndex
+                              - state
+                            type: object
+                          type: array
+                        losses:
+                          maximum: 1
+                          minimum: 0
+                          type: integer
+                        matchIndex:
+                          minimum: 1
+                          type: integer
+                        runId:
+                          minLength: 1
+                          type: string
+                        wins:
+                          maximum: 3
+                          minimum: 0
+                          type: integer
+                      required:
+                        - runId
+                        - matchIndex
+                        - wins
+                        - losses
+                        - activeBuffs
+                      type:
+                        - object
+                        - "null"
                     schemaVersion:
                       enum:
-                        - 5.0.0
+                        - 6.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -35244,6 +36295,7 @@ components:
                     - eventLog
                     - replayCursor
                     - sequence
+                    - runContext
                     - activeEffects
                     - effectPrompts
                     - visibility
@@ -35652,7 +36704,7 @@ components:
                       type: array
                     engineVersion:
                       enum:
-                        - 2026.04-step4
+                        - 2026.04-step7
                       type: string
                     eventLog:
                       items:
@@ -37090,9 +38142,75 @@ components:
                       enum:
                         - "2026.1"
                       type: string
+                    runContext:
+                      properties:
+                        activeBuffs:
+                          items:
+                            properties:
+                              acquiredAtMatchIndex:
+                                minimum: 0
+                                type: integer
+                              id:
+                                enum:
+                                  - privilege_favor
+                                  - deep_pockets
+                                  - down_payment
+                                  - extortion
+                                  - double_agent
+                                type: string
+                              owner:
+                                enum:
+                                  - p1
+                                  - p2
+                                type: string
+                              source:
+                                enum:
+                                  - starter
+                                  - reward
+                                type: string
+                              state:
+                                additionalProperties:
+                                  anyOf:
+                                    - type: string
+                                    - type: number
+                                    - type: boolean
+                                    - type: "null"
+                                    - type: "null"
+                                type: object
+                            required:
+                              - id
+                              - owner
+                              - source
+                              - acquiredAtMatchIndex
+                              - state
+                            type: object
+                          type: array
+                        losses:
+                          maximum: 1
+                          minimum: 0
+                          type: integer
+                        matchIndex:
+                          minimum: 1
+                          type: integer
+                        runId:
+                          minLength: 1
+                          type: string
+                        wins:
+                          maximum: 3
+                          minimum: 0
+                          type: integer
+                      required:
+                        - runId
+                        - matchIndex
+                        - wins
+                        - losses
+                        - activeBuffs
+                      type:
+                        - object
+                        - "null"
                     schemaVersion:
                       enum:
-                        - 5.0.0
+                        - 6.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -37114,6 +38232,7 @@ components:
                     - eventLog
                     - replayCursor
                     - sequence
+                    - runContext
                     - activeEffects
                     - effectPrompts
                     - visibility
@@ -38562,7 +39681,7 @@ components:
                           type: array
                         engineVersion:
                           enum:
-                            - 2026.04-step4
+                            - 2026.04-step7
                           type: string
                         eventLog:
                           items:
@@ -40000,9 +41119,75 @@ components:
                           enum:
                             - "2026.1"
                           type: string
+                        runContext:
+                          properties:
+                            activeBuffs:
+                              items:
+                                properties:
+                                  acquiredAtMatchIndex:
+                                    minimum: 0
+                                    type: integer
+                                  id:
+                                    enum:
+                                      - privilege_favor
+                                      - deep_pockets
+                                      - down_payment
+                                      - extortion
+                                      - double_agent
+                                    type: string
+                                  owner:
+                                    enum:
+                                      - p1
+                                      - p2
+                                    type: string
+                                  source:
+                                    enum:
+                                      - starter
+                                      - reward
+                                    type: string
+                                  state:
+                                    additionalProperties:
+                                      anyOf:
+                                        - type: string
+                                        - type: number
+                                        - type: boolean
+                                        - type: "null"
+                                        - type: "null"
+                                    type: object
+                                required:
+                                  - id
+                                  - owner
+                                  - source
+                                  - acquiredAtMatchIndex
+                                  - state
+                                type: object
+                              type: array
+                            losses:
+                              maximum: 1
+                              minimum: 0
+                              type: integer
+                            matchIndex:
+                              minimum: 1
+                              type: integer
+                            runId:
+                              minLength: 1
+                              type: string
+                            wins:
+                              maximum: 3
+                              minimum: 0
+                              type: integer
+                          required:
+                            - runId
+                            - matchIndex
+                            - wins
+                            - losses
+                            - activeBuffs
+                          type:
+                            - object
+                            - "null"
                         schemaVersion:
                           enum:
-                            - 5.0.0
+                            - 6.0.0
                           type: string
                         sequence:
                           minimum: 0
@@ -40158,6 +41343,7 @@ components:
                         - eventLog
                         - replayCursor
                         - sequence
+                        - runContext
                         - activeEffects
                         - effectPrompts
                         - visibility
@@ -40566,7 +41752,7 @@ components:
                           type: array
                         engineVersion:
                           enum:
-                            - 2026.04-step4
+                            - 2026.04-step7
                           type: string
                         eventLog:
                           items:
@@ -42004,9 +43190,75 @@ components:
                           enum:
                             - "2026.1"
                           type: string
+                        runContext:
+                          properties:
+                            activeBuffs:
+                              items:
+                                properties:
+                                  acquiredAtMatchIndex:
+                                    minimum: 0
+                                    type: integer
+                                  id:
+                                    enum:
+                                      - privilege_favor
+                                      - deep_pockets
+                                      - down_payment
+                                      - extortion
+                                      - double_agent
+                                    type: string
+                                  owner:
+                                    enum:
+                                      - p1
+                                      - p2
+                                    type: string
+                                  source:
+                                    enum:
+                                      - starter
+                                      - reward
+                                    type: string
+                                  state:
+                                    additionalProperties:
+                                      anyOf:
+                                        - type: string
+                                        - type: number
+                                        - type: boolean
+                                        - type: "null"
+                                        - type: "null"
+                                    type: object
+                                required:
+                                  - id
+                                  - owner
+                                  - source
+                                  - acquiredAtMatchIndex
+                                  - state
+                                type: object
+                              type: array
+                            losses:
+                              maximum: 1
+                              minimum: 0
+                              type: integer
+                            matchIndex:
+                              minimum: 1
+                              type: integer
+                            runId:
+                              minLength: 1
+                              type: string
+                            wins:
+                              maximum: 3
+                              minimum: 0
+                              type: integer
+                          required:
+                            - runId
+                            - matchIndex
+                            - wins
+                            - losses
+                            - activeBuffs
+                          type:
+                            - object
+                            - "null"
                         schemaVersion:
                           enum:
-                            - 5.0.0
+                            - 6.0.0
                           type: string
                         sequence:
                           minimum: 0
@@ -42028,6 +43280,7 @@ components:
                         - eventLog
                         - replayCursor
                         - sequence
+                        - runContext
                         - activeEffects
                         - effectPrompts
                         - visibility
@@ -43372,7 +44625,7 @@ components:
                       type: array
                     engineVersion:
                       enum:
-                        - 2026.04-step4
+                        - 2026.04-step7
                       type: string
                     eventLog:
                       items:
@@ -44810,9 +46063,75 @@ components:
                       enum:
                         - "2026.1"
                       type: string
+                    runContext:
+                      properties:
+                        activeBuffs:
+                          items:
+                            properties:
+                              acquiredAtMatchIndex:
+                                minimum: 0
+                                type: integer
+                              id:
+                                enum:
+                                  - privilege_favor
+                                  - deep_pockets
+                                  - down_payment
+                                  - extortion
+                                  - double_agent
+                                type: string
+                              owner:
+                                enum:
+                                  - p1
+                                  - p2
+                                type: string
+                              source:
+                                enum:
+                                  - starter
+                                  - reward
+                                type: string
+                              state:
+                                additionalProperties:
+                                  anyOf:
+                                    - type: string
+                                    - type: number
+                                    - type: boolean
+                                    - type: "null"
+                                    - type: "null"
+                                type: object
+                            required:
+                              - id
+                              - owner
+                              - source
+                              - acquiredAtMatchIndex
+                              - state
+                            type: object
+                          type: array
+                        losses:
+                          maximum: 1
+                          minimum: 0
+                          type: integer
+                        matchIndex:
+                          minimum: 1
+                          type: integer
+                        runId:
+                          minLength: 1
+                          type: string
+                        wins:
+                          maximum: 3
+                          minimum: 0
+                          type: integer
+                      required:
+                        - runId
+                        - matchIndex
+                        - wins
+                        - losses
+                        - activeBuffs
+                      type:
+                        - object
+                        - "null"
                     schemaVersion:
                       enum:
-                        - 5.0.0
+                        - 6.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -44968,6 +46287,7 @@ components:
                     - eventLog
                     - replayCursor
                     - sequence
+                    - runContext
                     - activeEffects
                     - effectPrompts
                     - visibility
@@ -45376,7 +46696,7 @@ components:
                       type: array
                     engineVersion:
                       enum:
-                        - 2026.04-step4
+                        - 2026.04-step7
                       type: string
                     eventLog:
                       items:
@@ -46814,9 +48134,75 @@ components:
                       enum:
                         - "2026.1"
                       type: string
+                    runContext:
+                      properties:
+                        activeBuffs:
+                          items:
+                            properties:
+                              acquiredAtMatchIndex:
+                                minimum: 0
+                                type: integer
+                              id:
+                                enum:
+                                  - privilege_favor
+                                  - deep_pockets
+                                  - down_payment
+                                  - extortion
+                                  - double_agent
+                                type: string
+                              owner:
+                                enum:
+                                  - p1
+                                  - p2
+                                type: string
+                              source:
+                                enum:
+                                  - starter
+                                  - reward
+                                type: string
+                              state:
+                                additionalProperties:
+                                  anyOf:
+                                    - type: string
+                                    - type: number
+                                    - type: boolean
+                                    - type: "null"
+                                    - type: "null"
+                                type: object
+                            required:
+                              - id
+                              - owner
+                              - source
+                              - acquiredAtMatchIndex
+                              - state
+                            type: object
+                          type: array
+                        losses:
+                          maximum: 1
+                          minimum: 0
+                          type: integer
+                        matchIndex:
+                          minimum: 1
+                          type: integer
+                        runId:
+                          minLength: 1
+                          type: string
+                        wins:
+                          maximum: 3
+                          minimum: 0
+                          type: integer
+                      required:
+                        - runId
+                        - matchIndex
+                        - wins
+                        - losses
+                        - activeBuffs
+                      type:
+                        - object
+                        - "null"
                     schemaVersion:
                       enum:
-                        - 5.0.0
+                        - 6.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -46838,6 +48224,7 @@ components:
                     - eventLog
                     - replayCursor
                     - sequence
+                    - runContext
                     - activeEffects
                     - effectPrompts
                     - visibility
@@ -47705,7 +49092,7 @@ components:
                       type: array
                     engineVersion:
                       enum:
-                        - 2026.04-step4
+                        - 2026.04-step7
                       type: string
                     eventLog:
                       items:
@@ -49143,9 +50530,75 @@ components:
                       enum:
                         - "2026.1"
                       type: string
+                    runContext:
+                      properties:
+                        activeBuffs:
+                          items:
+                            properties:
+                              acquiredAtMatchIndex:
+                                minimum: 0
+                                type: integer
+                              id:
+                                enum:
+                                  - privilege_favor
+                                  - deep_pockets
+                                  - down_payment
+                                  - extortion
+                                  - double_agent
+                                type: string
+                              owner:
+                                enum:
+                                  - p1
+                                  - p2
+                                type: string
+                              source:
+                                enum:
+                                  - starter
+                                  - reward
+                                type: string
+                              state:
+                                additionalProperties:
+                                  anyOf:
+                                    - type: string
+                                    - type: number
+                                    - type: boolean
+                                    - type: "null"
+                                    - type: "null"
+                                type: object
+                            required:
+                              - id
+                              - owner
+                              - source
+                              - acquiredAtMatchIndex
+                              - state
+                            type: object
+                          type: array
+                        losses:
+                          maximum: 1
+                          minimum: 0
+                          type: integer
+                        matchIndex:
+                          minimum: 1
+                          type: integer
+                        runId:
+                          minLength: 1
+                          type: string
+                        wins:
+                          maximum: 3
+                          minimum: 0
+                          type: integer
+                      required:
+                        - runId
+                        - matchIndex
+                        - wins
+                        - losses
+                        - activeBuffs
+                      type:
+                        - object
+                        - "null"
                     schemaVersion:
                       enum:
-                        - 5.0.0
+                        - 6.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -49301,6 +50754,7 @@ components:
                     - eventLog
                     - replayCursor
                     - sequence
+                    - runContext
                     - activeEffects
                     - effectPrompts
                     - visibility
@@ -49709,7 +51163,7 @@ components:
                       type: array
                     engineVersion:
                       enum:
-                        - 2026.04-step4
+                        - 2026.04-step7
                       type: string
                     eventLog:
                       items:
@@ -51147,9 +52601,75 @@ components:
                       enum:
                         - "2026.1"
                       type: string
+                    runContext:
+                      properties:
+                        activeBuffs:
+                          items:
+                            properties:
+                              acquiredAtMatchIndex:
+                                minimum: 0
+                                type: integer
+                              id:
+                                enum:
+                                  - privilege_favor
+                                  - deep_pockets
+                                  - down_payment
+                                  - extortion
+                                  - double_agent
+                                type: string
+                              owner:
+                                enum:
+                                  - p1
+                                  - p2
+                                type: string
+                              source:
+                                enum:
+                                  - starter
+                                  - reward
+                                type: string
+                              state:
+                                additionalProperties:
+                                  anyOf:
+                                    - type: string
+                                    - type: number
+                                    - type: boolean
+                                    - type: "null"
+                                    - type: "null"
+                                type: object
+                            required:
+                              - id
+                              - owner
+                              - source
+                              - acquiredAtMatchIndex
+                              - state
+                            type: object
+                          type: array
+                        losses:
+                          maximum: 1
+                          minimum: 0
+                          type: integer
+                        matchIndex:
+                          minimum: 1
+                          type: integer
+                        runId:
+                          minLength: 1
+                          type: string
+                        wins:
+                          maximum: 3
+                          minimum: 0
+                          type: integer
+                      required:
+                        - runId
+                        - matchIndex
+                        - wins
+                        - losses
+                        - activeBuffs
+                      type:
+                        - object
+                        - "null"
                     schemaVersion:
                       enum:
-                        - 5.0.0
+                        - 6.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -51171,6 +52691,7 @@ components:
                     - eventLog
                     - replayCursor
                     - sequence
+                    - runContext
                     - activeEffects
                     - effectPrompts
                     - visibility
@@ -52037,7 +53558,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step4
+                    - 2026.04-step7
                   type: string
                 eventLog:
                   items:
@@ -53475,9 +54996,75 @@ components:
                   enum:
                     - "2026.1"
                   type: string
+                runContext:
+                  properties:
+                    activeBuffs:
+                      items:
+                        properties:
+                          acquiredAtMatchIndex:
+                            minimum: 0
+                            type: integer
+                          id:
+                            enum:
+                              - privilege_favor
+                              - deep_pockets
+                              - down_payment
+                              - extortion
+                              - double_agent
+                            type: string
+                          owner:
+                            enum:
+                              - p1
+                              - p2
+                            type: string
+                          source:
+                            enum:
+                              - starter
+                              - reward
+                            type: string
+                          state:
+                            additionalProperties:
+                              anyOf:
+                                - type: string
+                                - type: number
+                                - type: boolean
+                                - type: "null"
+                                - type: "null"
+                            type: object
+                        required:
+                          - id
+                          - owner
+                          - source
+                          - acquiredAtMatchIndex
+                          - state
+                        type: object
+                      type: array
+                    losses:
+                      maximum: 1
+                      minimum: 0
+                      type: integer
+                    matchIndex:
+                      minimum: 1
+                      type: integer
+                    runId:
+                      minLength: 1
+                      type: string
+                    wins:
+                      maximum: 3
+                      minimum: 0
+                      type: integer
+                  required:
+                    - runId
+                    - matchIndex
+                    - wins
+                    - losses
+                    - activeBuffs
+                  type:
+                    - object
+                    - "null"
                 schemaVersion:
                   enum:
-                    - 5.0.0
+                    - 6.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -53499,6 +55086,7 @@ components:
                 - eventLog
                 - replayCursor
                 - sequence
+                - runContext
                 - activeEffects
                 - effectPrompts
                 - visibility
@@ -53565,6 +55153,216 @@ components:
             - type
             - error
           type: object
+    RunContext:
+      properties:
+        activeBuffs:
+          items:
+            properties:
+              acquiredAtMatchIndex:
+                minimum: 0
+                type: integer
+              id:
+                enum:
+                  - privilege_favor
+                  - deep_pockets
+                  - down_payment
+                  - extortion
+                  - double_agent
+                type: string
+              owner:
+                enum:
+                  - p1
+                  - p2
+                type: string
+              source:
+                enum:
+                  - starter
+                  - reward
+                type: string
+              state:
+                additionalProperties:
+                  anyOf:
+                    - type: string
+                    - type: number
+                    - type: boolean
+                    - type: "null"
+                    - type: "null"
+                type: object
+            required:
+              - id
+              - owner
+              - source
+              - acquiredAtMatchIndex
+              - state
+            type: object
+          type: array
+        losses:
+          maximum: 1
+          minimum: 0
+          type: integer
+        matchIndex:
+          minimum: 1
+          type: integer
+        runId:
+          minLength: 1
+          type: string
+        wins:
+          maximum: 3
+          minimum: 0
+          type: integer
+      required:
+        - runId
+        - matchIndex
+        - wins
+        - losses
+        - activeBuffs
+      type: object
+    RunRewardOffer:
+      properties:
+        offerId:
+          minLength: 1
+          type: string
+        options:
+          items:
+            enum:
+              - privilege_favor
+              - deep_pockets
+              - down_payment
+              - extortion
+              - double_agent
+            type: string
+          maxItems: 3
+          minItems: 1
+          type: array
+        source:
+          enum:
+            - starter
+            - victory
+          type: string
+      required:
+        - offerId
+        - source
+        - options
+      type: object
+    RunState:
+      properties:
+        activeMatchId:
+          minLength: 1
+          type:
+            - string
+            - "null"
+        currentOffer:
+          properties:
+            offerId:
+              minLength: 1
+              type: string
+            options:
+              items:
+                enum:
+                  - privilege_favor
+                  - deep_pockets
+                  - down_payment
+                  - extortion
+                  - double_agent
+                type: string
+              maxItems: 3
+              minItems: 1
+              type: array
+            source:
+              enum:
+                - starter
+                - victory
+              type: string
+          required:
+            - offerId
+            - source
+            - options
+          type:
+            - object
+            - "null"
+        losses:
+          maximum: 1
+          minimum: 0
+          type: integer
+        matchIndex:
+          minimum: 1
+          type: integer
+        mode:
+          enum:
+            - local
+            - ai
+            - online
+          type: string
+        ownedBuffs:
+          items:
+            properties:
+              acquiredAtMatchIndex:
+                minimum: 0
+                type: integer
+              id:
+                enum:
+                  - privilege_favor
+                  - deep_pockets
+                  - down_payment
+                  - extortion
+                  - double_agent
+                type: string
+              owner:
+                enum:
+                  - p1
+                  - p2
+                type: string
+              source:
+                enum:
+                  - starter
+                  - reward
+                type: string
+              state:
+                additionalProperties:
+                  anyOf:
+                    - type: string
+                    - type: number
+                    - type: boolean
+                    - type: "null"
+                    - type: "null"
+                type: object
+            required:
+              - id
+              - owner
+              - source
+              - acquiredAtMatchIndex
+              - state
+            type: object
+          type: array
+        runId:
+          minLength: 1
+          type: string
+        seed:
+          minimum: 0
+          type: integer
+        status:
+          enum:
+            - draft
+            - active
+            - won
+            - lost
+          type: string
+        wins:
+          maximum: 3
+          minimum: 0
+          type: integer
+      required:
+        - runId
+        - seed
+        - mode
+        - matchIndex
+        - activeMatchId
+        - ownedBuffs
+        - wins
+        - losses
+        - status
+        - currentOffer
+      type: object
     SpectatorSnapshot:
       properties:
         activeEffects:
@@ -53968,7 +55766,7 @@ components:
           type: array
         engineVersion:
           enum:
-            - 2026.04-step4
+            - 2026.04-step7
           type: string
         eventLog:
           items:
@@ -55406,9 +57204,75 @@ components:
           enum:
             - "2026.1"
           type: string
+        runContext:
+          properties:
+            activeBuffs:
+              items:
+                properties:
+                  acquiredAtMatchIndex:
+                    minimum: 0
+                    type: integer
+                  id:
+                    enum:
+                      - privilege_favor
+                      - deep_pockets
+                      - down_payment
+                      - extortion
+                      - double_agent
+                    type: string
+                  owner:
+                    enum:
+                      - p1
+                      - p2
+                    type: string
+                  source:
+                    enum:
+                      - starter
+                      - reward
+                    type: string
+                  state:
+                    additionalProperties:
+                      anyOf:
+                        - type: string
+                        - type: number
+                        - type: boolean
+                        - type: "null"
+                        - type: "null"
+                    type: object
+                required:
+                  - id
+                  - owner
+                  - source
+                  - acquiredAtMatchIndex
+                  - state
+                type: object
+              type: array
+            losses:
+              maximum: 1
+              minimum: 0
+              type: integer
+            matchIndex:
+              minimum: 1
+              type: integer
+            runId:
+              minLength: 1
+              type: string
+            wins:
+              maximum: 3
+              minimum: 0
+              type: integer
+          required:
+            - runId
+            - matchIndex
+            - wins
+            - losses
+            - activeBuffs
+          type:
+            - object
+            - "null"
         schemaVersion:
           enum:
-            - 5.0.0
+            - 6.0.0
           type: string
         sequence:
           minimum: 0
@@ -55430,6 +57294,7 @@ components:
         - eventLog
         - replayCursor
         - sequence
+        - runContext
         - activeEffects
         - effectPrompts
         - visibility
@@ -56728,7 +58593,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step4
+                    - 2026.04-step7
                   type: string
                 eventLog:
                   items:
@@ -58166,9 +60031,75 @@ components:
                   enum:
                     - "2026.1"
                   type: string
+                runContext:
+                  properties:
+                    activeBuffs:
+                      items:
+                        properties:
+                          acquiredAtMatchIndex:
+                            minimum: 0
+                            type: integer
+                          id:
+                            enum:
+                              - privilege_favor
+                              - deep_pockets
+                              - down_payment
+                              - extortion
+                              - double_agent
+                            type: string
+                          owner:
+                            enum:
+                              - p1
+                              - p2
+                            type: string
+                          source:
+                            enum:
+                              - starter
+                              - reward
+                            type: string
+                          state:
+                            additionalProperties:
+                              anyOf:
+                                - type: string
+                                - type: number
+                                - type: boolean
+                                - type: "null"
+                                - type: "null"
+                            type: object
+                        required:
+                          - id
+                          - owner
+                          - source
+                          - acquiredAtMatchIndex
+                          - state
+                        type: object
+                      type: array
+                    losses:
+                      maximum: 1
+                      minimum: 0
+                      type: integer
+                    matchIndex:
+                      minimum: 1
+                      type: integer
+                    runId:
+                      minLength: 1
+                      type: string
+                    wins:
+                      maximum: 3
+                      minimum: 0
+                      type: integer
+                  required:
+                    - runId
+                    - matchIndex
+                    - wins
+                    - losses
+                    - activeBuffs
+                  type:
+                    - object
+                    - "null"
                 schemaVersion:
                   enum:
-                    - 5.0.0
+                    - 6.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -58324,6 +60255,7 @@ components:
                 - eventLog
                 - replayCursor
                 - sequence
+                - runContext
                 - activeEffects
                 - effectPrompts
                 - visibility
@@ -58732,7 +60664,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step4
+                    - 2026.04-step7
                   type: string
                 eventLog:
                   items:
@@ -60170,9 +62102,75 @@ components:
                   enum:
                     - "2026.1"
                   type: string
+                runContext:
+                  properties:
+                    activeBuffs:
+                      items:
+                        properties:
+                          acquiredAtMatchIndex:
+                            minimum: 0
+                            type: integer
+                          id:
+                            enum:
+                              - privilege_favor
+                              - deep_pockets
+                              - down_payment
+                              - extortion
+                              - double_agent
+                            type: string
+                          owner:
+                            enum:
+                              - p1
+                              - p2
+                            type: string
+                          source:
+                            enum:
+                              - starter
+                              - reward
+                            type: string
+                          state:
+                            additionalProperties:
+                              anyOf:
+                                - type: string
+                                - type: number
+                                - type: boolean
+                                - type: "null"
+                                - type: "null"
+                            type: object
+                        required:
+                          - id
+                          - owner
+                          - source
+                          - acquiredAtMatchIndex
+                          - state
+                        type: object
+                      type: array
+                    losses:
+                      maximum: 1
+                      minimum: 0
+                      type: integer
+                    matchIndex:
+                      minimum: 1
+                      type: integer
+                    runId:
+                      minLength: 1
+                      type: string
+                    wins:
+                      maximum: 3
+                      minimum: 0
+                      type: integer
+                  required:
+                    - runId
+                    - matchIndex
+                    - wins
+                    - losses
+                    - activeBuffs
+                  type:
+                    - object
+                    - "null"
                 schemaVersion:
                   enum:
-                    - 5.0.0
+                    - 6.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -60194,6 +62192,7 @@ components:
                 - eventLog
                 - replayCursor
                 - sequence
+                - runContext
                 - activeEffects
                 - effectPrompts
                 - visibility
@@ -60614,7 +62613,7 @@ components:
               type: array
             engineVersion:
               enum:
-                - 2026.04-step4
+                - 2026.04-step7
               type: string
             eventLog:
               items:
@@ -62052,9 +64051,75 @@ components:
               enum:
                 - "2026.1"
               type: string
+            runContext:
+              properties:
+                activeBuffs:
+                  items:
+                    properties:
+                      acquiredAtMatchIndex:
+                        minimum: 0
+                        type: integer
+                      id:
+                        enum:
+                          - privilege_favor
+                          - deep_pockets
+                          - down_payment
+                          - extortion
+                          - double_agent
+                        type: string
+                      owner:
+                        enum:
+                          - p1
+                          - p2
+                        type: string
+                      source:
+                        enum:
+                          - starter
+                          - reward
+                        type: string
+                      state:
+                        additionalProperties:
+                          anyOf:
+                            - type: string
+                            - type: number
+                            - type: boolean
+                            - type: "null"
+                            - type: "null"
+                        type: object
+                    required:
+                      - id
+                      - owner
+                      - source
+                      - acquiredAtMatchIndex
+                      - state
+                    type: object
+                  type: array
+                losses:
+                  maximum: 1
+                  minimum: 0
+                  type: integer
+                matchIndex:
+                  minimum: 1
+                  type: integer
+                runId:
+                  minLength: 1
+                  type: string
+                wins:
+                  maximum: 3
+                  minimum: 0
+                  type: integer
+              required:
+                - runId
+                - matchIndex
+                - wins
+                - losses
+                - activeBuffs
+              type:
+                - object
+                - "null"
             schemaVersion:
               enum:
-                - 5.0.0
+                - 6.0.0
               type: string
             sequence:
               minimum: 0
@@ -62210,6 +64275,7 @@ components:
             - eventLog
             - replayCursor
             - sequence
+            - runContext
             - activeEffects
             - effectPrompts
             - visibility
@@ -62618,7 +64684,7 @@ components:
               type: array
             engineVersion:
               enum:
-                - 2026.04-step4
+                - 2026.04-step7
               type: string
             eventLog:
               items:
@@ -64056,9 +66122,75 @@ components:
               enum:
                 - "2026.1"
               type: string
+            runContext:
+              properties:
+                activeBuffs:
+                  items:
+                    properties:
+                      acquiredAtMatchIndex:
+                        minimum: 0
+                        type: integer
+                      id:
+                        enum:
+                          - privilege_favor
+                          - deep_pockets
+                          - down_payment
+                          - extortion
+                          - double_agent
+                        type: string
+                      owner:
+                        enum:
+                          - p1
+                          - p2
+                        type: string
+                      source:
+                        enum:
+                          - starter
+                          - reward
+                        type: string
+                      state:
+                        additionalProperties:
+                          anyOf:
+                            - type: string
+                            - type: number
+                            - type: boolean
+                            - type: "null"
+                            - type: "null"
+                        type: object
+                    required:
+                      - id
+                      - owner
+                      - source
+                      - acquiredAtMatchIndex
+                      - state
+                    type: object
+                  type: array
+                losses:
+                  maximum: 1
+                  minimum: 0
+                  type: integer
+                matchIndex:
+                  minimum: 1
+                  type: integer
+                runId:
+                  minLength: 1
+                  type: string
+                wins:
+                  maximum: 3
+                  minimum: 0
+                  type: integer
+              required:
+                - runId
+                - matchIndex
+                - wins
+                - losses
+                - activeBuffs
+              type:
+                - object
+                - "null"
             schemaVersion:
               enum:
-                - 5.0.0
+                - 6.0.0
               type: string
             sequence:
               minimum: 0
@@ -64080,6 +66212,7 @@ components:
             - eventLog
             - replayCursor
             - sequence
+            - runContext
             - activeEffects
             - effectPrompts
             - visibility
@@ -64088,7 +66221,7 @@ defaultContentType: application/json
 info:
   description: Authoritative room-service WebSocket protocol with filtered snapshots and Step 02.5 effect lifecycle envelopes.
   title: Gem Duel Realtime Contracts
-  version: 5.0.0
+  version: 6.0.0
 operations:
   joinRoomSocket:
     action: send

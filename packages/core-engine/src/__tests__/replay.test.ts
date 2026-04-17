@@ -10,12 +10,11 @@ import {
 } from '../index';
 import { buildGoldenReplayBundles } from './golden-replay-scenarios';
 import { createBootstrappedLocalActor, makeTestPorts } from './test-ports';
-import buyChainedAbilityReplay from '../../__replays__/golden/buy-chained-ability.step04.json';
-import replenishPrivilegeShiftReplay from '../../__replays__/golden/replenish-privilege-shift.step04.json';
-import reserveBlindReplay from '../../__replays__/golden/reserve-blind.step04.json';
-import reserveFaceUpReplay from '../../__replays__/golden/reserve-face-up.step04.json';
-import royalMilestoneReplay from '../../__replays__/golden/royal-milestone-selection.step04.json';
-import takeThreeDiscardReplay from '../../__replays__/golden/take-three-discard.step04.json';
+import deepPocketsReplay from '../../__replays__/golden/deep-pockets-threshold.step07.json';
+import doubleAgentReplay from '../../__replays__/golden/double-agent-privilege-double.step07.json';
+import downPaymentReplay from '../../__replays__/golden/down-payment-reserve-buy.step07.json';
+import extortionReplay from '../../__replays__/golden/extortion-second-replenish.step07.json';
+import privilegeFavorReplay from '../../__replays__/golden/privilege-favor-setup.step07.json';
 
 const ZERO_INVENTORY = {
     blue: 0,
@@ -136,17 +135,16 @@ describe('replay helpers', () => {
         expect(verification.value.replayedSnapshot).toEqual(finalSnapshot);
     });
 
-    it('verifies all committed Step 04 golden replay fixtures', () => {
+    it('verifies all committed Step 07 golden replay fixtures', () => {
         const committedBundles = new Map<string, ReplayBundle>([
-            ['buy-chained-ability.step04.json', buyChainedAbilityReplay as ReplayBundle],
+            ['deep-pockets-threshold.step07.json', deepPocketsReplay as unknown as ReplayBundle],
             [
-                'replenish-privilege-shift.step04.json',
-                replenishPrivilegeShiftReplay as ReplayBundle,
+                'double-agent-privilege-double.step07.json',
+                doubleAgentReplay as unknown as ReplayBundle,
             ],
-            ['reserve-blind.step04.json', reserveBlindReplay as ReplayBundle],
-            ['reserve-face-up.step04.json', reserveFaceUpReplay as ReplayBundle],
-            ['royal-milestone-selection.step04.json', royalMilestoneReplay as ReplayBundle],
-            ['take-three-discard.step04.json', takeThreeDiscardReplay as ReplayBundle],
+            ['down-payment-reserve-buy.step07.json', downPaymentReplay as unknown as ReplayBundle],
+            ['extortion-second-replenish.step07.json', extortionReplay as unknown as ReplayBundle],
+            ['privilege-favor-setup.step07.json', privilegeFavorReplay as unknown as ReplayBundle],
         ]);
 
         for (const scenario of buildGoldenReplayBundles()) {

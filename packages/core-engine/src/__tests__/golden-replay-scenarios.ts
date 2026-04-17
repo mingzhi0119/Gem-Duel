@@ -5,13 +5,15 @@ import type {
     ReplayCommand,
     TypedResult,
 } from '@gem-duel/contracts';
+import { createRunContext, type BuffId } from '@gem-duel/domain';
 import {
     buildReplayBundle,
+    createMatchActor,
     createMatchActorFromSnapshot,
     dispatchCommand,
     readSnapshot,
 } from '../index';
-import { createBootstrappedLocalActor, makeTestPorts } from './test-ports';
+import { createBootstrappedLocalActor, DEFAULT_FLAGS, makeTestPorts } from './test-ports';
 
 const ZERO_INVENTORY = {
     blue: 0,
@@ -35,48 +37,38 @@ const createReplayCommand = (
     command,
 });
 
-const getBootstrappedSnapshot = (seed: number) => {
-    const { actor } = createBootstrappedLocalActor(seed);
-    return readSnapshot(actor);
-};
+const createBuffRunContext = (
+    buffId: BuffId,
+    state: Record<string, string | number | boolean | null> = {}
+) =>
+    createRunContext('run-step07', 1, 0, 0, [
+        {
+            id: buffId,
+            owner: 'p1',
+            source: 'starter',
+            acquiredAtMatchIndex: 1,
+            state,
+        },
+    ]);
 
-const resetTurn = (snapshot: GameSnapshot, currentPlayer: 'p1' | 'p2' = 'p1') => {
-    snapshot.context.currentPlayer = currentPlayer;
-    snapshot.context.phase = 'turnIdle';
-    snapshot.context.winner = null;
-    snapshot.context.victoryReason = null;
-    snapshot.context.turn = {
-        turnNumber: 1,
-        segment: 'optional',
-        optionalStep: 'privilege',
-        mandatoryActionTaken: false,
-        pendingDiscardCount: 0,
-    };
-};
+const createGoldenFlags = (roguelike = true) => ({
+    ...DEFAULT_FLAGS,
+    roguelike,
+});
 
-const setBoardToken = (
-    snapshot: GameSnapshot,
-    positionId: GameSnapshot['board'][number]['positionId'],
-    token: GameSnapshot['board'][number]['token']
-) => {
-    const cell = snapshot.board.find((entry) => entry.positionId === positionId);
-    if (!cell) {
-        throw new Error(`Unknown board position ${positionId}.`);
-    }
-    cell.token = token;
-};
-
-const runScenario = (
-    seed: number,
-    initialSnapshot: GameSnapshot,
+const runScenarioFromActor = (
+    actorFactory: () => {
+        actor: ReturnType<typeof createMatchActor>;
+        seed: number;
+    },
     execute: (
         record: (
             command: GameCommand
         ) => TypedResult<{ snapshot: GameSnapshot; eventCount: number }>
     ) => void
 ): ReplayBundle => {
-    const { ports } = makeTestPorts(seed);
-    const actor = createMatchActorFromSnapshot(initialSnapshot, ports);
+    const { actor } = actorFactory();
+    const initialSnapshot = readSnapshot(actor);
     const commands: ReplayCommand[] = [];
 
     const record = (command: GameCommand) => {
@@ -100,218 +92,191 @@ const runScenario = (
     return buildReplayBundle(initialSnapshot, commands, readSnapshot(actor));
 };
 
-const buildTakeThreeDiscardReplay = () => {
-    const seed = 21;
-    const snapshot = getBootstrappedSnapshot(seed);
-    resetTurn(snapshot, 'p1');
+const createBootstrappedSnapshot = (seed: number) => {
+    const { actor } = createBootstrappedLocalActor(seed);
+    return readSnapshot(actor);
+};
+
+const buildPrivilegeFavorReplay = () => {
+    const seed = 31;
+    return {
+        filename: 'privilege-favor-setup.step07.json',
+        bundle: runScenarioFromActor(
+            () => ({
+                seed,
+                actor: createMatchActor(
+                    {
+                        seed,
+                        mode: 'local',
+                        flags: createGoldenFlags(),
+                        runContext: createBuffRunContext('privilege_favor'),
+                    },
+                    makeTestPorts(seed).ports
+                ),
+            }),
+            (record) => {
+                record({
+                    type: 'SELECT_MODE',
+                    mode: 'local',
+                    flags: createGoldenFlags(),
+                });
+                record({ type: 'START_MATCH' });
+            }
+        ),
+    };
+};
+
+const buildDownPaymentReplay = () => {
+    const seed = 32;
+    const snapshot = createBootstrappedSnapshot(seed);
+    snapshot.context.currentPlayer = 'p1';
+    snapshot.context.flags = createGoldenFlags();
+    snapshot.players.p1.inventory = { ...ZERO_INVENTORY };
+    snapshot.players.p1.reserveSlots[0] = {
+        slotId: 'reserve-1',
+        sourceLevel: 1,
+        card: {
+            cardId: 'reserved-discount-card',
+            level: 1,
+            points: 1,
+            crowns: 0,
+            printedBonusColor: 'blue',
+            bonusColor: 'blue',
+            bonusCount: 1,
+            cost: {
+                ...ZERO_INVENTORY,
+                red: 1,
+            },
+            ability: 'none',
+        },
+    };
+    snapshot.runContext = createBuffRunContext('down_payment');
+
+    return {
+        filename: 'down-payment-reserve-buy.step07.json',
+        bundle: runScenarioFromActor(
+            () => ({
+                seed,
+                actor: createMatchActorFromSnapshot(snapshot, makeTestPorts(seed).ports),
+            }),
+            (record) => {
+                record({ type: 'BEGIN_BUY' });
+                record({
+                    type: 'BUY_CARD',
+                    source: { kind: 'reserve', slotId: 'reserve-1' },
+                });
+            }
+        ),
+    };
+};
+
+const buildExtortionReplay = () => {
+    const seed = 33;
+    const snapshot = createBootstrappedSnapshot(seed);
+    snapshot.context.currentPlayer = 'p1';
+    snapshot.context.flags = createGoldenFlags();
+    snapshot.players.p2.inventory.red = 1;
+    snapshot.hiddenState.bag = ['blue'];
+    snapshot.board[0]!.token = null;
+    snapshot.runContext = createBuffRunContext('extortion', {
+        replenishCount: 1,
+    });
+
+    return {
+        filename: 'extortion-second-replenish.step07.json',
+        bundle: runScenarioFromActor(
+            () => ({
+                seed,
+                actor: createMatchActorFromSnapshot(snapshot, makeTestPorts(seed).ports),
+            }),
+            (record) => {
+                const replenished = record({ type: 'REPLENISH_BOARD' });
+                if (!replenished.ok) {
+                    throw new Error(replenished.error.message);
+                }
+                const prompt = replenished.value.snapshot.effectPrompts.find(
+                    (
+                        entry
+                    ): entry is Extract<
+                        (typeof replenished.value.snapshot.effectPrompts)[number],
+                        { atom: 'take_opponent_token' }
+                    > => entry.atom === 'take_opponent_token'
+                );
+                if (!prompt?.allowedColors[0]) {
+                    throw new Error('Expected extortion to surface a take_opponent_token prompt.');
+                }
+                record({
+                    type: 'STEAL_OPPONENT_TOKEN',
+                    effectId: prompt.effectId,
+                    color: prompt.allowedColors[0],
+                });
+            }
+        ),
+    };
+};
+
+const buildDoubleAgentReplay = () => {
+    const seed = 34;
+    const snapshot = createBootstrappedSnapshot(seed);
+    snapshot.context.currentPlayer = 'p1';
+    snapshot.context.flags = createGoldenFlags();
+    snapshot.players.p1.privileges = 1;
+    snapshot.runContext = createBuffRunContext('double_agent');
+    snapshot.board[0]!.token = 'blue';
+    snapshot.board[1]!.token = 'green';
+
+    return {
+        filename: 'double-agent-privilege-double.step07.json',
+        bundle: runScenarioFromActor(
+            () => ({
+                seed,
+                actor: createMatchActorFromSnapshot(snapshot, makeTestPorts(seed).ports),
+            }),
+            (record) => {
+                record({ type: 'BEGIN_PRIVILEGE' });
+                record({
+                    type: 'USE_PRIVILEGE',
+                    positions: ['r2c2', 'r2c3'],
+                });
+            }
+        ),
+    };
+};
+
+const buildDeepPocketsReplay = () => {
+    const seed = 35;
+    const snapshot = createBootstrappedSnapshot(seed);
+    snapshot.context.currentPlayer = 'p1';
+    snapshot.context.flags = createGoldenFlags();
     snapshot.players.p1.inventory = {
         ...ZERO_INVENTORY,
-        blue: 8,
+        blue: 11,
     };
-    snapshot.players.p1.privileges = 0;
-    snapshot.players.p2.privileges = 0;
-    snapshot.privilegeSupply = 3;
-    setBoardToken(snapshot, 'r0c0', 'red');
-    setBoardToken(snapshot, 'r0c1', 'red');
-    setBoardToken(snapshot, 'r0c2', 'red');
+    snapshot.runContext = createBuffRunContext('deep_pockets');
+    snapshot.board[0]!.token = 'red';
 
     return {
-        filename: 'take-three-discard.step04.json',
-        bundle: runScenario(seed, snapshot, (record) => {
-            record({ type: 'BEGIN_GEM_SELECTION' });
-            record({ type: 'TAKE_TOKENS', positions: ['r0c0', 'r0c1', 'r0c2'] });
-            record({ type: 'DISCARD_TOKEN', color: 'blue' });
-        }),
-    };
-};
-
-const buildReplenishReplay = () => {
-    const seed = 22;
-    const snapshot = getBootstrappedSnapshot(seed);
-    resetTurn(snapshot, 'p1');
-    snapshot.players.p1.privileges = 0;
-    snapshot.players.p2.privileges = 0;
-    snapshot.privilegeSupply = 3;
-    snapshot.hiddenState.bag = ['blue', 'white'];
-    setBoardToken(snapshot, 'r0c0', null);
-    setBoardToken(snapshot, 'r0c1', null);
-
-    return {
-        filename: 'replenish-privilege-shift.step04.json',
-        bundle: runScenario(seed, snapshot, (record) => {
-            record({ type: 'REPLENISH_BOARD' });
-        }),
-    };
-};
-
-const buildReserveFaceUpReplay = () => {
-    const seed = 23;
-    const snapshot = getBootstrappedSnapshot(seed);
-    resetTurn(snapshot, 'p1');
-    snapshot.players.p1.inventory = { ...ZERO_INVENTORY };
-    setBoardToken(snapshot, 'r0c0', 'gold');
-    const levelOneRow = snapshot.pyramid.find((row) => row.level === 1);
-    if (!levelOneRow) {
-        throw new Error('Expected a level-1 row for face-up reserve.');
-    }
-    levelOneRow.slots[0]!.card = {
-        cardId: 'face-up-reserve-card',
-        level: 1,
-        points: 0,
-        crowns: 0,
-        printedBonusColor: 'green',
-        bonusColor: 'green',
-        bonusCount: 1,
-        cost: { ...ZERO_INVENTORY },
-        ability: 'none',
-    };
-
-    return {
-        filename: 'reserve-face-up.step04.json',
-        bundle: runScenario(seed, snapshot, (record) => {
-            record({ type: 'BEGIN_RESERVE' });
-            record({
-                type: 'RESERVE_CARD',
-                goldPosition: 'r0c0',
-                source: { kind: 'pyramid', level: 1, slot: 1 },
-            });
-        }),
-    };
-};
-
-const buildReserveBlindReplay = () => {
-    const seed = 24;
-    const snapshot = getBootstrappedSnapshot(seed);
-    resetTurn(snapshot, 'p1');
-    snapshot.players.p1.inventory = { ...ZERO_INVENTORY };
-    setBoardToken(snapshot, 'r0c1', 'gold');
-    snapshot.hiddenState.deckOrder.level1 = ['l1-bl-0', ...snapshot.hiddenState.deckOrder.level1];
-
-    return {
-        filename: 'reserve-blind.step04.json',
-        bundle: runScenario(seed, snapshot, (record) => {
-            record({ type: 'BEGIN_RESERVE' });
-            record({
-                type: 'RESERVE_CARD',
-                goldPosition: 'r0c1',
-                source: { kind: 'deck', level: 1 },
-            });
-        }),
-    };
-};
-
-const buildBuyChainReplay = () => {
-    const seed = 25;
-    const snapshot = getBootstrappedSnapshot(seed);
-    resetTurn(snapshot, 'p1');
-    snapshot.players.p1.inventory = { ...ZERO_INVENTORY };
-    setBoardToken(snapshot, 'r2c2', 'blue');
-    const levelOneRow = snapshot.pyramid.find((row) => row.level === 1);
-    if (!levelOneRow) {
-        throw new Error('Expected a level-1 row for chained buy.');
-    }
-    levelOneRow.slots[0]!.card = {
-        cardId: 'bonus-gem-card',
-        level: 1,
-        points: 0,
-        crowns: 0,
-        printedBonusColor: 'blue',
-        bonusColor: 'blue',
-        bonusCount: 1,
-        cost: { ...ZERO_INVENTORY },
-        ability: 'bonus_gem',
-    };
-
-    return {
-        filename: 'buy-chained-ability.step04.json',
-        bundle: runScenario(seed, snapshot, (record) => {
-            record({ type: 'BEGIN_BUY' });
-            const bought = record({
-                type: 'BUY_CARD',
-                source: { kind: 'pyramid', level: 1, slot: 1 },
-            });
-            if (!bought.ok) {
-                throw new Error(bought.error.message);
+        filename: 'deep-pockets-threshold.step07.json',
+        bundle: runScenarioFromActor(
+            () => ({
+                seed,
+                actor: createMatchActorFromSnapshot(snapshot, makeTestPorts(seed).ports),
+            }),
+            (record) => {
+                record({ type: 'BEGIN_GEM_SELECTION' });
+                record({
+                    type: 'TAKE_TOKENS',
+                    positions: ['r2c2'],
+                });
             }
-            const prompt = bought.value.snapshot.effectPrompts.find(
-                (
-                    entry
-                ): entry is Extract<
-                    (typeof bought.value.snapshot.effectPrompts)[number],
-                    { atom: 'take_board_token' }
-                > => entry.atom === 'take_board_token'
-            );
-            if (!prompt) {
-                throw new Error('Expected a take_board_token prompt.');
-            }
-            record({
-                type: 'TAKE_EFFECT_BOARD_TOKEN',
-                effectId: prompt.effectId,
-                positionId: 'r2c2',
-            });
-        }),
-    };
-};
-
-const buildRoyalReplay = () => {
-    const seed = 26;
-    const snapshot = getBootstrappedSnapshot(seed);
-    resetTurn(snapshot, 'p1');
-    snapshot.players.p1.inventory = { ...ZERO_INVENTORY };
-    snapshot.players.p1.tableau = [];
-    snapshot.players.p1.royals = [];
-    snapshot.players.p1.score = 0;
-    snapshot.players.p1.crowns = 0;
-    snapshot.royalSupply = [
-        {
-            royalId: 'royal-3pts',
-            points: 3,
-            crowns: 0,
-            ability: 'none',
-            label: 'The Queen',
-        },
-        {
-            royalId: 'royal-scroll',
-            points: 2,
-            crowns: 0,
-            ability: 'scroll',
-            label: 'The Judge',
-        },
-    ];
-    const levelOneRow = snapshot.pyramid.find((row) => row.level === 1);
-    if (!levelOneRow) {
-        throw new Error('Expected a level-1 row for royal replay.');
-    }
-    levelOneRow.slots[0]!.card = {
-        cardId: 'royal-threshold-card',
-        level: 1,
-        points: 0,
-        crowns: 3,
-        printedBonusColor: 'blue',
-        bonusColor: 'blue',
-        bonusCount: 1,
-        cost: { ...ZERO_INVENTORY },
-        ability: 'none',
-    };
-
-    return {
-        filename: 'royal-milestone-selection.step04.json',
-        bundle: runScenario(seed, snapshot, (record) => {
-            record({ type: 'BEGIN_BUY' });
-            record({
-                type: 'BUY_CARD',
-                source: { kind: 'pyramid', level: 1, slot: 1 },
-            });
-            record({ type: 'SELECT_ROYAL', royalId: 'royal-3pts' });
-        }),
+        ),
     };
 };
 
 export const buildGoldenReplayBundles = () => [
-    buildTakeThreeDiscardReplay(),
-    buildReplenishReplay(),
-    buildReserveFaceUpReplay(),
-    buildReserveBlindReplay(),
-    buildBuyChainReplay(),
-    buildRoyalReplay(),
+    buildPrivilegeFavorReplay(),
+    buildDownPaymentReplay(),
+    buildExtortionReplay(),
+    buildDoubleAgentReplay(),
+    buildDeepPocketsReplay(),
 ];

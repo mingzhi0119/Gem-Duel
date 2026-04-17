@@ -23,6 +23,7 @@
 - [`30-contracts/step-04-classic-rules-migration-note.md`](./30-contracts/step-04-classic-rules-migration-note.md): Step 04 classic command/snapshot/victory 迁移说明
 - [`30-contracts/step-05-room-service-authority-migration-note.md`](./30-contracts/step-05-room-service-authority-migration-note.md): Step 05 room-service authority、server-bound seat 与 room error 迁移说明
 - [`30-contracts/step-06-shell-ui-migration-note.md`](./30-contracts/step-06-shell-ui-migration-note.md): Step 06 shared shell/UI integration 与 viewer-scoped `availableActions` 迁移说明
+- [`30-contracts/step-07-run-buff-replay-migration-note.md`](./30-contracts/step-07-run-buff-replay-migration-note.md): Step 07 run/buff contract surface、snapshot `runContext` 与 replay inspector 迁移说明
 - [`40-operations/README.md`](./40-operations/README.md): 部署、观测、CI/CD 与运行策略
 - [`40-operations/room-service-authority-semantics.md`](./40-operations/room-service-authority-semantics.md): Step 05 room-service 权威语义、连接绑定、广播与 replay 存储触发
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent 工具、CI 护栏与 `.codex`/MCP 规划
@@ -57,6 +58,7 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`30-contracts/step-04-classic-rules-migration-note.md`](./30-contracts/step-04-classic-rules-migration-note.md): Step 04 migration note for classic commands, snapshot shape, and victory metadata
 - [`30-contracts/step-05-room-service-authority-migration-note.md`](./30-contracts/step-05-room-service-authority-migration-note.md): Step 05 migration note for room-service authority, server-bound seats, and room errors
 - [`30-contracts/step-06-shell-ui-migration-note.md`](./30-contracts/step-06-shell-ui-migration-note.md): Step 06 migration note for shared shell/UI integration and viewer-scoped `availableActions`
+- [`30-contracts/step-07-run-buff-replay-migration-note.md`](./30-contracts/step-07-run-buff-replay-migration-note.md): Step 07 migration note for the run/buff contract surface, snapshot `runContext`, and the replay inspector
 - [`40-operations/README.md`](./40-operations/README.md): Deployment, observability, CI/CD, and runtime strategy
 - [`40-operations/room-service-authority-semantics.md`](./40-operations/room-service-authority-semantics.md): Step 05 room-service authority semantics, connection binding, broadcast rules, and replay persistence
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent tooling, CI guardrails, and `.codex`/MCP planning

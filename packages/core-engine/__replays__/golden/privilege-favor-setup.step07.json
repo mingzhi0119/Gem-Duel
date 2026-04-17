@@ -2,7 +2,7 @@
     "schemaVersion": "6.0.0",
     "rulesetVersion": "2026.1",
     "engineVersion": "2026.04-step7",
-    "seed": 7,
+    "seed": 31,
     "initialSnapshot": {
         "schemaVersion": "6.0.0",
         "rulesetVersion": "2026.1",
@@ -12,15 +12,15 @@
             "matchId": "match-1",
             "schemaVersion": "6.0.0",
             "rulesetVersion": "2026.1",
-            "seed": 7,
+            "seed": 31,
             "mode": "local",
-            "phase": "turnIdle",
+            "phase": "initialization",
             "step": 0,
             "currentPlayer": "p1",
             "winner": null,
             "victoryReason": null,
             "flags": {
-                "roguelike": false,
+                "roguelike": true,
                 "onlineAuthoritative": false,
                 "aiEnabled": false
             },
@@ -302,7 +302,7 @@
                 "id": "p2",
                 "score": 0,
                 "crowns": 0,
-                "privileges": 1,
+                "privileges": 0,
                 "inventory": {
                     "blue": 0,
                     "white": 0,
@@ -336,7 +336,21 @@
         "eventLog": [],
         "replayCursor": null,
         "sequence": 0,
-        "runContext": null,
+        "runContext": {
+            "runId": "run-step07",
+            "matchIndex": 1,
+            "wins": 0,
+            "losses": 0,
+            "activeBuffs": [
+                {
+                    "id": "privilege_favor",
+                    "owner": "p1",
+                    "source": "starter",
+                    "acquiredAtMatchIndex": 1,
+                    "state": {}
+                }
+            ]
+        },
         "activeEffects": [],
         "effectPrompts": [],
         "hiddenState": {
@@ -354,20 +368,88 @@
     },
     "commands": [
         {
-            "clientCommandId": "cmd-1",
+            "clientCommandId": "golden-command-1",
             "expectedSeq": 0,
             "issuedBy": "p1",
             "command": {
-                "type": "BEGIN_GEM_SELECTION"
+                "type": "SELECT_MODE",
+                "mode": "local",
+                "flags": {
+                    "roguelike": true,
+                    "onlineAuthoritative": false,
+                    "aiEnabled": false
+                }
+            }
+        },
+        {
+            "clientCommandId": "golden-command-2",
+            "expectedSeq": 2,
+            "issuedBy": "p1",
+            "command": {
+                "type": "START_MATCH"
             }
         }
     ],
-    "events": [],
-    "finalStateHash": "hash-1",
+    "events": [
+        {
+            "type": "match.modeSelected",
+            "mode": "local"
+        },
+        {
+            "type": "phase.changed",
+            "phase": "modeSelection"
+        },
+        {
+            "type": "match.started"
+        },
+        {
+            "type": "phase.changed",
+            "phase": "turnIdle"
+        },
+        {
+            "type": "match.setupCompleted",
+            "firstPlayer": "p2",
+            "privilegeRecipient": "p1"
+        },
+        {
+            "type": "effect.spawned",
+            "effectId": "match-1-grant_privilege-6",
+            "parentEffectId": null,
+            "atom": "grant_privilege",
+            "hookPoint": "AFTER_MATCH_SETUP",
+            "source": "buff_hook",
+            "scope": "opposing_player",
+            "owner": "p1",
+            "sequence": 6,
+            "stage": "scheduled",
+            "rngNamespace": "match/match-1/effects/grant_privilege/6/match-1-grant_privilege-6"
+        },
+        {
+            "type": "effect.started",
+            "effectId": "match-1-grant_privilege-6",
+            "atom": "grant_privilege",
+            "sequence": 6,
+            "stage": "running"
+        },
+        {
+            "type": "privilege.awarded",
+            "player": "p1",
+            "source": "buff_hook"
+        },
+        {
+            "type": "effect.completed",
+            "effectId": "match-1-grant_privilege-6",
+            "atom": "grant_privilege",
+            "sequence": 6,
+            "stage": "completed",
+            "outcome": "resolved"
+        }
+    ],
+    "finalStateHash": "fnv1a-98e96721",
     "resultSummary": {
         "winner": null,
         "reason": null,
-        "turns": 0,
-        "finalSeq": 0
+        "turns": 9,
+        "finalSeq": 9
     }
 }

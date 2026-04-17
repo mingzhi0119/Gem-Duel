@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { createAiMatchSession, createLocalMatchSession } from '@gem-duel/application';
 import type { UiActionDescriptor } from '@gem-duel/contracts';
 import { MatchView, Section } from '@gem-duel/ui';
+import { AiTracePanel, ReplayInspectorPanel } from '../../components/session-panels';
 
 export function MatchPlayground({
     mode,
@@ -25,14 +26,12 @@ export function MatchPlayground({
             ? createAiMatchSession({ seed, flags })
             : createLocalMatchSession({ seed, flags });
     }, [aiEnabled, mode, seed]);
-    const [snapshot, setSnapshot] = useState(
-        sessionResult.ok ? sessionResult.value.viewModel() : null
-    );
+    const [, setRefreshKey] = useState(0);
     const [error, setError] = useState<string | null>(
         sessionResult.ok ? null : sessionResult.error.message
     );
 
-    if (!sessionResult.ok || !snapshot) {
+    if (!sessionResult.ok) {
         return (
             <Section title={`Interactive ${mode.toUpperCase()} Session`}>
                 <p>
@@ -45,6 +44,9 @@ export function MatchPlayground({
     }
 
     const session = sessionResult.value;
+    const viewModel = session.viewModel();
+    const replayInspector = session.replayInspector();
+    const aiTrace = session.aiTrace();
 
     const handleAction = (action: UiActionDescriptor) => {
         const result = session.dispatch(action.command);
@@ -54,20 +56,24 @@ export function MatchPlayground({
         }
 
         setError(null);
-        setSnapshot(session.viewModel());
+        setRefreshKey((value) => value + 1);
     };
 
     return (
-        <MatchView
-            viewModel={snapshot}
-            onSelect={handleAction}
-            error={error}
-            note={
-                <p className="gd-muted">
-                    ZH: 这是应用层 session 直接驱动核心引擎的最小闭环。 EN: This is the minimal
-                    vertical slice from the application layer to the deterministic core engine.
-                </p>
-            }
-        />
+        <>
+            <MatchView
+                viewModel={viewModel}
+                onSelect={handleAction}
+                error={error}
+                note={
+                    <p className="gd-muted">
+                        ZH: 这是应用层 session 直接驱动核心引擎的最小闭环。 EN: This is the minimal
+                        vertical slice from the application layer to the deterministic core engine.
+                    </p>
+                }
+            />
+            {replayInspector.ok ? <ReplayInspectorPanel model={replayInspector.value} /> : null}
+            {mode === 'ai' ? <AiTracePanel traces={aiTrace} /> : null}
+        </>
     );
 }

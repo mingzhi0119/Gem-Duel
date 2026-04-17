@@ -7,6 +7,7 @@ import {
 } from '@gem-duel/domain';
 import type { GameEvent } from './game';
 import { GameEventSchema } from './game';
+import { RunContextSchema } from './run';
 import {
     ActiveEffectSchema,
     BoardCellSchema,
@@ -34,6 +35,7 @@ const SharedVisibleSnapshotSchema = z.object({
     eventLog: z.array(GameEventSchema),
     replayCursor: z.number().int().min(0).nullable(),
     sequence: z.number().int().min(0),
+    runContext: RunContextSchema.nullable(),
     activeEffects: z.array(ActiveEffectSchema),
     effectPrompts: z.array(EffectPromptSchema),
 });
@@ -106,6 +108,7 @@ const stripHiddenState = (snapshot: AuthoritativeSnapshot) => ({
     eventLog: snapshot.eventLog,
     replayCursor: snapshot.replayCursor,
     sequence: snapshot.sequence,
+    runContext: snapshot.runContext,
     activeEffects: snapshot.activeEffects,
     effectPrompts: snapshot.effectPrompts,
 });

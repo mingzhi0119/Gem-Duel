@@ -4,16 +4,13 @@ import {
     type BoardPositionId,
     type BonusColor,
     type DomainError,
-    type JewelCardState,
 } from '@gem-duel/domain';
 import type { GameCommand, GameSnapshot, TypedResult } from '@gem-duel/contracts';
 import {
     applyTurnState,
-    calculateCardPayment,
     type EnginePorts,
     findFirstEmptyReserveSlot,
     getBoardCell,
-    getBuySourceCard,
     getCurrentPlayerState,
     getPyramidSlot,
     getReserveSlot,
@@ -28,6 +25,12 @@ import {
     collectBoardTokens,
     recomputePlayerTotals,
 } from './classic-helpers';
+import {
+    calculateBuyPayment,
+    getGemLimit,
+    getPrivilegePositionCap,
+    getPrivilegeSpendCount,
+} from './buff-state';
 import {
     awardPrivilegeWithEffect,
     continueTurnFlow,
@@ -67,12 +70,17 @@ const canReserveCard = (snapshot: GameSnapshot) => {
 };
 
 const canBuyCard = (snapshot: GameSnapshot) => {
-    const player = getCurrentPlayerState(snapshot);
-    const availableCards = [
-        ...snapshot.pyramid.flatMap((row) => row.slots.map((slot) => slot.card).filter(Boolean)),
-        ...player.reserveSlots.map((slot) => slot.card).filter(Boolean),
-    ] as JewelCardState[];
-    return availableCards.some((card) => calculateCardPayment(player, card).affordable);
+    const sources = [
+        ...snapshot.pyramid.flatMap((row) =>
+            row.slots
+                .filter((slot) => slot.card !== null)
+                .map((slot) => ({ kind: 'pyramid' as const, level: row.level, slot: slot.slot }))
+        ),
+        ...getCurrentPlayerState(snapshot)
+            .reserveSlots.filter((slot) => slot.card !== null)
+            .map((slot) => ({ kind: 'reserve' as const, slotId: slot.slotId })),
+    ];
+    return sources.some((source) => calculateBuyPayment(snapshot, source)?.payment.affordable);
 };
 
 const createPhaseGuardError = (snapshot: GameSnapshot, command: GameCommand): DomainError =>
@@ -170,7 +178,18 @@ const validateCommandPayload = (
             return validateTokenLine(snapshot, command.positions);
         case 'USE_PRIVILEGE': {
             const player = getCurrentPlayerState(snapshot);
-            if (command.positions.length > player.privileges) {
+            const spendCount = getPrivilegeSpendCount(
+                snapshot,
+                player.id,
+                command.positions.length
+            );
+            if (command.positions.length > getPrivilegePositionCap(snapshot, player.id)) {
+                return createRuleGuardError(
+                    'ENGINE_RULE_GUARD',
+                    'Privilege selections exceed the current per-use cap.'
+                );
+            }
+            if (spendCount > player.privileges) {
                 return createRuleGuardError(
                     'ENGINE_RULE_GUARD',
                     'Cannot spend more privilege scrolls than the player owns.'
@@ -220,14 +239,14 @@ const validateCommandPayload = (
                   );
         }
         case 'BUY_CARD': {
-            const card = getBuySourceCard(snapshot, command.source);
-            if (!card) {
+            const priced = calculateBuyPayment(snapshot, command.source);
+            if (!priced) {
                 return createRuleGuardError(
                     'ENGINE_RULE_GUARD',
                     'The requested buy source does not contain a card.'
                 );
             }
-            return calculateCardPayment(getCurrentPlayerState(snapshot), card).affordable
+            return priced.payment.affordable
                 ? null
                 : createRuleGuardError(
                       'ENGINE_RULE_GUARD',
@@ -502,8 +521,12 @@ const handleCommand = (snapshot: GameSnapshot, command: GameCommand, ports: Engi
             return snapshot;
         case 'BUY_CARD': {
             const player = getCurrentPlayerState(snapshot);
+            const priced = calculateBuyPayment(snapshot, command.source);
+            if (!priced) {
+                throw new Error('Attempted to buy from an empty source.');
+            }
             const purchasedCard = removeBuySourceCard(snapshot, command.source);
-            const payment = calculateCardPayment(player, purchasedCard);
+            const payment = priced.payment;
             for (const color of ['blue', 'white', 'green', 'black', 'red', 'pearl'] as const) {
                 player.inventory[color] -= payment.paid[color];
             }
@@ -546,12 +569,16 @@ const handleCommand = (snapshot: GameSnapshot, command: GameCommand, ports: Engi
                 player.inventory[entry.token] += 1;
                 setBoardToken(snapshot, entry.positionId, null);
             }
-            player.privileges -= command.positions.length;
+            player.privileges -= getPrivilegeSpendCount(
+                snapshot,
+                player.id,
+                command.positions.length
+            );
             pushEvent(snapshot, {
                 type: 'privilege.used',
                 player: snapshot.context.currentPlayer,
                 positions: command.positions,
-                spent: command.positions.length,
+                spent: getPrivilegeSpendCount(snapshot, player.id, command.positions.length),
             });
             pushEvent(snapshot, {
                 type: 'tokens.taken',
@@ -711,7 +738,7 @@ const handleCommand = (snapshot: GameSnapshot, command: GameCommand, ports: Engi
                 ['blue', 'white', 'green', 'black', 'red', 'pearl', 'gold'].reduce(
                     (sum, color) => sum + player.inventory[color as keyof typeof player.inventory],
                     0
-                ) - 10
+                ) - getGemLimit(snapshot, player.id)
             );
             if (remaining > 0) {
                 removeEffectPrompt(snapshot, prompt.effectId);
@@ -757,13 +784,12 @@ export const executeCommand = (
     command: GameCommand,
     ports: EnginePorts,
     handlers: {
-        setupClassicMatch: (snapshot: GameSnapshot, ports: EnginePorts) => void;
+        setupClassicMatch: (snapshot: GameSnapshot, ports: EnginePorts) => GameSnapshot;
         replenishBoard: (snapshot: GameSnapshot, ports: EnginePorts) => GameSnapshot;
     }
 ) => {
     if (command.type === 'START_MATCH') {
-        handlers.setupClassicMatch(snapshot, ports);
-        return snapshot;
+        return handlers.setupClassicMatch(snapshot, ports);
     }
     if (command.type === 'REPLENISH_BOARD') {
         return handlers.replenishBoard(snapshot, ports);

@@ -1,6 +1,7 @@
 import { createActor, assign, setup } from 'xstate';
 import { createDomainError, type DomainError, type MatchFlags } from '@gem-duel/domain';
 import type { GameCommand, GameSnapshot, TypedResult } from '@gem-duel/contracts';
+import { applyAfterMatchSetupBuffs, applyAfterReplenishBoardBuffs } from './buff-runtime';
 import {
     createInitialSnapshot,
     type EnginePorts,
@@ -54,11 +55,12 @@ const handleReplenishBoard = (snapshot: GameSnapshot, ports: EnginePorts) => {
         'optional_action',
         'AFTER_REPLENISH_BOARD'
     );
-    applyTurnState(updated, {
+    const buffUpdated = applyAfterReplenishBoardBuffs(updated, ports);
+    applyTurnState(buffUpdated, {
         segment: 'mandatory',
         optionalStep: 'done',
     });
-    return updated;
+    return buffUpdated;
 };
 
 const createMatchMachine = (ports: EnginePorts) =>
@@ -99,7 +101,10 @@ const createMatchMachine = (ports: EnginePorts) =>
                         {
                             actions: assign(({ context, event }) => ({
                                 match: executeCommand(cloneSnapshot(context.match), event, ports, {
-                                    setupClassicMatch,
+                                    setupClassicMatch: (snapshot, enginePorts) => {
+                                        setupClassicMatch(snapshot, enginePorts);
+                                        return applyAfterMatchSetupBuffs(snapshot, enginePorts);
+                                    },
                                     replenishBoard: handleReplenishBoard,
                                 }),
                             })),
@@ -129,11 +134,12 @@ export const createMatchActor = (
         seed: number;
         mode: GameSnapshot['context']['mode'];
         flags: MatchFlags;
+        runContext?: GameSnapshot['runContext'];
     },
     ports: EnginePorts
 ) =>
     createMatchActorFromSnapshot(
-        createInitialSnapshot(ports, input.seed, input.mode, input.flags),
+        createInitialSnapshot(ports, input.seed, input.mode, input.flags, input.runContext ?? null),
         ports
     );
 

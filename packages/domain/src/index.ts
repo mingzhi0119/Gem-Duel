@@ -1,3 +1,5 @@
+import { BUFF_CATALOG, STARTER_BUFF_POOL } from './buffs/catalog';
+
 export const RULESET_VERSION = '2026.1';
 export const GAME_MODES = ['local', 'ai', 'online'] as const;
 export const GAME_PHASES = [
@@ -119,6 +121,20 @@ export const ROOM_ERROR_CODES = [
     'ROOM_ALREADY_BOUND',
     'ROOM_WAITING_FOR_PLAYERS',
 ] as const;
+export const BUFF_IDS = [
+    'privilege_favor',
+    'deep_pockets',
+    'down_payment',
+    'extortion',
+    'double_agent',
+] as const;
+export const BUFF_RARITIES = ['common', 'rare', 'boss', 'meta-unlock'] as const;
+export const BUFF_SCOPES = ['self', 'opponent', 'global-run'] as const;
+export const BUFF_TRIGGER_STYLES = ['passive', 'triggered', 'replacement', 'stacking'] as const;
+export const BUFF_LIFECYCLES = ['match-only', 'run-only', 'meta-unlock'] as const;
+export const BUFF_ACQUISITION_SOURCES = ['starter', 'reward'] as const;
+export const RUN_STATUSES = ['draft', 'active', 'won', 'lost'] as const;
+export const RUN_REWARD_SOURCES = ['starter', 'victory'] as const;
 
 const BOARD_POSITION_COORDINATES = Object.freeze({
     r0c0: { row: 0, col: 0 },
@@ -178,6 +194,14 @@ export type EffectLifecycleStage = (typeof EFFECT_LIFECYCLE_STAGES)[number];
 export type EffectOutcome = (typeof EFFECT_OUTCOMES)[number];
 export type ErrorCategory = (typeof ERROR_CATEGORIES)[number];
 export type RoomErrorCode = (typeof ROOM_ERROR_CODES)[number];
+export type BuffId = (typeof BUFF_IDS)[number];
+export type BuffRarity = (typeof BUFF_RARITIES)[number];
+export type BuffScope = (typeof BUFF_SCOPES)[number];
+export type BuffTriggerStyle = (typeof BUFF_TRIGGER_STYLES)[number];
+export type BuffLifecycle = (typeof BUFF_LIFECYCLES)[number];
+export type BuffAcquisitionSource = (typeof BUFF_ACQUISITION_SOURCES)[number];
+export type RunStatus = (typeof RUN_STATUSES)[number];
+export type RunRewardSource = (typeof RUN_REWARD_SOURCES)[number];
 
 export interface DomainError {
     code: string;
@@ -367,6 +391,44 @@ export interface HiddenState {
     extraTurns: Record<PlayerId, number>;
 }
 
+export interface BuffCatalogEntry {
+    id: BuffId;
+    name: string;
+    description: string;
+    rarity: BuffRarity;
+    scope: BuffScope;
+    triggerStyle: BuffTriggerStyle;
+    lifecycle: BuffLifecycle;
+    hookPoint: EffectHookPoint;
+    effectAtoms: EffectAtom[];
+    stacking: 'unique';
+    replayImpact: string;
+}
+
+export type BuffInstanceStateValue = string | number | boolean | null;
+
+export interface BuffInstance {
+    id: BuffId;
+    owner: PlayerId;
+    source: BuffAcquisitionSource;
+    acquiredAtMatchIndex: number;
+    state: Record<string, BuffInstanceStateValue>;
+}
+
+export interface RunRewardOffer {
+    offerId: string;
+    source: RunRewardSource;
+    options: BuffId[];
+}
+
+export interface RunContext {
+    runId: string;
+    matchIndex: number;
+    wins: number;
+    losses: number;
+    activeBuffs: BuffInstance[];
+}
+
 export interface MatchState {
     context: MatchContext;
     board: BoardCellState[];
@@ -379,22 +441,25 @@ export interface MatchState {
     activeEffects: ActiveEffect[];
     effectPrompts: EffectPrompt[];
     hiddenState: HiddenState;
+    runContext: RunContext | null;
 }
 
 export interface RunState {
     runId: string;
     seed: number;
+    mode: GameMode;
+    matchIndex: number;
     activeMatchId: string | null;
-    buffIds: string[];
-    relicIds: string[];
+    ownedBuffs: BuffInstance[];
     wins: number;
     losses: number;
-    status: 'draft' | 'active' | 'completed';
+    status: RunStatus;
+    currentOffer: RunRewardOffer | null;
 }
 
 export interface MetaState {
     profileId: string;
-    unlockedBuffIds: string[];
+    unlockedBuffIds: BuffId[];
     unlockedDifficultyIds: string[];
     completedRunIds: string[];
     totalRuns: number;
@@ -475,6 +540,29 @@ export const createHiddenState = (): HiddenState => ({
     },
 });
 
+export const createRunContext = (
+    runId: string,
+    matchIndex: number,
+    wins: number,
+    losses: number,
+    activeBuffs: BuffInstance[]
+): RunContext => ({
+    runId,
+    matchIndex,
+    wins,
+    losses,
+    activeBuffs: structuredClone(activeBuffs),
+});
+
+export const createDefaultMetaState = (profileId: string): MetaState => ({
+    profileId,
+    unlockedBuffIds: [...STARTER_BUFF_POOL],
+    unlockedDifficultyIds: [],
+    completedRunIds: [],
+    totalRuns: 0,
+    lastUpdatedAt: null,
+});
+
 export const getBoardPositionCoordinate = (positionId: BoardPositionId) =>
     BOARD_POSITION_COORDINATES[positionId];
 
@@ -490,3 +578,5 @@ export const createDomainError = (
     recoverable: category !== 'infra',
     details,
 });
+
+export { BUFF_CATALOG, STARTER_BUFF_POOL };

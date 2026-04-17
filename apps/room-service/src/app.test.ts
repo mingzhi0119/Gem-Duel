@@ -1,6 +1,11 @@
 import type { AddressInfo } from 'node:net';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { buildUiViewModel, createMatchSession, type MatchSession } from '@gem-duel/application';
+import {
+    buildReplayInspectorModel,
+    buildUiViewModel,
+    createMatchSession,
+    type MatchSession,
+} from '@gem-duel/application';
 import { createEnginePorts } from '@gem-duel/adapters';
 import type {
     CreateRoomRequest,
@@ -177,8 +182,14 @@ const createCompletingSession = (request: CreateRoomRequest): TypedResult<MatchS
             replay() {
                 return replayBundle;
             },
+            replayInspector() {
+                return buildReplayInspectorModel(replayBundle);
+            },
             viewModel(viewer) {
                 return buildUiViewModel(currentSnapshot, viewer ?? 'p1');
+            },
+            aiTrace() {
+                return [];
             },
         },
     };

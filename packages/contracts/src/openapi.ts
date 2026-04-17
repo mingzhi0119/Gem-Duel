@@ -12,6 +12,14 @@ import {
     RoomDetailSchema,
 } from './http';
 import {
+    BuffCatalogEntrySchema,
+    BuffInstanceSchema,
+    MetaStateSchema,
+    RunContextSchema,
+    RunRewardOfferSchema,
+    RunStateSchema,
+} from './run';
+import {
     ActiveEffectSchema,
     DomainErrorSchema,
     GemInventorySchema,
@@ -58,6 +66,12 @@ registry.register('MatchContext', MatchContextSchema);
 registry.register('ActiveEffect', ActiveEffectSchema);
 registry.register('HiddenState', HiddenStateSchema);
 registry.register('DomainError', DomainErrorSchema);
+registry.register('BuffCatalogEntry', BuffCatalogEntrySchema);
+registry.register('BuffInstance', BuffInstanceSchema);
+registry.register('RunRewardOffer', RunRewardOfferSchema);
+registry.register('RunContext', RunContextSchema);
+registry.register('RunState', RunStateSchema);
+registry.register('MetaState', MetaStateSchema);
 registry.register('GameCommand', GameCommandSchema);
 registry.register('GameEvent', GameEventSchema);
 registry.register('AuthoritativeSnapshot', AuthoritativeSnapshotSchema);

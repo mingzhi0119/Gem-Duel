@@ -17,6 +17,7 @@ import {
     type PlayerId,
     type PlayerState,
     type ReserveSlotId,
+    type RunContext,
     type VictoryReason,
 } from '@gem-duel/domain';
 import {
@@ -235,7 +236,8 @@ export const createInitialSnapshot = (
     ports: EnginePorts,
     seed: number,
     mode: GameSnapshot['context']['mode'],
-    flags: MatchFlags
+    flags: MatchFlags,
+    runContext: RunContext | null = null
 ): GameSnapshot => ({
     schemaVersion: SCHEMA_VERSION,
     rulesetVersion: RULESET_VERSION,
@@ -266,6 +268,7 @@ export const createInitialSnapshot = (
     eventLog: [],
     replayCursor: null,
     sequence: 0,
+    runContext: runContext ? structuredClone(runContext) : null,
     activeEffects: [],
     effectPrompts: [],
     hiddenState: createHiddenState(),
@@ -283,7 +286,13 @@ export const collectBoardTokens = (snapshot: GameSnapshot, positions: BoardPosit
         };
     });
 
-export const calculateCardPayment = (player: PlayerState, card: JewelCardState) => {
+export const calculateCardPayment = (
+    player: PlayerState,
+    card: JewelCardState,
+    options: {
+        basicDiscount?: number;
+    } = {}
+) => {
     const paid: Record<GemColor, number> = {
         blue: 0,
         white: 0,
@@ -294,6 +303,7 @@ export const calculateCardPayment = (player: PlayerState, card: JewelCardState) 
         gold: 0,
     };
     let goldSpent = 0;
+    let remainingBasicDiscount = options.basicDiscount ?? 0;
 
     for (const color of COST_COLORS) {
         const printedCost = card.cost[color];
@@ -305,7 +315,16 @@ export const calculateCardPayment = (player: PlayerState, card: JewelCardState) 
                   0
               )
             : 0;
-        const needed = Math.max(0, printedCost - discount);
+        let needed = Math.max(0, printedCost - discount);
+        if (
+            remainingBasicDiscount > 0 &&
+            BONUS_COLORS.includes(color as BonusColor) &&
+            needed > 0
+        ) {
+            const appliedDiscount = Math.min(remainingBasicDiscount, needed);
+            needed -= appliedDiscount;
+            remainingBasicDiscount -= appliedDiscount;
+        }
         const spendFromColor = Math.min(needed, player.inventory[color]);
         paid[color] = spendFromColor;
         goldSpent += needed - spendFromColor;

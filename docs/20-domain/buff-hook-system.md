@@ -11,6 +11,7 @@
 - Buff 不直接持有宿主 API、随机源或外部 IO。
 - Step 02.5 只冻结 hook 原语与生命周期；Step 07 才填充具体 Buff 业务。
 - Buff 不引入独立的 `BUFF_RESOLUTION` 顶层 hook family，也不拥有独立主流程 phase；Buff 只是既有语义 hook 的 consumer。
+- Step 07 的 starter Buff 只允许消费现有 hook points / effect atoms；若需要新 atom、新隐藏通道或新主流程 phase，必须回到契约决策层而不是在实现里偷开口子。
 
 ## 冻结后的原语
 
@@ -67,6 +68,7 @@
 ## 序列化与回放
 
 - replay 与存档只记录 Buff `id` 与最小实例上下文，不记录可执行函数。
+- Roguelike match snapshot 通过 `runContext.activeBuffs` 暴露当前 Buff 实例序列化视图；classic / online non-roguelike 对局必须显式发送 `runContext: null`。
 - Buff 引起的真实规则结果必须表现为标准 `GameEvent` / `EffectAtom`，从而进入权威事件流。
 - Buff 不得引入绕过 `finalStateHash` 的隐式状态。
 
@@ -88,6 +90,7 @@ This document defines the upfront governance model for Roguelike / Buff systems.
 - Buffs do not own host APIs, random sources, or external IO directly.
 - Step 02.5 freezes hook primitives and lifecycle; Step 07 fills in concrete Buff business behavior.
 - Buffs do not introduce a dedicated top-level `BUFF_RESOLUTION` hook family or a standalone main-flow phase; Buffs are consumers of the existing semantic hook surface.
+- The Step 07 starter Buff set may consume only the existing hook points and effect atoms; any need for a new atom, hidden channel, or main-flow phase must escalate back to the contract layer instead of appearing as an implementation shortcut.
 
 ## Frozen Primitives
 
@@ -144,6 +147,7 @@ This document defines the upfront governance model for Roguelike / Buff systems.
 ## Serialization and Replay
 
 - Replays and saves store only Buff `id` plus minimal instance context, never executable functions.
+- Roguelike match snapshots expose the current serialized Buff instance view through `runContext.activeBuffs`; classic / online non-roguelike matches must emit `runContext: null` explicitly.
 - Any gameplay effect caused by a Buff must materialize as standard `GameEvent` / `EffectAtom` values in the authoritative event stream.
 - Buffs may not introduce hidden state that bypasses `finalStateHash`.
 

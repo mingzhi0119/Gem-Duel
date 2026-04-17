@@ -23,6 +23,12 @@
 - [`extracted-privilege-scrolls.md`](./extracted-privilege-scrolls.md): privilege usage、shared cap 与 transfer semantics
 - [`extracted-scoring-and-win-conditions.md`](./extracted-scoring-and-win-conditions.md): points / crowns / single-color victory checks
 
+### Step 07 抽取笔记
+
+- [`extracted-ai-heuristics.md`](./extracted-ai-heuristics.md): AI sub-phase priority、candidate ranking 与 deterministic tie-breaking intent
+- [`extracted-buff-draft-and-run-loop.md`](./extracted-buff-draft-and-run-loop.md): pre-match buff draft、init effects 与 run-loop clean-room normalization
+- [`extracted-buff-catalog-step07.md`](./extracted-buff-catalog-step07.md): Step 07 starter Buff subset 与 why-it-fits-frozen-atoms notes
+
 ## EN
 
 This directory indexes the legacy single-package `Vite + Electron` implementation. The old code now lives under `old/legacy-vite-electron/` and is preserved strictly as read-only reference material rather than active architecture truth.
@@ -45,3 +51,9 @@ This directory indexes the legacy single-package `Vite + Electron` implementatio
 - [`extracted-royal-milestones.md`](./extracted-royal-milestones.md): crown milestones, royal selection, and turn restoration
 - [`extracted-privilege-scrolls.md`](./extracted-privilege-scrolls.md): privilege usage, shared-cap handling, and transfer semantics
 - [`extracted-scoring-and-win-conditions.md`](./extracted-scoring-and-win-conditions.md): points / crowns / single-color victory checks
+
+### Step 07 Extraction Notes
+
+- [`extracted-ai-heuristics.md`](./extracted-ai-heuristics.md): AI sub-phase priorities, candidate ranking, and deterministic tie-breaking intent
+- [`extracted-buff-draft-and-run-loop.md`](./extracted-buff-draft-and-run-loop.md): pre-match buff draft, init effects, and run-loop clean-room normalization
+- [`extracted-buff-catalog-step07.md`](./extracted-buff-catalog-step07.md): the Step 07 starter Buff subset and why it fits the frozen atom set

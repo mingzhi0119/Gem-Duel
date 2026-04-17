@@ -20,6 +20,7 @@ import {
     pushEvent,
     setPhase,
 } from './classic-helpers';
+import { getGemLimit } from './buff-state';
 
 const createEffectId = (snapshot: GameSnapshot, atom: EffectAtom) =>
     `${snapshot.context.matchId}-${atom}-${snapshot.sequence + 1}`;
@@ -107,8 +108,13 @@ export const awardPrivilegeWithEffect = (
     snapshot: GameSnapshot,
     ports: EnginePorts,
     targetPlayer: PlayerId,
-    source: 'optional_action' | 'mandatory_action' | 'card_ability' | 'royal_reward',
-    hookPoint: 'AFTER_REPLENISH_BOARD' | 'AFTER_TAKE_TOKENS' | 'AFTER_BUY_CARD' | 'AFTER_GAIN_ROYAL'
+    source: 'optional_action' | 'mandatory_action' | 'card_ability' | 'royal_reward' | 'buff_hook',
+    hookPoint:
+        | 'AFTER_MATCH_SETUP'
+        | 'AFTER_REPLENISH_BOARD'
+        | 'AFTER_TAKE_TOKENS'
+        | 'AFTER_BUY_CARD'
+        | 'AFTER_GAIN_ROYAL'
 ) => {
     const effectId = createEffectId(snapshot, 'grant_privilege');
     const rngNamespace = createEffectNamespace(snapshot, 'grant_privilege', effectId);
@@ -248,7 +254,13 @@ export const startOpponentTokenEffect = (
     snapshot: GameSnapshot,
     ports: EnginePorts,
     owner: PlayerId,
-    source: 'card_ability' | 'royal_reward'
+    source: 'card_ability' | 'royal_reward' | 'buff_hook',
+    hookPoint: 'AFTER_BUY_CARD' | 'AFTER_GAIN_ROYAL' | 'AFTER_REPLENISH_BOARD' = source ===
+    'card_ability'
+        ? 'AFTER_BUY_CARD'
+        : source === 'royal_reward'
+          ? 'AFTER_GAIN_ROYAL'
+          : 'AFTER_REPLENISH_BOARD'
 ) => {
     const targetPlayer = nextPlayer(owner);
     const allowedColors = (['blue', 'white', 'green', 'black', 'red', 'pearl'] as const).filter(
@@ -266,7 +278,7 @@ export const startOpponentTokenEffect = (
             effectId,
             parentEffectId: null,
             atom: 'take_opponent_token',
-            hookPoint: source === 'card_ability' ? 'AFTER_BUY_CARD' : 'AFTER_GAIN_ROYAL',
+            hookPoint,
             source,
             scope: 'opposing_player',
             owner,
@@ -430,7 +442,11 @@ export const continueTurnFlow = (snapshot: GameSnapshot, ports: EnginePorts): Ga
         );
     }
 
-    const discardCount = Math.max(0, getTotalTokens(getCurrentPlayerState(snapshot)) - 10);
+    const discardCount = Math.max(
+        0,
+        getTotalTokens(getCurrentPlayerState(snapshot)) -
+            getGemLimit(snapshot, snapshot.context.currentPlayer)
+    );
     if (discardCount > 0) {
         return startDiscardEffect(snapshot, ports, discardCount);
     }
