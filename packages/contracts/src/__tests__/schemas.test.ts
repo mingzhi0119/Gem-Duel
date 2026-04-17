@@ -18,6 +18,7 @@ import {
     RoomDetailSchema,
     SCHEMA_VERSION,
     UiActionDescriptorSchema,
+    UiViewModelSchema,
     toPlayerSnapshot,
     toSpectatorSnapshot,
 } from '../index';
@@ -124,12 +125,67 @@ describe('contracts schemas', () => {
             type: 'match.patch',
             seq: playerSnapshot.sequence,
             snapshot: playerSnapshot,
+            roomStatus: 'active',
+            availableActions: [action],
+        });
+        const uiViewModel = UiViewModelSchema.parse({
+            title: 'Gem Duel LOCAL Match',
+            subtitle: 'Phase: turnIdle | Turn: p1 | Segment: optional',
+            viewerRole: 'player',
+            seat: 'p1',
+            sessionStatus: 'active',
+            snapshot: playerSnapshot,
+            boardCells: playerSnapshot.board.map((cell) => ({
+                positionId: cell.positionId,
+                row: cell.row,
+                col: cell.col,
+                token: cell.token,
+                selectable: false,
+                selected: false,
+                selectionKind: null,
+                reason: null,
+            })),
+            marketSlots: [],
+            playerZones: [
+                {
+                    playerId: 'p1',
+                    isViewer: true,
+                    isCurrentPlayer: true,
+                    actionableSeat: true,
+                    score: playerSnapshot.players.p1.score,
+                    crowns: playerSnapshot.players.p1.crowns,
+                    privileges: playerSnapshot.players.p1.privileges,
+                    inventory: playerSnapshot.players.p1.inventory,
+                    reserveSlots: playerSnapshot.players.p1.reserveSlots,
+                    tableauCount: playerSnapshot.players.p1.tableau.length,
+                    royalCount: playerSnapshot.players.p1.royals.length,
+                },
+                {
+                    playerId: 'p2',
+                    isViewer: false,
+                    isCurrentPlayer: false,
+                    actionableSeat: false,
+                    score: playerSnapshot.players.p2.score,
+                    crowns: playerSnapshot.players.p2.crowns,
+                    privileges: playerSnapshot.players.p2.privileges,
+                    inventory: playerSnapshot.players.p2.inventory,
+                    reserveSlots: playerSnapshot.players.p2.reserveSlots,
+                    tableauCount: playerSnapshot.players.p2.tableau.length,
+                    royalCount: playerSnapshot.players.p2.royals.length,
+                },
+            ],
+            royalOffers: [],
+            promptStack: [],
+            selectionDraft: null,
+            runPanel: null,
             availableActions: [action],
         });
 
         expect(replay.engineVersion).toBe(ENGINE_VERSION);
         expect(roomDetail.availableActions).toEqual([]);
         expect(patch.availableActions[0]?.id).toBe('begin-gem-selection');
+        expect(patch.roomStatus).toBe('active');
+        expect(uiViewModel.viewerRole).toBe('player');
     });
 
     it('parses run and buff contract surfaces', () => {

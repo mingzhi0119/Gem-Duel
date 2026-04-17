@@ -16,6 +16,7 @@
 - Step 06 对 shared shell/UI integration、viewer-scoped `availableActions` 与 room/UI payload 扩展的迁移说明请参考 [`step-06-shell-ui-migration-note.md`](./step-06-shell-ui-migration-note.md)。
 - Step 07 对 run/buff contract surface、snapshot `runContext` 与 replay inspector vertical slice 的迁移说明请参考 [`step-07-run-buff-replay-migration-note.md`](./step-07-run-buff-replay-migration-note.md)。
 - Phase 2 的 `UiViewModel` 2.0 字段清单、受影响 payload 与 contract PR checklist 请参考 [`phase-2-uiviewmodel-2.0-contract-prep.md`](./phase-2-uiviewmodel-2.0-contract-prep.md)。
+- Phase 2 的 `UiViewModel` 2.0 additive contract change 落地说明请参考 [`phase-2-uiviewmodel-2.0-migration-note.md`](./phase-2-uiviewmodel-2.0-migration-note.md)。
 
 ## EN
 
@@ -33,3 +34,4 @@
 - See [`step-06-shell-ui-migration-note.md`](./step-06-shell-ui-migration-note.md) for the Step 06 migration of shared shell/UI integration, viewer-scoped `availableActions`, and the room/UI payload expansion.
 - See [`step-07-run-buff-replay-migration-note.md`](./step-07-run-buff-replay-migration-note.md) for the Step 07 migration of the run/buff contract surface, snapshot `runContext`, and the replay-inspector vertical slice.
 - See [`phase-2-uiviewmodel-2.0-contract-prep.md`](./phase-2-uiviewmodel-2.0-contract-prep.md) for the Phase 2 `UiViewModel` 2.0 field inventory, affected payloads, and contract-PR checklist.
+- See [`phase-2-uiviewmodel-2.0-migration-note.md`](./phase-2-uiviewmodel-2.0-migration-note.md) for the landed additive Phase 2 migration note for `UiViewModel` 2.0.

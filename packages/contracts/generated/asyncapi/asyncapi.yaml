@@ -7652,6 +7652,12 @@ components:
               - command
             type: object
           type: array
+        roomStatus:
+          enum:
+            - waiting
+            - active
+            - completed
+          type: string
         seq:
           minimum: 0
           type: integer
@@ -10048,6 +10054,12 @@ components:
               - command
             type: object
           type: array
+        roomStatus:
+          enum:
+            - waiting
+            - active
+            - completed
+          type: string
         seq:
           minimum: 0
           type: integer
@@ -14519,6 +14531,12 @@ components:
         lastKnownSeq:
           minimum: 0
           type: integer
+        roomStatus:
+          enum:
+            - waiting
+            - active
+            - completed
+          type: string
         snapshot:
           anyOf:
             - properties:
@@ -44218,6 +44236,12 @@ components:
                   - command
                 type: object
               type: array
+            roomStatus:
+              enum:
+                - waiting
+                - active
+                - completed
+              type: string
             seq:
               minimum: 0
               type: integer
@@ -48688,6 +48712,12 @@ components:
             lastKnownSeq:
               minimum: 0
               type: integer
+            roomStatus:
+              enum:
+                - waiting
+                - active
+                - completed
+              type: string
             snapshot:
               anyOf:
                 - properties:
@@ -53152,6 +53182,12 @@ components:
                   - command
                 type: object
               type: array
+            roomStatus:
+              enum:
+                - waiting
+                - active
+                - completed
+              type: string
             seq:
               minimum: 0
               type: integer
@@ -58189,6 +58225,511 @@ components:
               - command
             type: object
           type: array
+        boardCells:
+          items:
+            properties:
+              col:
+                maximum: 4
+                minimum: 0
+                type: integer
+              positionId:
+                enum:
+                  - r2c2
+                  - r2c3
+                  - r3c3
+                  - r3c2
+                  - r3c1
+                  - r2c1
+                  - r1c1
+                  - r1c2
+                  - r1c3
+                  - r1c4
+                  - r2c4
+                  - r3c4
+                  - r4c4
+                  - r4c3
+                  - r4c2
+                  - r4c1
+                  - r4c0
+                  - r3c0
+                  - r2c0
+                  - r1c0
+                  - r0c0
+                  - r0c1
+                  - r0c2
+                  - r0c3
+                  - r0c4
+                type: string
+              reason:
+                minLength: 1
+                type:
+                  - string
+                  - "null"
+              row:
+                maximum: 4
+                minimum: 0
+                type: integer
+              selectable:
+                type: boolean
+              selected:
+                type: boolean
+              selectionKind:
+                enum:
+                  - mandatory
+                  - privilege
+                  - effect
+                  - reserve
+                type:
+                  - string
+                  - "null"
+              token:
+                enum:
+                  - blue
+                  - white
+                  - green
+                  - black
+                  - red
+                  - pearl
+                  - gold
+                type:
+                  - string
+                  - "null"
+            required:
+              - positionId
+              - row
+              - col
+              - token
+              - selectable
+              - selected
+              - selectionKind
+              - reason
+            type: object
+          type: array
+        marketSlots:
+          items:
+            properties:
+              cardId:
+                minLength: 1
+                type:
+                  - string
+                  - "null"
+              level:
+                anyOf:
+                  - enum:
+                      - 1
+                    type: number
+                  - enum:
+                      - 2
+                    type: number
+                  - enum:
+                      - 3
+                    type: number
+                  - type: "null"
+              occupied:
+                type: boolean
+              owner:
+                enum:
+                  - p1
+                  - p2
+                type:
+                  - string
+                  - "null"
+              reason:
+                minLength: 1
+                type:
+                  - string
+                  - "null"
+              ref:
+                minLength: 1
+                type: string
+              selectableAsBuy:
+                type: boolean
+              selectableAsReserve:
+                type: boolean
+              slot:
+                maximum: 5
+                minimum: 1
+                type:
+                  - integer
+                  - "null"
+              slotId:
+                enum:
+                  - reserve-1
+                  - reserve-2
+                  - reserve-3
+                type:
+                  - string
+                  - "null"
+              zone:
+                enum:
+                  - pyramid
+                  - deck
+                  - reserve
+                type: string
+            required:
+              - ref
+              - zone
+              - owner
+              - level
+              - slot
+              - slotId
+              - occupied
+              - cardId
+              - selectableAsBuy
+              - selectableAsReserve
+              - reason
+            type: object
+          type: array
+        playerZones:
+          items:
+            properties:
+              actionableSeat:
+                type: boolean
+              crowns:
+                minimum: 0
+                type: integer
+              inventory:
+                properties:
+                  black:
+                    minimum: 0
+                    type: integer
+                  blue:
+                    minimum: 0
+                    type: integer
+                  gold:
+                    minimum: 0
+                    type: integer
+                  green:
+                    minimum: 0
+                    type: integer
+                  pearl:
+                    minimum: 0
+                    type: integer
+                  red:
+                    minimum: 0
+                    type: integer
+                  white:
+                    minimum: 0
+                    type: integer
+                required:
+                  - blue
+                  - white
+                  - green
+                  - black
+                  - red
+                  - pearl
+                  - gold
+                type: object
+              isCurrentPlayer:
+                type: boolean
+              isViewer:
+                type: boolean
+              playerId:
+                enum:
+                  - p1
+                  - p2
+                type: string
+              privileges:
+                maximum: 3
+                minimum: 0
+                type: integer
+              reserveSlots:
+                items:
+                  properties:
+                    occupied:
+                      type: boolean
+                    slotId:
+                      enum:
+                        - reserve-1
+                        - reserve-2
+                        - reserve-3
+                      type: string
+                  required:
+                    - slotId
+                    - occupied
+                  type: object
+                type: array
+              royalCount:
+                minimum: 0
+                type: integer
+              score:
+                minimum: 0
+                type: integer
+              tableauCount:
+                minimum: 0
+                type: integer
+            required:
+              - playerId
+              - isViewer
+              - isCurrentPlayer
+              - actionableSeat
+              - score
+              - crowns
+              - privileges
+              - inventory
+              - reserveSlots
+              - tableauCount
+              - royalCount
+            type: object
+          type: array
+        promptStack:
+          items:
+            properties:
+              allowedBoardPositions:
+                items:
+                  enum:
+                    - r2c2
+                    - r2c3
+                    - r3c3
+                    - r3c2
+                    - r3c1
+                    - r2c1
+                    - r1c1
+                    - r1c2
+                    - r1c3
+                    - r1c4
+                    - r2c4
+                    - r3c4
+                    - r4c4
+                    - r4c3
+                    - r4c2
+                    - r4c1
+                    - r4c0
+                    - r3c0
+                    - r2c0
+                    - r1c0
+                    - r0c0
+                    - r0c1
+                    - r0c2
+                    - r0c3
+                    - r0c4
+                  type: string
+                type: array
+              allowedColors:
+                items:
+                  enum:
+                    - blue
+                    - white
+                    - green
+                    - black
+                    - red
+                    - pearl
+                    - gold
+                  type: string
+                type: array
+              atom:
+                minLength: 1
+                type: string
+              cardId:
+                minLength: 1
+                type:
+                  - string
+                  - "null"
+              effectId:
+                minLength: 1
+                type: string
+              label:
+                minLength: 1
+                type: string
+              remainingSelections:
+                minimum: 0
+                type:
+                  - integer
+                  - "null"
+              royalIds:
+                items:
+                  minLength: 1
+                  type: string
+                type: array
+              targetPlayer:
+                enum:
+                  - p1
+                  - p2
+                type:
+                  - string
+                  - "null"
+            required:
+              - effectId
+              - atom
+              - label
+              - remainingSelections
+              - allowedBoardPositions
+              - allowedColors
+              - royalIds
+              - targetPlayer
+              - cardId
+            type: object
+          type: array
+        royalOffers:
+          items:
+            properties:
+              label:
+                minLength: 1
+                type: string
+              reason:
+                minLength: 1
+                type:
+                  - string
+                  - "null"
+              royalId:
+                minLength: 1
+                type: string
+              selectable:
+                type: boolean
+            required:
+              - royalId
+              - label
+              - selectable
+              - reason
+            type: object
+          type: array
+        runPanel:
+          properties:
+            activeBuffIds:
+              items:
+                enum:
+                  - privilege_favor
+                  - deep_pockets
+                  - down_payment
+                  - extortion
+                  - double_agent
+                type: string
+              type: array
+            losses:
+              minimum: 0
+              type: integer
+            matchIndex:
+              minimum: 1
+              type: integer
+            runId:
+              minLength: 1
+              type: string
+            wins:
+              minimum: 0
+              type: integer
+          required:
+            - runId
+            - matchIndex
+            - wins
+            - losses
+            - activeBuffIds
+          type:
+            - object
+            - "null"
+        seat:
+          enum:
+            - p1
+            - p2
+          type:
+            - string
+            - "null"
+        selectionDraft:
+          properties:
+            commandType:
+              enum:
+                - TAKE_TOKENS
+                - USE_PRIVILEGE
+                - RESERVE_CARD
+                - SELECT_ROYAL
+                - TAKE_EFFECT_BOARD_TOKEN
+                - STEAL_OPPONENT_TOKEN
+                - SELECT_BONUS_COLOR
+                - DISCARD_TOKEN
+              type: string
+            effectId:
+              minLength: 1
+              type:
+                - string
+                - "null"
+            goldPosition:
+              enum:
+                - r2c2
+                - r2c3
+                - r3c3
+                - r3c2
+                - r3c1
+                - r2c1
+                - r1c1
+                - r1c2
+                - r1c3
+                - r1c4
+                - r2c4
+                - r3c4
+                - r4c4
+                - r4c3
+                - r4c2
+                - r4c1
+                - r4c0
+                - r3c0
+                - r2c0
+                - r1c0
+                - r0c0
+                - r0c1
+                - r0c2
+                - r0c3
+                - r0c4
+              type:
+                - string
+                - "null"
+            model:
+              enum:
+                - engine-prompt
+                - pending-command
+              type: string
+            remainingSelections:
+              minimum: 0
+              type:
+                - integer
+                - "null"
+            selectedBoardPositions:
+              items:
+                enum:
+                  - r2c2
+                  - r2c3
+                  - r3c3
+                  - r3c2
+                  - r3c1
+                  - r2c1
+                  - r1c1
+                  - r1c2
+                  - r1c3
+                  - r1c4
+                  - r2c4
+                  - r3c4
+                  - r4c4
+                  - r4c3
+                  - r4c2
+                  - r4c1
+                  - r4c0
+                  - r3c0
+                  - r2c0
+                  - r1c0
+                  - r0c0
+                  - r0c1
+                  - r0c2
+                  - r0c3
+                  - r0c4
+                type: string
+              type: array
+          required:
+            - model
+            - commandType
+            - effectId
+            - selectedBoardPositions
+            - goldPosition
+            - remainingSelections
+          type:
+            - object
+            - "null"
+        sessionStatus:
+          enum:
+            - waiting-opponent
+            - active
+            - completed
+            - replay
+            - resyncing
+            - disconnected
+          type: string
         snapshot:
           anyOf:
             - properties:
@@ -62203,10 +62744,25 @@ components:
         title:
           minLength: 1
           type: string
+        viewerRole:
+          enum:
+            - player
+            - spectator
+          type: string
       required:
         - title
         - subtitle
+        - viewerRole
+        - seat
+        - sessionStatus
         - snapshot
+        - boardCells
+        - marketSlots
+        - playerZones
+        - royalOffers
+        - promptStack
+        - selectionDraft
+        - runPanel
         - availableActions
       type: object
     VisibleSnapshot:

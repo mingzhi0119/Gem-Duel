@@ -1,0 +1,79 @@
+# Phase 2 Migration Note - UiViewModel 2.0 Additive Expansion
+
+## ZH
+
+- Change summary:
+    - 通过 additive contract change 扩展 `UiViewModel`，加入 viewer / session / board / market / player-zone / prompt / sidecar 字段族。
+    - realtime room payload 额外携带 `roomStatus`，让房间页不再依据 snapshot terminal 状态本地回推房间状态。
+- Affected schemas or message types:
+    - `packages/contracts/src/ui.ts`
+    - `packages/contracts/src/websocket.ts`
+    - `UiViewModel`
+    - `match.patch`
+    - `match.resync`
+    - `match.observe`
+- Old shape:
+    - `UiViewModel = { title, subtitle, snapshot, availableActions }`
+    - realtime patch/resync/observe 仅携带 `snapshot + availableActions`
+- New shape:
+    - `UiViewModel` 仍保留旧字段，并新增：
+        - `viewerRole`
+        - `seat`
+        - `sessionStatus`
+        - `boardCells`
+        - `marketSlots`
+        - `playerZones`
+        - `royalOffers`
+        - `promptStack`
+        - `selectionDraft`
+        - `runPanel`
+    - realtime patch/resync/observe 新增可选 `roomStatus`
+- Required consumer updates:
+    - `packages/application` 需要统一构建新增 projection 字段；
+    - `apps/room-service` 需要在 patch/resync/observe 中发送 `roomStatus`；
+    - `apps/web` 需要停止基于 snapshot terminal 本地回推房间状态。
+- Replay/version impact:
+    - 本次不修改 replay bundle、snapshot tier 或 `SCHEMA_VERSION`；
+    - `roomStatus` 作为 additive realtime field 进入房间协议；
+    - 后续若进入 pending-selection 命令/phase surface，再单独评估 replay/hash 影响。
+- ADR link:
+    - [`ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md)
+
+## EN
+
+- Change summary:
+    - Expand `UiViewModel` through an additive contract change so it carries viewer/session/board/market/player-zone/prompt/sidecar field families.
+    - Add `roomStatus` to realtime room payloads so the room page stops deriving room completion from terminal snapshot state locally.
+- Affected schemas or message types:
+    - `packages/contracts/src/ui.ts`
+    - `packages/contracts/src/websocket.ts`
+    - `UiViewModel`
+    - `match.patch`
+    - `match.resync`
+    - `match.observe`
+- Old shape:
+    - `UiViewModel = { title, subtitle, snapshot, availableActions }`
+    - realtime patch/resync/observe carried `snapshot + availableActions` only
+- New shape:
+    - `UiViewModel` keeps the old fields and adds:
+        - `viewerRole`
+        - `seat`
+        - `sessionStatus`
+        - `boardCells`
+        - `marketSlots`
+        - `playerZones`
+        - `royalOffers`
+        - `promptStack`
+        - `selectionDraft`
+        - `runPanel`
+    - realtime patch/resync/observe add optional `roomStatus`
+- Required consumer updates:
+    - `packages/application` must project the new fields centrally;
+    - `apps/room-service` must emit `roomStatus` in patch/resync/observe messages;
+    - `apps/web` must stop deriving room status from terminal snapshot state.
+- Replay/version impact:
+    - this wave does not change the replay bundle, snapshot tiers, or `SCHEMA_VERSION`;
+    - `roomStatus` lands as an additive realtime-room field;
+    - later pending-selection command/phase work should evaluate replay/hash impact separately.
+- ADR link:
+    - [`ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md)

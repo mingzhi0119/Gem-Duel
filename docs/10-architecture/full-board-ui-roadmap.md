@@ -120,6 +120,9 @@
 
 - [`phase-2-interaction-and-uiviewmodel-plan.md`](./phase-2-interaction-and-uiviewmodel-plan.md)
 - [`../30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md`](../30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md)
+- 已落 ADR：[`../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md)
+- 已落 migration note：[`../30-contracts/phase-2-uiviewmodel-2.0-migration-note.md`](../30-contracts/phase-2-uiviewmodel-2.0-migration-note.md)
+- 本阶段进展日志：[`logs/phase-2-adr-and-contract-wave-1.md`](./logs/phase-2-adr-and-contract-wave-1.md)
 
 本阶段前置门：
 
@@ -151,6 +154,10 @@
 - migration note、fixtures、contract regen 与 property tests 同步更新。
 
 #### Phase 2.5 - `packages/ui` 布局、Design Tokens 与 Visual Harness
+
+状态：`In Progress`（2026-04-17）。日志：[`logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md`](./logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md)
+
+治理主文档：[`phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md)
 
 目标：在真正做 full board renderer 前，先建立 UI primitives 的载体与视觉基线。
 
@@ -432,6 +439,9 @@ Governance docs:
 
 - [`phase-2-interaction-and-uiviewmodel-plan.md`](./phase-2-interaction-and-uiviewmodel-plan.md)
 - [`../30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md`](../30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md)
+- Landed ADR: [`../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md)
+- Landed migration note: [`../30-contracts/phase-2-uiviewmodel-2.0-migration-note.md`](../30-contracts/phase-2-uiviewmodel-2.0-migration-note.md)
+- Progress log for this contract wave: [`logs/phase-2-adr-and-contract-wave-1.md`](./logs/phase-2-adr-and-contract-wave-1.md)
 
 Entry gate:
 
@@ -463,6 +473,10 @@ Done criteria:
 - Migration notes, fixtures, contract regeneration, and property tests are updated together.
 
 #### Phase 2.5 - `packages/ui` Layout, Design Tokens, and Visual Harness
+
+Status: `In Progress` (2026-04-17). Log: [`logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md`](./logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md)
+
+Governance doc: [`phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md)
 
 Goal: establish the host for UI primitives and visual baselines before building the real board renderer.
 

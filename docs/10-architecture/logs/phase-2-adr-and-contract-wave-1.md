@@ -1,0 +1,113 @@
+# Phase 2 Log - ADR and UiViewModel 2.0 Contract Wave 1
+
+## ZH
+
+- 日期：2026-04-17
+- Phase：Phase 2
+- 状态：进行中
+- 范围：落实 board-selection-model ADR，并完成 `UiViewModel` 2.0 的第一轮 additive contract change 与 projection 收口。
+- 本次落地结果：
+    - 已新增 [`ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md)，正式选择“引擎拥有的 prompt / pending-selection 语义”作为长期方向。
+    - 已新增 [`phase-2-uiviewmodel-2.0-migration-note.md`](../../30-contracts/phase-2-uiviewmodel-2.0-migration-note.md)，把 `UiViewModel` 2.0 的新增字段、受影响 payload 与消费者迁移面记录下来。
+    - `packages/contracts/src/ui.ts` 已完成第一轮 additive 扩展，`UiViewModel` 现已携带：
+        - `viewerRole`
+        - `seat`
+        - `sessionStatus`
+        - `boardCells`
+        - `marketSlots`
+        - `playerZones`
+        - `royalOffers`
+        - `promptStack`
+        - `selectionDraft`
+        - `runPanel`
+    - `packages/contracts/src/websocket.ts` 的 `match.patch` / `match.resync` / `match.observe` 已补可选 `roomStatus`。
+    - `packages/application/src/index.ts` 已统一构建上述 projection 字段。
+    - `apps/room-service` 已在 realtime patch/resync/observe 中发送 `roomStatus`，`apps/web/app/rooms/[roomId]/room-live-client.tsx` 已停止依据 terminal snapshot 本地回推房间状态。
+    - 已修正 terminal patch 的 `roomStatus` 采样时序，确保 replay 落库后的最终 patch / observe 一致对外暴露 `completed`。
+- 当前未完成项：
+    - ADR 选定的 pending-selection command / phase surface 还未进入实现；
+    - spectator / resync / out-of-turn invariants 还未形成正式 property gate；
+    - full-board renderer 仍未开始消费新 projection。
+- 涉及文件：
+    - `docs/90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md`
+    - `docs/30-contracts/phase-2-uiviewmodel-2.0-migration-note.md`
+    - `packages/contracts/src/ui.ts`
+    - `packages/contracts/src/websocket.ts`
+    - `packages/contracts/generated/openapi/openapi.json`
+    - `packages/contracts/generated/asyncapi/asyncapi.yaml`
+    - `packages/contracts/src/__fixtures__/openapi.expected.json`
+    - `packages/contracts/src/__fixtures__/asyncapi.expected.yaml`
+    - `packages/contracts/src/__tests__/schemas.test.ts`
+    - `packages/application/src/index.ts`
+    - `packages/application/src/view-model.test.ts`
+    - `apps/room-service/src/authority.ts`
+    - `apps/room-service/src/app.test.ts`
+    - `apps/room-service/src/store.ts`
+    - `apps/web/app/rooms/[roomId]/room-live-client.tsx`
+- 验证：
+    - `pnpm contracts:generate`
+    - `pnpm contracts:verify`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `git restore -- apps/web/next-env.d.ts`
+
+## EN
+
+- Date: 2026-04-17
+- Phase: Phase 2
+- Status: In Progress
+- Scope: land the board-selection-model ADR and complete the first additive `UiViewModel` 2.0 contract/projection wave.
+- Landed results:
+    - [`ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md) now formally selects engine-owned prompt / pending-selection semantics as the long-term direction.
+    - [`phase-2-uiviewmodel-2.0-migration-note.md`](../../30-contracts/phase-2-uiviewmodel-2.0-migration-note.md) now captures the new `UiViewModel` 2.0 fields, affected payloads, and consumer migration surface.
+    - `packages/contracts/src/ui.ts` now carries the first additive `UiViewModel` 2.0 field wave:
+        - `viewerRole`
+        - `seat`
+        - `sessionStatus`
+        - `boardCells`
+        - `marketSlots`
+        - `playerZones`
+        - `royalOffers`
+        - `promptStack`
+        - `selectionDraft`
+        - `runPanel`
+    - `packages/contracts/src/websocket.ts` now adds optional `roomStatus` to `match.patch` / `match.resync` / `match.observe`.
+    - `packages/application/src/index.ts` now centralizes projection of those new fields.
+    - `apps/room-service` now emits `roomStatus` in realtime patch/resync/observe messages, and `apps/web/app/rooms/[roomId]/room-live-client.tsx` no longer derives room completion from terminal snapshot state locally.
+    - Terminal patch/observe delivery now samples `roomStatus` after replay persistence so externally visible end-state messages align on `completed`.
+- Remaining work:
+    - the ADR-selected pending-selection command/phase surface is not implemented yet;
+    - spectator / resync / out-of-turn invariants are not yet formalized as a property gate;
+    - the full-board renderer has not started consuming the richer projection yet.
+- Touched files:
+    - `docs/90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md`
+    - `docs/30-contracts/phase-2-uiviewmodel-2.0-migration-note.md`
+    - `packages/contracts/src/ui.ts`
+    - `packages/contracts/src/websocket.ts`
+    - `packages/contracts/generated/openapi/openapi.json`
+    - `packages/contracts/generated/asyncapi/asyncapi.yaml`
+    - `packages/contracts/src/__fixtures__/openapi.expected.json`
+    - `packages/contracts/src/__fixtures__/asyncapi.expected.yaml`
+    - `packages/contracts/src/__tests__/schemas.test.ts`
+    - `packages/application/src/index.ts`
+    - `packages/application/src/view-model.test.ts`
+    - `apps/room-service/src/authority.ts`
+    - `apps/room-service/src/app.test.ts`
+    - `apps/room-service/src/store.ts`
+    - `apps/web/app/rooms/[roomId]/room-live-client.tsx`
+- Validation:
+    - `pnpm contracts:generate`
+    - `pnpm contracts:verify`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `git restore -- apps/web/next-env.d.ts`

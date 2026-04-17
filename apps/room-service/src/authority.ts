@@ -149,17 +149,20 @@ const createMatchPatchSet = (room: RoomRuntime): CachedCommandResult['playerPatc
     const snapshot = room.session.snapshot();
     const p1View = room.session.viewModel('p1');
     const p2View = room.session.viewModel('p2');
+    const roomStatus = getRoomStatus(room);
     return {
         p1: {
             type: 'match.patch',
             seq: snapshot.sequence,
             snapshot: p1View.snapshot as PlayerSnapshot,
+            roomStatus,
             availableActions: p1View.availableActions,
         },
         p2: {
             type: 'match.patch',
             seq: snapshot.sequence,
             snapshot: p2View.snapshot as PlayerSnapshot,
+            roomStatus,
             availableActions: p2View.availableActions,
         },
     };
@@ -172,6 +175,7 @@ const createSpectatorMessage = (room: RoomRuntime): CachedCommandResult['spectat
         type: 'match.observe',
         seq: snapshot.sequence,
         snapshot: spectatorView.snapshot as SpectatorSnapshot,
+        roomStatus: getRoomStatus(room),
         availableActions: spectatorView.availableActions,
     };
 };
@@ -534,6 +538,7 @@ export const createRoomAuthority = (options: RoomAuthorityOptions): RoomAuthorit
                             type: 'match.resync',
                             lastKnownSeq: envelope.expectedSeq,
                             snapshot: playerView.snapshot,
+                            roomStatus: getRoomStatus(room),
                             availableActions: playerView.availableActions,
                         });
                         return;
@@ -545,13 +550,13 @@ export const createRoomAuthority = (options: RoomAuthorityOptions): RoomAuthorit
                         return;
                     }
 
+                    maybeStoreReplay(room);
                     const cachedResult: CachedCommandResult = {
                         owner: connection.binding.playerId,
                         playerPatches: createMatchPatchSet(room),
                         spectatorMessage: createSpectatorMessage(room),
                     };
                     room.processedCommands.set(envelope.clientCommandId, cachedResult);
-                    maybeStoreReplay(room);
                     roomStore.upsert(room);
                     broadcastSuccessfulCommand(room, cachedResult);
                     return;

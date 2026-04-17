@@ -32,17 +32,15 @@ type PlayerId = PlayerSnapshot['viewer'];
 const updateRoomRealtime = (
     room: RoomDetail | null,
     snapshot: RoomDetail['snapshot'],
-    availableActions: RoomDetail['availableActions']
+    availableActions: RoomDetail['availableActions'],
+    status?: RoomDetail['status']
 ): RoomDetail | null =>
     room
         ? {
               ...room,
               snapshot,
               availableActions,
-              status:
-                  snapshot?.context.phase === 'terminal' || snapshot?.context.winner
-                      ? 'completed'
-                      : room.status,
+              status: status ?? room.status,
           }
         : null;
 
@@ -68,12 +66,13 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
     const handleRealtimePayload = useEffectEvent(
         (
             snapshot: NonNullable<RoomDetail['snapshot']>,
-            availableActions: RoomDetail['availableActions']
+            availableActions: RoomDetail['availableActions'],
+            roomStatus?: RoomDetail['status']
         ) => {
             startTransition(() => {
-                setViewModel(buildVisibleUiViewModel(snapshot, availableActions));
+                setViewModel(buildVisibleUiViewModel(snapshot, availableActions, { roomStatus }));
                 setRoom((currentRoom) =>
-                    updateRoomRealtime(currentRoom, snapshot, availableActions)
+                    updateRoomRealtime(currentRoom, snapshot, availableActions, roomStatus)
                 );
             });
         }
@@ -100,7 +99,11 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
             case 'match.patch':
             case 'match.resync':
             case 'match.observe':
-                handleRealtimePayload(message.snapshot, message.availableActions);
+                handleRealtimePayload(
+                    message.snapshot,
+                    message.availableActions,
+                    message.roomStatus
+                );
                 if (message.type === 'match.observe') {
                     setBinding('spectator');
                 }
@@ -250,11 +253,6 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
         event.preventDefault();
     };
 
-    const viewer =
-        viewModel?.snapshot.visibility === 'player'
-            ? (viewModel.snapshot.viewer as ViewerId)
-            : ('spectator' as const);
-
     return (
         <>
             <Section title={`Room ${roomId}`}>
@@ -267,7 +265,7 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
                 <div className="gd-grid">
                     <div className="gd-card">
                         <strong>Status</strong>
-                        <span>{room?.status ?? 'loading'}</span>
+                        <span>{viewModel?.sessionStatus ?? room?.status ?? 'loading'}</span>
                     </div>
                     <div className="gd-card">
                         <strong>Players</strong>
@@ -283,7 +281,13 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
                     </div>
                     <div className="gd-card">
                         <strong>Viewer</strong>
-                        <span>{viewModel ? viewer : 'spectator'}</span>
+                        <span>
+                            {viewModel
+                                ? viewModel.viewerRole === 'player'
+                                    ? (viewModel.seat as ViewerId)
+                                    : 'spectator'
+                                : 'spectator'}
+                        </span>
                     </div>
                 </div>
                 <div className="gd-action-list">

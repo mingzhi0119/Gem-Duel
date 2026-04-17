@@ -13,6 +13,8 @@
 - [`phase-0-wording-downgrade-and-entry-scope.md`](./phase-0-wording-downgrade-and-entry-scope.md): Phase 0 口径降级、发布边界与首页验证壳文案收口
 - [`phase-1-application-ui-structure-kickoff.md`](./phase-1-application-ui-structure-kickoff.md): Phase 1 启动日志，确认 `application/ui` 结构清理的目标边界与未完成项
 - [`phase-2-interaction-adr-and-uiviewmodel-kickoff.md`](./phase-2-interaction-adr-and-uiviewmodel-kickoff.md): Phase 2 启动日志，确认 ADR 前置门、`UiViewModel` 2.0 contract prep 与后续迁移顺序
+- [`phase-2-adr-and-contract-wave-1.md`](./phase-2-adr-and-contract-wave-1.md): Phase 2 第一轮 ADR + `UiViewModel` 2.0 contract/projection 落地日志
+- [`phase-2.5-ui-layout-and-visual-harness-kickoff.md`](./phase-2.5-ui-layout-and-visual-harness-kickoff.md): Phase 2.5 启动日志，确认 `packages/ui` layout、tokens 与 visual harness 的治理入口
 
 ## EN
 
@@ -27,3 +29,5 @@ This directory stores landing logs for phases tracked in `docs/10-architecture/f
 - [`phase-0-wording-downgrade-and-entry-scope.md`](./phase-0-wording-downgrade-and-entry-scope.md): Phase 0 wording downgrade, release-scope clarification, and homepage validation-shell wording closure
 - [`phase-1-application-ui-structure-kickoff.md`](./phase-1-application-ui-structure-kickoff.md): Phase 1 kickoff log for the pending `application/ui` structure cleanup and its remaining work
 - [`phase-2-interaction-adr-and-uiviewmodel-kickoff.md`](./phase-2-interaction-adr-and-uiviewmodel-kickoff.md): Phase 2 kickoff log for the ADR gate, `UiViewModel` 2.0 contract prep, and the later migration order
+- [`phase-2-adr-and-contract-wave-1.md`](./phase-2-adr-and-contract-wave-1.md): Phase 2 log for the first ADR + `UiViewModel` 2.0 contract/projection landing wave
+- [`phase-2.5-ui-layout-and-visual-harness-kickoff.md`](./phase-2.5-ui-layout-and-visual-harness-kickoff.md): Phase 2.5 kickoff log for `packages/ui` layout, tokens, and the visual harness

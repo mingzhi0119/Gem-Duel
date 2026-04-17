@@ -4,8 +4,16 @@ import {
     type ReplayBundle,
     type ReplayCommand,
     type RoomDetail,
+    type UiBoardCell,
     type TypedResult,
     type UiActionDescriptor,
+    type UiMarketSlot,
+    type UiPlayerZone,
+    type UiPrompt,
+    type UiRoyalOffer,
+    type UiRunPanel,
+    type UiSelectionDraft,
+    type UiSessionStatus,
     type UiViewModel,
     type VisibleSnapshot,
     toPlayerSnapshot,
@@ -641,20 +649,441 @@ const buildUiSubtitle = (snapshot: VisibleSnapshot | GameSnapshot) =>
         .filter(Boolean)
         .join(' | ');
 
+interface BuildVisibleUiViewModelOptions {
+    roomStatus?: RoomDetail['status'];
+    sessionStatus?: UiSessionStatus;
+}
+
+const deriveSessionStatus = (
+    snapshot: VisibleSnapshot,
+    options: BuildVisibleUiViewModelOptions = {}
+): UiSessionStatus => {
+    if (options.sessionStatus) {
+        return options.sessionStatus;
+    }
+
+    if (options.roomStatus === 'waiting') {
+        return 'waiting-opponent';
+    }
+
+    if (
+        options.roomStatus === 'completed' ||
+        snapshot.context.phase === 'terminal' ||
+        snapshot.context.winner !== null
+    ) {
+        return 'completed';
+    }
+
+    if (snapshot.context.phase === 'replay' || snapshot.replayCursor !== null) {
+        return 'replay';
+    }
+
+    return 'active';
+};
+
+const getViewerSeat = (snapshot: VisibleSnapshot) =>
+    snapshot.visibility === 'player' ? snapshot.viewer : null;
+
+const buildBoardCells = (
+    snapshot: VisibleSnapshot,
+    availableActions: UiActionDescriptor[]
+): UiBoardCell[] => {
+    const mandatoryPositions = new Set<string>();
+    const privilegePositions = new Set<string>();
+    const effectPositions = new Set<string>();
+    const reserveGoldPositions = new Set<string>();
+
+    for (const action of availableActions) {
+        switch (action.command.type) {
+            case 'TAKE_TOKENS':
+                for (const position of action.command.positions) {
+                    mandatoryPositions.add(position);
+                }
+                break;
+            case 'USE_PRIVILEGE':
+                for (const position of action.command.positions) {
+                    privilegePositions.add(position);
+                }
+                break;
+            case 'TAKE_EFFECT_BOARD_TOKEN':
+                effectPositions.add(action.command.positionId);
+                break;
+            case 'RESERVE_CARD':
+                reserveGoldPositions.add(action.command.goldPosition);
+                break;
+        }
+    }
+
+    return snapshot.board.map((cell) => {
+        let selectionKind: UiBoardCell['selectionKind'] = null;
+        if (mandatoryPositions.has(cell.positionId)) {
+            selectionKind = 'mandatory';
+        } else if (privilegePositions.has(cell.positionId)) {
+            selectionKind = 'privilege';
+        } else if (effectPositions.has(cell.positionId)) {
+            selectionKind = 'effect';
+        } else if (reserveGoldPositions.has(cell.positionId)) {
+            selectionKind = 'reserve';
+        }
+
+        return {
+            positionId: cell.positionId,
+            row: cell.row,
+            col: cell.col,
+            token: cell.token,
+            selectable: selectionKind !== null,
+            selected: false,
+            selectionKind,
+            reason: null,
+        };
+    });
+};
+
+const buildMarketSlots = (
+    snapshot: VisibleSnapshot,
+    availableActions: UiActionDescriptor[]
+): UiMarketSlot[] => {
+    const buyPyramidRefs = new Set<string>();
+    const buyReserveRefs = new Set<string>();
+    const reservePyramidRefs = new Set<string>();
+    const reserveDeckRefs = new Set<string>();
+
+    for (const action of availableActions) {
+        if (action.command.type === 'BUY_CARD') {
+            if (action.command.source.kind === 'pyramid') {
+                buyPyramidRefs.add(
+                    `pyramid-${action.command.source.level}-${action.command.source.slot}`
+                );
+            } else {
+                buyReserveRefs.add(`reserve-${action.command.source.slotId}`);
+            }
+        }
+
+        if (action.command.type === 'RESERVE_CARD') {
+            if (action.command.source.kind === 'pyramid') {
+                reservePyramidRefs.add(
+                    `pyramid-${action.command.source.level}-${action.command.source.slot}`
+                );
+            } else {
+                reserveDeckRefs.add(`deck-${action.command.source.level}`);
+            }
+        }
+    }
+
+    const slots: UiMarketSlot[] = snapshot.pyramid.flatMap((row) =>
+        row.slots.map((slot) => ({
+            ref: `pyramid-${row.level}-${slot.slot}`,
+            zone: 'pyramid',
+            owner: null,
+            level: row.level,
+            slot: slot.slot,
+            slotId: null,
+            occupied: slot.card !== null,
+            cardId: slot.card?.cardId ?? null,
+            selectableAsBuy: buyPyramidRefs.has(`pyramid-${row.level}-${slot.slot}`),
+            selectableAsReserve: reservePyramidRefs.has(`pyramid-${row.level}-${slot.slot}`),
+            reason: null,
+        }))
+    );
+
+    for (const ref of [...reserveDeckRefs].sort()) {
+        const levelText = ref.split('-')[1];
+        const level = levelText ? Number(levelText) : NaN;
+        if (level !== 1 && level !== 2 && level !== 3) {
+            continue;
+        }
+        slots.push({
+            ref,
+            zone: 'deck',
+            owner: null,
+            level,
+            slot: null,
+            slotId: null,
+            occupied: true,
+            cardId: null,
+            selectableAsBuy: false,
+            selectableAsReserve: true,
+            reason: null,
+        });
+    }
+
+    const ownVisibleReserveSlots =
+        snapshot.visibility === 'player'
+            ? new Map(snapshot.viewerReserveSlots.map((slot) => [slot.slotId, slot]))
+            : new Map();
+
+    for (const playerId of ['p1', 'p2'] as const) {
+        for (const reserveSlot of snapshot.players[playerId].reserveSlots) {
+            const visibleReserve =
+                snapshot.visibility === 'player' && snapshot.viewer === playerId
+                    ? (ownVisibleReserveSlots.get(reserveSlot.slotId) ?? null)
+                    : null;
+            const ref = `reserve-${reserveSlot.slotId}`;
+            slots.push({
+                ref,
+                zone: 'reserve',
+                owner: playerId,
+                level: visibleReserve?.sourceLevel ?? null,
+                slot: null,
+                slotId: reserveSlot.slotId,
+                occupied: reserveSlot.occupied,
+                cardId: visibleReserve?.card?.cardId ?? null,
+                selectableAsBuy: buyReserveRefs.has(ref),
+                selectableAsReserve: false,
+                reason: null,
+            });
+        }
+    }
+
+    return slots;
+};
+
+const buildPlayerZones = (
+    snapshot: VisibleSnapshot,
+    availableActions: UiActionDescriptor[]
+): UiPlayerZone[] =>
+    (['p1', 'p2'] as const).map((playerId) => {
+        const player = snapshot.players[playerId];
+        const isViewer = snapshot.visibility === 'player' && snapshot.viewer === playerId;
+        return {
+            playerId,
+            isViewer,
+            isCurrentPlayer: snapshot.context.currentPlayer === playerId,
+            actionableSeat: isViewer && availableActions.length > 0,
+            score: player.score,
+            crowns: player.crowns,
+            privileges: player.privileges,
+            inventory: structuredClone(player.inventory),
+            reserveSlots: structuredClone(player.reserveSlots),
+            tableauCount: player.tableau.length,
+            royalCount: player.royals.length,
+        };
+    });
+
+const buildRoyalOffers = (
+    snapshot: VisibleSnapshot,
+    availableActions: UiActionDescriptor[]
+): UiRoyalOffer[] => {
+    const selectableRoyalIds = new Set(
+        availableActions.flatMap((action) =>
+            action.command.type === 'SELECT_ROYAL' ? [action.command.royalId] : []
+        )
+    );
+
+    return snapshot.royalSupply.map((royal) => ({
+        royalId: royal.royalId,
+        label: royal.label,
+        selectable: selectableRoyalIds.has(royal.royalId),
+        reason: null,
+    }));
+};
+
+const buildPromptStack = (snapshot: VisibleSnapshot): UiPrompt[] =>
+    snapshot.effectPrompts.map((prompt) => {
+        switch (prompt.atom) {
+            case 'gain_royal':
+                return {
+                    effectId: prompt.effectId,
+                    atom: prompt.atom,
+                    label: 'Select a royal reward',
+                    remainingSelections: 1,
+                    allowedBoardPositions: [],
+                    allowedColors: [],
+                    royalIds: [...prompt.royalIds],
+                    targetPlayer: null,
+                    cardId: null,
+                };
+            case 'take_board_token':
+                return {
+                    effectId: prompt.effectId,
+                    atom: prompt.atom,
+                    label: 'Take a bonus board token',
+                    remainingSelections: prompt.count,
+                    allowedBoardPositions: snapshot.board
+                        .filter(
+                            (cell) =>
+                                cell.token !== null &&
+                                prompt.allowedColors.includes(
+                                    cell.token as (typeof prompt.allowedColors)[number]
+                                )
+                        )
+                        .map((cell) => cell.positionId),
+                    allowedColors: [...prompt.allowedColors],
+                    royalIds: [],
+                    targetPlayer: null,
+                    cardId: null,
+                };
+            case 'take_opponent_token':
+                return {
+                    effectId: prompt.effectId,
+                    atom: prompt.atom,
+                    label: 'Steal an opponent token',
+                    remainingSelections: 1,
+                    allowedBoardPositions: [],
+                    allowedColors: [...prompt.allowedColors],
+                    royalIds: [],
+                    targetPlayer: prompt.targetPlayer,
+                    cardId: null,
+                };
+            case 'override_bonus_color':
+                return {
+                    effectId: prompt.effectId,
+                    atom: prompt.atom,
+                    label: 'Select a bonus color',
+                    remainingSelections: 1,
+                    allowedBoardPositions: [],
+                    allowedColors: [...prompt.allowedColors],
+                    royalIds: [],
+                    targetPlayer: null,
+                    cardId: prompt.cardId,
+                };
+            case 'discard_to_limit':
+                return {
+                    effectId: prompt.effectId,
+                    atom: prompt.atom,
+                    label: 'Discard down to the gem limit',
+                    remainingSelections: prompt.remaining,
+                    allowedBoardPositions: [],
+                    allowedColors: [],
+                    royalIds: [],
+                    targetPlayer: null,
+                    cardId: null,
+                };
+        }
+    });
+
+const getVisiblePrivilegePositionCap = (snapshot: VisibleSnapshot) =>
+    snapshot.runContext?.activeBuffs.some(
+        (buff) => buff.owner === snapshot.context.currentPlayer && buff.id === 'double_agent'
+    )
+        ? 2
+        : 3;
+
+const buildSelectionDraft = (snapshot: VisibleSnapshot): UiSelectionDraft | null => {
+    const prompt = snapshot.effectPrompts[0];
+    if (prompt) {
+        switch (prompt.atom) {
+            case 'gain_royal':
+                return {
+                    model: 'engine-prompt',
+                    commandType: 'SELECT_ROYAL',
+                    effectId: prompt.effectId,
+                    selectedBoardPositions: [],
+                    goldPosition: null,
+                    remainingSelections: 1,
+                };
+            case 'take_board_token':
+                return {
+                    model: 'engine-prompt',
+                    commandType: 'TAKE_EFFECT_BOARD_TOKEN',
+                    effectId: prompt.effectId,
+                    selectedBoardPositions: [],
+                    goldPosition: null,
+                    remainingSelections: prompt.count,
+                };
+            case 'take_opponent_token':
+                return {
+                    model: 'engine-prompt',
+                    commandType: 'STEAL_OPPONENT_TOKEN',
+                    effectId: prompt.effectId,
+                    selectedBoardPositions: [],
+                    goldPosition: null,
+                    remainingSelections: 1,
+                };
+            case 'override_bonus_color':
+                return {
+                    model: 'engine-prompt',
+                    commandType: 'SELECT_BONUS_COLOR',
+                    effectId: prompt.effectId,
+                    selectedBoardPositions: [],
+                    goldPosition: null,
+                    remainingSelections: 1,
+                };
+            case 'discard_to_limit':
+                return {
+                    model: 'engine-prompt',
+                    commandType: 'DISCARD_TOKEN',
+                    effectId: prompt.effectId,
+                    selectedBoardPositions: [],
+                    goldPosition: null,
+                    remainingSelections: prompt.remaining,
+                };
+        }
+    }
+
+    switch (snapshot.context.phase) {
+        case 'gemSelection':
+            return {
+                model: 'pending-command',
+                commandType: 'TAKE_TOKENS',
+                effectId: null,
+                selectedBoardPositions: [],
+                goldPosition: null,
+                remainingSelections: null,
+            };
+        case 'privilege':
+            return {
+                model: 'pending-command',
+                commandType: 'USE_PRIVILEGE',
+                effectId: null,
+                selectedBoardPositions: [],
+                goldPosition: null,
+                remainingSelections: getVisiblePrivilegePositionCap(snapshot),
+            };
+        case 'reserving':
+            return {
+                model: 'pending-command',
+                commandType: 'RESERVE_CARD',
+                effectId: null,
+                selectedBoardPositions: [],
+                goldPosition: null,
+                remainingSelections: 1,
+            };
+        default:
+            return null;
+    }
+};
+
+const buildRunPanel = (snapshot: VisibleSnapshot): UiRunPanel | null =>
+    snapshot.runContext
+        ? {
+              runId: snapshot.runContext.runId,
+              matchIndex: snapshot.runContext.matchIndex,
+              wins: snapshot.runContext.wins,
+              losses: snapshot.runContext.losses,
+              activeBuffIds: snapshot.runContext.activeBuffs.map((buff) => buff.id),
+          }
+        : null;
+
 export const buildVisibleUiViewModel = (
     snapshot: VisibleSnapshot,
-    availableActions: UiActionDescriptor[] = []
+    availableActions: UiActionDescriptor[] = [],
+    options: BuildVisibleUiViewModelOptions = {}
 ): UiViewModel => ({
     title: buildUiTitle(snapshot),
     subtitle: buildUiSubtitle(snapshot),
+    viewerRole: snapshot.visibility === 'player' ? 'player' : 'spectator',
+    seat: getViewerSeat(snapshot),
+    sessionStatus: deriveSessionStatus(snapshot, options),
     snapshot,
+    boardCells: buildBoardCells(snapshot, availableActions),
+    marketSlots: buildMarketSlots(snapshot, availableActions),
+    playerZones: buildPlayerZones(snapshot, availableActions),
+    royalOffers: buildRoyalOffers(snapshot, availableActions),
+    promptStack: buildPromptStack(snapshot),
+    selectionDraft: buildSelectionDraft(snapshot),
+    runPanel: buildRunPanel(snapshot),
     availableActions,
 });
 
 export const buildRoomUiViewModel = (
-    room: Pick<RoomDetail, 'snapshot' | 'availableActions'>
+    room: Pick<RoomDetail, 'snapshot' | 'availableActions' | 'status'>
 ): UiViewModel | null =>
-    room.snapshot ? buildVisibleUiViewModel(room.snapshot, room.availableActions) : null;
+    room.snapshot
+        ? buildVisibleUiViewModel(room.snapshot, room.availableActions, {
+              roomStatus: room.status,
+          })
+        : null;
 
 const canViewerAct = (snapshot: GameSnapshot, viewer: ViewerId) =>
     viewer !== 'spectator' && viewer === snapshot.context.currentPlayer;

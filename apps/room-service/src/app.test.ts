@@ -438,6 +438,9 @@ describe('buildRoomServiceApp', () => {
         expect(p1Patch.snapshot.viewer).toBe('p1');
         expect(p2Patch.snapshot.viewer).toBe('p2');
         expect(spectatorObserve.snapshot.visibility).toBe('spectator');
+        expect(p1Patch.roomStatus).toBe('active');
+        expect(p2Patch.roomStatus).toBe('active');
+        expect(spectatorObserve.roomStatus).toBe('active');
         expect(p1Patch.availableActions.length).toBeGreaterThan(0);
         expect(p2Patch.availableActions).toEqual([]);
         expect(spectatorObserve.availableActions).toEqual([]);
@@ -475,6 +478,7 @@ describe('buildRoomServiceApp', () => {
         expect(resync.snapshot.visibility).toBe('player');
         expect(resync.snapshot.viewer).toBe('p1');
         expect(resync.snapshot.sequence).toBe(p1Patch.snapshot.sequence);
+        expect(resync.roomStatus).toBe('active');
         expect(resync.availableActions).toEqual(p1Patch.availableActions);
 
         await Promise.all([p1.close(), p2.close(), spectator.close()]);
@@ -625,6 +629,8 @@ describe('buildRoomServiceApp', () => {
         }
         expect(p1Patch.snapshot.context.phase).toBe('terminal');
         expect(p1Patch.snapshot.context.winner).toBe('p1');
+        expect(p1Patch.roomStatus).toBe('completed');
+        expect(p2Patch.roomStatus).toBe('completed');
 
         const replayResponse = await fetch(`${urlBase}/replays/${room.roomId}`);
         expect(replayResponse.status).toBe(200);

@@ -3,6 +3,7 @@ import type {
     CreateRoomRequest,
     PlayerSnapshot,
     ReplayBundle,
+    RoomDetail,
     SpectatorSnapshot,
     UiActionDescriptor,
 } from '@gem-duel/contracts';
@@ -17,6 +18,7 @@ export interface CachedCommandResult {
             type: 'match.patch';
             seq: number;
             snapshot: PlayerSnapshot;
+            roomStatus?: RoomDetail['status'];
             availableActions: UiActionDescriptor[];
         }
     >;
@@ -24,6 +26,7 @@ export interface CachedCommandResult {
         type: 'match.observe';
         seq: number;
         snapshot: SpectatorSnapshot;
+        roomStatus?: RoomDetail['status'];
         availableActions: UiActionDescriptor[];
     };
 }
