@@ -43,7 +43,11 @@
     - `pnpm test`
     - `pnpm build`
 - Tag / release point：
-    - 自本步提交封口且 tracker 标记 `Step 08 = 已完成` 之后，未来的 tag-based release flow 被允许重新启用。
+    - 自本步提交封口且 tracker 标记 `Step 08 = 已完成` 之后，engineering release/tag flow 被允许重新启用。
+- 审计后澄清（2026-04-17 / Opus 4.7）：
+    - 这里的 `release-ready` 只覆盖重构工程边界、验收门禁与 artifact 流程，不代表“产品盘面 UI 已达到 GA 水位”。
+    - `v1.0.0` 及以上产品语义版本仍需等待 [`../../10-architecture/full-board-ui-roadmap.md`](../../10-architecture/full-board-ui-roadmap.md) Phase 4 完成；Desktop offline 分发仍需等待该路线图的 Phase 8。
+    - 本步允许的是 future engineering/internal tag flow，不应被转述为“完整产品可立即公开发布”。
 
 ## EN
 
@@ -88,4 +92,8 @@
     - `pnpm test`
     - `pnpm build`
 - Tag / release point:
-    - Future tag-based release flow becomes allowed only after this closing commit lands and the tracker records `Step 08 = 已完成`.
+    - Future engineering release/tag flow becomes allowed only after this closing commit lands and the tracker records `Step 08 = 已完成`.
+- Post-audit clarification (2026-04-17 / Opus 4.7):
+    - `release-ready` here covers rebuild closure, acceptance gates, and artifact flow only; it does not mean the product already has a GA-grade full board UI.
+    - Product-semantic versions `v1.0.0+` remain gated on [`../../10-architecture/full-board-ui-roadmap.md`](../../10-architecture/full-board-ui-roadmap.md) Phase 4, and Desktop offline distribution remains gated on Phase 8.
+    - This step reopens future engineering/internal tagging only and should not be restated as "the full product is ready for public launch."

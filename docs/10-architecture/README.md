@@ -8,6 +8,7 @@
 - 工程执行规范、legacy 归档规则与 Git 策略请参考 [`engineering-standards.md`](./engineering-standards.md)。
 - Agent 边界、分层 `AGENTS.md` 与机械化护栏矩阵请参考 [`agent-guardrails-matrix.md`](./agent-guardrails-matrix.md)。
 - Step 06 的 Web/Desktop 共享 application/ui 组合边界请参考 [`web-desktop-application-integration.md`](./web-desktop-application-integration.md)。
+- 从当前最小验证壳演进到完整游戏盘面 UI 的审计结论、发现归属与按 Phase 排序整改路线图请参考 [`full-board-ui-roadmap.md`](./full-board-ui-roadmap.md)。
 
 ## EN
 
@@ -17,3 +18,4 @@
 - See [`engineering-standards.md`](./engineering-standards.md) for execution rules, legacy archive policy, and Git workflow constraints.
 - See [`agent-guardrails-matrix.md`](./agent-guardrails-matrix.md) for agent boundaries, layered `AGENTS.md`, and the mechanical guardrail matrix.
 - See [`web-desktop-application-integration.md`](./web-desktop-application-integration.md) for the Step 06 shared Web/Desktop composition boundary through `application` and `ui`.
+- See [`full-board-ui-roadmap.md`](./full-board-ui-roadmap.md) for the audit-driven, phase-sorted remediation path from the current validation shell to a full playable board UI.

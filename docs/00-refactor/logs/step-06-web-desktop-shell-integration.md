@@ -33,6 +33,10 @@
     - `pnpm typecheck`
     - `pnpm test`
     - `pnpm build`
+- 审计后澄清（2026-04-17 / Opus 4.7）：
+    - 这里的“Web 与 Desktop 共享 view model / UI boundary”应解读为 shared application/ui boundary 已收口，而不是“Desktop 产品分发面已验证完成”。
+    - 当前完成态仍是 deterministic validation shell，而不是完整盘面 UI；full board/product completion 改由 [`../../10-architecture/full-board-ui-roadmap.md`](../../10-architecture/full-board-ui-roadmap.md) 的 Phase 0-8 继续治理。
+    - Desktop 目前被记录为“通过同一套 Web shell 路由消费 shared app layer”；offline standalone / `file://` fallback 并未在本步形成可发布承诺，后续单列到 full-board roadmap Phase 8。
 - 对应 Commit：Step 06 代码边界、tracker、step log 与验收记录已完成同步。
 
 ## EN
@@ -68,4 +72,8 @@
     - `pnpm typecheck`
     - `pnpm test`
     - `pnpm build`
+- Post-audit clarification (2026-04-17 / Opus 4.7):
+    - "Web and Desktop share the same view-model / UI boundary" should now be read as shared application/ui-boundary closure, not as proof that Desktop distribution is fully validated.
+    - The completed state here is still a deterministic validation shell, not a player-complete full board UI; product-facing closure now continues in [`../../10-architecture/full-board-ui-roadmap.md`](../../10-architecture/full-board-ui-roadmap.md) Phase 0-8.
+    - Desktop is currently documented as consuming the shared app layer through the same Web routes; the offline standalone / `file://` fallback remains outside this step's validated promise and is deferred to full-board roadmap Phase 8.
 - Commit reference: the Step 06 code boundary, tracker, step log, and acceptance record are now synchronized.
