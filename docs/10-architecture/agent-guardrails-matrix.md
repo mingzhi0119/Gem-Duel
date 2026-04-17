@@ -23,19 +23,20 @@
 
 ## 护栏矩阵
 
-| 约束目标                               | 文档真相                                                                               | 计划机械化手段                                                                                    | 计划落地步骤        |
-| -------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------- |
-| 单向依赖                               | `AGENTS.md`、本文件、`docs/10-architecture/`                                           | `dependency-cruiser` + `eslint-plugin-boundaries`（已接线）                                       | Step 02             |
-| 禁止隐藏随机源                         | `AGENTS.md`、`packages/core-engine/AGENTS.md`、`docs/20-domain/`                       | ESLint `no-restricted-globals`、`no-restricted-syntax`、`no-restricted-imports`；后续补 `Semgrep` | Step 02-03          |
-| namespaced RNG streams                 | `docs/20-domain/`、`docs/30-contracts/`                                                | contract tests + determinism tests + replay regression                                            | Step 02-03          |
-| actor-based effect resolution          | `docs/00-refactor/full-rebuild-plan.md`、`docs/20-domain/`                             | state-machine tests + actor tests                                                                 | Step 02.5-03        |
-| 先契约后实现                           | `docs/30-contracts/`、根 `AGENTS.md`                                                   | `zod` schema、contract fixtures、OpenAPI/AsyncAPI generation、drift verification                  | Step 02             |
-| Snapshot 信息过滤                      | `docs/30-contracts/`、`apps/room-service/AGENTS.md`                                    | contract tests + room-service protocol tests                                                      | Step 02, Step 05    |
-| room-service 共享引擎                  | 根 `AGENTS.md`、`apps/room-service/AGENTS.md`、`docs/00-refactor/full-rebuild-plan.md` | dependency rules + architectural review + golden replay parity                                    | Step 05             |
-| Replay 权威格式与回归                  | `docs/20-domain/`、`docs/30-contracts/`                                                | replay wire-shape fixtures + `finalStateHash` regression suite                                    | Step 02-04          |
-| seq / resync / idempotency / spectator | `docs/30-contracts/`、`docs/40-operations/`                                            | HTTP/WS contract tests + session integration tests                                                | Step 05             |
-| 步骤与提交对齐                         | `docs/00-refactor/`、`docs/10-architecture/engineering-standards.md`                   | tracker + per-step logs now；`commitlint` + `commitizen` 留待后续 wave                            | Step 01, later wave |
-| Agent 读取当前步骤                     | `docs/00-refactor/rebuild-execution-tracker.md`                                        | `.codex/config.toml` + MCP `current_step()`                                                       | Step 02-03          |
+| 约束目标                               | 文档真相                                                                               | 计划机械化手段                                                                                    | 计划落地步骤            |
+| -------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------- |
+| 单向依赖                               | `AGENTS.md`、本文件、`docs/10-architecture/`                                           | `dependency-cruiser` + `eslint-plugin-boundaries`（已接线）                                       | Step 02                 |
+| 禁止隐藏随机源                         | `AGENTS.md`、`packages/core-engine/AGENTS.md`、`docs/20-domain/`                       | ESLint `no-restricted-globals`、`no-restricted-syntax`、`no-restricted-imports`；后续补 `Semgrep` | Step 02-03              |
+| namespaced RNG streams                 | `docs/20-domain/`、`docs/30-contracts/`                                                | contract tests + determinism tests + replay regression                                            | Step 02-03              |
+| actor-based effect resolution          | `docs/00-refactor/full-rebuild-plan.md`、`docs/20-domain/`                             | state-machine tests + actor tests                                                                 | Step 02.5-03            |
+| 先契约后实现                           | `docs/30-contracts/`、根 `AGENTS.md`                                                   | `zod` schema、contract fixtures、OpenAPI/AsyncAPI generation、drift verification                  | Step 02                 |
+| Snapshot 信息过滤                      | `docs/30-contracts/`、`apps/room-service/AGENTS.md`                                    | contract tests + room-service protocol tests                                                      | Step 02, Step 05        |
+| room-service 共享引擎                  | 根 `AGENTS.md`、`apps/room-service/AGENTS.md`、`docs/00-refactor/full-rebuild-plan.md` | dependency rules + architectural review + golden replay parity                                    | Step 05                 |
+| Replay 权威格式与回归                  | `docs/20-domain/`、`docs/30-contracts/`                                                | replay wire-shape fixtures + `finalStateHash` regression suite                                    | Step 02-04              |
+| seq / resync / idempotency / spectator | `docs/30-contracts/`、`docs/40-operations/`                                            | HTTP/WS contract tests + session integration tests                                                | Step 05                 |
+| 步骤与提交对齐                         | `docs/00-refactor/`、`docs/10-architecture/engineering-standards.md`                   | tracker + per-step logs now；`commitlint` + `commitizen` 留待后续 wave                            | Step 01, later wave     |
+| 工作树清洁与漂移产物隔离               | 根 `AGENTS.md`、`docs/10-architecture/engineering-standards.md`                        | `git status --short` 审查 + `.gitignore` / `tmp/` 输出约束 + `pnpm check-commit` + pre-push gate  | 2026-04 governance wave |
+| Agent 读取当前步骤                     | `docs/00-refactor/rebuild-execution-tracker.md`                                        | `.codex/config.toml` + MCP `current_step()`                                                       | Step 02-03              |
 
 ## 工具选型决议
 
@@ -45,6 +46,7 @@
 - 契约：继续采用 `zod` 作为当前 schema 真相源，通过 OpenAPI 3.1 与 AsyncAPI 3.0 输出对外描述。
 - 确定性与辅助实现：记录 `pure-rand`、`ts-pattern`、`mutative`、`msgpackr` 为首选实现辅助库。
 - 文档策略：根 `AGENTS.md` 只保留短规则；不能机械校验的细节统一沉到 `docs/`。
+- 工作树卫生：提交前先做人类可读的 worktree 审查；对可预测的漂移产物，优先把输出导向已 ignore 的路径或 `tmp/`；当前已由 `check-commit` / pre-push gate 做第一轮机械化。
 
 ## 元规则
 
@@ -73,19 +75,20 @@ This document splits agent governance into three layers: written rules, mechanic
 
 ## Guardrail Matrix
 
-| Constraint                             | Documentation Source                                                                     | Planned Mechanical Gate                                                                          | Planned Step        |
-| -------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------- |
-| One-way dependencies                   | `AGENTS.md`, this file, `docs/10-architecture/`                                          | `dependency-cruiser` + `eslint-plugin-boundaries` (wired in Step 02)                             | Step 02             |
-| No hidden random sources               | `AGENTS.md`, `packages/core-engine/AGENTS.md`, `docs/20-domain/`                         | ESLint `no-restricted-globals`, `no-restricted-syntax`, `no-restricted-imports`; later `Semgrep` | Step 02-03          |
-| Namespaced RNG streams                 | `docs/20-domain/`, `docs/30-contracts/`                                                  | contract tests + determinism tests + replay regression                                           | Step 02-03          |
-| Actor-based effect resolution          | `docs/00-refactor/full-rebuild-plan.md`, `docs/20-domain/`                               | state-machine tests + actor tests                                                                | Step 02.5-03        |
-| Contracts before implementation        | `docs/30-contracts/`, root `AGENTS.md`                                                   | `zod` schemas, contract fixtures, generated docs, and drift verification                         | Step 02             |
-| Snapshot information filtering         | `docs/30-contracts/`, `apps/room-service/AGENTS.md`                                      | contract tests + room-service protocol tests                                                     | Step 02, Step 05    |
-| Shared engine in room-service          | root `AGENTS.md`, `apps/room-service/AGENTS.md`, `docs/00-refactor/full-rebuild-plan.md` | dependency rules + architecture review + golden replay parity                                    | Step 05             |
-| Replay authority and regression        | `docs/20-domain/`, `docs/30-contracts/`                                                  | replay wire-shape fixtures + `finalStateHash` regression suite                                   | Step 02-04          |
-| seq / resync / idempotency / spectator | `docs/30-contracts/`, `docs/40-operations/`                                              | HTTP/WS contract tests + session integration tests                                               | Step 05             |
-| Step-to-commit alignment               | `docs/00-refactor/`, `docs/10-architecture/engineering-standards.md`                     | tracker + per-step logs now; `commitlint` + `commitizen` later                                   | Step 01, later wave |
-| Agent awareness of current step        | `docs/00-refactor/rebuild-execution-tracker.md`                                          | `.codex/config.toml` + MCP `current_step()`                                                      | Step 02-03          |
+| Constraint                             | Documentation Source                                                                     | Planned Mechanical Gate                                                                               | Planned Step            |
+| -------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------- |
+| One-way dependencies                   | `AGENTS.md`, this file, `docs/10-architecture/`                                          | `dependency-cruiser` + `eslint-plugin-boundaries` (wired in Step 02)                                  | Step 02                 |
+| No hidden random sources               | `AGENTS.md`, `packages/core-engine/AGENTS.md`, `docs/20-domain/`                         | ESLint `no-restricted-globals`, `no-restricted-syntax`, `no-restricted-imports`; later `Semgrep`      | Step 02-03              |
+| Namespaced RNG streams                 | `docs/20-domain/`, `docs/30-contracts/`                                                  | contract tests + determinism tests + replay regression                                                | Step 02-03              |
+| Actor-based effect resolution          | `docs/00-refactor/full-rebuild-plan.md`, `docs/20-domain/`                               | state-machine tests + actor tests                                                                     | Step 02.5-03            |
+| Contracts before implementation        | `docs/30-contracts/`, root `AGENTS.md`                                                   | `zod` schemas, contract fixtures, generated docs, and drift verification                              | Step 02                 |
+| Snapshot information filtering         | `docs/30-contracts/`, `apps/room-service/AGENTS.md`                                      | contract tests + room-service protocol tests                                                          | Step 02, Step 05        |
+| Shared engine in room-service          | root `AGENTS.md`, `apps/room-service/AGENTS.md`, `docs/00-refactor/full-rebuild-plan.md` | dependency rules + architecture review + golden replay parity                                         | Step 05                 |
+| Replay authority and regression        | `docs/20-domain/`, `docs/30-contracts/`                                                  | replay wire-shape fixtures + `finalStateHash` regression suite                                        | Step 02-04              |
+| seq / resync / idempotency / spectator | `docs/30-contracts/`, `docs/40-operations/`                                              | HTTP/WS contract tests + session integration tests                                                    | Step 05                 |
+| Step-to-commit alignment               | `docs/00-refactor/`, `docs/10-architecture/engineering-standards.md`                     | tracker + per-step logs now; `commitlint` + `commitizen` later                                        | Step 01, later wave     |
+| Worktree hygiene and drift isolation   | root `AGENTS.md`, `docs/10-architecture/engineering-standards.md`                        | `git status --short` audit + `.gitignore` / `tmp/` output rules + `pnpm check-commit` + pre-push gate | 2026-04 governance wave |
+| Agent awareness of current step        | `docs/00-refactor/rebuild-execution-tracker.md`                                          | `.codex/config.toml` + MCP `current_step()`                                                           | Step 02-03              |
 
 ## Tooling Decisions
 
@@ -95,6 +98,7 @@ This document splits agent governance into three layers: written rules, mechanic
 - Contracts: keep `zod` as the current schema truth source and generate outward descriptions with OpenAPI 3.1 plus AsyncAPI 3.0.
 - Determinism helpers: record `pure-rand`, `ts-pattern`, `mutative`, and `msgpackr` as the preferred supporting libraries.
 - Documentation policy: root `AGENTS.md` stays short, while non-mechanical detail lives in `docs/`.
+- Worktree hygiene: perform a readable worktree audit before commit, keep predictable drift outputs in ignored paths or `tmp/`, and use the landed `check-commit` / pre-push gates as the first mechanical enforcement layer.
 
 ## Meta Rule
 

@@ -4,6 +4,7 @@
 
 - Update `packages/contracts` and the matching docs before changing any cross-boundary behavior. 修改任何跨边界行为前，先更新 `packages/contracts` 与对应文档。
 - Update `docs/` or an ADR before adding a new package, layer, dependency direction, or governance rule. 新增包、分层、依赖方向或治理规则前，先更新 `docs/` 或 ADR。
+- Audit any pre-existing uncommitted changes before editing, committing, or opening a PR; classify them as intended work or drift artifacts, then restore, ignore, or relocate the drift before continuing. 在编辑、提交或开 PR 前，必须先审查现有未提交改动；将其区分为有效工作或漂移产物，并在继续前恢复、ignore 或迁移漂移。
 - Keep imports within the frozen Step 02 matrix. 严格遵守 Step 02 冻结后的依赖矩阵。
   `domain` -> no workspace dependencies
   `contracts` -> `domain`
@@ -25,6 +26,7 @@
 
 - Prefer one small, intention-revealing change per step boundary. 每个步骤边界内优先做小而明确的变更。
 - Add tests, replay samples, and contract examples together with new rules or protocol changes. 新规则或协议变化应同时补测试、replay 样例与契约示例。
+- Prefer ignored paths or temporary directories for drift-prone generated outputs, and delete those temporary artifacts after use. 容易漂移的生成产物应优先写入已 ignore 的路径或临时目录，并在使用后及时删除。
 - Put detailed process rules in `docs/` when they are not yet mechanically enforceable in CI. 尚未能在 CI 机械校验的细节规则，应沉到 `docs/`。
 - Prefer the closest directory `AGENTS.md` for local constraints and keep root rules short. 本地约束优先写在最近目录的 `AGENTS.md`，根规则保持简洁。
 - Prefer the matching project-local skill under `.codex/skills/` when a task fits an established workflow such as contract changes, phase transitions, legacy extraction, Buff additions, or replay golden maintenance. 当任务符合既有流程时，优先使用 `.codex/skills/` 中对应的项目本地 Skill，例如契约修改、phase 迁移、legacy 考古、Buff 新增或 golden replay 维护。
@@ -43,12 +45,12 @@
 - Current validation: `pnpm build`
 - Current validation: `pnpm check-deps`
 - Current validation: `pnpm check-boundaries`
+- Current validation: `pnpm check-commit`
 - Current validation: `pnpm check-contracts`
 - Current generation: `pnpm contracts:generate`
 - Current verification: `pnpm contracts:verify`
 - Current docs reference: `docs/00-refactor/rebuild-execution-tracker.md`
 - Planned guardrails for later steps: `pnpm check-replays`
-- Planned guardrails for later steps: `pnpm check-commit`
 
 ## NEVER DO / 禁止
 
@@ -58,6 +60,7 @@
 - Never fork or reimplement `packages/core-engine` inside `apps/room-service`; only add authentication, persistence, broadcasting, idempotency, and rate limiting there. 禁止在 `apps/room-service` 中 fork 或重写 `packages/core-engine`；这里只允许增加认证、持久化、广播、幂等与限流。
 - Never modify contracts without updating schema docs, error-code references, and the contract governance docs. 修改契约时，禁止跳过 schema 文档、错误码引用与契约治理文档。
 - Never create or update git tags until final acceptance is closed in `docs/00-refactor/rebuild-execution-tracker.md`. 在 `docs/00-refactor/rebuild-execution-tracker.md` 标记最终验收完成前，禁止创建或更新 git tag。
+- Never create a commit or PR while unrelated, unexplained, or drift-only changes remain uncommitted in the worktree. 禁止在工作树中仍有无关、未说明或仅属漂移的未提交改动时创建 commit 或 PR。
 
 ## PROOF OF DONE / 完成证明
 

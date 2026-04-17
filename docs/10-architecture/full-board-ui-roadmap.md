@@ -59,6 +59,8 @@
 
 #### Phase 0 - 口径降级、发布边界与审计证据
 
+状态：`Completed`（2026-04-17）。日志：[`logs/phase-0-wording-downgrade-and-entry-scope.md`](./logs/phase-0-wording-downgrade-and-entry-scope.md)
+
 目标：先修正认知风险，确保任何入口都不会把 Step 08 误读为产品 GA。
 
 覆盖发现：F1、F2、F5、F11。
@@ -71,15 +73,17 @@
     - Desktop offline 分发尚未验收；
     - `v1.0.0+` 语义版本需等待 Phase 4，Desktop offline 需等待 Phase 8。
 - 在 step-log 规范中新增 acceptance evidence 要求：commit SHA、CI run id、golden replay hash 摘要或 validation-output 摘要。
-- 记录一个后续代码整改项：将 `apps/web/app/page.tsx` 的 hero / marketing copy 从“完整产品已就绪”降级为“deterministic validation shell + roadmap link”；本次 doc-only pass 不改代码，只在文档内确认为待办。
+- 已将 `apps/web/app/page.tsx` 的 hero / marketing copy 降级为“deterministic validation shell + roadmap link”口径，并把 CTA 从产品完成话术收口为 validation surface 话术。
 
 完成标准：
 
 - 从 tracker、release-prep、Step 06/08 和 architecture 入口都能读到一致口径。
 - 审计读者不会再把 Step 08 视作产品发布完成。
-- 后续 step log 模板具备 acceptance evidence 字段。
+- 后续 step log 模板具备 acceptance evidence 字段，且默认首页已不再把 engineering closure 表述为完整产品完成。
 
 #### Phase 1 - Application / UI 仓库结构清理
+
+状态：`In Progress`（2026-04-17）。日志：[`logs/phase-1-application-ui-structure-kickoff.md`](./logs/phase-1-application-ui-structure-kickoff.md)
 
 目标：在不改契约的前提下，先清出 projection 与 UI 扩展空间。
 
@@ -87,9 +91,16 @@
 
 本阶段输出：
 
+- `packages/application` 与 `packages/ui` 的目标目录、write-scope、迁移顺序与非目标治理说明见 [`phase-1-application-ui-structure-plan.md`](./phase-1-application-ui-structure-plan.md)。
 - 把 `packages/application/src/index.ts` 按职责拆分为 sessions、view-model、ai、replay 等目录。
 - 把 `packages/ui` 建立基础目录结构与 barrel，而不是继续单文件堆叠。
 - 不改 behavior，不改 cross-boundary contract，只做 layout / ownership 清理。
+
+本阶段明确非目标：
+
+- 不提前处理 design tokens / shared CSS ownership；该项留给 Phase 2.5。
+- 不提前扩 `UiViewModel` 契约或处理多阶段交互范式；该项留给 Phase 2。
+- 不把目录整理误写成 full-board UI 已落地或产品完成。
 
 完成标准：
 
@@ -353,6 +364,8 @@ This document is the authoritative full-board UI remediation plan after the Opus
 
 #### Phase 0 - Wording Downgrade, Release Scope, and Audit Evidence
 
+Status: `Completed` (2026-04-17). Log: [`logs/phase-0-wording-downgrade-and-entry-scope.md`](./logs/phase-0-wording-downgrade-and-entry-scope.md)
+
 Goal: fix the interpretation risk first so no entrypoint can read Step 08 as product GA.
 
 Covers: F1, F2, F5, F11.
@@ -365,15 +378,17 @@ Outputs:
     - Desktop offline distribution is still unaccepted;
     - `v1.0.0+` requires Phase 4, and Desktop offline release requires Phase 8.
 - Add an acceptance-evidence rule to the step-log guide: commit SHA, CI run id, golden replay hash summary, or validation-output summary.
-- Record a follow-up code task to downgrade `apps/web/app/page.tsx` hero/marketing copy from "product complete" language to "deterministic validation shell + roadmap link." This doc-only pass records the requirement but does not edit code.
+- `apps/web/app/page.tsx` now uses downgraded hero/marketing wording centered on a deterministic validation shell plus a roadmap link, and its CTA labels no longer imply a player-complete product.
 
 Done criteria:
 
 - Tracker, release-prep, Step 06/08, and architecture entrypoints all say the same thing.
 - Audit readers can no longer treat Step 08 as product-release completion.
-- The step-log template now has an acceptance-evidence field.
+- The step-log template now has an acceptance-evidence field, and the default homepage no longer describes engineering closure as a player-complete product.
 
 #### Phase 1 - Application / UI Repository Structure Cleanup
+
+Status: `In Progress` (2026-04-17). Log: [`logs/phase-1-application-ui-structure-kickoff.md`](./logs/phase-1-application-ui-structure-kickoff.md)
 
 Goal: create room for projection and UI growth without changing contracts yet.
 
@@ -381,9 +396,16 @@ Covers: F6, F10.
 
 Outputs:
 
+- The target layout, write scopes, migration order, and non-goals for `packages/application` and `packages/ui` are documented in [`phase-1-application-ui-structure-plan.md`](./phase-1-application-ui-structure-plan.md).
 - Split `packages/application/src/index.ts` into sessions, view-model, ai, replay, and similar folders.
 - Give `packages/ui` a baseline directory layout and barrel structure instead of growing as a single file.
 - Keep the work non-behavioral and non-contractual.
+
+Explicit non-goals:
+
+- Do not move design tokens or shared CSS ownership yet; that belongs to Phase 2.5.
+- Do not expand `UiViewModel` or resolve the multi-step interaction model yet; that belongs to Phase 2.
+- Do not describe directory cleanup as full-board UI completion or product completion.
 
 Done criteria:
 

@@ -2,7 +2,7 @@
 
 ## ZH
 
-本文件记录 Agent 协作护栏的分波次落地顺序。当前步骤只做文档治理，不在本文件中直接接线工具。
+本文件记录 Agent 协作护栏的分波次落地顺序。当前仓库已完成 worktree hygiene 相关的 `pnpm check-commit` 与 pre-push gate 接线，其余波次仍按本文件继续推进。
 
 项目本地 Skills 的规范、触发和步骤映射另见 [`skills-governance.md`](./skills-governance.md)。
 
@@ -24,7 +24,7 @@
 - replay 序列化：记录 `msgpackr`。
 - golden replays：固定目录与 `finalStateHash` regression。
 - 性质测试：`fast-check` + `@fast-check/vitest`
-- 提交护栏：`husky` + `lint-staged` + `commitlint` + `commitizen`
+- 提交护栏：`husky` + `lint-staged` + `pnpm check-commit` 已在 pre-commit 前后接线，pre-push 也要求 clean worktree；`commitlint` + `commitizen` 仍留待后续波次
 
 ## Wave 3
 
@@ -45,7 +45,7 @@
 
 ## EN
 
-This document records the rollout order for agent-collaboration guardrails. The current step is documentation-only and does not wire the tools yet.
+This document records the rollout order for agent-collaboration guardrails. The repository has now landed the `pnpm check-commit` and pre-push worktree-hygiene guardrails, while the remaining waves still follow this rollout plan.
 
 Project-local skill quality rules, triggers, and step mapping live in [`skills-governance.md`](./skills-governance.md).
 
@@ -67,7 +67,7 @@ Project-local skill quality rules, triggers, and step mapping live in [`skills-g
 - Replay serialization: record `msgpackr`.
 - Golden replays: fixed directory plus `finalStateHash` regression.
 - Property testing: `fast-check` + `@fast-check/vitest`
-- Commit guardrails: `husky` + `lint-staged` + `commitlint` + `commitizen`
+- Commit guardrails: `husky` + `lint-staged` + `pnpm check-commit` are now wired before and after the pre-commit formatting pass, and pre-push also requires a clean worktree; `commitlint` + `commitizen` remain future follow-up work
 
 ## Wave 3
 

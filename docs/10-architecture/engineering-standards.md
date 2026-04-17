@@ -41,6 +41,24 @@
 - 允许 Push 和 Merge，但不得把 tag 用作阶段性里程碑或版本发布信号。
 - Step 08 完成后，仓库进入 release-ready 状态，允许后续 tag-based release flow，但 Step 08 本身不创建 tag。
 
+### 工作树卫生与漂移产物
+
+- 任何编辑、提交、开 PR、push 或 merge 之前，先运行 `git status --short` 审查当前工作树。
+- 发现未提交改动时，必须先分类：
+    - intended work：本次范围内的真实改动，应继续整理、验证并提交。
+    - drift artifact：由 dev server、build、codegen、缓存、编辑器或平台行为带来的非真相源改动，应恢复、删除、ignore 或迁移到临时目录。
+- 若某个生成步骤会稳定产生非真相源文件，优先处理顺序为：
+    - 把输出改到已 ignore 的路径；
+    - 或改到仓库 `tmp/` / 系统临时目录；
+    - 并在使用后及时删除这些临时产物。
+- 若某类漂移产物无法避免且路径固定，应同步更新 `.gitignore` 或工具输出位置，而不是把漂移留到提交边界再人工兜底。
+- tracked 文件若被工具改写但不属于本次真相面，必须在提交前 `restore` 回仓库状态。
+- 提交边界要求干净工作树：创建 commit 或 PR 时，不允许留下未提交、未解释、未分类的残留改动。
+- 当前 `pnpm check-commit` + `.husky/pre-push` 已覆盖至少两项：
+    - commit / PR 前除 staged set 外不得有额外未提交残留，push 前工作树必须完全 clean；
+    - 已知 drift-prone 生成步骤不得把非真相源文件写回受跟踪路径。
+- 后续可继续扩展 `pnpm check-commit`，例如覆盖更多 drift-prone tracked files 或按包分层的生成产物约束。
+
 ### 文档与命名规范
 
 - 核心治理文档默认双语维护，硬约束优先使用英文在前、中文在后。
@@ -110,6 +128,24 @@
 - Do not create or update git tags until `Step 08` is marked complete in the tracker.
 - Pushes and merges are allowed, but tags may not be used as interim milestone or release signals.
 - After `Step 08` closes, the repo is release-ready and future tag-based release flow is allowed, but Step 08 itself does not create tags.
+
+### Worktree Hygiene and Drift Artifacts
+
+- Before any edit, commit, PR, push, or merge, run `git status --short` and audit the current worktree.
+- When uncommitted changes exist, classify them first:
+    - intended work: real in-scope changes that should be validated and committed;
+    - drift artifacts: non-source-of-truth changes caused by dev servers, builds, codegen, caches, editors, or platform behavior, which must be restored, deleted, ignored, or relocated to temp output.
+- If a generator predictably emits non-source-of-truth files, the preferred order is:
+    - redirect the output into an ignored path;
+    - or emit into the repo `tmp/` directory or the system temp directory;
+    - and delete those temporary artifacts after use.
+- If a drift-prone output path is unavoidable and stable, update `.gitignore` or the generator destination instead of relying on manual cleanup at commit time.
+- If a tracked file is rewritten by tooling but is not part of the intended truth surface for the change, it must be restored before commit.
+- Commit boundaries require a clean worktree: no commit or PR may be created while leftover uncommitted, unexplained, or unclassified changes remain.
+- The current `pnpm check-commit` + `.husky/pre-push` guardrail now covers at least:
+    - no leftover uncommitted changes outside the staged set before commit / PR, and a fully clean worktree before push;
+    - no known drift-prone generators writing non-source-of-truth output back into tracked paths.
+- Later revisions can extend `pnpm check-commit` further, for example with more drift-prone tracked files or package-specific generator policies.
 
 ### Documentation and Naming Standards
 

@@ -8,41 +8,50 @@ export default function HomePage() {
             <section className="gd-hero">
                 <div className="gd-panel">
                     <p className="gd-muted">ZH</p>
-                    <h2>新主应用入口已经切换到 Next.js App Router</h2>
+                    <h2>当前主页仍是验证壳，不是完整盘面 UI</h2>
                     <p>
-                        当前仓库已经具备
-                        monorepo、contracts、domain、core-engine、application、adapters、ui、
-                        web、desktop 和 room-service 的骨架与第一条可运行主链路。
+                        当前仓库已完成重构工程边界收口，并提供本地、AI、在线与观战流程的
+                        deterministic validation shell；完整产品盘面与后续整改顺序已转入 full-board
+                        roadmap 跟踪。
                     </p>
                     <p className="gd-muted">EN</p>
                     <p>
-                        The repo now runs on a monorepo layout with a deterministic engine, typed
-                        contracts, a shared Web/Desktop shell boundary, and an authoritative
-                        room-service that can drive local, AI, online, and spectator flows through
-                        the same application-layer view models.
+                        This homepage currently exposes a deterministic validation shell for local,
+                        AI, online, and spectator flows. It reflects engineering closure rather than
+                        a player-complete board product, and the remaining product UI work is
+                        tracked in the full-board roadmap.
                     </p>
                     <div className="gd-action-list">
                         <Link className="gd-link" href="/play/local">
-                            Launch Local Demo
+                            Launch Local Validation
                         </Link>
                         <Link className="gd-link" href="/play/run">
-                            Launch Roguelike Run
+                            Launch Roguelike Validation
                         </Link>
                         <Link className="gd-link" href="/rooms">
-                            Create or Join a Room
+                            Open Room Validation
                         </Link>
                         <Link className="gd-link" href="/rulebook">
                             Read Rulebook Strategy
                         </Link>
+                        <Link
+                            className="gd-link"
+                            href="https://github.com/mingzhi0119/Gem-Duel/blob/main/docs/10-architecture/full-board-ui-roadmap.md"
+                            rel="noreferrer"
+                            target="_blank"
+                        >
+                            Read Full-Board Roadmap
+                        </Link>
                     </div>
                 </div>
                 <div className="gd-panel">
-                    <p className="gd-muted">Contract Surface</p>
+                    <p className="gd-muted">Validation Metadata</p>
                     <p>Schema Version: {SCHEMA_VERSION}</p>
                     <p>Engine Version: {ENGINE_VERSION}</p>
                     <p>
-                        HTTP and WebSocket contract artifacts are generated into
-                        `packages/contracts/generated/` and validated during Step 02.
+                        These versions are shown as internal validation metadata while the default
+                        entrypoint remains a verification shell and not the final player-facing
+                        board UI.
                     </p>
                 </div>
             </section>
