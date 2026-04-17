@@ -11,6 +11,6 @@ describe('replay fixtures', () => {
             readFileSync(path.join(replayFixtureRoot, 'minimal-replay.json'), 'utf8')
         );
 
-        expect(ReplayBundleSchema.parse(replay).engineVersion).toBe('2026.04-step3');
+        expect(ReplayBundleSchema.parse(replay).engineVersion).toBe('2026.04-step4');
     });
 });

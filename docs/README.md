@@ -19,6 +19,7 @@
 - [`30-contracts/README.md`](./30-contracts/README.md): HTTP、WebSocket、Replay 契约
 - [`30-contracts/contract-hardening-spec.md`](./30-contracts/contract-hardening-spec.md): 契约硬化、schema 真相源与生成策略
 - [`30-contracts/step-03-phase-replay-migration-note.md`](./30-contracts/step-03-phase-replay-migration-note.md): Step 03 phase surface 与 replay/hash ownership 迁移说明
+- [`30-contracts/step-04-classic-rules-migration-note.md`](./30-contracts/step-04-classic-rules-migration-note.md): Step 04 classic command/snapshot/victory 迁移说明
 - [`40-operations/README.md`](./40-operations/README.md): 部署、观测、CI/CD 与运行策略
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent 工具、CI 护栏与 `.codex`/MCP 规划
 - [`40-operations/skills-governance.md`](./40-operations/skills-governance.md): 项目本地 Skills 的质量标准、步骤映射与目录治理
@@ -48,6 +49,7 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`30-contracts/README.md`](./30-contracts/README.md): HTTP, WebSocket, and replay contracts
 - [`30-contracts/contract-hardening-spec.md`](./30-contracts/contract-hardening-spec.md): Contract hardening, schema truth sources, and generation strategy
 - [`30-contracts/step-03-phase-replay-migration-note.md`](./30-contracts/step-03-phase-replay-migration-note.md): Step 03 migration note for the phase surface and replay/hash ownership
+- [`30-contracts/step-04-classic-rules-migration-note.md`](./30-contracts/step-04-classic-rules-migration-note.md): Step 04 migration note for classic commands, snapshot shape, and victory metadata
 - [`40-operations/README.md`](./40-operations/README.md): Deployment, observability, CI/CD, and runtime strategy
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent tooling, CI guardrails, and `.codex`/MCP planning
 - [`40-operations/skills-governance.md`](./40-operations/skills-governance.md): Quality bar, step mapping, and directory governance for project-local skills

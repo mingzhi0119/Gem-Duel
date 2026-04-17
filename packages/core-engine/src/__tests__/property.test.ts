@@ -10,7 +10,45 @@ import {
     getAllowedCommands,
     readSnapshot,
 } from '../index';
+import { calculateCardPayment } from '../classic-helpers';
 import { DEFAULT_FLAGS, makeTestPorts } from './test-ports';
+
+const findNonGoldBoardPositions = (snapshot: GameSnapshot) =>
+    snapshot.board
+        .filter((cell) => cell.token !== null && cell.token !== 'gold')
+        .map((cell) => cell.positionId);
+
+const findGoldBoardPosition = (snapshot: GameSnapshot) =>
+    snapshot.board.find((cell) => cell.token === 'gold')?.positionId ?? null;
+
+const pickReserveSource = (snapshot: GameSnapshot, choice: number) => {
+    const pyramidCards = snapshot.pyramid.flatMap((row) =>
+        row.slots
+            .filter((slot) => slot.card !== null)
+            .map((slot) => ({ kind: 'pyramid' as const, level: row.level, slot: slot.slot }))
+    );
+    const deckLevels = ([1, 2, 3] as const)
+        .filter((level) => snapshot.hiddenState.deckOrder[`level${level}`].length > 0)
+        .map((level) => ({ kind: 'deck' as const, level }));
+    const sources = [...pyramidCards, ...deckLevels];
+    return sources[choice % Math.max(sources.length, 1)] ?? null;
+};
+
+const pickBuySource = (snapshot: GameSnapshot, choice: number) => {
+    const player = snapshot.players[snapshot.context.currentPlayer];
+    const affordablePyramidCards = snapshot.pyramid.flatMap((row) =>
+        row.slots
+            .filter(
+                (slot) => slot.card !== null && calculateCardPayment(player, slot.card).affordable
+            )
+            .map((slot) => ({ kind: 'pyramid' as const, level: row.level, slot: slot.slot }))
+    );
+    const affordableReserveCards = player.reserveSlots
+        .filter((slot) => slot.card !== null && calculateCardPayment(player, slot.card).affordable)
+        .map((slot) => ({ kind: 'reserve' as const, slotId: slot.slotId }));
+    const sources = [...affordablePyramidCards, ...affordableReserveCards];
+    return sources[choice % Math.max(sources.length, 1)] ?? null;
+};
 
 const materializeCommand = (snapshot: GameSnapshot, choice: number): GameCommand | null => {
     const allowedCommands = getAllowedCommands(snapshot);
@@ -24,39 +62,89 @@ const materializeCommand = (snapshot: GameSnapshot, choice: number): GameCommand
         case 'BEGIN_RESERVE':
         case 'BEGIN_BUY':
         case 'BEGIN_PRIVILEGE':
-        case 'BEGIN_ROYAL_RESOLUTION':
+        case 'REPLENISH_BOARD':
         case 'ENTER_REPLAY':
         case 'EXIT_REPLAY':
-        case 'START_MATCH':
             return { type: commandType };
-        case 'TAKE_GEM': {
-            const availableColors = (['blue', 'red', 'green', 'white'] as const).filter(
-                (color) => snapshot.gemBank[color] > 0
-            );
-            return {
-                type: 'TAKE_GEM',
-                color: availableColors[choice % Math.max(availableColors.length, 1)] ?? 'blue',
-            };
+        case 'TAKE_TOKENS': {
+            const positions = findNonGoldBoardPositions(snapshot);
+            return positions[0] ? { type: 'TAKE_TOKENS', positions: [positions[0]] } : null;
         }
-        case 'RESERVE_CARD':
-            return { type: 'RESERVE_CARD', slot: (choice % 3) + 1 };
-        case 'BUY_CARD':
-            return { type: 'BUY_CARD', scoreGain: (choice % 2) + 1 };
+        case 'RESERVE_CARD': {
+            const goldPosition = findGoldBoardPosition(snapshot);
+            const source = pickReserveSource(snapshot, choice);
+            return goldPosition && source
+                ? {
+                      type: 'RESERVE_CARD',
+                      goldPosition,
+                      source,
+                  }
+                : null;
+        }
+        case 'BUY_CARD': {
+            const source = pickBuySource(snapshot, choice);
+            return source ? { type: 'BUY_CARD', source } : null;
+        }
         case 'USE_PRIVILEGE': {
-            const availableColors = (
-                ['blue', 'white', 'green', 'black', 'red', 'pearl'] as const
-            ).filter((color) => snapshot.gemBank[color] > 0);
-            return {
-                type: 'USE_PRIVILEGE',
-                color: availableColors[choice % Math.max(availableColors.length, 1)] ?? 'green',
-            };
+            const positions = findNonGoldBoardPositions(snapshot);
+            return positions[0] ? { type: 'USE_PRIVILEGE', positions: [positions[0]] } : null;
         }
-        case 'SELECT_ROYAL':
-            return { type: 'SELECT_ROYAL', crownsGain: (choice % 3) + 1 };
-        case 'FINISH_MATCH':
-            return { type: 'FINISH_MATCH', winner: choice % 2 === 0 ? 'p1' : 'p2' };
-        case 'SELECT_MODE':
-            return { type: 'SELECT_MODE', mode: 'local', flags: DEFAULT_FLAGS };
+        case 'DISCARD_TOKEN': {
+            const player = snapshot.players[snapshot.context.currentPlayer];
+            const color = (
+                ['blue', 'white', 'green', 'black', 'red', 'pearl', 'gold'] as const
+            ).find((entry) => player.inventory[entry] > 0);
+            return color ? { type: 'DISCARD_TOKEN', color } : null;
+        }
+        case 'SELECT_ROYAL': {
+            const prompt = snapshot.effectPrompts.find((entry) => entry.atom === 'gain_royal');
+            return prompt?.royalIds[0]
+                ? { type: 'SELECT_ROYAL', royalId: prompt.royalIds[0] }
+                : null;
+        }
+        case 'TAKE_EFFECT_BOARD_TOKEN': {
+            const prompt = snapshot.effectPrompts.find(
+                (entry) => entry.atom === 'take_board_token'
+            );
+            const cell = snapshot.board.find(
+                (entry) =>
+                    entry.token !== null &&
+                    entry.token !== 'gold' &&
+                    entry.token !== 'pearl' &&
+                    prompt?.allowedColors.includes(entry.token)
+            );
+            return prompt && cell
+                ? {
+                      type: 'TAKE_EFFECT_BOARD_TOKEN',
+                      effectId: prompt.effectId,
+                      positionId: cell.positionId,
+                  }
+                : null;
+        }
+        case 'STEAL_OPPONENT_TOKEN': {
+            const prompt = snapshot.effectPrompts.find(
+                (entry) => entry.atom === 'take_opponent_token'
+            );
+            return prompt?.allowedColors[0]
+                ? {
+                      type: 'STEAL_OPPONENT_TOKEN',
+                      effectId: prompt.effectId,
+                      color: prompt.allowedColors[0],
+                  }
+                : null;
+        }
+        case 'SELECT_BONUS_COLOR': {
+            const prompt = snapshot.effectPrompts.find(
+                (entry) => entry.atom === 'override_bonus_color'
+            );
+            return prompt?.allowedColors[0]
+                ? {
+                      type: 'SELECT_BONUS_COLOR',
+                      effectId: prompt.effectId,
+                      color: prompt.allowedColors[0],
+                  }
+                : null;
+        }
     }
 
     return null;
@@ -110,7 +198,7 @@ const runLegalChoices = (seed: number, choices: number[]) => {
 test.prop(
     [
         fc.integer({ min: 1, max: 10_000 }),
-        fc.array(fc.integer({ min: 0, max: 99 }), { maxLength: 12 }),
+        fc.array(fc.integer({ min: 0, max: 99 }), { maxLength: 16 }),
     ],
     { numRuns: 25 }
 )(
@@ -128,7 +216,7 @@ test.prop(
 test.prop(
     [
         fc.integer({ min: 1, max: 10_000 }),
-        fc.array(fc.integer({ min: 0, max: 99 }), { maxLength: 12 }),
+        fc.array(fc.integer({ min: 0, max: 99 }), { maxLength: 16 }),
     ],
     { numRuns: 25 }
 )(

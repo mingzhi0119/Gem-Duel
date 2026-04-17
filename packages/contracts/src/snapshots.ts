@@ -1,40 +1,56 @@
 import { z } from 'zod';
-import { RULESET_VERSION, type MatchState, type PlayerId } from '@gem-duel/domain';
+import {
+    RULESET_VERSION,
+    type MatchState,
+    type PlayerId,
+    type PublicPlayerState,
+} from '@gem-duel/domain';
 import type { GameEvent } from './game';
 import { GameEventSchema } from './game';
 import {
     ActiveEffectSchema,
+    BoardCellSchema,
+    EffectPromptSchema,
     HiddenStateSchema,
     MatchContextSchema,
     PlayersByIdSchema,
-    GemInventorySchema,
+    PublicPlayersByIdSchema,
+    PyramidRowSchema,
+    ReserveSlotSchema,
+    RoyalCardSchema,
 } from './shared/base';
 import { ENGINE_VERSION, PlayerIdSchema, SCHEMA_VERSION } from './shared/enums';
 
-const SharedSnapshotSchema = z.object({
+const SharedVisibleSnapshotSchema = z.object({
     schemaVersion: z.literal(SCHEMA_VERSION),
     rulesetVersion: z.literal(RULESET_VERSION),
     engineVersion: z.literal(ENGINE_VERSION),
     context: MatchContextSchema,
-    gemBank: GemInventorySchema,
-    players: PlayersByIdSchema,
+    board: z.array(BoardCellSchema),
+    pyramid: z.array(PyramidRowSchema),
+    royalSupply: z.array(RoyalCardSchema),
+    privilegeSupply: z.number().int().min(0).max(3),
+    players: PublicPlayersByIdSchema,
     eventLog: z.array(GameEventSchema),
     replayCursor: z.number().int().min(0).nullable(),
     sequence: z.number().int().min(0),
     activeEffects: z.array(ActiveEffectSchema),
+    effectPrompts: z.array(EffectPromptSchema),
 });
 
-export const AuthoritativeSnapshotSchema = SharedSnapshotSchema.extend({
+export const AuthoritativeSnapshotSchema = SharedVisibleSnapshotSchema.extend({
     visibility: z.literal('authoritative'),
+    players: PlayersByIdSchema,
     hiddenState: HiddenStateSchema,
 });
 
-export const PlayerSnapshotSchema = SharedSnapshotSchema.extend({
+export const PlayerSnapshotSchema = SharedVisibleSnapshotSchema.extend({
     visibility: z.literal('player'),
     viewer: PlayerIdSchema,
+    viewerReserveSlots: z.array(ReserveSlotSchema),
 });
 
-export const SpectatorSnapshotSchema = SharedSnapshotSchema.extend({
+export const SpectatorSnapshotSchema = SharedVisibleSnapshotSchema.extend({
     visibility: z.literal('spectator'),
 });
 
@@ -56,17 +72,42 @@ export type PlayerSnapshot = z.infer<typeof PlayerSnapshotSchema>;
 export type SpectatorSnapshot = z.infer<typeof SpectatorSnapshotSchema>;
 export type VisibleSnapshot = z.infer<typeof VisibleSnapshotSchema>;
 
+const toPublicPlayerState = (
+    player: AuthoritativeSnapshot['players'][PlayerId]
+): PublicPlayerState => ({
+    id: player.id,
+    score: player.score,
+    crowns: player.crowns,
+    privileges: player.privileges,
+    inventory: player.inventory,
+    reserveSlots: player.reserveSlots.map((slot) => ({
+        slotId: slot.slotId,
+        occupied: slot.card !== null,
+    })),
+    tableau: player.tableau,
+    royals: player.royals,
+});
+
+const projectPublicPlayers = (snapshot: AuthoritativeSnapshot) => ({
+    p1: toPublicPlayerState(snapshot.players.p1),
+    p2: toPublicPlayerState(snapshot.players.p2),
+});
+
 const stripHiddenState = (snapshot: AuthoritativeSnapshot) => ({
     schemaVersion: snapshot.schemaVersion,
     rulesetVersion: snapshot.rulesetVersion,
     engineVersion: snapshot.engineVersion,
     context: snapshot.context,
-    gemBank: snapshot.gemBank,
-    players: snapshot.players,
+    board: snapshot.board,
+    pyramid: snapshot.pyramid,
+    royalSupply: snapshot.royalSupply,
+    privilegeSupply: snapshot.privilegeSupply,
+    players: projectPublicPlayers(snapshot),
     eventLog: snapshot.eventLog,
     replayCursor: snapshot.replayCursor,
     sequence: snapshot.sequence,
     activeEffects: snapshot.activeEffects,
+    effectPrompts: snapshot.effectPrompts,
 });
 
 export const toPlayerSnapshot = (
@@ -76,6 +117,7 @@ export const toPlayerSnapshot = (
     ...stripHiddenState(snapshot),
     visibility: 'player',
     viewer,
+    viewerReserveSlots: structuredClone(snapshot.players[viewer].reserveSlots),
 });
 
 export const toSpectatorSnapshot = (snapshot: AuthoritativeSnapshot): SpectatorSnapshot => ({

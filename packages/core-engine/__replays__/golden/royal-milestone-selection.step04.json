@@ -1,0 +1,801 @@
+{
+    "schemaVersion": "5.0.0",
+    "rulesetVersion": "2026.1",
+    "engineVersion": "2026.04-step4",
+    "seed": 26,
+    "initialSnapshot": {
+        "schemaVersion": "5.0.0",
+        "rulesetVersion": "2026.1",
+        "engineVersion": "2026.04-step4",
+        "visibility": "authoritative",
+        "context": {
+            "matchId": "match-1",
+            "schemaVersion": "5.0.0",
+            "rulesetVersion": "2026.1",
+            "seed": 26,
+            "mode": "local",
+            "phase": "turnIdle",
+            "step": 5,
+            "currentPlayer": "p1",
+            "winner": null,
+            "victoryReason": null,
+            "flags": {
+                "roguelike": false,
+                "onlineAuthoritative": false,
+                "aiEnabled": false
+            },
+            "turn": {
+                "turnNumber": 1,
+                "segment": "optional",
+                "optionalStep": "privilege",
+                "mandatoryActionTaken": false,
+                "pendingDiscardCount": 0
+            }
+        },
+        "board": [
+            {
+                "positionId": "r2c2",
+                "row": 2,
+                "col": 2,
+                "token": "pearl"
+            },
+            {
+                "positionId": "r2c3",
+                "row": 2,
+                "col": 3,
+                "token": "blue"
+            },
+            {
+                "positionId": "r3c3",
+                "row": 3,
+                "col": 3,
+                "token": "black"
+            },
+            {
+                "positionId": "r3c2",
+                "row": 3,
+                "col": 2,
+                "token": "red"
+            },
+            {
+                "positionId": "r3c1",
+                "row": 3,
+                "col": 1,
+                "token": "blue"
+            },
+            {
+                "positionId": "r2c1",
+                "row": 2,
+                "col": 1,
+                "token": "blue"
+            },
+            {
+                "positionId": "r1c1",
+                "row": 1,
+                "col": 1,
+                "token": "red"
+            },
+            {
+                "positionId": "r1c2",
+                "row": 1,
+                "col": 2,
+                "token": "blue"
+            },
+            {
+                "positionId": "r1c3",
+                "row": 1,
+                "col": 3,
+                "token": "red"
+            },
+            {
+                "positionId": "r1c4",
+                "row": 1,
+                "col": 4,
+                "token": "pearl"
+            },
+            {
+                "positionId": "r2c4",
+                "row": 2,
+                "col": 4,
+                "token": "gold"
+            },
+            {
+                "positionId": "r3c4",
+                "row": 3,
+                "col": 4,
+                "token": "green"
+            },
+            {
+                "positionId": "r4c4",
+                "row": 4,
+                "col": 4,
+                "token": "white"
+            },
+            {
+                "positionId": "r4c3",
+                "row": 4,
+                "col": 3,
+                "token": "white"
+            },
+            {
+                "positionId": "r4c2",
+                "row": 4,
+                "col": 2,
+                "token": "black"
+            },
+            {
+                "positionId": "r4c1",
+                "row": 4,
+                "col": 1,
+                "token": "green"
+            },
+            {
+                "positionId": "r4c0",
+                "row": 4,
+                "col": 0,
+                "token": "red"
+            },
+            {
+                "positionId": "r3c0",
+                "row": 3,
+                "col": 0,
+                "token": "white"
+            },
+            {
+                "positionId": "r2c0",
+                "row": 2,
+                "col": 0,
+                "token": "green"
+            },
+            {
+                "positionId": "r1c0",
+                "row": 1,
+                "col": 0,
+                "token": "green"
+            },
+            {
+                "positionId": "r0c0",
+                "row": 0,
+                "col": 0,
+                "token": "white"
+            },
+            {
+                "positionId": "r0c1",
+                "row": 0,
+                "col": 1,
+                "token": "gold"
+            },
+            {
+                "positionId": "r0c2",
+                "row": 0,
+                "col": 2,
+                "token": "gold"
+            },
+            {
+                "positionId": "r0c3",
+                "row": 0,
+                "col": 3,
+                "token": "black"
+            },
+            {
+                "positionId": "r0c4",
+                "row": 0,
+                "col": 4,
+                "token": "black"
+            }
+        ],
+        "pyramid": [
+            {
+                "level": 1,
+                "slots": [
+                    {
+                        "level": 1,
+                        "slot": 1,
+                        "card": {
+                            "cardId": "royal-threshold-card",
+                            "level": 1,
+                            "points": 0,
+                            "crowns": 3,
+                            "printedBonusColor": "blue",
+                            "bonusColor": "blue",
+                            "bonusCount": 1,
+                            "cost": {
+                                "blue": 0,
+                                "white": 0,
+                                "green": 0,
+                                "black": 0,
+                                "red": 0,
+                                "pearl": 0,
+                                "gold": 0
+                            },
+                            "ability": "none"
+                        }
+                    },
+                    {
+                        "level": 1,
+                        "slot": 2,
+                        "card": {
+                            "cardId": "l1-wh-24",
+                            "level": 1,
+                            "points": 0,
+                            "crowns": 1,
+                            "printedBonusColor": "white",
+                            "bonusColor": "white",
+                            "bonusCount": 1,
+                            "cost": {
+                                "blue": 3,
+                                "white": 0,
+                                "green": 0,
+                                "black": 0,
+                                "red": 0,
+                                "pearl": 0,
+                                "gold": 0
+                            },
+                            "ability": "none"
+                        }
+                    },
+                    {
+                        "level": 1,
+                        "slot": 3,
+                        "card": {
+                            "cardId": "l1-bl-15",
+                            "level": 1,
+                            "points": 0,
+                            "crowns": 0,
+                            "printedBonusColor": "blue",
+                            "bonusColor": "blue",
+                            "bonusCount": 1,
+                            "cost": {
+                                "blue": 0,
+                                "white": 1,
+                                "green": 1,
+                                "black": 1,
+                                "red": 1,
+                                "pearl": 0,
+                                "gold": 0
+                            },
+                            "ability": "none"
+                        }
+                    },
+                    {
+                        "level": 1,
+                        "slot": 4,
+                        "card": {
+                            "cardId": "l1-jo-27",
+                            "level": 1,
+                            "points": 0,
+                            "crowns": 1,
+                            "printedBonusColor": "gold",
+                            "bonusColor": null,
+                            "bonusCount": 1,
+                            "cost": {
+                                "blue": 0,
+                                "white": 4,
+                                "green": 0,
+                                "black": 0,
+                                "red": 0,
+                                "pearl": 1,
+                                "gold": 0
+                            },
+                            "ability": "none"
+                        }
+                    },
+                    {
+                        "level": 1,
+                        "slot": 5,
+                        "card": {
+                            "cardId": "l1-bl-3",
+                            "level": 1,
+                            "points": 1,
+                            "crowns": 0,
+                            "printedBonusColor": "black",
+                            "bonusColor": "black",
+                            "bonusCount": 1,
+                            "cost": {
+                                "blue": 2,
+                                "white": 0,
+                                "green": 3,
+                                "black": 0,
+                                "red": 0,
+                                "pearl": 0,
+                                "gold": 0
+                            },
+                            "ability": "none"
+                        }
+                    }
+                ]
+            },
+            {
+                "level": 2,
+                "slots": [
+                    {
+                        "level": 2,
+                        "slot": 1,
+                        "card": {
+                            "cardId": "l2-gr-41",
+                            "level": 2,
+                            "points": 1,
+                            "crowns": 0,
+                            "printedBonusColor": "green",
+                            "bonusColor": "green",
+                            "bonusCount": 2,
+                            "cost": {
+                                "blue": 0,
+                                "white": 0,
+                                "green": 0,
+                                "black": 2,
+                                "red": 5,
+                                "pearl": 0,
+                                "gold": 0
+                            },
+                            "ability": "none"
+                        }
+                    },
+                    {
+                        "level": 2,
+                        "slot": 2,
+                        "card": {
+                            "cardId": "l2-bl-33",
+                            "level": 2,
+                            "points": 1,
+                            "crowns": 0,
+                            "printedBonusColor": "black",
+                            "bonusColor": "black",
+                            "bonusCount": 2,
+                            "cost": {
+                                "blue": 2,
+                                "white": 5,
+                                "green": 0,
+                                "black": 0,
+                                "red": 0,
+                                "pearl": 0,
+                                "gold": 0
+                            },
+                            "ability": "none"
+                        }
+                    },
+                    {
+                        "level": 2,
+                        "slot": 3,
+                        "card": {
+                            "cardId": "l2-wh-50",
+                            "level": 2,
+                            "points": 2,
+                            "crowns": 1,
+                            "printedBonusColor": "white",
+                            "bonusColor": "white",
+                            "bonusCount": 1,
+                            "cost": {
+                                "blue": 0,
+                                "white": 0,
+                                "green": 2,
+                                "black": 2,
+                                "red": 2,
+                                "pearl": 1,
+                                "gold": 0
+                            },
+                            "ability": "none"
+                        }
+                    },
+                    {
+                        "level": 2,
+                        "slot": 4,
+                        "card": {
+                            "cardId": "l2-gr-42",
+                            "level": 2,
+                            "points": 2,
+                            "crowns": 1,
+                            "printedBonusColor": "green",
+                            "bonusColor": "green",
+                            "bonusCount": 1,
+                            "cost": {
+                                "blue": 2,
+                                "white": 2,
+                                "green": 0,
+                                "black": 2,
+                                "red": 0,
+                                "pearl": 1,
+                                "gold": 0
+                            },
+                            "ability": "none"
+                        }
+                    }
+                ]
+            },
+            {
+                "level": 3,
+                "slots": [
+                    {
+                        "level": 3,
+                        "slot": 1,
+                        "card": {
+                            "cardId": "l3-jo-70",
+                            "level": 3,
+                            "points": 3,
+                            "crowns": 0,
+                            "printedBonusColor": "gold",
+                            "bonusColor": null,
+                            "bonusCount": 1,
+                            "cost": {
+                                "blue": 0,
+                                "white": 0,
+                                "green": 0,
+                                "black": 0,
+                                "red": 8,
+                                "pearl": 0,
+                                "gold": 0
+                            },
+                            "ability": "again"
+                        }
+                    },
+                    {
+                        "level": 3,
+                        "slot": 2,
+                        "card": {
+                            "cardId": "l3-gr-63",
+                            "level": 3,
+                            "points": 4,
+                            "crowns": 0,
+                            "printedBonusColor": "green",
+                            "bonusColor": "green",
+                            "bonusCount": 1,
+                            "cost": {
+                                "blue": 2,
+                                "white": 0,
+                                "green": 6,
+                                "black": 0,
+                                "red": 2,
+                                "pearl": 0,
+                                "gold": 0
+                            },
+                            "ability": "none"
+                        }
+                    },
+                    {
+                        "level": 3,
+                        "slot": 3,
+                        "card": {
+                            "cardId": "l3-re-61",
+                            "level": 3,
+                            "points": 4,
+                            "crowns": 0,
+                            "printedBonusColor": "red",
+                            "bonusColor": "red",
+                            "bonusCount": 1,
+                            "cost": {
+                                "blue": 0,
+                                "white": 0,
+                                "green": 2,
+                                "black": 2,
+                                "red": 6,
+                                "pearl": 0,
+                                "gold": 0
+                            },
+                            "ability": "none"
+                        }
+                    }
+                ]
+            }
+        ],
+        "royalSupply": [
+            {
+                "royalId": "royal-3pts",
+                "points": 3,
+                "crowns": 0,
+                "ability": "none",
+                "label": "The Queen"
+            },
+            {
+                "royalId": "royal-scroll",
+                "points": 2,
+                "crowns": 0,
+                "ability": "scroll",
+                "label": "The Judge"
+            }
+        ],
+        "privilegeSupply": 2,
+        "players": {
+            "p1": {
+                "id": "p1",
+                "score": 0,
+                "crowns": 0,
+                "privileges": 0,
+                "inventory": {
+                    "blue": 0,
+                    "white": 0,
+                    "green": 0,
+                    "black": 0,
+                    "red": 0,
+                    "pearl": 0,
+                    "gold": 0
+                },
+                "reserveSlots": [
+                    {
+                        "slotId": "reserve-1",
+                        "sourceLevel": null,
+                        "card": null
+                    },
+                    {
+                        "slotId": "reserve-2",
+                        "sourceLevel": null,
+                        "card": null
+                    },
+                    {
+                        "slotId": "reserve-3",
+                        "sourceLevel": null,
+                        "card": null
+                    }
+                ],
+                "tableau": [],
+                "royals": []
+            },
+            "p2": {
+                "id": "p2",
+                "score": 0,
+                "crowns": 0,
+                "privileges": 1,
+                "inventory": {
+                    "blue": 0,
+                    "white": 0,
+                    "green": 0,
+                    "black": 0,
+                    "red": 0,
+                    "pearl": 0,
+                    "gold": 0
+                },
+                "reserveSlots": [
+                    {
+                        "slotId": "reserve-1",
+                        "sourceLevel": null,
+                        "card": null
+                    },
+                    {
+                        "slotId": "reserve-2",
+                        "sourceLevel": null,
+                        "card": null
+                    },
+                    {
+                        "slotId": "reserve-3",
+                        "sourceLevel": null,
+                        "card": null
+                    }
+                ],
+                "tableau": [],
+                "royals": []
+            }
+        },
+        "eventLog": [
+            {
+                "type": "match.modeSelected",
+                "mode": "local"
+            },
+            {
+                "type": "phase.changed",
+                "phase": "modeSelection"
+            },
+            {
+                "type": "match.started"
+            },
+            {
+                "type": "phase.changed",
+                "phase": "turnIdle"
+            },
+            {
+                "type": "match.setupCompleted",
+                "firstPlayer": "p1",
+                "privilegeRecipient": "p2"
+            }
+        ],
+        "replayCursor": null,
+        "sequence": 5,
+        "activeEffects": [],
+        "effectPrompts": [],
+        "hiddenState": {
+            "bag": [],
+            "deckOrder": {
+                "level1": [
+                    "l1-jo-29",
+                    "l1-bl-2",
+                    "l1-bl-0",
+                    "l1-gr-12",
+                    "l1-wh-22",
+                    "l1-gr-14",
+                    "l1-re-7",
+                    "l1-gr-10",
+                    "l1-gr-13",
+                    "l1-re-6",
+                    "l1-bl-18",
+                    "l1-re-9",
+                    "l1-wh-21",
+                    "l1-bl-17",
+                    "l1-jo-26",
+                    "l1-po-25",
+                    "l1-jo-28",
+                    "l1-re-8",
+                    "l1-bl-1",
+                    "l1-bl-16",
+                    "l1-bl-19",
+                    "l1-bl-4",
+                    "l1-re-5",
+                    "l1-wh-23",
+                    "l1-gr-11"
+                ],
+                "level2": [
+                    "l2-jo-55",
+                    "l2-bl-45",
+                    "l2-re-36",
+                    "l2-gr-43",
+                    "l2-jo-56",
+                    "l2-bl-44",
+                    "l2-gr-40",
+                    "l2-re-39",
+                    "l2-bl-46",
+                    "l2-wh-51",
+                    "l2-bl-34",
+                    "l2-jo-54",
+                    "l2-wh-49",
+                    "l2-bl-35",
+                    "l2-bl-47",
+                    "l2-re-37",
+                    "l2-po-53",
+                    "l2-wh-48",
+                    "l2-re-38",
+                    "l2-bl-32"
+                ],
+                "level3": [
+                    "l3-jo-69",
+                    "l3-wh-67",
+                    "l3-bl-58",
+                    "l3-gr-62",
+                    "l3-bl-59",
+                    "l3-po-68",
+                    "l3-bl-65",
+                    "l3-re-60",
+                    "l3-wh-66",
+                    "l3-bl-64"
+                ]
+            },
+            "extraTurns": {
+                "p1": 0,
+                "p2": 0
+            }
+        }
+    },
+    "commands": [
+        {
+            "clientCommandId": "golden-command-1",
+            "expectedSeq": 5,
+            "issuedBy": "p1",
+            "command": {
+                "type": "BEGIN_BUY"
+            }
+        },
+        {
+            "clientCommandId": "golden-command-2",
+            "expectedSeq": 7,
+            "issuedBy": "p1",
+            "command": {
+                "type": "BUY_CARD",
+                "source": {
+                    "kind": "pyramid",
+                    "level": 1,
+                    "slot": 1
+                }
+            }
+        },
+        {
+            "clientCommandId": "golden-command-3",
+            "expectedSeq": 14,
+            "issuedBy": "p1",
+            "command": {
+                "type": "SELECT_ROYAL",
+                "royalId": "royal-3pts"
+            }
+        }
+    ],
+    "events": [
+        {
+            "type": "match.modeSelected",
+            "mode": "local"
+        },
+        {
+            "type": "phase.changed",
+            "phase": "modeSelection"
+        },
+        {
+            "type": "match.started"
+        },
+        {
+            "type": "phase.changed",
+            "phase": "turnIdle"
+        },
+        {
+            "type": "match.setupCompleted",
+            "firstPlayer": "p1",
+            "privilegeRecipient": "p2"
+        },
+        {
+            "type": "turn.segmentChanged",
+            "segment": "mandatory",
+            "optionalStep": "done",
+            "pendingDiscardCount": 0
+        },
+        {
+            "type": "phase.changed",
+            "phase": "buying"
+        },
+        {
+            "type": "card.bought",
+            "player": "p1",
+            "source": {
+                "kind": "pyramid",
+                "level": 1,
+                "slot": 1
+            },
+            "cardId": "royal-threshold-card",
+            "bonusColor": "blue",
+            "goldSpent": 0
+        },
+        {
+            "type": "pyramid.refilled",
+            "level": 1,
+            "slot": 1,
+            "cardId": "l1-jo-29"
+        },
+        {
+            "type": "phase.changed",
+            "phase": "turnIdle"
+        },
+        {
+            "type": "turn.segmentChanged",
+            "segment": "cleanup",
+            "optionalStep": "done",
+            "pendingDiscardCount": 0
+        },
+        {
+            "type": "effect.spawned",
+            "effectId": "match-1-gain_royal-12",
+            "parentEffectId": null,
+            "atom": "gain_royal",
+            "hookPoint": "BEFORE_GAIN_ROYAL",
+            "source": "royal_reward",
+            "scope": "active_player",
+            "owner": "p1",
+            "sequence": 12,
+            "stage": "scheduled",
+            "rngNamespace": "match/match-1/effects/gain_royal/12/match-1-gain_royal-12"
+        },
+        {
+            "type": "effect.started",
+            "effectId": "match-1-gain_royal-12",
+            "atom": "gain_royal",
+            "sequence": 12,
+            "stage": "running"
+        },
+        {
+            "type": "royal.milestoneReached",
+            "player": "p1",
+            "milestone": 3
+        },
+        {
+            "type": "royal.selected",
+            "player": "p1",
+            "royalId": "royal-3pts"
+        },
+        {
+            "type": "effect.completed",
+            "effectId": "match-1-gain_royal-12",
+            "atom": "gain_royal",
+            "sequence": 12,
+            "stage": "completed",
+            "outcome": "resolved"
+        }
+    ],
+    "finalStateHash": "fnv1a-5e5c5d7b",
+    "resultSummary": {
+        "winner": null,
+        "reason": null,
+        "turns": 16,
+        "finalSeq": 16
+    }
+}

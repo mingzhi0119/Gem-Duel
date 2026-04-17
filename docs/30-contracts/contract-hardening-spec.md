@@ -17,6 +17,7 @@
 - `PlayerSnapshot`：发给单个玩家的视图，只允许暴露该玩家可见的信息与自己的隐藏信息。
 - `SpectatorSnapshot`：发给观战者的视图，对局进行中不得暴露任何玩家的隐藏牌或未来牌堆信息。
 - 所有外发快照都必须从 `AuthoritativeSnapshot` 通过信息过滤投影得到，禁止直接复用权威结构下发到客户端。
+- 自 Step 04 起，classic snapshot surface 必须显式暴露 board、pyramid、royal supply、privilege supply、reserve slot occupancy、turn metadata 与 `victoryReason`，而不再依赖 placeholder score-only fields。
 
 ## Effect / Hook 契约
 
@@ -122,6 +123,7 @@ This document defines the hardening path for `packages/contracts`. Contracts mus
 - `PlayerSnapshot`: sent to one player and may reveal only public information plus that player's own hidden information.
 - `SpectatorSnapshot`: sent to spectators and must not reveal hidden cards or future deck information while the match is live.
 - All outbound snapshots must be projected from `AuthoritativeSnapshot` through information filtering; raw authoritative structures may never be sent externally.
+- Starting in Step 04, the classic snapshot surface must explicitly expose board, pyramid, royal supply, privilege supply, reserve-slot occupancy, turn metadata, and `victoryReason` instead of placeholder score-only fields.
 
 ## Effect / Hook Contracts
 

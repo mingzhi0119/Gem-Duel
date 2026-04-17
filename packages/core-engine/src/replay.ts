@@ -52,12 +52,16 @@ export const projectSnapshotForHash = (snapshot: GameSnapshot) => ({
     engineVersion: snapshot.engineVersion,
     visibility: snapshot.visibility,
     context: snapshot.context,
-    gemBank: snapshot.gemBank,
+    board: snapshot.board,
+    pyramid: snapshot.pyramid,
+    royalSupply: snapshot.royalSupply,
+    privilegeSupply: snapshot.privilegeSupply,
     players: snapshot.players,
     eventLog: snapshot.eventLog,
     replayCursor: snapshot.replayCursor,
     sequence: snapshot.sequence,
     activeEffects: snapshot.activeEffects,
+    effectPrompts: snapshot.effectPrompts,
     hiddenState: snapshot.hiddenState,
 });
 
@@ -79,6 +83,7 @@ export const buildReplayBundle = (
     finalStateHash: createSnapshotHash(finalSnapshot),
     resultSummary: {
         winner: finalSnapshot.context.winner,
+        reason: finalSnapshot.context.victoryReason,
         turns: finalSnapshot.context.step,
         finalSeq: finalSnapshot.sequence,
     },

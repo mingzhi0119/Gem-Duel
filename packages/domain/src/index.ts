@@ -13,6 +13,43 @@ export const GAME_PHASES = [
 ] as const;
 export const PLAYER_IDS = ['p1', 'p2'] as const;
 export const GEM_COLORS = ['blue', 'white', 'green', 'black', 'red', 'pearl', 'gold'] as const;
+export const BONUS_COLORS = ['blue', 'white', 'green', 'black', 'red'] as const;
+export const PRINTED_BONUS_COLORS = [...BONUS_COLORS, 'gold', null] as const;
+export const STEALABLE_GEM_COLORS = ['blue', 'white', 'green', 'black', 'red', 'pearl'] as const;
+export const CARD_LEVELS = [1, 2, 3] as const;
+export const DECK_LEVEL_KEYS = ['level1', 'level2', 'level3'] as const;
+export const RESERVE_SLOT_IDS = ['reserve-1', 'reserve-2', 'reserve-3'] as const;
+export const TURN_SEGMENTS = ['optional', 'mandatory', 'cleanup'] as const;
+export const OPTIONAL_TURN_STEPS = ['privilege', 'replenish', 'done'] as const;
+export const JEWEL_CARD_ABILITIES = ['none', 'again', 'steal', 'scroll', 'bonus_gem'] as const;
+export const VICTORY_REASONS = ['points', 'crowns', 'singleColor'] as const;
+export const BOARD_POSITION_IDS = [
+    'r2c2',
+    'r2c3',
+    'r3c3',
+    'r3c2',
+    'r3c1',
+    'r2c1',
+    'r1c1',
+    'r1c2',
+    'r1c3',
+    'r1c4',
+    'r2c4',
+    'r3c4',
+    'r4c4',
+    'r4c3',
+    'r4c2',
+    'r4c1',
+    'r4c0',
+    'r3c0',
+    'r2c0',
+    'r1c0',
+    'r0c0',
+    'r0c1',
+    'r0c2',
+    'r0c3',
+    'r0c4',
+] as const;
 export const EFFECT_ATOMS = [
     'grant_privilege',
     'take_opponent_token',
@@ -74,11 +111,56 @@ export const ERROR_CATEGORIES = [
     'desync',
 ] as const;
 
+const BOARD_POSITION_COORDINATES = Object.freeze({
+    r0c0: { row: 0, col: 0 },
+    r0c1: { row: 0, col: 1 },
+    r0c2: { row: 0, col: 2 },
+    r0c3: { row: 0, col: 3 },
+    r0c4: { row: 0, col: 4 },
+    r1c0: { row: 1, col: 0 },
+    r1c1: { row: 1, col: 1 },
+    r1c2: { row: 1, col: 2 },
+    r1c3: { row: 1, col: 3 },
+    r1c4: { row: 1, col: 4 },
+    r2c0: { row: 2, col: 0 },
+    r2c1: { row: 2, col: 1 },
+    r2c2: { row: 2, col: 2 },
+    r2c3: { row: 2, col: 3 },
+    r2c4: { row: 2, col: 4 },
+    r3c0: { row: 3, col: 0 },
+    r3c1: { row: 3, col: 1 },
+    r3c2: { row: 3, col: 2 },
+    r3c3: { row: 3, col: 3 },
+    r3c4: { row: 3, col: 4 },
+    r4c0: { row: 4, col: 0 },
+    r4c1: { row: 4, col: 1 },
+    r4c2: { row: 4, col: 2 },
+    r4c3: { row: 4, col: 3 },
+    r4c4: { row: 4, col: 4 },
+}) satisfies Record<
+    (typeof BOARD_POSITION_IDS)[number],
+    {
+        row: number;
+        col: number;
+    }
+>;
+
 export type RuleSetVersion = typeof RULESET_VERSION;
 export type GameMode = (typeof GAME_MODES)[number];
 export type GamePhase = (typeof GAME_PHASES)[number];
 export type PlayerId = (typeof PLAYER_IDS)[number];
 export type GemColor = (typeof GEM_COLORS)[number];
+export type BonusColor = (typeof BONUS_COLORS)[number];
+export type PrintedBonusColor = BonusColor | 'gold' | null;
+export type StealableGemColor = (typeof STEALABLE_GEM_COLORS)[number];
+export type CardLevel = (typeof CARD_LEVELS)[number];
+export type DeckLevelKey = (typeof DECK_LEVEL_KEYS)[number];
+export type ReserveSlotId = (typeof RESERVE_SLOT_IDS)[number];
+export type TurnSegment = (typeof TURN_SEGMENTS)[number];
+export type OptionalTurnStep = (typeof OPTIONAL_TURN_STEPS)[number];
+export type JewelCardAbility = (typeof JEWEL_CARD_ABILITIES)[number];
+export type VictoryReason = (typeof VICTORY_REASONS)[number];
+export type BoardPositionId = (typeof BOARD_POSITION_IDS)[number];
 export type EffectAtom = (typeof EFFECT_ATOMS)[number];
 export type EffectHookPoint = (typeof EFFECT_HOOK_POINTS)[number];
 export type EffectSource = (typeof EFFECT_SOURCES)[number];
@@ -105,20 +187,89 @@ export interface GemInventory {
     gold: number;
 }
 
+export interface JewelCardState {
+    cardId: string;
+    level: CardLevel;
+    points: number;
+    crowns: number;
+    printedBonusColor: PrintedBonusColor;
+    bonusColor: BonusColor | null;
+    bonusCount: number;
+    cost: GemInventory;
+    ability: JewelCardAbility;
+}
+
+export interface RoyalCardState {
+    royalId: string;
+    points: number;
+    crowns: number;
+    ability: JewelCardAbility;
+    label: string;
+}
+
+export interface BoardCellState {
+    positionId: BoardPositionId;
+    row: number;
+    col: number;
+    token: GemColor | null;
+}
+
+export interface PyramidSlotState {
+    level: CardLevel;
+    slot: number;
+    card: JewelCardState | null;
+}
+
+export interface PyramidRowState {
+    level: CardLevel;
+    slots: PyramidSlotState[];
+}
+
+export interface ReserveSlotState {
+    slotId: ReserveSlotId;
+    sourceLevel: CardLevel | null;
+    card: JewelCardState | null;
+}
+
+export interface PublicReserveSlotState {
+    slotId: ReserveSlotId;
+    occupied: boolean;
+}
+
 export interface PlayerState {
     id: PlayerId;
     score: number;
     crowns: number;
     privileges: number;
-    reservedCards: number;
-    tableauCards: number;
     inventory: GemInventory;
+    reserveSlots: ReserveSlotState[];
+    tableau: JewelCardState[];
+    royals: RoyalCardState[];
+}
+
+export interface PublicPlayerState {
+    id: PlayerId;
+    score: number;
+    crowns: number;
+    privileges: number;
+    inventory: GemInventory;
+    reserveSlots: PublicReserveSlotState[];
+    tableau: JewelCardState[];
+    royals: RoyalCardState[];
 }
 
 export interface MatchFlags {
     roguelike: boolean;
     onlineAuthoritative: boolean;
     aiEnabled: boolean;
+}
+
+export interface TurnState {
+    turnNumber: number;
+    segment: TurnSegment;
+    optionalStep: OptionalTurnStep;
+    mandatoryActionTaken: boolean;
+    pendingDiscardCount: number;
 }
 
 export interface MatchContext {
@@ -131,7 +282,9 @@ export interface MatchContext {
     step: number;
     currentPlayer: PlayerId;
     winner: PlayerId | null;
+    victoryReason: VictoryReason | null;
     flags: MatchFlags;
+    turn: TurnState;
 }
 
 export interface ActiveEffect {
@@ -147,19 +300,64 @@ export interface ActiveEffect {
     rngNamespace: string;
 }
 
+export interface RoyalSelectionPrompt {
+    effectId: string;
+    atom: 'gain_royal';
+    milestone: 3 | 6;
+    royalIds: string[];
+}
+
+export interface BoardTokenPrompt {
+    effectId: string;
+    atom: 'take_board_token';
+    allowedColors: BonusColor[];
+    count: number;
+}
+
+export interface OpponentTokenPrompt {
+    effectId: string;
+    atom: 'take_opponent_token';
+    targetPlayer: PlayerId;
+    allowedColors: StealableGemColor[];
+}
+
+export interface BonusColorPrompt {
+    effectId: string;
+    atom: 'override_bonus_color';
+    cardId: string;
+    allowedColors: BonusColor[];
+}
+
+export interface DiscardPrompt {
+    effectId: string;
+    atom: 'discard_to_limit';
+    remaining: number;
+}
+
+export type EffectPrompt =
+    | RoyalSelectionPrompt
+    | BoardTokenPrompt
+    | OpponentTokenPrompt
+    | BonusColorPrompt
+    | DiscardPrompt;
+
 export interface HiddenState {
     bag: GemColor[];
-    deckOrder: Record<string, string[]>;
+    deckOrder: Record<DeckLevelKey, string[]>;
     extraTurns: Record<PlayerId, number>;
 }
 
 export interface MatchState {
     context: MatchContext;
-    gemBank: GemInventory;
+    board: BoardCellState[];
+    pyramid: PyramidRowState[];
+    royalSupply: RoyalCardState[];
+    privilegeSupply: number;
     players: Record<PlayerId, PlayerState>;
     sequence: number;
     replayCursor: number | null;
     activeEffects: ActiveEffect[];
+    effectPrompts: EffectPrompt[];
     hiddenState: HiddenState;
 }
 
@@ -204,25 +402,45 @@ export const createEmptyInventory = (): GemInventory => ({
     gold: 0,
 });
 
-export const createInitialGemBank = (): GemInventory => ({
-    blue: 4,
-    white: 4,
-    green: 4,
-    black: 4,
-    red: 4,
-    pearl: 2,
-    gold: 3,
-});
+export const createReserveSlots = (): ReserveSlotState[] =>
+    RESERVE_SLOT_IDS.map((slotId) => ({
+        slotId,
+        sourceLevel: null,
+        card: null,
+    }));
+
+export const createPublicReserveSlots = (): PublicReserveSlotState[] =>
+    RESERVE_SLOT_IDS.map((slotId) => ({
+        slotId,
+        occupied: false,
+    }));
 
 export const createPlayerState = (id: PlayerId): PlayerState => ({
     id,
     score: 0,
     crowns: 0,
-    privileges: id === 'p2' ? 1 : 0,
-    reservedCards: 0,
-    tableauCards: 0,
+    privileges: 0,
     inventory: createEmptyInventory(),
+    reserveSlots: createReserveSlots(),
+    tableau: [],
+    royals: [],
 });
+
+export const createTurnState = (): TurnState => ({
+    turnNumber: 1,
+    segment: 'optional',
+    optionalStep: 'privilege',
+    mandatoryActionTaken: false,
+    pendingDiscardCount: 0,
+});
+
+export const createEmptyBoard = (): BoardCellState[] =>
+    BOARD_POSITION_IDS.map((positionId) => ({
+        positionId,
+        row: BOARD_POSITION_COORDINATES[positionId].row,
+        col: BOARD_POSITION_COORDINATES[positionId].col,
+        token: null,
+    }));
 
 export const createHiddenState = (): HiddenState => ({
     bag: [],
@@ -236,6 +454,9 @@ export const createHiddenState = (): HiddenState => ({
         p2: 0,
     },
 });
+
+export const getBoardPositionCoordinate = (positionId: BoardPositionId) =>
+    BOARD_POSITION_COORDINATES[positionId];
 
 export const createDomainError = (
     code: string,

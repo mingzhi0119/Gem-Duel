@@ -1,5 +1,5 @@
 import type { GameCommand } from './game';
-import type { GameSnapshot } from './snapshots';
+import type { VisibleSnapshot } from './snapshots';
 
 export interface UiActionDescriptor {
     id: string;
@@ -11,6 +11,6 @@ export interface UiActionDescriptor {
 export interface UiViewModel {
     title: string;
     subtitle: string;
-    snapshot: GameSnapshot;
+    snapshot: VisibleSnapshot;
     availableActions: UiActionDescriptor[];
 }

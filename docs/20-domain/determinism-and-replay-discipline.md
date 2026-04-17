@@ -7,6 +7,7 @@
 ## 状态分层
 
 - `MatchState`：单局对战的全部领域状态。
+- 自 Step 04 起，`MatchState` 必须完整承载经典规则所需的 spiral board tokens、pyramid reveal、hidden deck order、royal supply、privilege supply、reserve slots、turn metadata 与 `victoryReason`。
 - `RunState`：一个 Roguelike run 内的多局进度、Buff、奖励与选择。
 - `MetaState`：跨 run 的解锁、统计、长期进度与存档。
 - 经典模式只依赖 `MatchState`；`RunState` 与 `MetaState` 不能污染经典对局的确定性。
@@ -87,6 +88,7 @@ This document defines the determinism discipline for the core engine and domain 
 ## State Tiers
 
 - `MatchState`: all state for a single match.
+- Starting in Step 04, `MatchState` must carry the full classic-rule surface, including spiral board tokens, pyramid reveal, hidden deck order, royal supply, privilege supply, reserve slots, turn metadata, and `victoryReason`.
 - `RunState`: multi-match progress, Buff acquisitions, rewards, and choices within a roguelike run.
 - `MetaState`: cross-run unlocks, statistics, long-term progression, and save data.
 - Classic mode depends on `MatchState` alone; `RunState` and `MetaState` must not pollute classic-match determinism.

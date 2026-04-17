@@ -26,7 +26,7 @@ export function MatchPlayground({
             : createLocalMatchSession({ seed, flags });
     }, [aiEnabled, mode, seed]);
     const [snapshot, setSnapshot] = useState(
-        sessionResult.ok ? sessionResult.value.snapshot() : null
+        sessionResult.ok ? sessionResult.value.viewModel() : null
     );
     const [error, setError] = useState<string | null>(
         sessionResult.ok ? null : sessionResult.error.message
@@ -54,7 +54,7 @@ export function MatchPlayground({
         }
 
         setError(null);
-        setSnapshot(result.value);
+        setSnapshot(session.viewModel());
     };
 
     return (
@@ -65,19 +65,16 @@ export function MatchPlayground({
                     vertical slice from the application layer to the deterministic core engine.
                 </p>
                 {error && <p>{error}</p>}
-                <SnapshotSummary snapshot={snapshot} />
+                <SnapshotSummary snapshot={snapshot.snapshot} />
             </Section>
 
             <Section title="Available Actions">
-                <ActionList
-                    actions={session.viewModel().availableActions}
-                    onSelect={handleAction}
-                />
+                <ActionList actions={snapshot.availableActions} onSelect={handleAction} />
             </Section>
 
             <Section title="Event Log">
                 <ol className="gd-log">
-                    {snapshot.eventLog.map((event, index) => (
+                    {snapshot.snapshot.eventLog.map((event, index) => (
                         <li key={`${event.type}-${index}`}>
                             <code>{event.type}</code>
                         </li>

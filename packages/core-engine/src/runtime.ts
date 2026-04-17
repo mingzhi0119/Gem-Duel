@@ -1,160 +1,67 @@
 import { createActor, assign, setup } from 'xstate';
+import { createDomainError, type DomainError, type MatchFlags } from '@gem-duel/domain';
+import type { GameCommand, GameSnapshot, TypedResult } from '@gem-duel/contracts';
 import {
-    type ActiveEffect,
-    type DomainError,
-    RULESET_VERSION,
-    createDomainError,
-    createHiddenState,
-    createInitialGemBank,
-    type GamePhase,
-    type MatchFlags,
-    type NamespacedRng,
-    type PlayerState,
-    createPlayerState,
-} from '@gem-duel/domain';
-import {
-    ENGINE_VERSION,
-    SCHEMA_VERSION,
-    type GameCommand,
-    type GameEvent,
-    type GameSnapshot,
-    type TypedResult,
-} from '@gem-duel/contracts';
-import {
-    completeEffect,
-    createEffectLifecycleActor,
-    spawnEffect,
-    startEffect,
-} from './effect-lifecycle';
-
-const ROYAL_EFFECT_ATOM = 'gain_royal';
-const ROYAL_EFFECT_HOOK_POINT = 'BEFORE_GAIN_ROYAL';
-const ROYAL_EFFECT_SOURCE = 'royal_reward';
-const ROYAL_EFFECT_SCOPE = 'active_player';
-
-export type RngPort = NamespacedRng;
-
-export interface ClockPort {
-    now(): string;
-}
-
-export interface IdPort {
-    next(prefix?: string): string;
-}
-
-export interface EnginePorts {
-    rng: RngPort;
-    clock: ClockPort;
-    id: IdPort;
-}
+    createInitialSnapshot,
+    type EnginePorts,
+    pushEvent,
+    setBoardToken,
+    setupClassicMatch,
+    shuffleWithRng,
+    applyTurnState,
+} from './classic-helpers';
+import { executeCommand, validateDispatch } from './classic-transitions';
+import { awardPrivilegeWithEffect } from './classic-effects';
 
 interface MachineContext {
     match: GameSnapshot;
 }
 
-const phaseChanged = (phase: GamePhase): GameEvent => ({
-    type: 'phase.changed',
-    phase,
-});
-
 const cloneSnapshot = (snapshot: GameSnapshot): GameSnapshot => structuredClone(snapshot);
 
-const nextPlayer = (player: GameSnapshot['context']['currentPlayer']) =>
-    player === 'p1' ? 'p2' : 'p1';
+const handleReplenishBoard = (snapshot: GameSnapshot, ports: EnginePorts) => {
+    const emptyPositions = snapshot.board
+        .filter((cell) => cell.token === null)
+        .map((cell) => cell.positionId);
+    const refillRng = ports.rng.fork(
+        `match/${snapshot.context.matchId}/replenish/${snapshot.sequence + 1}`
+    );
+    const shuffledBag = shuffleWithRng(snapshot.hiddenState.bag, refillRng);
+    const placed: Array<{
+        positionId: GameSnapshot['board'][number]['positionId'];
+        token: NonNullable<GameSnapshot['board'][number]['token']>;
+    }> = [];
 
-const getCurrentPlayerState = (snapshot: GameSnapshot): PlayerState =>
-    snapshot.players[snapshot.context.currentPlayer];
-
-const pushEvent = (snapshot: GameSnapshot, event: GameEvent) => {
-    snapshot.eventLog.push(event);
-    snapshot.sequence += 1;
-    snapshot.context.step = snapshot.sequence;
-};
-
-const setPhase = (snapshot: GameSnapshot, phase: GamePhase) => {
-    snapshot.context.phase = phase;
-    pushEvent(snapshot, phaseChanged(phase));
-};
-
-const createInitialSnapshot = (
-    ports: EnginePorts,
-    seed: number,
-    mode: GameSnapshot['context']['mode'],
-    flags: MatchFlags
-): GameSnapshot => ({
-    schemaVersion: SCHEMA_VERSION,
-    rulesetVersion: RULESET_VERSION,
-    engineVersion: ENGINE_VERSION,
-    visibility: 'authoritative',
-    context: {
-        matchId: ports.id.next('match'),
-        schemaVersion: SCHEMA_VERSION,
-        rulesetVersion: RULESET_VERSION,
-        seed,
-        mode,
-        phase: 'initialization',
-        step: 0,
-        currentPlayer: 'p1',
-        winner: null,
-        flags,
-    },
-    gemBank: createInitialGemBank(),
-    players: {
-        p1: createPlayerState('p1'),
-        p2: createPlayerState('p2'),
-    },
-    eventLog: [],
-    replayCursor: null,
-    sequence: 0,
-    activeEffects: [],
-    hiddenState: createHiddenState(),
-});
-
-const findPendingRoyalEffect = (snapshot: GameSnapshot): ActiveEffect | undefined =>
-    snapshot.activeEffects.find((effect) => effect.atom === ROYAL_EFFECT_ATOM);
-
-const buildRoyalEffectId = (snapshot: GameSnapshot) =>
-    `${snapshot.context.matchId}-royal-${snapshot.sequence + 1}`;
-
-const buildRoyalRngNamespace = (snapshot: GameSnapshot, effectId: string) =>
-    `match/${snapshot.context.matchId}/royal/${snapshot.sequence + 1}/${effectId}`;
-
-const beginRoyalHandoff = (snapshot: GameSnapshot, ports: EnginePorts): GameSnapshot => {
-    const effectId = buildRoyalEffectId(snapshot);
-    const rngNamespace = buildRoyalRngNamespace(snapshot, effectId);
-    ports.rng.fork(rngNamespace);
-
-    const spawned = spawnEffect(snapshot, {
-        effectId,
-        parentEffectId: null,
-        atom: ROYAL_EFFECT_ATOM,
-        hookPoint: ROYAL_EFFECT_HOOK_POINT,
-        source: ROYAL_EFFECT_SOURCE,
-        scope: ROYAL_EFFECT_SCOPE,
-        owner: snapshot.context.currentPlayer,
-        sequence: snapshot.sequence + 1,
-        rngNamespace,
-    });
-    const started = startEffect(spawned.snapshot, spawned.actor);
-    return started.snapshot;
-};
-
-const resolveRoyalSelection = (snapshot: GameSnapshot, crownsGain: number): GameSnapshot => {
-    const activeRoyal = findPendingRoyalEffect(snapshot);
-    if (!activeRoyal) {
-        return snapshot;
+    for (const positionId of emptyPositions) {
+        const nextToken = shuffledBag.shift() ?? null;
+        if (!nextToken) {
+            break;
+        }
+        setBoardToken(snapshot, positionId, nextToken);
+        placed.push({ positionId, token: nextToken });
     }
 
-    const player = getCurrentPlayerState(snapshot);
-    player.crowns += crownsGain;
-    player.score += crownsGain;
-    pushEvent(snapshot, { type: 'royal.selected', crownsGain });
-
-    const lifecycleActor = createEffectLifecycleActor(activeRoyal);
-    return completeEffect(snapshot, lifecycleActor, 'resolved').snapshot;
+    snapshot.hiddenState.bag = shuffledBag;
+    pushEvent(snapshot, {
+        type: 'board.replenished',
+        player: snapshot.context.currentPlayer,
+        positions: placed,
+    });
+    const updated = awardPrivilegeWithEffect(
+        snapshot,
+        ports,
+        snapshot.context.currentPlayer === 'p1' ? 'p2' : 'p1',
+        'optional_action',
+        'AFTER_REPLENISH_BOARD'
+    );
+    applyTurnState(updated, {
+        segment: 'mandatory',
+        optionalStep: 'done',
+    });
+    return updated;
 };
 
-const createMatchMachine = (ports: EnginePorts, initialPhase: GamePhase) =>
+const createMatchMachine = (ports: EnginePorts) =>
     setup({
         types: {
             context: {} as MachineContext,
@@ -163,261 +70,56 @@ const createMatchMachine = (ports: EnginePorts, initialPhase: GamePhase) =>
         },
     }).createMachine({
         id: 'gem-duel-engine',
-        initial: initialPhase,
+        initial: 'active',
         context: ({ input }) => ({ match: input.snapshot }),
         states: {
-            initialization: {
-                on: {
-                    SELECT_MODE: {
-                        target: 'modeSelection',
-                        actions: assign(({ context, event }) => {
-                            const match = cloneSnapshot(context.match);
-                            match.context.mode = event.mode;
-                            match.context.flags = event.flags;
-                            pushEvent(match, { type: 'match.modeSelected', mode: event.mode });
-                            setPhase(match, 'modeSelection');
-                            return { match };
-                        }),
-                    },
-                },
-            },
-            modeSelection: {
-                on: {
-                    START_MATCH: {
-                        target: 'turnIdle',
-                        actions: assign(({ context }) => {
-                            const match = cloneSnapshot(context.match);
-                            pushEvent(match, { type: 'match.started' });
-                            setPhase(match, 'turnIdle');
-                            return { match };
-                        }),
-                    },
-                },
-            },
-            turnIdle: {
-                on: {
-                    BEGIN_GEM_SELECTION: {
-                        target: 'gemSelection',
-                        actions: assign(({ context }) => {
-                            const match = cloneSnapshot(context.match);
-                            setPhase(match, 'gemSelection');
-                            return { match };
-                        }),
-                    },
-                    BEGIN_RESERVE: {
-                        target: 'reserving',
-                        actions: assign(({ context }) => {
-                            const match = cloneSnapshot(context.match);
-                            setPhase(match, 'reserving');
-                            return { match };
-                        }),
-                    },
-                    BEGIN_BUY: {
-                        target: 'buying',
-                        actions: assign(({ context }) => {
-                            const match = cloneSnapshot(context.match);
-                            setPhase(match, 'buying');
-                            return { match };
-                        }),
-                    },
-                    BEGIN_PRIVILEGE: {
-                        target: 'privilege',
-                        actions: assign(({ context }) => {
-                            const match = cloneSnapshot(context.match);
-                            setPhase(match, 'privilege');
-                            return { match };
-                        }),
-                    },
-                    BEGIN_ROYAL_RESOLUTION: {
-                        actions: assign(({ context }) => ({
-                            match: beginRoyalHandoff(cloneSnapshot(context.match), ports),
-                        })),
-                    },
-                    SELECT_ROYAL: {
-                        actions: assign(({ context, event }) => ({
-                            match: resolveRoyalSelection(
-                                cloneSnapshot(context.match),
-                                event.crownsGain
-                            ),
-                        })),
-                    },
-                    ENTER_REPLAY: {
-                        target: 'replay',
-                        actions: assign(({ context }) => {
-                            const match = cloneSnapshot(context.match);
-                            match.replayCursor = match.eventLog.length;
-                            pushEvent(match, { type: 'replay.entered' });
-                            setPhase(match, 'replay');
-                            return { match };
-                        }),
-                    },
-                    FINISH_MATCH: {
-                        target: 'terminal',
-                        actions: assign(({ context, event }) => {
-                            const match = cloneSnapshot(context.match);
-                            match.context.winner = event.winner;
-                            pushEvent(match, { type: 'match.finished', winner: event.winner });
-                            setPhase(match, 'terminal');
-                            return { match };
-                        }),
-                    },
-                },
-            },
-            gemSelection: {
-                on: {
-                    TAKE_GEM: {
-                        target: 'turnIdle',
-                        actions: assign(({ context, event }) => {
-                            const match = cloneSnapshot(context.match);
-                            const player = getCurrentPlayerState(match);
-                            match.gemBank[event.color] = Math.max(
-                                0,
-                                match.gemBank[event.color] - 1
-                            );
-                            player.inventory[event.color] += 1;
-                            pushEvent(match, { type: 'gem.taken', color: event.color });
-                            match.context.currentPlayer = nextPlayer(match.context.currentPlayer);
-                            setPhase(match, 'turnIdle');
-                            return { match };
-                        }),
-                    },
-                },
-            },
-            reserving: {
-                on: {
-                    RESERVE_CARD: {
-                        target: 'turnIdle',
-                        actions: assign(({ context, event }) => {
-                            const match = cloneSnapshot(context.match);
-                            const player = getCurrentPlayerState(match);
-                            player.reservedCards = Math.min(3, player.reservedCards + event.slot);
-                            pushEvent(match, { type: 'card.reserved', slot: event.slot });
-                            match.context.currentPlayer = nextPlayer(match.context.currentPlayer);
-                            setPhase(match, 'turnIdle');
-                            return { match };
-                        }),
-                    },
-                },
-            },
-            buying: {
-                on: {
-                    BUY_CARD: {
-                        target: 'turnIdle',
-                        actions: assign(({ context, event }) => {
-                            const match = cloneSnapshot(context.match);
-                            const player = getCurrentPlayerState(match);
-                            player.tableauCards += 1;
-                            player.score += event.scoreGain;
-                            pushEvent(match, { type: 'card.bought', scoreGain: event.scoreGain });
-                            match.context.currentPlayer = nextPlayer(match.context.currentPlayer);
-                            setPhase(match, 'turnIdle');
-                            return { match };
-                        }),
-                    },
-                },
-            },
-            privilege: {
-                on: {
-                    USE_PRIVILEGE: {
-                        target: 'turnIdle',
-                        actions: assign(({ context, event }) => {
-                            const match = cloneSnapshot(context.match);
-                            const player = getCurrentPlayerState(match);
-                            if (player.privileges > 0 && match.gemBank[event.color] > 0) {
-                                player.privileges -= 1;
-                                player.inventory[event.color] += 1;
-                                match.gemBank[event.color] -= 1;
-                            }
-                            pushEvent(match, { type: 'privilege.used', color: event.color });
-                            match.context.currentPlayer = nextPlayer(match.context.currentPlayer);
-                            setPhase(match, 'turnIdle');
-                            return { match };
-                        }),
-                    },
-                },
-            },
-            replay: {
-                on: {
-                    EXIT_REPLAY: {
-                        target: 'turnIdle',
-                        actions: assign(({ context }) => {
-                            const match = cloneSnapshot(context.match);
-                            match.replayCursor = null;
-                            pushEvent(match, { type: 'replay.exited' });
-                            setPhase(match, 'turnIdle');
-                            return { match };
-                        }),
-                    },
-                },
-            },
-            terminal: {
-                type: 'final',
+            active: {
+                on: Object.fromEntries(
+                    [
+                        'SELECT_MODE',
+                        'START_MATCH',
+                        'BEGIN_GEM_SELECTION',
+                        'TAKE_TOKENS',
+                        'BEGIN_RESERVE',
+                        'RESERVE_CARD',
+                        'BEGIN_BUY',
+                        'BUY_CARD',
+                        'BEGIN_PRIVILEGE',
+                        'USE_PRIVILEGE',
+                        'REPLENISH_BOARD',
+                        'DISCARD_TOKEN',
+                        'SELECT_ROYAL',
+                        'TAKE_EFFECT_BOARD_TOKEN',
+                        'STEAL_OPPONENT_TOKEN',
+                        'SELECT_BONUS_COLOR',
+                        'ENTER_REPLAY',
+                        'EXIT_REPLAY',
+                    ].map((type) => [
+                        type,
+                        {
+                            actions: assign(({ context, event }) => ({
+                                match: executeCommand(cloneSnapshot(context.match), event, ports, {
+                                    setupClassicMatch,
+                                    replenishBoard: handleReplenishBoard,
+                                }),
+                            })),
+                        },
+                    ])
+                ),
             },
         },
     });
 
-const createPhaseGuardError = (snapshot: GameSnapshot, command: GameCommand): DomainError =>
-    createDomainError(
-        'ENGINE_PHASE_GUARD',
-        'rules',
-        `Command ${command.type} is not allowed during ${snapshot.context.phase}.`,
-        {
-            phase: snapshot.context.phase,
-            command: command.type,
-            activeEffects: snapshot.activeEffects.map((effect) => ({
-                effectId: effect.effectId,
-                atom: effect.atom,
-                stage: effect.stage,
-            })),
-        }
-    );
-
-export const getAllowedCommands = (snapshot: GameSnapshot): GameCommand['type'][] => {
-    const pendingRoyal = findPendingRoyalEffect(snapshot);
-    switch (snapshot.context.phase) {
-        case 'initialization':
-            return ['SELECT_MODE'];
-        case 'modeSelection':
-            return ['START_MATCH'];
-        case 'turnIdle':
-            return pendingRoyal
-                ? ['SELECT_ROYAL']
-                : [
-                      'BEGIN_GEM_SELECTION',
-                      'BEGIN_RESERVE',
-                      'BEGIN_BUY',
-                      'BEGIN_PRIVILEGE',
-                      'BEGIN_ROYAL_RESOLUTION',
-                      'ENTER_REPLAY',
-                      'FINISH_MATCH',
-                  ];
-        case 'gemSelection':
-            return ['TAKE_GEM'];
-        case 'reserving':
-            return ['RESERVE_CARD'];
-        case 'buying':
-            return ['BUY_CARD'];
-        case 'privilege':
-            return ['USE_PRIVILEGE'];
-        case 'replay':
-            return ['EXIT_REPLAY'];
-        case 'terminal':
-            return [];
-    }
-};
-
-export const canDispatchCommand = (snapshot: GameSnapshot, command: GameCommand) =>
-    getAllowedCommands(snapshot).includes(command.type);
-
 export type MatchActor = ReturnType<typeof createMatchActor>;
+export type { ClockPort, EnginePorts, IdPort, RngPort } from './classic-helpers';
+export { getAllowedCommands, canDispatchCommand, validateDispatch } from './classic-transitions';
 
 export const createMatchActorFromSnapshot = (snapshot: GameSnapshot, ports: EnginePorts) => {
-    const actor = createActor(createMatchMachine(ports, snapshot.context.phase), {
+    const actor = createActor(createMatchMachine(ports), {
         input: {
             snapshot: cloneSnapshot(snapshot),
         },
     });
-
     actor.start();
     return actor;
 };
@@ -443,15 +145,12 @@ export const dispatchCommand = (
     command: GameCommand
 ): TypedResult<{ snapshot: GameSnapshot; eventCount: number }> => {
     const currentSnapshot = actor.getSnapshot().context.match;
-    if (!canDispatchCommand(currentSnapshot, command)) {
-        return {
-            ok: false,
-            error: createPhaseGuardError(currentSnapshot, command),
-        };
+    const validation = validateDispatch(currentSnapshot, command);
+    if (!validation.ok) {
+        return validation;
     }
 
     actor.send(command);
-
     return {
         ok: true,
         value: {
@@ -470,12 +169,10 @@ export const bootstrapMatch = (
     if (!selectMode.ok) {
         return selectMode;
     }
-
     const start = dispatchCommand(actor, { type: 'START_MATCH' });
     if (!start.ok) {
         return start;
     }
-
     return {
         ok: true,
         value: start.value.snapshot,

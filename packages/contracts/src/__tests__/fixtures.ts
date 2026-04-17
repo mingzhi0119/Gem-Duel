@@ -1,6 +1,39 @@
+import {
+    createEmptyBoard,
+    createHiddenState,
+    createPlayerState,
+    createTurnState,
+} from '@gem-duel/domain';
 import { ENGINE_VERSION, SCHEMA_VERSION } from '../shared/enums';
 import type { AuthoritativeSnapshot } from '../snapshots';
 import type { ReplayBundle } from '../replay';
+
+const createEmptyPyramid = () => [
+    {
+        level: 1 as const,
+        slots: Array.from({ length: 5 }, (_, index) => ({
+            level: 1 as const,
+            slot: index + 1,
+            card: null,
+        })),
+    },
+    {
+        level: 2 as const,
+        slots: Array.from({ length: 4 }, (_, index) => ({
+            level: 2 as const,
+            slot: index + 1,
+            card: null,
+        })),
+    },
+    {
+        level: 3 as const,
+        slots: Array.from({ length: 3 }, (_, index) => ({
+            level: 3 as const,
+            slot: index + 1,
+            card: null,
+        })),
+    },
+];
 
 export const createAuthoritativeSnapshotFixture = (): AuthoritativeSnapshot => ({
     schemaVersion: SCHEMA_VERSION,
@@ -17,73 +50,31 @@ export const createAuthoritativeSnapshotFixture = (): AuthoritativeSnapshot => (
         step: 0,
         currentPlayer: 'p1',
         winner: null,
+        victoryReason: null,
         flags: {
             roguelike: false,
             onlineAuthoritative: false,
             aiEnabled: false,
         },
+        turn: createTurnState(),
     },
-    gemBank: {
-        blue: 4,
-        white: 4,
-        green: 4,
-        black: 4,
-        red: 4,
-        pearl: 2,
-        gold: 3,
-    },
+    board: createEmptyBoard(),
+    pyramid: createEmptyPyramid(),
+    royalSupply: [],
+    privilegeSupply: 3,
     players: {
-        p1: {
-            id: 'p1',
-            score: 0,
-            crowns: 0,
-            privileges: 0,
-            reservedCards: 0,
-            tableauCards: 0,
-            inventory: {
-                blue: 0,
-                white: 0,
-                green: 0,
-                black: 0,
-                red: 0,
-                pearl: 0,
-                gold: 0,
-            },
-        },
+        p1: createPlayerState('p1'),
         p2: {
-            id: 'p2',
-            score: 0,
-            crowns: 0,
+            ...createPlayerState('p2'),
             privileges: 1,
-            reservedCards: 0,
-            tableauCards: 0,
-            inventory: {
-                blue: 0,
-                white: 0,
-                green: 0,
-                black: 0,
-                red: 0,
-                pearl: 0,
-                gold: 0,
-            },
         },
     },
     eventLog: [],
     replayCursor: null,
     sequence: 0,
     activeEffects: [],
-    hiddenState: {
-        bag: [],
-        deckOrder: {
-            level1: [],
-            level2: [],
-            level3: [],
-        },
-        extraTurns: {
-            p1: 0,
-            p2: 0,
-        },
-    },
+    effectPrompts: [],
+    hiddenState: createHiddenState(),
 });
 
 export const createReplayBundleFixture = (): ReplayBundle => ({
@@ -106,6 +97,7 @@ export const createReplayBundleFixture = (): ReplayBundle => ({
     finalStateHash: 'hash-1',
     resultSummary: {
         winner: null,
+        reason: null,
         turns: 0,
         finalSeq: 0,
     },

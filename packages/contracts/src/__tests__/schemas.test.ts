@@ -19,19 +19,24 @@ import { createAuthoritativeSnapshotFixture, createReplayBundleFixture } from '.
 describe('contracts schemas', () => {
     it('accepts a valid deterministic command payload', () => {
         const command = GameCommandSchema.parse({
-            type: 'TAKE_GEM',
-            color: 'blue',
+            type: 'TAKE_TOKENS',
+            positions: ['r2c2'],
         });
 
-        expect(command.type).toBe('TAKE_GEM');
-        expect(SCHEMA_VERSION).toBe('4.0.0');
-        expect(ENGINE_VERSION).toBe('2026.04-step3');
+        expect(command.type).toBe('TAKE_TOKENS');
+        expect(SCHEMA_VERSION).toBe('5.0.0');
+        expect(ENGINE_VERSION).toBe('2026.04-step4');
     });
 
     it('projects authoritative snapshots into player-safe snapshots', () => {
         const playerSnapshot = toPlayerSnapshot(createAuthoritativeSnapshotFixture(), 'p1');
 
         expect(PlayerSnapshotSchema.parse(playerSnapshot).visibility).toBe('player');
+        expect(playerSnapshot.viewerReserveSlots).toHaveLength(3);
+        expect(playerSnapshot.players.p1.reserveSlots[0]).toMatchObject({
+            slotId: 'reserve-1',
+            occupied: false,
+        });
     });
 
     it('parses frozen effect lifecycle contracts', () => {

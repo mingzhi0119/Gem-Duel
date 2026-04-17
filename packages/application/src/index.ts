@@ -6,22 +6,28 @@ import {
     type TypedResult,
     type UiActionDescriptor,
     type UiViewModel,
+    toPlayerSnapshot,
+    toSpectatorSnapshot,
 } from '@gem-duel/contracts';
 import { createEnginePorts } from '@gem-duel/adapters';
 import {
     buildReplayBundle,
     createMatchActor,
     dispatchCommand,
+    getAllowedCommands,
     readSnapshot,
+    validateDispatch,
     type EnginePorts,
 } from '@gem-duel/core-engine';
-import { type MatchFlags, type GameMode } from '@gem-duel/domain';
+import { type GameMode, type MatchFlags } from '@gem-duel/domain';
+
+type ViewerId = GameSnapshot['context']['currentPlayer'] | 'spectator';
 
 export interface MatchSession {
     dispatch(command: GameCommand): TypedResult<GameSnapshot>;
     snapshot(): GameSnapshot;
     replay(): ReplayBundle;
-    viewModel(): UiViewModel;
+    viewModel(viewer?: ViewerId): UiViewModel;
 }
 
 export interface MatchSessionInput {
@@ -35,98 +41,283 @@ export interface ShellMatchSessionInput {
     flags: MatchFlags;
 }
 
-const hasPendingRoyalSelection = (snapshot: GameSnapshot) =>
-    snapshot.activeEffects.some((effect) => effect.atom === 'gain_royal');
+const getRoyalPrompt = (snapshot: GameSnapshot) =>
+    snapshot.effectPrompts.find(
+        (
+            prompt
+        ): prompt is Extract<(typeof snapshot.effectPrompts)[number], { atom: 'gain_royal' }> =>
+            prompt.atom === 'gain_royal'
+    ) ?? null;
+
+const getBoardTokenPrompt = (snapshot: GameSnapshot) =>
+    snapshot.effectPrompts.find(
+        (
+            prompt
+        ): prompt is Extract<
+            (typeof snapshot.effectPrompts)[number],
+            { atom: 'take_board_token' }
+        > => prompt.atom === 'take_board_token'
+    ) ?? null;
+
+const getOpponentTokenPrompt = (snapshot: GameSnapshot) =>
+    snapshot.effectPrompts.find(
+        (
+            prompt
+        ): prompt is Extract<
+            (typeof snapshot.effectPrompts)[number],
+            { atom: 'take_opponent_token' }
+        > => prompt.atom === 'take_opponent_token'
+    ) ?? null;
+
+const getBonusColorPrompt = (snapshot: GameSnapshot) =>
+    snapshot.effectPrompts.find(
+        (
+            prompt
+        ): prompt is Extract<
+            (typeof snapshot.effectPrompts)[number],
+            { atom: 'override_bonus_color' }
+        > => prompt.atom === 'override_bonus_color'
+    ) ?? null;
+
+const appendAction = (
+    snapshot: GameSnapshot,
+    actions: UiActionDescriptor[],
+    id: string,
+    label: string,
+    command: GameCommand
+) => {
+    if (validateDispatch(snapshot, command).ok) {
+        actions.push({ id, label, command });
+    }
+};
+
+const getNonGoldBoardCells = (snapshot: GameSnapshot) =>
+    snapshot.board.filter((cell) => cell.token !== null && cell.token !== 'gold');
+
+const getGoldBoardCell = (snapshot: GameSnapshot) =>
+    snapshot.board.find((cell) => cell.token === 'gold') ?? null;
+
+const getReserveSources = (snapshot: GameSnapshot) => [
+    ...snapshot.pyramid.flatMap((row) =>
+        row.slots
+            .filter((slot) => slot.card !== null)
+            .map((slot) => ({ kind: 'pyramid' as const, level: row.level, slot: slot.slot }))
+    ),
+    ...([1, 2, 3] as const)
+        .filter((level) => snapshot.hiddenState.deckOrder[`level${level}`].length > 0)
+        .map((level) => ({ kind: 'deck' as const, level })),
+];
+
+const getBuySources = (snapshot: GameSnapshot) => [
+    ...snapshot.pyramid.flatMap((row) =>
+        row.slots
+            .filter((slot) => slot.card !== null)
+            .map((slot) => ({
+                source: { kind: 'pyramid' as const, level: row.level, slot: slot.slot },
+                label: slot.card!.cardId,
+            }))
+    ),
+    ...snapshot.players[snapshot.context.currentPlayer].reserveSlots
+        .filter((slot) => slot.card !== null)
+        .map((slot) => ({
+            source: { kind: 'reserve' as const, slotId: slot.slotId },
+            label: slot.card!.cardId,
+        })),
+];
 
 const buildActions = (snapshot: GameSnapshot): UiActionDescriptor[] => {
-    switch (snapshot.context.phase) {
-        case 'turnIdle':
-            if (hasPendingRoyalSelection(snapshot)) {
-                return [
-                    {
-                        id: 'royal-1',
-                        label: 'Select Royal (+1 Crown)',
-                        command: { type: 'SELECT_ROYAL', crownsGain: 1 },
-                    },
-                ];
+    const actions: UiActionDescriptor[] = [];
+
+    for (const commandType of getAllowedCommands(snapshot)) {
+        switch (commandType) {
+            case 'BEGIN_GEM_SELECTION':
+                appendAction(snapshot, actions, 'begin-gem-selection', 'Begin Gem Selection', {
+                    type: 'BEGIN_GEM_SELECTION',
+                });
+                break;
+            case 'BEGIN_RESERVE':
+                appendAction(snapshot, actions, 'begin-reserve', 'Begin Reserve', {
+                    type: 'BEGIN_RESERVE',
+                });
+                break;
+            case 'BEGIN_BUY':
+                appendAction(snapshot, actions, 'begin-buy', 'Begin Buy', { type: 'BEGIN_BUY' });
+                break;
+            case 'BEGIN_PRIVILEGE':
+                appendAction(snapshot, actions, 'begin-privilege', 'Begin Privilege', {
+                    type: 'BEGIN_PRIVILEGE',
+                });
+                break;
+            case 'REPLENISH_BOARD':
+                appendAction(snapshot, actions, 'replenish-board', 'Replenish Board', {
+                    type: 'REPLENISH_BOARD',
+                });
+                break;
+            case 'ENTER_REPLAY':
+                appendAction(snapshot, actions, 'enter-replay', 'Enter Replay', {
+                    type: 'ENTER_REPLAY',
+                });
+                break;
+            case 'EXIT_REPLAY':
+                appendAction(snapshot, actions, 'exit-replay', 'Exit Replay', {
+                    type: 'EXIT_REPLAY',
+                });
+                break;
+            case 'TAKE_TOKENS':
+                for (const cell of getNonGoldBoardCells(snapshot)) {
+                    appendAction(
+                        snapshot,
+                        actions,
+                        `take-${cell.positionId}`,
+                        `Take ${cell.token} at ${cell.positionId}`,
+                        { type: 'TAKE_TOKENS', positions: [cell.positionId] }
+                    );
+                }
+                break;
+            case 'RESERVE_CARD': {
+                const goldCell = getGoldBoardCell(snapshot);
+                if (!goldCell) {
+                    break;
+                }
+                for (const source of getReserveSources(snapshot)) {
+                    appendAction(
+                        snapshot,
+                        actions,
+                        `reserve-${source.kind}-${source.level}${'slot' in source ? `-${source.slot}` : ''}`,
+                        source.kind === 'pyramid'
+                            ? `Reserve L${source.level} S${source.slot}`
+                            : `Reserve Blind L${source.level}`,
+                        {
+                            type: 'RESERVE_CARD',
+                            goldPosition: goldCell.positionId,
+                            source,
+                        }
+                    );
+                }
+                break;
             }
-            return [
-                {
-                    id: 'begin-gems',
-                    label: 'Begin Gem Selection',
-                    command: { type: 'BEGIN_GEM_SELECTION' },
-                },
-                { id: 'begin-reserve', label: 'Begin Reserve', command: { type: 'BEGIN_RESERVE' } },
-                { id: 'begin-buy', label: 'Begin Buy', command: { type: 'BEGIN_BUY' } },
-                {
-                    id: 'begin-privilege',
-                    label: 'Begin Privilege',
-                    command: { type: 'BEGIN_PRIVILEGE' },
-                },
-                {
-                    id: 'begin-royal',
-                    label: 'Begin Royal Resolution',
-                    command: { type: 'BEGIN_ROYAL_RESOLUTION' },
-                },
-                { id: 'replay', label: 'Enter Replay', command: { type: 'ENTER_REPLAY' } },
-                {
-                    id: 'finish',
-                    label: 'Finish Match (P1)',
-                    command: { type: 'FINISH_MATCH', winner: 'p1' },
-                },
-            ];
-        case 'gemSelection':
-            return [
-                {
-                    id: 'take-blue',
-                    label: 'Take Blue Gem',
-                    command: { type: 'TAKE_GEM', color: 'blue' },
-                },
-                {
-                    id: 'take-red',
-                    label: 'Take Red Gem',
-                    command: { type: 'TAKE_GEM', color: 'red' },
-                },
-            ];
-        case 'reserving':
-            return [
-                {
-                    id: 'reserve-1',
-                    label: 'Reserve Slot 1',
-                    command: { type: 'RESERVE_CARD', slot: 1 },
-                },
-                {
-                    id: 'reserve-2',
-                    label: 'Reserve Slot 2',
-                    command: { type: 'RESERVE_CARD', slot: 2 },
-                },
-            ];
-        case 'buying':
-            return [
-                {
-                    id: 'buy-1',
-                    label: 'Buy Card (+1)',
-                    command: { type: 'BUY_CARD', scoreGain: 1 },
-                },
-                {
-                    id: 'buy-2',
-                    label: 'Buy Card (+2)',
-                    command: { type: 'BUY_CARD', scoreGain: 2 },
-                },
-            ];
-        case 'privilege':
-            return [
-                {
-                    id: 'privilege-green',
-                    label: 'Use Privilege on Green',
-                    command: { type: 'USE_PRIVILEGE', color: 'green' },
-                },
-            ];
-        case 'replay':
-            return [{ id: 'exit-replay', label: 'Exit Replay', command: { type: 'EXIT_REPLAY' } }];
-        default:
-            return [];
+            case 'BUY_CARD':
+                for (const option of getBuySources(snapshot)) {
+                    appendAction(snapshot, actions, `buy-${option.label}`, `Buy ${option.label}`, {
+                        type: 'BUY_CARD',
+                        source: option.source,
+                    });
+                }
+                break;
+            case 'USE_PRIVILEGE':
+                for (const cell of getNonGoldBoardCells(snapshot)) {
+                    appendAction(
+                        snapshot,
+                        actions,
+                        `privilege-${cell.positionId}`,
+                        `Use Privilege on ${cell.positionId}`,
+                        { type: 'USE_PRIVILEGE', positions: [cell.positionId] }
+                    );
+                }
+                break;
+            case 'DISCARD_TOKEN': {
+                const player = snapshot.players[snapshot.context.currentPlayer];
+                for (const color of [
+                    'blue',
+                    'white',
+                    'green',
+                    'black',
+                    'red',
+                    'pearl',
+                    'gold',
+                ] as const) {
+                    if (player.inventory[color] <= 0) {
+                        continue;
+                    }
+                    appendAction(snapshot, actions, `discard-${color}`, `Discard ${color}`, {
+                        type: 'DISCARD_TOKEN',
+                        color,
+                    });
+                }
+                break;
+            }
+            case 'SELECT_ROYAL': {
+                const prompt = getRoyalPrompt(snapshot);
+                if (!prompt) {
+                    break;
+                }
+                for (const royalId of prompt.royalIds) {
+                    appendAction(
+                        snapshot,
+                        actions,
+                        `select-royal-${royalId}`,
+                        `Select Royal ${royalId}`,
+                        { type: 'SELECT_ROYAL', royalId }
+                    );
+                }
+                break;
+            }
+            case 'TAKE_EFFECT_BOARD_TOKEN': {
+                const prompt = getBoardTokenPrompt(snapshot);
+                if (!prompt) {
+                    break;
+                }
+                for (const cell of snapshot.board) {
+                    if (
+                        cell.token === null ||
+                        cell.token === 'gold' ||
+                        cell.token === 'pearl' ||
+                        !prompt.allowedColors.includes(cell.token)
+                    ) {
+                        continue;
+                    }
+                    appendAction(
+                        snapshot,
+                        actions,
+                        `effect-board-${cell.positionId}`,
+                        `Take Bonus Token ${cell.token} at ${cell.positionId}`,
+                        {
+                            type: 'TAKE_EFFECT_BOARD_TOKEN',
+                            effectId: prompt.effectId,
+                            positionId: cell.positionId,
+                        }
+                    );
+                }
+                break;
+            }
+            case 'STEAL_OPPONENT_TOKEN': {
+                const prompt = getOpponentTokenPrompt(snapshot);
+                if (!prompt) {
+                    break;
+                }
+                for (const color of prompt.allowedColors) {
+                    appendAction(snapshot, actions, `steal-${color}`, `Steal ${color}`, {
+                        type: 'STEAL_OPPONENT_TOKEN',
+                        effectId: prompt.effectId,
+                        color,
+                    });
+                }
+                break;
+            }
+            case 'SELECT_BONUS_COLOR': {
+                const prompt = getBonusColorPrompt(snapshot);
+                if (!prompt) {
+                    break;
+                }
+                for (const color of prompt.allowedColors) {
+                    appendAction(
+                        snapshot,
+                        actions,
+                        `bonus-color-${color}`,
+                        `Set Bonus Color ${color}`,
+                        {
+                            type: 'SELECT_BONUS_COLOR',
+                            effectId: prompt.effectId,
+                            color,
+                        }
+                    );
+                }
+                break;
+            }
+        }
     }
+
+    return actions;
 };
 
 const createReplayCommand = (
@@ -140,10 +331,13 @@ const createReplayCommand = (
     command,
 });
 
-export const buildUiViewModel = (snapshot: GameSnapshot): UiViewModel => ({
+const buildVisibleSnapshot = (snapshot: GameSnapshot, viewer: ViewerId) =>
+    viewer === 'spectator' ? toSpectatorSnapshot(snapshot) : toPlayerSnapshot(snapshot, viewer);
+
+export const buildUiViewModel = (snapshot: GameSnapshot, viewer: ViewerId = 'p1'): UiViewModel => ({
     title: `Gem Duel ${snapshot.context.mode.toUpperCase()} Match`,
-    subtitle: `Phase: ${snapshot.context.phase} | Turn: ${snapshot.context.currentPlayer}`,
-    snapshot,
+    subtitle: `Phase: ${snapshot.context.phase} | Turn: ${snapshot.context.currentPlayer} | Segment: ${snapshot.context.turn.segment}`,
+    snapshot: buildVisibleSnapshot(snapshot, viewer),
     availableActions: buildActions(snapshot),
 });
 
@@ -198,8 +392,8 @@ export const createMatchSession = (
             replay() {
                 return buildReplayBundle(initialSnapshot, [...commandLog], readSnapshot(actor));
             },
-            viewModel() {
-                return buildUiViewModel(readSnapshot(actor));
+            viewModel(viewer = 'p1') {
+                return buildUiViewModel(readSnapshot(actor), viewer);
             },
         },
     };
