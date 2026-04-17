@@ -35,7 +35,6 @@ import {
     dispatchCommand,
     finalizeRunMatch,
     getAllowedCommands,
-    getPrivilegePositionCap,
     readSnapshot,
     selectRunReward,
     validateDispatch,
@@ -211,26 +210,6 @@ const getBuySources = (snapshot: GameSnapshot) => [
         })),
 ];
 
-const buildPositionSelections = <T>(positions: T[], maxCount: number) => {
-    const selections = positions.map((position) => [position]);
-    if (maxCount < 2) {
-        return selections;
-    }
-
-    for (let left = 0; left < positions.length; left += 1) {
-        for (let right = left + 1; right < positions.length; right += 1) {
-            const first = positions[left];
-            const second = positions[right];
-            if (!first || !second) {
-                continue;
-            }
-            selections.push([first, second]);
-        }
-    }
-
-    return selections;
-};
-
 export const buildReplayInspectorModel = (
     bundle: ReplayBundle
 ): TypedResult<ReplayInspectorModel> => {
@@ -315,16 +294,36 @@ const buildActions = (snapshot: GameSnapshot): UiActionDescriptor[] => {
                     type: 'EXIT_REPLAY',
                 });
                 break;
-            case 'TAKE_TOKENS':
+            case 'TAKE_TOKENS_ADD_POSITION': {
+                const selectedPositions =
+                    snapshot.pendingSelection?.action === 'TAKE_TOKENS'
+                        ? new Set(snapshot.pendingSelection.selectedPositions)
+                        : new Set<string>();
                 for (const cell of getNonGoldBoardCells(snapshot)) {
+                    if (selectedPositions.has(cell.positionId)) {
+                        continue;
+                    }
                     appendAction(
                         snapshot,
                         actions,
-                        `take-${cell.positionId}`,
-                        `Take ${cell.token} at ${cell.positionId}`,
-                        { type: 'TAKE_TOKENS', positions: [cell.positionId] }
+                        `take-add-${cell.positionId}`,
+                        `Add ${cell.token} at ${cell.positionId}`,
+                        { type: 'TAKE_TOKENS_ADD_POSITION', positionId: cell.positionId }
                     );
                 }
+                break;
+            }
+            case 'TAKE_TOKENS_CONFIRM':
+                appendAction(snapshot, actions, 'take-confirm', 'Confirm Token Selection', {
+                    type: 'TAKE_TOKENS_CONFIRM',
+                });
+                break;
+            case 'TAKE_TOKENS_CANCEL':
+                appendAction(snapshot, actions, 'take-cancel', 'Cancel Token Selection', {
+                    type: 'TAKE_TOKENS_CANCEL',
+                });
+                break;
+            case 'TAKE_TOKENS':
                 break;
             case 'RESERVE_CARD': {
                 const goldCell = getGoldBoardCell(snapshot);
@@ -356,19 +355,42 @@ const buildActions = (snapshot: GameSnapshot): UiActionDescriptor[] => {
                     });
                 }
                 break;
-            case 'USE_PRIVILEGE':
-                for (const positions of buildPositionSelections(
-                    getNonGoldBoardCells(snapshot).map((cell) => cell.positionId),
-                    getPrivilegePositionCap(snapshot, snapshot.context.currentPlayer)
-                )) {
+            case 'USE_PRIVILEGE_ADD_POSITION': {
+                const selectedPositions =
+                    snapshot.pendingSelection?.action === 'USE_PRIVILEGE'
+                        ? new Set(snapshot.pendingSelection.selectedPositions)
+                        : new Set<string>();
+                for (const cell of getNonGoldBoardCells(snapshot)) {
+                    if (selectedPositions.has(cell.positionId)) {
+                        continue;
+                    }
                     appendAction(
                         snapshot,
                         actions,
-                        `privilege-${positions.join('-')}`,
-                        `Use Privilege on ${positions.join(', ')}`,
-                        { type: 'USE_PRIVILEGE', positions }
+                        `privilege-add-${cell.positionId}`,
+                        `Add Privilege Pick ${cell.positionId}`,
+                        { type: 'USE_PRIVILEGE_ADD_POSITION', positionId: cell.positionId }
                     );
                 }
+                break;
+            }
+            case 'USE_PRIVILEGE_CONFIRM':
+                appendAction(
+                    snapshot,
+                    actions,
+                    'privilege-confirm',
+                    'Confirm Privilege Selection',
+                    {
+                        type: 'USE_PRIVILEGE_CONFIRM',
+                    }
+                );
+                break;
+            case 'USE_PRIVILEGE_CANCEL':
+                appendAction(snapshot, actions, 'privilege-cancel', 'Cancel Privilege', {
+                    type: 'USE_PRIVILEGE_CANCEL',
+                });
+                break;
+            case 'USE_PRIVILEGE':
                 break;
             case 'DISCARD_TOKEN': {
                 const player = snapshot.players[snapshot.context.currentPlayer];
@@ -553,8 +575,44 @@ const scoreAiAction = (
             return 240 + tieBreaker;
         case 'SELECT_BONUS_COLOR':
             return 230 + tieBreaker;
+        case 'USE_PRIVILEGE_ADD_POSITION':
+            return (
+                220 +
+                (snapshot.pendingSelection?.action === 'USE_PRIVILEGE'
+                    ? snapshot.pendingSelection.selectedPositions.length * 12
+                    : 0) +
+                tieBreaker
+            );
+        case 'USE_PRIVILEGE_CONFIRM':
+            return (
+                215 +
+                (snapshot.pendingSelection?.action === 'USE_PRIVILEGE'
+                    ? snapshot.pendingSelection.selectedPositions.length * 20
+                    : 0) +
+                tieBreaker
+            );
+        case 'USE_PRIVILEGE_CANCEL':
+            return -20 + tieBreaker;
         case 'USE_PRIVILEGE':
             return 210 + command.positions.length * 20 + tieBreaker;
+        case 'TAKE_TOKENS_ADD_POSITION':
+            return (
+                190 +
+                (snapshot.pendingSelection?.action === 'TAKE_TOKENS'
+                    ? snapshot.pendingSelection.selectedPositions.length * 10
+                    : 0) +
+                tieBreaker
+            );
+        case 'TAKE_TOKENS_CONFIRM':
+            return (
+                185 +
+                (snapshot.pendingSelection?.action === 'TAKE_TOKENS'
+                    ? snapshot.pendingSelection.selectedPositions.length * 18
+                    : 0) +
+                tieBreaker
+            );
+        case 'TAKE_TOKENS_CANCEL':
+            return -10 + tieBreaker;
         case 'TAKE_TOKENS':
             return 180 + command.positions.length * 18 + tieBreaker;
         case 'RESERVE_CARD': {
@@ -692,18 +750,15 @@ const buildBoardCells = (
     const privilegePositions = new Set<string>();
     const effectPositions = new Set<string>();
     const reserveGoldPositions = new Set<string>();
+    const selectedPositions = new Set(snapshot.pendingSelection?.selectedPositions ?? []);
 
     for (const action of availableActions) {
         switch (action.command.type) {
-            case 'TAKE_TOKENS':
-                for (const position of action.command.positions) {
-                    mandatoryPositions.add(position);
-                }
+            case 'TAKE_TOKENS_ADD_POSITION':
+                mandatoryPositions.add(action.command.positionId);
                 break;
-            case 'USE_PRIVILEGE':
-                for (const position of action.command.positions) {
-                    privilegePositions.add(position);
-                }
+            case 'USE_PRIVILEGE_ADD_POSITION':
+                privilegePositions.add(action.command.positionId);
                 break;
             case 'TAKE_EFFECT_BOARD_TOKEN':
                 effectPositions.add(action.command.positionId);
@@ -711,6 +766,18 @@ const buildBoardCells = (
             case 'RESERVE_CARD':
                 reserveGoldPositions.add(action.command.goldPosition);
                 break;
+        }
+    }
+
+    if (snapshot.pendingSelection?.action === 'TAKE_TOKENS') {
+        for (const position of snapshot.pendingSelection.selectedPositions) {
+            mandatoryPositions.add(position);
+        }
+    }
+
+    if (snapshot.pendingSelection?.action === 'USE_PRIVILEGE') {
+        for (const position of snapshot.pendingSelection.selectedPositions) {
+            privilegePositions.add(position);
         }
     }
 
@@ -732,7 +799,7 @@ const buildBoardCells = (
             col: cell.col,
             token: cell.token,
             selectable: selectionKind !== null,
-            selected: false,
+            selected: selectedPositions.has(cell.positionId),
             selectionKind,
             reason: null,
         };
@@ -1011,6 +1078,32 @@ const buildSelectionDraft = (snapshot: VisibleSnapshot): UiSelectionDraft | null
         }
     }
 
+    if (snapshot.pendingSelection?.action === 'TAKE_TOKENS') {
+        return {
+            model: 'pending-command',
+            commandType: 'TAKE_TOKENS',
+            effectId: null,
+            selectedBoardPositions: [...snapshot.pendingSelection.selectedPositions],
+            goldPosition: null,
+            remainingSelections:
+                snapshot.pendingSelection.maxSelections -
+                snapshot.pendingSelection.selectedPositions.length,
+        };
+    }
+
+    if (snapshot.pendingSelection?.action === 'USE_PRIVILEGE') {
+        return {
+            model: 'pending-command',
+            commandType: 'USE_PRIVILEGE',
+            effectId: null,
+            selectedBoardPositions: [...snapshot.pendingSelection.selectedPositions],
+            goldPosition: null,
+            remainingSelections:
+                snapshot.pendingSelection.maxSelections -
+                snapshot.pendingSelection.selectedPositions.length,
+        };
+    }
+
     switch (snapshot.context.phase) {
         case 'gemSelection':
             return {
@@ -1019,7 +1112,7 @@ const buildSelectionDraft = (snapshot: VisibleSnapshot): UiSelectionDraft | null
                 effectId: null,
                 selectedBoardPositions: [],
                 goldPosition: null,
-                remainingSelections: null,
+                remainingSelections: 3,
             };
         case 'privilege':
             return {

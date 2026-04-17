@@ -135,6 +135,7 @@ export const BUFF_LIFECYCLES = ['match-only', 'run-only', 'meta-unlock'] as cons
 export const BUFF_ACQUISITION_SOURCES = ['starter', 'reward'] as const;
 export const RUN_STATUSES = ['draft', 'active', 'won', 'lost'] as const;
 export const RUN_REWARD_SOURCES = ['starter', 'victory'] as const;
+export const PENDING_SELECTION_ACTIONS = ['TAKE_TOKENS', 'USE_PRIVILEGE'] as const;
 
 const BOARD_POSITION_COORDINATES = Object.freeze({
     r0c0: { row: 0, col: 0 },
@@ -202,6 +203,7 @@ export type BuffLifecycle = (typeof BUFF_LIFECYCLES)[number];
 export type BuffAcquisitionSource = (typeof BUFF_ACQUISITION_SOURCES)[number];
 export type RunStatus = (typeof RUN_STATUSES)[number];
 export type RunRewardSource = (typeof RUN_REWARD_SOURCES)[number];
+export type PendingSelectionAction = (typeof PENDING_SELECTION_ACTIONS)[number];
 
 export interface DomainError {
     code: string;
@@ -331,6 +333,20 @@ export interface MatchContext {
     turn: TurnState;
 }
 
+export interface TakeTokensPendingSelection {
+    action: 'TAKE_TOKENS';
+    selectedPositions: BoardPositionId[];
+    maxSelections: 3;
+}
+
+export interface UsePrivilegePendingSelection {
+    action: 'USE_PRIVILEGE';
+    selectedPositions: BoardPositionId[];
+    maxSelections: 1 | 2 | 3;
+}
+
+export type PendingSelectionState = TakeTokensPendingSelection | UsePrivilegePendingSelection;
+
 export interface ActiveEffect {
     effectId: string;
     parentEffectId: string | null;
@@ -440,6 +456,7 @@ export interface MatchState {
     replayCursor: number | null;
     activeEffects: ActiveEffect[];
     effectPrompts: EffectPrompt[];
+    pendingSelection: PendingSelectionState | null;
     hiddenState: HiddenState;
     runContext: RunContext | null;
 }

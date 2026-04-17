@@ -1,0 +1,105 @@
+# Phase 2 Log - Pending Selection Contract and Projection Wave 2
+
+## ZH
+
+- 日期：2026-04-17
+- Phase：Phase 2
+- 状态：进行中
+- 范围：把 ADR 选定的“引擎拥有的 pending-selection”正式落到 `TAKE_TOKENS` / `USE_PRIVILEGE` 的 command、snapshot 与 projection surface。
+- 本次落地结果：
+    - `packages/domain` 已新增 `pendingSelection` 领域状态，用于表达引擎拥有的多阶段选点上下文。
+    - `packages/contracts` 已补 `PendingSelectionState` schema，并把该状态纳入 snapshot / command / event contract：
+        - 新增 `TAKE_TOKENS_ADD_POSITION` / `TAKE_TOKENS_CONFIRM` / `TAKE_TOKENS_CANCEL`
+        - 新增 `USE_PRIVILEGE_ADD_POSITION` / `USE_PRIVILEGE_CONFIRM` / `USE_PRIVILEGE_CANCEL`
+        - 新增 `selection.positionAdded` 事件
+    - `packages/core-engine` 已开始在 `gemSelection` / `privilege` 阶段维护 `pendingSelection`，并在 confirm / cancel 时清理状态。
+    - `packages/application` 已停止为 live UI 枚举 `TAKE_TOKENS` / `USE_PRIVILEGE` 的笛卡尔组合，改为从引擎 command surface 直接投影 incremental actions。
+    - `buildSelectionDraft()` 与 `boardCells` 投影现已直接读取 `snapshot.pendingSelection`，不再依赖页面本地 draft intent。
+    - engine / property / view-model / contract tests 已补 pending-selection 的解析、投影与确认/取消路径。
+- 当前未完成项：
+    - 其余多阶段交互仍未统一迁到 pending-selection / prompt-stack 风格；
+    - spectator / resync / out-of-turn invariants 尚未形成 Phase 6 门禁；
+    - full-board renderer 还未消费这些更细的 board-facing projection。
+- 涉及文件：
+    - `packages/domain/src/index.ts`
+    - `packages/contracts/src/shared/base.ts`
+    - `packages/contracts/src/snapshots.ts`
+    - `packages/contracts/src/game.ts`
+    - `packages/contracts/src/__tests__/fixtures.ts`
+    - `packages/contracts/src/__tests__/schemas.test.ts`
+    - `packages/contracts/src/__fixtures__/replay/minimal-replay.json`
+    - `packages/contracts/generated/openapi/openapi.json`
+    - `packages/contracts/generated/asyncapi/asyncapi.yaml`
+    - `packages/contracts/src/__fixtures__/openapi.expected.json`
+    - `packages/contracts/src/__fixtures__/asyncapi.expected.yaml`
+    - `packages/core-engine/src/classic-helpers.ts`
+    - `packages/core-engine/src/classic-transitions.ts`
+    - `packages/core-engine/src/runtime.ts`
+    - `packages/core-engine/src/replay.ts`
+    - `packages/core-engine/src/__tests__/engine.test.ts`
+    - `packages/core-engine/src/__tests__/property.test.ts`
+    - `packages/application/src/index.ts`
+    - `packages/application/src/view-model.test.ts`
+- 验证：
+    - `pnpm contracts:generate`
+    - `pnpm contracts:verify`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `git restore -- apps/web/next-env.d.ts`
+
+## EN
+
+- Date: 2026-04-17
+- Phase: Phase 2
+- Status: In Progress
+- Scope: land the ADR-selected engine-owned pending-selection model across the `TAKE_TOKENS` / `USE_PRIVILEGE` command, snapshot, and projection surface.
+- Landed results:
+    - `packages/domain` now defines a `pendingSelection` state shape for engine-owned multi-step board selection.
+    - `packages/contracts` now adds `PendingSelectionState` schema coverage and exposes the state through snapshot / command / event contracts:
+        - `TAKE_TOKENS_ADD_POSITION` / `TAKE_TOKENS_CONFIRM` / `TAKE_TOKENS_CANCEL`
+        - `USE_PRIVILEGE_ADD_POSITION` / `USE_PRIVILEGE_CONFIRM` / `USE_PRIVILEGE_CANCEL`
+        - `selection.positionAdded`
+    - `packages/core-engine` now manages `pendingSelection` during `gemSelection` / `privilege` phases and clears it on confirm / cancel.
+    - `packages/application` no longer enumerates cartesian `TAKE_TOKENS` / `USE_PRIVILEGE` combinations for the live UI and instead projects incremental actions directly from the engine command surface.
+    - `buildSelectionDraft()` and board-cell projection now read `snapshot.pendingSelection` directly rather than depending on page-local draft intent.
+    - engine / property / view-model / contract tests now cover pending-selection parsing, projection, and confirm/cancel flows.
+- Remaining work:
+    - the remaining multi-step interactions have not yet been unified onto the pending-selection / prompt-stack model;
+    - spectator / resync / out-of-turn invariants are not yet formalized as the Phase 6 gate;
+    - the full-board renderer still does not consume the richer board-facing projection.
+- Touched files:
+    - `packages/domain/src/index.ts`
+    - `packages/contracts/src/shared/base.ts`
+    - `packages/contracts/src/snapshots.ts`
+    - `packages/contracts/src/game.ts`
+    - `packages/contracts/src/__tests__/fixtures.ts`
+    - `packages/contracts/src/__tests__/schemas.test.ts`
+    - `packages/contracts/src/__fixtures__/replay/minimal-replay.json`
+    - `packages/contracts/generated/openapi/openapi.json`
+    - `packages/contracts/generated/asyncapi/asyncapi.yaml`
+    - `packages/contracts/src/__fixtures__/openapi.expected.json`
+    - `packages/contracts/src/__fixtures__/asyncapi.expected.yaml`
+    - `packages/core-engine/src/classic-helpers.ts`
+    - `packages/core-engine/src/classic-transitions.ts`
+    - `packages/core-engine/src/runtime.ts`
+    - `packages/core-engine/src/replay.ts`
+    - `packages/core-engine/src/__tests__/engine.test.ts`
+    - `packages/core-engine/src/__tests__/property.test.ts`
+    - `packages\application\src\index.ts`
+    - `packages\application\src\view-model.test.ts`
+- Validation:
+    - `pnpm contracts:generate`
+    - `pnpm contracts:verify`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `git restore -- apps/web/next-env.d.ts`

@@ -75,6 +75,7 @@ export const createAuthoritativeSnapshotFixture = (): AuthoritativeSnapshot => (
     runContext: null,
     activeEffects: [],
     effectPrompts: [],
+    pendingSelection: null,
     hiddenState: createHiddenState(),
 });
 

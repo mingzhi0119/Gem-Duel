@@ -62,6 +62,16 @@ export const GameCommandSchema = z.discriminatedUnion('type', [
         type: z.literal('BEGIN_GEM_SELECTION'),
     }),
     z.object({
+        type: z.literal('TAKE_TOKENS_ADD_POSITION'),
+        positionId: BoardPositionIdSchema,
+    }),
+    z.object({
+        type: z.literal('TAKE_TOKENS_CONFIRM'),
+    }),
+    z.object({
+        type: z.literal('TAKE_TOKENS_CANCEL'),
+    }),
+    z.object({
         type: z.literal('TAKE_TOKENS'),
         positions: z.array(BoardPositionIdSchema).min(1).max(3),
     }),
@@ -82,6 +92,16 @@ export const GameCommandSchema = z.discriminatedUnion('type', [
     }),
     z.object({
         type: z.literal('BEGIN_PRIVILEGE'),
+    }),
+    z.object({
+        type: z.literal('USE_PRIVILEGE_ADD_POSITION'),
+        positionId: BoardPositionIdSchema,
+    }),
+    z.object({
+        type: z.literal('USE_PRIVILEGE_CONFIRM'),
+    }),
+    z.object({
+        type: z.literal('USE_PRIVILEGE_CANCEL'),
     }),
     z.object({
         type: z.literal('USE_PRIVILEGE'),
@@ -130,6 +150,13 @@ export const GameEventSchema = z.discriminatedUnion('type', [
         privilegeRecipient: PlayerIdSchema,
     }),
     z.object({ type: z.literal('phase.changed'), phase: GamePhaseSchema }),
+    z.object({
+        type: z.literal('selection.positionAdded'),
+        action: z.union([z.literal('TAKE_TOKENS'), z.literal('USE_PRIVILEGE')]),
+        player: PlayerIdSchema,
+        positionId: BoardPositionIdSchema,
+        positions: z.array(BoardPositionIdSchema).min(1).max(3),
+    }),
     z.object({
         type: z.literal('turn.segmentChanged'),
         segment: z.enum(['optional', 'mandatory', 'cleanup']),

@@ -162,6 +162,68 @@ const validateTokenLine = (snapshot: GameSnapshot, positions: BoardPositionId[])
     return null;
 };
 
+const getTakeTokensPendingSelection = (snapshot: GameSnapshot) =>
+    snapshot.pendingSelection?.action === 'TAKE_TOKENS' ? snapshot.pendingSelection : null;
+
+const getUsePrivilegePendingSelection = (snapshot: GameSnapshot) =>
+    snapshot.pendingSelection?.action === 'USE_PRIVILEGE' ? snapshot.pendingSelection : null;
+
+const createPendingSelectionError = (command: GameCommand['type']) =>
+    createRuleGuardError(
+        'ENGINE_RULE_GUARD',
+        `Command ${command} requires an active pending selection in the current phase.`
+    );
+
+const validateUsePrivilegePositions = (snapshot: GameSnapshot, positions: BoardPositionId[]) => {
+    const player = getCurrentPlayerState(snapshot);
+    const spendCount = getPrivilegeSpendCount(snapshot, player.id, positions.length);
+    if (positions.length > getPrivilegePositionCap(snapshot, player.id)) {
+        return createRuleGuardError(
+            'ENGINE_RULE_GUARD',
+            'Privilege selections exceed the current per-use cap.'
+        );
+    }
+    if (spendCount > player.privileges) {
+        return createRuleGuardError(
+            'ENGINE_RULE_GUARD',
+            'Cannot spend more privilege scrolls than the player owns.'
+        );
+    }
+    if (new Set(positions).size !== positions.length) {
+        return createRuleGuardError('ENGINE_RULE_GUARD', 'Privilege selections must be unique.');
+    }
+    for (const positionId of positions) {
+        const cell = getBoardCell(snapshot, positionId);
+        if (cell.token === null || cell.token === 'gold') {
+            return createRuleGuardError(
+                'ENGINE_RULE_GUARD',
+                'Privilege picks must target occupied non-gold board cells.'
+            );
+        }
+    }
+    return null;
+};
+
+const appendPendingSelectionPosition = (
+    snapshot: GameSnapshot,
+    action: 'TAKE_TOKENS' | 'USE_PRIVILEGE',
+    positionId: BoardPositionId
+) => {
+    const pendingSelection = snapshot.pendingSelection;
+    if (!pendingSelection || pendingSelection.action !== action) {
+        throw new Error(`Missing pending selection for ${action}.`);
+    }
+
+    pendingSelection.selectedPositions = [...pendingSelection.selectedPositions, positionId];
+    pushEvent(snapshot, {
+        type: 'selection.positionAdded',
+        action,
+        player: snapshot.context.currentPlayer,
+        positionId,
+        positions: [...pendingSelection.selectedPositions],
+    });
+};
+
 const validateCommandPayload = (
     snapshot: GameSnapshot,
     command: GameCommand
@@ -174,43 +236,86 @@ const validateCommandPayload = (
                       'ENGINE_RULE_GUARD',
                       'The bag is empty and the board cannot be replenished.'
                   );
+        case 'TAKE_TOKENS_ADD_POSITION': {
+            const pendingSelection = getTakeTokensPendingSelection(snapshot);
+            if (!pendingSelection) {
+                return createPendingSelectionError(command.type);
+            }
+            if (pendingSelection.selectedPositions.includes(command.positionId)) {
+                return createRuleGuardError(
+                    'ENGINE_RULE_GUARD',
+                    'Token selections must be unique.'
+                );
+            }
+            if (pendingSelection.selectedPositions.length >= pendingSelection.maxSelections) {
+                return createRuleGuardError(
+                    'ENGINE_RULE_GUARD',
+                    'Token selections cannot exceed the current pending-selection cap.'
+                );
+            }
+            return validateTokenLine(snapshot, [
+                ...pendingSelection.selectedPositions,
+                command.positionId,
+            ]);
+        }
+        case 'TAKE_TOKENS_CONFIRM': {
+            const pendingSelection = getTakeTokensPendingSelection(snapshot);
+            if (!pendingSelection) {
+                return createPendingSelectionError(command.type);
+            }
+            return pendingSelection.selectedPositions.length > 0
+                ? validateTokenLine(snapshot, pendingSelection.selectedPositions)
+                : createRuleGuardError(
+                      'ENGINE_RULE_GUARD',
+                      'Token selection cannot be confirmed without at least one board position.'
+                  );
+        }
+        case 'TAKE_TOKENS_CANCEL':
+            return getTakeTokensPendingSelection(snapshot)
+                ? null
+                : createPendingSelectionError(command.type);
         case 'TAKE_TOKENS':
             return validateTokenLine(snapshot, command.positions);
-        case 'USE_PRIVILEGE': {
-            const player = getCurrentPlayerState(snapshot);
-            const spendCount = getPrivilegeSpendCount(
-                snapshot,
-                player.id,
-                command.positions.length
-            );
-            if (command.positions.length > getPrivilegePositionCap(snapshot, player.id)) {
-                return createRuleGuardError(
-                    'ENGINE_RULE_GUARD',
-                    'Privilege selections exceed the current per-use cap.'
-                );
+        case 'USE_PRIVILEGE_ADD_POSITION': {
+            const pendingSelection = getUsePrivilegePendingSelection(snapshot);
+            if (!pendingSelection) {
+                return createPendingSelectionError(command.type);
             }
-            if (spendCount > player.privileges) {
-                return createRuleGuardError(
-                    'ENGINE_RULE_GUARD',
-                    'Cannot spend more privilege scrolls than the player owns.'
-                );
-            }
-            if (new Set(command.positions).size !== command.positions.length) {
+            if (pendingSelection.selectedPositions.includes(command.positionId)) {
                 return createRuleGuardError(
                     'ENGINE_RULE_GUARD',
                     'Privilege selections must be unique.'
                 );
             }
-            for (const positionId of command.positions) {
-                const cell = getBoardCell(snapshot, positionId);
-                if (cell.token === null || cell.token === 'gold') {
-                    return createRuleGuardError(
-                        'ENGINE_RULE_GUARD',
-                        'Privilege picks must target occupied non-gold board cells.'
-                    );
-                }
+            if (pendingSelection.selectedPositions.length >= pendingSelection.maxSelections) {
+                return createRuleGuardError(
+                    'ENGINE_RULE_GUARD',
+                    'Privilege selections exceed the current pending-selection cap.'
+                );
             }
-            return null;
+            return validateUsePrivilegePositions(snapshot, [
+                ...pendingSelection.selectedPositions,
+                command.positionId,
+            ]);
+        }
+        case 'USE_PRIVILEGE_CONFIRM': {
+            const pendingSelection = getUsePrivilegePendingSelection(snapshot);
+            if (!pendingSelection) {
+                return createPendingSelectionError(command.type);
+            }
+            return pendingSelection.selectedPositions.length > 0
+                ? validateUsePrivilegePositions(snapshot, pendingSelection.selectedPositions)
+                : createRuleGuardError(
+                      'ENGINE_RULE_GUARD',
+                      'Privilege cannot be confirmed without at least one selected position.'
+                  );
+        }
+        case 'USE_PRIVILEGE_CANCEL':
+            return getUsePrivilegePendingSelection(snapshot)
+                ? null
+                : createPendingSelectionError(command.type);
+        case 'USE_PRIVILEGE': {
+            return validateUsePrivilegePositions(snapshot, command.positions);
         }
         case 'RESERVE_CARD': {
             if (!hasBoardGold(snapshot)) {
@@ -316,14 +421,30 @@ export const getAllowedCommands = (snapshot: GameSnapshot): GameCommand['type'][
             return ['SELECT_MODE'];
         case 'modeSelection':
             return ['START_MATCH'];
-        case 'gemSelection':
-            return ['TAKE_TOKENS'];
+        case 'gemSelection': {
+            const pendingSelection = getTakeTokensPendingSelection(snapshot);
+            return [
+                'TAKE_TOKENS_ADD_POSITION',
+                ...(pendingSelection && pendingSelection.selectedPositions.length > 0
+                    ? (['TAKE_TOKENS_CONFIRM'] as const)
+                    : []),
+                'TAKE_TOKENS_CANCEL',
+            ];
+        }
         case 'reserving':
             return ['RESERVE_CARD'];
         case 'buying':
             return ['BUY_CARD'];
-        case 'privilege':
-            return ['USE_PRIVILEGE'];
+        case 'privilege': {
+            const pendingSelection = getUsePrivilegePendingSelection(snapshot);
+            return [
+                'USE_PRIVILEGE_ADD_POSITION',
+                ...(pendingSelection && pendingSelection.selectedPositions.length > 0
+                    ? (['USE_PRIVILEGE_CONFIRM'] as const)
+                    : []),
+                'USE_PRIVILEGE_CANCEL',
+            ];
+        }
         case 'replay':
             return ['EXIT_REPLAY'];
         case 'terminal':
@@ -379,7 +500,9 @@ export const getAllowedCommands = (snapshot: GameSnapshot): GameCommand['type'][
 };
 
 export const canDispatchCommand = (snapshot: GameSnapshot, command: GameCommand) =>
-    getAllowedCommands(snapshot).includes(command.type);
+    getAllowedCommands(snapshot).includes(command.type) ||
+    (snapshot.context.phase === 'gemSelection' && command.type === 'TAKE_TOKENS') ||
+    (snapshot.context.phase === 'privilege' && command.type === 'USE_PRIVILEGE');
 
 const beginMandatoryPhase = (
     snapshot: GameSnapshot,
@@ -448,8 +571,62 @@ const handleCommand = (snapshot: GameSnapshot, command: GameCommand, ports: Engi
             throw new Error('START_MATCH is handled by runtime bootstrap.');
         case 'BEGIN_GEM_SELECTION':
             beginMandatoryPhase(snapshot, 'gemSelection');
+            snapshot.pendingSelection = {
+                action: 'TAKE_TOKENS',
+                selectedPositions: [],
+                maxSelections: 3,
+            };
+            return snapshot;
+        case 'TAKE_TOKENS_ADD_POSITION':
+            appendPendingSelectionPosition(snapshot, 'TAKE_TOKENS', command.positionId);
+            return snapshot;
+        case 'TAKE_TOKENS_CONFIRM': {
+            const pendingSelection = getTakeTokensPendingSelection(snapshot);
+            if (!pendingSelection) {
+                throw new Error('Token selection confirmation requires pending selection state.');
+            }
+            const positions = [...pendingSelection.selectedPositions];
+            snapshot.pendingSelection = null;
+            const player = getCurrentPlayerState(snapshot);
+            const taken = collectBoardTokens(snapshot, positions);
+            for (const entry of taken) {
+                player.inventory[entry.token] += 1;
+                setBoardToken(snapshot, entry.positionId, null);
+            }
+            pushEvent(snapshot, {
+                type: 'tokens.taken',
+                player: snapshot.context.currentPlayer,
+                source: 'mandatory',
+                positions,
+                colors: taken.map((entry) => entry.token),
+            });
+            const sameColorTake =
+                taken.length === 3 && new Set(taken.map((entry) => entry.token)).size === 1;
+            const pearlTake = taken.length === 2 && taken.every((entry) => entry.token === 'pearl');
+            let updated = snapshot;
+            if (sameColorTake || pearlTake) {
+                updated = awardPrivilegeWithEffect(
+                    updated,
+                    ports,
+                    nextPlayer(updated.context.currentPlayer),
+                    'mandatory_action',
+                    'AFTER_TAKE_TOKENS'
+                );
+            }
+            setPhase(updated, 'turnIdle');
+            applyTurnState(updated, {
+                segment: 'cleanup',
+                optionalStep: 'done',
+                mandatoryActionTaken: true,
+            });
+            return continueTurnFlow(updated, ports);
+        }
+        case 'TAKE_TOKENS_CANCEL':
+            snapshot.pendingSelection = null;
+            setPhase(snapshot, 'turnIdle');
             return snapshot;
         case 'TAKE_TOKENS': {
+            snapshot.pendingSelection = null;
             const player = getCurrentPlayerState(snapshot);
             const taken = collectBoardTokens(snapshot, command.positions);
             for (const entry of taken) {
@@ -561,8 +738,55 @@ const handleCommand = (snapshot: GameSnapshot, command: GameCommand, ports: Engi
         }
         case 'BEGIN_PRIVILEGE':
             setPhase(snapshot, 'privilege');
+            snapshot.pendingSelection = {
+                action: 'USE_PRIVILEGE',
+                selectedPositions: [],
+                maxSelections: getPrivilegePositionCap(snapshot, snapshot.context.currentPlayer),
+            };
+            return snapshot;
+        case 'USE_PRIVILEGE_ADD_POSITION':
+            appendPendingSelectionPosition(snapshot, 'USE_PRIVILEGE', command.positionId);
+            return snapshot;
+        case 'USE_PRIVILEGE_CONFIRM': {
+            const pendingSelection = getUsePrivilegePendingSelection(snapshot);
+            if (!pendingSelection) {
+                throw new Error('Privilege confirmation requires pending selection state.');
+            }
+            const positions = [...pendingSelection.selectedPositions];
+            snapshot.pendingSelection = null;
+            const player = getCurrentPlayerState(snapshot);
+            const taken = collectBoardTokens(snapshot, positions);
+            for (const entry of taken) {
+                player.inventory[entry.token] += 1;
+                setBoardToken(snapshot, entry.positionId, null);
+            }
+            player.privileges -= getPrivilegeSpendCount(snapshot, player.id, positions.length);
+            pushEvent(snapshot, {
+                type: 'privilege.used',
+                player: snapshot.context.currentPlayer,
+                positions,
+                spent: getPrivilegeSpendCount(snapshot, player.id, positions.length),
+            });
+            pushEvent(snapshot, {
+                type: 'tokens.taken',
+                player: snapshot.context.currentPlayer,
+                source: 'privilege',
+                positions,
+                colors: taken.map((entry) => entry.token),
+            });
+            setPhase(snapshot, 'turnIdle');
+            applyTurnState(snapshot, {
+                segment: 'optional',
+                optionalStep: 'replenish',
+            });
+            return snapshot;
+        }
+        case 'USE_PRIVILEGE_CANCEL':
+            snapshot.pendingSelection = null;
+            setPhase(snapshot, 'turnIdle');
             return snapshot;
         case 'USE_PRIVILEGE': {
+            snapshot.pendingSelection = null;
             const player = getCurrentPlayerState(snapshot);
             const taken = collectBoardTokens(snapshot, command.positions);
             for (const entry of taken) {

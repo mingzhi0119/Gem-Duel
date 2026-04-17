@@ -1,8 +1,10 @@
 import { z } from 'zod';
 import {
+    PENDING_SELECTION_ACTIONS,
     RULESET_VERSION,
     type ActiveEffect,
     type BoardCellState,
+    type PendingSelectionState,
     type BonusColorPrompt,
     type DiscardPrompt,
     type DomainError,
@@ -221,6 +223,25 @@ export const EffectPromptSchema = z.discriminatedUnion('atom', [
     BonusColorPromptSchema,
     DiscardPromptSchema,
 ]) satisfies z.ZodType<EffectPrompt>;
+
+export const PendingSelectionActionSchema = z.enum(PENDING_SELECTION_ACTIONS);
+
+export const TakeTokensPendingSelectionSchema = z.object({
+    action: z.literal('TAKE_TOKENS'),
+    selectedPositions: z.array(BoardPositionIdSchema).max(3),
+    maxSelections: z.literal(3),
+});
+
+export const UsePrivilegePendingSelectionSchema = z.object({
+    action: z.literal('USE_PRIVILEGE'),
+    selectedPositions: z.array(BoardPositionIdSchema).max(3),
+    maxSelections: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+});
+
+export const PendingSelectionStateSchema = z.discriminatedUnion('action', [
+    TakeTokensPendingSelectionSchema,
+    UsePrivilegePendingSelectionSchema,
+]) satisfies z.ZodType<PendingSelectionState>;
 
 export const EffectOutcomeValueSchema = EffectOutcomeSchema;
 

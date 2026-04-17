@@ -63,6 +63,7 @@ export const projectSnapshotForHash = (snapshot: GameSnapshot) => ({
     runContext: snapshot.runContext,
     activeEffects: snapshot.activeEffects,
     effectPrompts: snapshot.effectPrompts,
+    ...(snapshot.pendingSelection ? { pendingSelection: snapshot.pendingSelection } : {}),
     hiddenState: snapshot.hiddenState,
 });
 

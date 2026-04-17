@@ -14,6 +14,7 @@ import {
     EffectPromptSchema,
     HiddenStateSchema,
     MatchContextSchema,
+    PendingSelectionStateSchema,
     PlayersByIdSchema,
     PublicPlayersByIdSchema,
     PyramidRowSchema,
@@ -38,6 +39,7 @@ const SharedVisibleSnapshotSchema = z.object({
     runContext: RunContextSchema.nullable(),
     activeEffects: z.array(ActiveEffectSchema),
     effectPrompts: z.array(EffectPromptSchema),
+    pendingSelection: PendingSelectionStateSchema.nullable(),
 });
 
 export const AuthoritativeSnapshotSchema = SharedVisibleSnapshotSchema.extend({
@@ -111,6 +113,7 @@ const stripHiddenState = (snapshot: AuthoritativeSnapshot) => ({
     runContext: snapshot.runContext,
     activeEffects: snapshot.activeEffects,
     effectPrompts: snapshot.effectPrompts,
+    pendingSelection: snapshot.pendingSelection,
 });
 
 export const toPlayerSnapshot = (

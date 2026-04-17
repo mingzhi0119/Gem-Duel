@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import '@gem-duel/ui/styles.css';
 import { RuntimeShellBadge } from './components/runtime-shell-badge';
 import './globals.css';
 

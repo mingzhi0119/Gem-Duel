@@ -106,6 +106,94 @@ describe('core engine Step 04 classic rules', () => {
         expect(snapshotA.engineVersion).toBe(ENGINE_VERSION);
     });
 
+    it('tracks engine-owned pending selection state for board picks and clears it on confirm/cancel', () => {
+        const { actor } = createBootstrappedLocalActor(17);
+        const firstPosition = findFirstTakeablePosition(readSnapshot(actor));
+
+        const beginTake = dispatchCommand(actor, { type: 'BEGIN_GEM_SELECTION' });
+        expect(beginTake.ok).toBe(true);
+        if (!beginTake.ok) {
+            return;
+        }
+        expect(beginTake.value.snapshot.pendingSelection).toEqual({
+            action: 'TAKE_TOKENS',
+            selectedPositions: [],
+            maxSelections: 3,
+        });
+
+        const addPosition = dispatchCommand(actor, {
+            type: 'TAKE_TOKENS_ADD_POSITION',
+            positionId: firstPosition,
+        });
+        expect(addPosition.ok).toBe(true);
+        if (!addPosition.ok) {
+            return;
+        }
+        expect(addPosition.value.snapshot.pendingSelection).toEqual({
+            action: 'TAKE_TOKENS',
+            selectedPositions: [firstPosition],
+            maxSelections: 3,
+        });
+        expect(addPosition.value.snapshot.eventLog.at(-1)).toMatchObject({
+            type: 'selection.positionAdded',
+            action: 'TAKE_TOKENS',
+            positionId: firstPosition,
+        });
+
+        const confirmTake = dispatchCommand(actor, { type: 'TAKE_TOKENS_CONFIRM' });
+        expect(confirmTake.ok).toBe(true);
+        if (!confirmTake.ok) {
+            return;
+        }
+        expect(confirmTake.value.snapshot.pendingSelection).toBeNull();
+        expect(confirmTake.value.snapshot.context.phase).toBe('turnIdle');
+
+        const privilegeSnapshot = readSnapshot(actor);
+        privilegeSnapshot.context.currentPlayer = 'p1';
+        privilegeSnapshot.context.phase = 'turnIdle';
+        privilegeSnapshot.players.p1.privileges = 1;
+        privilegeSnapshot.context.turn = {
+            turnNumber: 1,
+            segment: 'optional',
+            optionalStep: 'privilege',
+            mandatoryActionTaken: false,
+            pendingDiscardCount: 0,
+        };
+
+        const privilegeActor = createMatchActorFromSnapshot(
+            privilegeSnapshot,
+            makeTestPorts(17).ports
+        );
+        const beginPrivilege = dispatchCommand(privilegeActor, { type: 'BEGIN_PRIVILEGE' });
+        expect(beginPrivilege.ok).toBe(true);
+        if (!beginPrivilege.ok) {
+            return;
+        }
+
+        const privilegePosition = findFirstTakeablePosition(readSnapshot(privilegeActor));
+        const addPrivilege = dispatchCommand(privilegeActor, {
+            type: 'USE_PRIVILEGE_ADD_POSITION',
+            positionId: privilegePosition,
+        });
+        expect(addPrivilege.ok).toBe(true);
+        if (!addPrivilege.ok) {
+            return;
+        }
+        expect(addPrivilege.value.snapshot.pendingSelection).toEqual({
+            action: 'USE_PRIVILEGE',
+            selectedPositions: [privilegePosition],
+            maxSelections: 3,
+        });
+
+        const cancelPrivilege = dispatchCommand(privilegeActor, { type: 'USE_PRIVILEGE_CANCEL' });
+        expect(cancelPrivilege.ok).toBe(true);
+        if (!cancelPrivilege.ok) {
+            return;
+        }
+        expect(cancelPrivilege.value.snapshot.pendingSelection).toBeNull();
+        expect(cancelPrivilege.value.snapshot.context.phase).toBe('turnIdle');
+    });
+
     it('represents royal handoff through activeEffects without changing the public phase', () => {
         const { actor, forkNamespaces } = createRoyalMilestoneActor(9);
 

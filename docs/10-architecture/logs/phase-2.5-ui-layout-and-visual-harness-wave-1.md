@@ -1,0 +1,97 @@
+# Phase 2.5 Log - UI Layout, Shared Styles, and Playground Wave 1
+
+## ZH
+
+- 日期：2026-04-17
+- Phase：Phase 2.5
+- 状态：进行中
+- 范围：把 `packages/ui` 从单文件验证壳整理成具备 shared-style ownership 和静态场景载体的基础 UI 包。
+- 本次落地结果：
+    - `packages/ui` 已由单一 `src/index.tsx` 扩成按职责分层的目录：
+        - `board/`
+        - `drawer/`
+        - `hud/`
+        - `primitives/`
+        - `styles/`
+        - `tables/`
+        - `views/`
+    - `packages/ui/package.json` 已公开 `./styles.css` export，供 shell 通过包边界消费 shared styles。
+    - shared `gd-*` token / shell 样式已从 `apps/web/app/globals.css` 迁回 `packages/ui/src/styles/`，`apps/web/app/layout.tsx` 已改为显式引入 `@gem-duel/ui/styles.css`。
+    - `/playground` 静态 fixture 页面已落地，可在不启动 live engine session 的情况下渲染 `MatchView`、`TurnHud`、`SidecarDrawer` 与 `BoardSceneScaffold`。
+    - 这为后续 Phase 3 primitives 和 screenshot baseline 建立了包内载体，但尚未把 playground 提升为完整视觉回归门禁。
+- 当前未完成项：
+    - screenshot baseline / `check-visual` 仍未接入 CI；
+    - 当前 playground 仍是 static fixture + scaffold，不是完整 full-board renderer；
+    - `packages/ui` 的 design-token 体系仍需继续扩展到完整盘面视觉语言。
+- 涉及文件：
+    - `packages/ui/package.json`
+    - `packages/ui/src/index.tsx`
+    - `packages/ui/src/primitives/*`
+    - `packages/ui/src/board/*`
+    - `packages/ui/src/hud/*`
+    - `packages/ui/src/drawer/*`
+    - `packages/ui/src/tables/*`
+    - `packages/ui/src/views/*`
+    - `packages/ui/src/styles/tokens.css`
+    - `packages/ui/src/styles/shell.css`
+    - `packages/ui/src/styles/index.css`
+    - `apps/web/app/layout.tsx`
+    - `apps/web/app/globals.css`
+    - `apps/web/app/playground/page.tsx`
+- 验证：
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `git restore -- apps/web/next-env.d.ts`
+
+## EN
+
+- Date: 2026-04-17
+- Phase: Phase 2.5
+- Status: In Progress
+- Scope: move `packages/ui` from a single-file validation shell toward a real shared UI package with package-owned styles and a static scene host.
+- Landed results:
+    - `packages/ui` has expanded from a single `src/index.tsx` file into role-based directories:
+        - `board/`
+        - `drawer/`
+        - `hud/`
+        - `primitives/`
+        - `styles/`
+        - `tables/`
+        - `views/`
+    - `packages/ui/package.json` now exports `./styles.css` so shells consume shared styles through the package boundary.
+    - Shared `gd-*` token / shell styling has moved out of `apps/web/app/globals.css` and back into `packages/ui/src/styles/`, while `apps/web/app/layout.tsx` now imports `@gem-duel/ui/styles.css` explicitly.
+    - A static `/playground` fixture page now renders `MatchView`, `TurnHud`, `SidecarDrawer`, and `BoardSceneScaffold` without booting a live engine session.
+    - This creates the package-level host needed for later Phase 3 primitives and screenshot baselines, but the playground is not yet a full visual-regression gate.
+- Remaining work:
+    - screenshot baselines / `check-visual` are not yet wired into CI;
+    - the current playground is still a static fixture + scaffold rather than the finished full-board renderer;
+    - the design-token system still needs to expand into the full board visual language.
+- Touched files:
+    - `packages/ui/package.json`
+    - `packages/ui/src/index.tsx`
+    - `packages/ui/src/primitives/*`
+    - `packages/ui/src/board/*`
+    - `packages/ui/src/hud/*`
+    - `packages/ui/src/drawer/*`
+    - `packages/ui/src/tables/*`
+    - `packages/ui/src/views/*`
+    - `packages/ui/src/styles/tokens.css`
+    - `packages/ui/src/styles/shell.css`
+    - `packages/ui/src/styles/index.css`
+    - `apps/web/app/layout.tsx`
+    - `apps/web/app/globals.css`
+    - `apps/web/app/playground/page.tsx`
+- Validation:
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `git restore -- apps/web/next-env.d.ts`

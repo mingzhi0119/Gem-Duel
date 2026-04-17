@@ -66,4 +66,47 @@ describe('application view-model composition', () => {
         expect(roomView?.availableActions).toHaveLength(1);
         expect(roomView?.sessionStatus).toBe('waiting-opponent');
     });
+
+    it('projects pending board selections without requiring UI-local draft state', () => {
+        const session = createLocalMatchSession({
+            seed: 20260417,
+            flags: {
+                roguelike: false,
+                onlineAuthoritative: false,
+                aiEnabled: false,
+            },
+        });
+
+        if (!session.ok) {
+            throw new Error('Expected local session creation to succeed.');
+        }
+
+        expect(session.value.dispatch({ type: 'BEGIN_GEM_SELECTION' }).ok).toBe(true);
+        const afterBegin = session.value.viewModel(session.value.snapshot().context.currentPlayer);
+        const addAction = afterBegin.availableActions.find(
+            (action) => action.command.type === 'TAKE_TOKENS_ADD_POSITION'
+        );
+
+        expect(addAction).toBeDefined();
+        if (!addAction) {
+            return;
+        }
+
+        expect(session.value.dispatch(addAction.command).ok).toBe(true);
+        const selectionView = session.value.viewModel(
+            session.value.snapshot().context.currentPlayer
+        );
+
+        expect(selectionView.selectionDraft).toMatchObject({
+            model: 'pending-command',
+            commandType: 'TAKE_TOKENS',
+        });
+        expect(selectionView.selectionDraft?.selectedBoardPositions).toHaveLength(1);
+        expect(selectionView.boardCells.some((cell) => cell.selected)).toBe(true);
+        expect(
+            selectionView.availableActions.some(
+                (action) => action.command.type === 'TAKE_TOKENS_CONFIRM'
+            )
+        ).toBe(true);
+    });
 });

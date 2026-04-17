@@ -271,6 +271,7 @@ export const createInitialSnapshot = (
     runContext: runContext ? structuredClone(runContext) : null,
     activeEffects: [],
     effectPrompts: [],
+    pendingSelection: null,
     hiddenState: createHiddenState(),
 });
 

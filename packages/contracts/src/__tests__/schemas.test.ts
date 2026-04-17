@@ -30,8 +30,13 @@ describe('contracts schemas', () => {
             type: 'TAKE_TOKENS',
             positions: ['r2c2'],
         });
+        const incremental = GameCommandSchema.parse({
+            type: 'TAKE_TOKENS_ADD_POSITION',
+            positionId: 'r2c2',
+        });
 
         expect(command.type).toBe('TAKE_TOKENS');
+        expect(incremental.type).toBe('TAKE_TOKENS_ADD_POSITION');
         expect(SCHEMA_VERSION).toBe('6.0.0');
         expect(ENGINE_VERSION).toBe('2026.04-step7');
     });
@@ -75,12 +80,20 @@ describe('contracts schemas', () => {
             stage: 'completed',
             outcome: 'resolved',
         });
+        const selectionAdded = GameEventSchema.parse({
+            type: 'selection.positionAdded',
+            action: 'TAKE_TOKENS',
+            player: 'p1',
+            positionId: 'r2c2',
+            positions: ['r2c2'],
+        });
 
         expect(activeEffect.atom).toBe('take_board_token');
         expect(EffectSourceSchema.parse(activeEffect.source)).toBe('card_ability');
         expect(EffectExecutionScopeSchema.parse(activeEffect.scope)).toBe('active_player');
         expect(started).toMatchObject({ type: 'effect.started', stage: 'running' });
         expect(completed).toMatchObject({ type: 'effect.completed', outcome: 'resolved' });
+        expect(selectionAdded.type).toBe('selection.positionAdded');
         if (started.type === 'effect.started') {
             expect(EffectLifecycleStageSchema.parse(started.stage)).toBe('running');
         }
@@ -104,6 +117,11 @@ describe('contracts schemas', () => {
             label: 'Begin Gem Selection',
             command: { type: 'BEGIN_GEM_SELECTION' },
         });
+        playerSnapshot.pendingSelection = {
+            action: 'TAKE_TOKENS',
+            selectedPositions: ['r2c2'],
+            maxSelections: 3,
+        };
 
         const replay = ReplayBundleSchema.parse({
             ...createReplayBundleFixture(),
@@ -176,7 +194,14 @@ describe('contracts schemas', () => {
             ],
             royalOffers: [],
             promptStack: [],
-            selectionDraft: null,
+            selectionDraft: {
+                model: 'pending-command',
+                commandType: 'TAKE_TOKENS',
+                effectId: null,
+                selectedBoardPositions: ['r2c2'],
+                goldPosition: null,
+                remainingSelections: 2,
+            },
             runPanel: null,
             availableActions: [action],
         });
@@ -186,6 +211,10 @@ describe('contracts schemas', () => {
         expect(patch.availableActions[0]?.id).toBe('begin-gem-selection');
         expect(patch.roomStatus).toBe('active');
         expect(uiViewModel.viewerRole).toBe('player');
+        expect(uiViewModel.snapshot.pendingSelection).toMatchObject({
+            action: 'TAKE_TOKENS',
+            selectedPositions: ['r2c2'],
+        });
     });
 
     it('parses run and buff contract surfaces', () => {

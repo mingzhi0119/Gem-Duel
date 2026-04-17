@@ -110,7 +110,11 @@
 
 #### Phase 2 - 交互范式 ADR + `UiViewModel` 2.0 契约扩展
 
-状态：`In Progress`（2026-04-17）。日志：[`logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md`](./logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md)
+状态：`In Progress`（2026-04-17）。日志：
+
+- [`logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md`](./logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md)
+- [`logs/phase-2-adr-and-contract-wave-1.md`](./logs/phase-2-adr-and-contract-wave-1.md)
+- [`logs/phase-2-pending-selection-wave-2.md`](./logs/phase-2-pending-selection-wave-2.md)
 
 目标：先决定“多选盘面交互怎么表达”，再做 board-facing projection。
 
@@ -146,6 +150,11 @@
     - `runPanel?`
 - `room-live-client` 等页面不得继续在页面层临时推导 `room.status` / viewer / selectable state。
 - spectator / replay / room filtering 语义必须一起进入 projection contract，而不是延后到页面实现时再补。
+- 当前已落第二波 Phase 2 结果：
+    - `TAKE_TOKENS` / `USE_PRIVILEGE` 已开始切到引擎拥有的 pending-selection command surface，而不是页面枚举所有组合；
+    - `pendingSelection` 已进入 snapshot / contract / replay-visible state；
+    - `packages/application` 已改为从 `snapshot.pendingSelection` 投影 `selectionDraft` 与 board-cell selected/selectable 状态；
+    - property / engine / view-model tests 已补覆盖 pending-selection 的确认与取消路径。
 
 完成标准：
 
@@ -155,7 +164,10 @@
 
 #### Phase 2.5 - `packages/ui` 布局、Design Tokens 与 Visual Harness
 
-状态：`In Progress`（2026-04-17）。日志：[`logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md`](./logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md)
+状态：`In Progress`（2026-04-17）。日志：
+
+- [`logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md`](./logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md)
+- [`logs/phase-2.5-ui-layout-and-visual-harness-wave-1.md`](./logs/phase-2.5-ui-layout-and-visual-harness-wave-1.md)
 
 治理主文档：[`phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md)
 
@@ -169,6 +181,10 @@
 - `tokens.css` / theme layer，把 `gd-*` 样式从 app-scope 收回到 `packages/ui`。
 - 静态渲染 playground 或 Storybook/Ladle 风格 visual harness。
 - screenshot baseline 机制与 `check-visual` 类门禁草案。
+- 当前已落第一波 Phase 2.5 结果：
+    - `packages/ui` 已拆出 `board/`、`drawer/`、`hud/`、`primitives/`、`styles/`、`tables/`、`views/`；
+    - shared shell / token 样式已从 `apps/web/app/globals.css` 收回到 `@gem-duel/ui/styles.css`；
+    - `/playground` 静态 fixture 页面已落地，可在不启动 live session 的情况下渲染 package-owned scene scaffold。
 
 完成标准：
 

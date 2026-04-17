@@ -9,6 +9,7 @@ import {
     dispatchCommand,
     getAllowedCommands,
     readSnapshot,
+    validateDispatch,
 } from '../index';
 import { calculateCardPayment } from '../classic-helpers';
 import { DEFAULT_FLAGS, makeTestPorts } from './test-ports';
@@ -65,7 +66,24 @@ const materializeCommand = (snapshot: GameSnapshot, choice: number): GameCommand
         case 'REPLENISH_BOARD':
         case 'ENTER_REPLAY':
         case 'EXIT_REPLAY':
+        case 'TAKE_TOKENS_CONFIRM':
+        case 'TAKE_TOKENS_CANCEL':
+        case 'USE_PRIVILEGE_CONFIRM':
+        case 'USE_PRIVILEGE_CANCEL':
             return { type: commandType };
+        case 'TAKE_TOKENS_ADD_POSITION': {
+            const pendingSelection =
+                snapshot.pendingSelection?.action === 'TAKE_TOKENS'
+                    ? snapshot.pendingSelection
+                    : null;
+            const positions = findNonGoldBoardPositions(snapshot)
+                .filter((position) => !pendingSelection?.selectedPositions.includes(position))
+                .map((positionId) => ({
+                    type: 'TAKE_TOKENS_ADD_POSITION' as const,
+                    positionId,
+                }));
+            return positions.find((command) => validateDispatch(snapshot, command).ok) ?? null;
+        }
         case 'TAKE_TOKENS': {
             const positions = findNonGoldBoardPositions(snapshot);
             return positions[0] ? { type: 'TAKE_TOKENS', positions: [positions[0]] } : null;
@@ -84,6 +102,19 @@ const materializeCommand = (snapshot: GameSnapshot, choice: number): GameCommand
         case 'BUY_CARD': {
             const source = pickBuySource(snapshot, choice);
             return source ? { type: 'BUY_CARD', source } : null;
+        }
+        case 'USE_PRIVILEGE_ADD_POSITION': {
+            const pendingSelection =
+                snapshot.pendingSelection?.action === 'USE_PRIVILEGE'
+                    ? snapshot.pendingSelection
+                    : null;
+            const positions = findNonGoldBoardPositions(snapshot)
+                .filter((position) => !pendingSelection?.selectedPositions.includes(position))
+                .map((positionId) => ({
+                    type: 'USE_PRIVILEGE_ADD_POSITION' as const,
+                    positionId,
+                }));
+            return positions.find((command) => validateDispatch(snapshot, command).ok) ?? null;
         }
         case 'USE_PRIVILEGE': {
             const positions = findNonGoldBoardPositions(snapshot);

@@ -1,0 +1,16 @@
+:root {
+    color-scheme: light;
+    --gd-background: #f5f2eb;
+    --gd-surface: #fffdf8;
+    --gd-surface-strong: #1b2430;
+    --gd-surface-soft: rgba(255, 253, 248, 0.88);
+    --gd-text: #1b2430;
+    --gd-muted: #566070;
+    --gd-accent: #006d77;
+    --gd-accent-soft: #d9f3f0;
+    --gd-border: #d8d2c4;
+    --gd-danger: #a11212;
+    --gd-shadow: 0 18px 50px rgba(68, 78, 96, 0.08);
+    --gd-radius-panel: 20px;
+    --gd-radius-pill: 999px;
+}
