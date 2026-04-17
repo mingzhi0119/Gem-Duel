@@ -1,8 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { createMatchSession } from '@gem-duel/application';
-import { createEnginePorts } from '@gem-duel/adapters';
+import { createAiMatchSession, createLocalMatchSession } from '@gem-duel/application';
 import type { UiActionDescriptor } from '@gem-duel/contracts';
 import { ActionList, Section, SnapshotSummary } from '@gem-duel/ui';
 
@@ -15,22 +14,17 @@ export function MatchPlayground({
     seed: number;
     aiEnabled: boolean;
 }) {
-    const sessionResult = useMemo(
-        () =>
-            createMatchSession(
-                {
-                    seed,
-                    mode,
-                    flags: {
-                        roguelike: true,
-                        onlineAuthoritative: false,
-                        aiEnabled,
-                    },
-                },
-                createEnginePorts(seed)
-            ),
-        [aiEnabled, mode, seed]
-    );
+    const sessionResult = useMemo(() => {
+        const flags = {
+            roguelike: true,
+            onlineAuthoritative: false,
+            aiEnabled,
+        };
+
+        return mode === 'ai'
+            ? createAiMatchSession({ seed, flags })
+            : createLocalMatchSession({ seed, flags });
+    }, [aiEnabled, mode, seed]);
     const [snapshot, setSnapshot] = useState(
         sessionResult.ok ? sessionResult.value.snapshot() : null
     );

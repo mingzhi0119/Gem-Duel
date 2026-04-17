@@ -35,6 +35,16 @@
 - WebSocket / event 契约：采用 AsyncAPI 3.0 作为目标描述格式。
 - Replay 契约：权威 wire format 为 `MessagePack`，推荐实现库记录为 `msgpackr`；JSON 只作为调试/导出视图。
 - HTTP 错误表达：对齐 `RFC 9457 Problem Details for HTTP APIs`。
+- 运行时 root barrel `@gem-duel/contracts` 不得 re-export 文档生成或校验模块；OpenAPI / AsyncAPI 入口固定为 `@gem-duel/contracts/openapi` 与 `@gem-duel/contracts/asyncapi`，避免 Web/Client bundle 引入 Node-only 依赖。
+- 提交到仓库的生成产物固定为：
+    - `packages/contracts/generated/openapi/openapi.json`
+    - `packages/contracts/generated/asyncapi/asyncapi.yaml`
+- 预期 fixtures 固定为：
+    - `packages/contracts/src/__fixtures__/openapi.expected.json`
+    - `packages/contracts/src/__fixtures__/asyncapi.expected.yaml`
+    - `packages/contracts/src/__fixtures__/replay/*.json`
+- 生成命令：`pnpm contracts:generate`
+- 漂移校验命令：`pnpm contracts:verify`
 
 ## Replay Bundle
 
@@ -72,6 +82,7 @@
 - 快照变化必须在 `docs/30-contracts/` 和对应 ADR 中说明是“预期变更”还是“破坏性变更”。
 - replay CI 以 `finalStateHash` 为准，不接受主观“看起来没问题”的判断。
 - 契约层不允许绕过 schema 直接定义跨边界 payload。
+- `pnpm check-contracts` 必须覆盖 schema parse tests、OpenAPI 生成/漂移测试、AsyncAPI 生成/校验/漂移测试，以及最小 replay wire-shape fixture 测试。
 
 ## EN
 
@@ -108,6 +119,16 @@ This document defines the hardening path for `packages/contracts`. Contracts mus
 - WebSocket / event contracts: use AsyncAPI 3.0 as the target description format.
 - Replay contracts: the authoritative wire format is `MessagePack`, with `msgpackr` recorded as the preferred implementation; JSON exists only for debug/export views.
 - HTTP error representation: align with `RFC 9457 Problem Details for HTTP APIs`.
+- The runtime root barrel `@gem-duel/contracts` must not re-export documentation generation or validation modules; OpenAPI / AsyncAPI entrypoints are fixed at `@gem-duel/contracts/openapi` and `@gem-duel/contracts/asyncapi` so Web/Client bundles do not pull in Node-only dependencies.
+- Generated artifacts committed to the repo are fixed at:
+    - `packages/contracts/generated/openapi/openapi.json`
+    - `packages/contracts/generated/asyncapi/asyncapi.yaml`
+- Expected fixtures are fixed at:
+    - `packages/contracts/src/__fixtures__/openapi.expected.json`
+    - `packages/contracts/src/__fixtures__/asyncapi.expected.yaml`
+    - `packages/contracts/src/__fixtures__/replay/*.json`
+- Generation command: `pnpm contracts:generate`
+- Drift verification command: `pnpm contracts:verify`
 
 ## Replay Bundle
 
@@ -145,3 +166,4 @@ This document defines the hardening path for `packages/contracts`. Contracts mus
 - Snapshot changes must be explained in `docs/30-contracts/` and the matching ADR as either expected or breaking.
 - Replay CI uses `finalStateHash` as the source of truth and does not accept subjective “looks fine” validation.
 - The contract layer may not bypass schemas when defining cross-boundary payloads.
+- `pnpm check-contracts` must cover schema parse tests, OpenAPI generation/drift checks, AsyncAPI generation/validation/drift checks, and minimal replay wire-shape fixture parsing.

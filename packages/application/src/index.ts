@@ -9,6 +9,7 @@ import {
     type UiActionDescriptor,
     type UiViewModel,
 } from '@gem-duel/contracts';
+import { createEnginePorts } from '@gem-duel/adapters';
 import {
     createMatchActor,
     dispatchCommand,
@@ -27,6 +28,11 @@ export interface MatchSession {
 export interface MatchSessionInput {
     seed: number;
     mode: GameMode;
+    flags: MatchFlags;
+}
+
+export interface ShellMatchSessionInput {
+    seed: number;
     flags: MatchFlags;
 }
 
@@ -253,3 +259,23 @@ export const createMatchSession = (
         },
     };
 };
+
+export const createLocalMatchSession = (input: ShellMatchSessionInput): TypedResult<MatchSession> =>
+    createMatchSession(
+        {
+            seed: input.seed,
+            mode: 'local',
+            flags: input.flags,
+        },
+        createEnginePorts(input.seed)
+    );
+
+export const createAiMatchSession = (input: ShellMatchSessionInput): TypedResult<MatchSession> =>
+    createMatchSession(
+        {
+            seed: input.seed,
+            mode: 'ai',
+            flags: input.flags,
+        },
+        createEnginePorts(input.seed)
+    );

@@ -62,6 +62,6 @@ describe('core engine determinism', () => {
 
         expect(snapshotA).toEqual(snapshotB);
         expect(snapshotA.sequence).toBeGreaterThan(0);
-        expect(snapshotA.engineVersion).toBe('2026.04-step2-prep');
+        expect(snapshotA.engineVersion).toBe('2026.04-step2');
     });
 });

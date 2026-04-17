@@ -4,7 +4,15 @@
 
 - Update `packages/contracts` and the matching docs before changing any cross-boundary behavior. 修改任何跨边界行为前，先更新 `packages/contracts` 与对应文档。
 - Update `docs/` or an ADR before adding a new package, layer, dependency direction, or governance rule. 新增包、分层、依赖方向或治理规则前，先更新 `docs/` 或 ADR。
-- Keep imports one-way: `contracts/domain -> core-engine -> application -> adapters -> apps/ui`. 严格遵守单向依赖：`contracts/domain -> core-engine -> application -> adapters -> apps/ui`。
+- Keep imports within the frozen Step 02 matrix. 严格遵守 Step 02 冻结后的依赖矩阵。
+  `domain` -> no workspace dependencies
+  `contracts` -> `domain`
+  `core-engine` -> `contracts`, `domain`
+  `adapters` -> `contracts`, `domain`, `core-engine`
+  `application` -> `contracts`, `domain`, `core-engine`, `adapters` (session/bootstrap only)
+  `ui` -> `contracts`
+  `apps/web` and `apps/desktop` -> `application`, `contracts`, `ui`
+  `apps/room-service` -> `application`, `contracts`, `adapters`
 - Keep `packages/core-engine` and `packages/domain` deterministic and driven only by explicit inputs, ports, and namespaced RNG streams. `packages/core-engine` 与 `packages/domain` 必须保持确定性，只能依赖显式输入、ports 和分域 RNG。
 - Keep `apps/web`, `apps/desktop`, and `packages/ui` free of game-rule, scoring, Buff, and authority logic. `apps/web`、`apps/desktop` 与 `packages/ui` 不得承载规则、计分、Buff 或权威裁判逻辑。
 - Keep `apps/web/app/api/*` limited to BFF, translation, aggregation, and orchestration; never place match resolution there. `apps/web/app/api/*` 只做 BFF、转换、聚合与编排，不得放对局裁决。
@@ -33,9 +41,12 @@
 - Current validation: `pnpm typecheck`
 - Current validation: `pnpm test`
 - Current validation: `pnpm build`
+- Current validation: `pnpm check-deps`
+- Current validation: `pnpm check-boundaries`
+- Current validation: `pnpm check-contracts`
+- Current generation: `pnpm contracts:generate`
+- Current verification: `pnpm contracts:verify`
 - Current docs reference: `docs/00-refactor/rebuild-execution-tracker.md`
-- Planned guardrails for later steps: `pnpm check-deps`
-- Planned guardrails for later steps: `pnpm check-contracts`
 - Planned guardrails for later steps: `pnpm check-replays`
 - Planned guardrails for later steps: `pnpm check-commit`
 
@@ -52,5 +63,6 @@
 
 - The relevant tracker row and step log reflect the change. 对应 tracker 行与 step log 已同步变化。
 - The nearest `AGENTS.md` and the matching governance docs stay consistent. 最近目录的 `AGENTS.md` 与对应治理文档保持一致。
+- Step 02 contract changes also pass `pnpm check-deps`, `pnpm check-boundaries`, and `pnpm check-contracts`. Step 02 的契约与边界改动还必须通过 `pnpm check-deps`、`pnpm check-boundaries` 与 `pnpm check-contracts`。
 - `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build` pass when the change requires validation. 需要校验时，`pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm build` 通过。
 - Any planned mechanical guardrail affected by the change is documented in `docs/` even if the tool wiring lands later. 即使工具接线尚未落地，受影响的机械化护栏也已写入 `docs/`。

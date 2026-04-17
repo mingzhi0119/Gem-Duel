@@ -30,6 +30,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
+      - name: Check dependency graph
+        run: pnpm check-deps
+
+      - name: Check contracts
+        run: pnpm check-contracts
+
       - name: Typecheck
         run: pnpm typecheck
 

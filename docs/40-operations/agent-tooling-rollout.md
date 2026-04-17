@@ -13,10 +13,10 @@
 - core-engine/domain 的 ESLint 禁令：封死随机、时钟、浏览器、Electron、Node IO 与隐藏随机源。
 - 分层 `AGENTS.md`：把全局规则拆成最近目录优先的局部规则。
 - `OpenAPI 3.1` + `AsyncAPI 3.0`：冻结对外契约描述目标版本。
+- 契约快照测试：`vitest` + schema fixture + generated drift checks。若与 tracker 冲突，以 `docs/00-refactor/rebuild-execution-tracker.md` 为准；Step 02 已将 contract snapshots 前移到本波次。
 
 ## Wave 2
 
-- 契约快照测试：`vitest` + schema fixture。
 - 状态机调试：`@statelyai/inspect`
 - namespaced RNG：记录为 `pure-rand`。
 - 状态穷尽匹配：记录 `ts-pattern`。
@@ -56,10 +56,10 @@ Project-local skill quality rules, triggers, and step mapping live in [`skills-g
 - ESLint pure-core restrictions for core-engine/domain: block randomness, clocks, browser APIs, Electron APIs, Node IO, and hidden random helpers.
 - Layered `AGENTS.md`: split global rules into nearest-directory constraints.
 - `OpenAPI 3.1` + `AsyncAPI 3.0`: freeze the outward protocol description targets.
+- Contract snapshot tests: `vitest` + schema fixtures + generated drift checks. When this rollout conflicts with the tracker, `docs/00-refactor/rebuild-execution-tracker.md` wins; Step 02 already moved contract snapshots into this wave.
 
 ## Wave 2
 
-- Contract snapshot tests: `vitest` + schema fixtures.
 - State-machine inspection: `@statelyai/inspect`
 - Namespaced RNG streams: record `pure-rand`.
 - Exhaustive phase matching: record `ts-pattern`.

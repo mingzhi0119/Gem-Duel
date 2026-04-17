@@ -5,14 +5,26 @@
     "type": "module",
     "main": "./src/index.ts",
     "types": "./src/index.ts",
+    "exports": {
+        ".": "./src/index.ts",
+        "./openapi": "./src/openapi.ts",
+        "./asyncapi": "./src/asyncapi.ts"
+    },
     "dependencies": {
+        "@asteasolutions/zod-to-openapi": "^7.3.4",
+        "@asyncapi/parser": "^3.6.0",
         "@gem-duel/domain": "workspace:*",
+        "yaml": "^2.8.3",
         "zod": "^3.25.76"
     },
     "scripts": {
         "build": "tsc -p tsconfig.json",
+        "generate": "corepack pnpm generate:openapi && corepack pnpm generate:asyncapi",
+        "generate:openapi": "tsx ./scripts/generate-openapi.ts",
+        "generate:asyncapi": "tsx ./scripts/generate-asyncapi.ts",
         "lint": "eslint src --ext .ts",
         "test": "vitest run src/__tests__ --passWithNoTests",
-        "typecheck": "tsc -p tsconfig.json --noEmit"
+        "typecheck": "tsc -p tsconfig.json --noEmit",
+        "verify:generated": "tsx ./scripts/verify-generated.ts"
     }
 }

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { openApiDocument } from '@gem-duel/contracts';
+import { ENGINE_VERSION, SCHEMA_VERSION } from '@gem-duel/contracts';
 import { Section } from '@gem-duel/ui';
 
 export default function HomePage() {
@@ -33,8 +33,13 @@ export default function HomePage() {
                     </div>
                 </div>
                 <div className="gd-panel">
-                    <p className="gd-muted">Public Surface</p>
-                    <pre>{JSON.stringify(openApiDocument.paths, null, 2)}</pre>
+                    <p className="gd-muted">Contract Surface</p>
+                    <p>Schema Version: {SCHEMA_VERSION}</p>
+                    <p>Engine Version: {ENGINE_VERSION}</p>
+                    <p>
+                        HTTP and WebSocket contract artifacts are generated into
+                        `packages/contracts/generated/` and validated during Step 02.
+                    </p>
                 </div>
             </section>
 
