@@ -92,10 +92,11 @@ export const DraftScreen: React.FC<DraftScreenProps> = ({
             {/* Background Ambience */}
             <div
                 className={`absolute inset-0 pointer-events-none opacity-20
-                ${theme === 'dark'
+                ${
+                    theme === 'dark'
                         ? 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900/40 via-slate-950 to-slate-950'
                         : 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-200/40 via-slate-100 to-slate-100'
-                    }
+                }
             `}
             />
 
@@ -134,11 +135,12 @@ export const DraftScreen: React.FC<DraftScreenProps> = ({
                                     onClick={() => onReroll(lvl)}
                                     className={`
                                         text-[10px] font-black w-8 h-8 flex items-center justify-center rounded-lg transition-all active:scale-95
-                                        ${buffLevel === lvl
-                                            ? 'bg-amber-400 text-amber-950 shadow-inner'
-                                            : theme === 'dark'
-                                                ? 'text-slate-400 hover:bg-white/5 hover:text-white'
-                                                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'
+                                        ${
+                                            buffLevel === lvl
+                                                ? 'bg-amber-400 text-amber-950 shadow-inner'
+                                                : theme === 'dark'
+                                                  ? 'text-slate-400 hover:bg-white/5 hover:text-white'
+                                                  : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'
                                         }
                                     `}
                                 >
@@ -167,10 +169,11 @@ export const DraftScreen: React.FC<DraftScreenProps> = ({
             {/* Active Player Indicator */}
             <div
                 className={`z-10 mb-8 flex items-center gap-3 px-6 py-3 rounded-full border shadow-lg
-                ${activePlayer === 'p1'
+                ${
+                    activePlayer === 'p1'
                         ? 'bg-emerald-600/20 border-emerald-500 text-emerald-500'
                         : 'bg-blue-600/20 border-blue-500 text-blue-500'
-                    }
+                }
             `}
             >
                 {activePlayer === 'p1' ? <Shield size={24} /> : <Swords size={24} />}

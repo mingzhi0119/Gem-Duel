@@ -109,15 +109,16 @@ export const GameActions: React.FC<GameActionsProps> = ({
                                 onClick={handleReplenish}
                                 disabled={bagCount === 0 || phase !== 'IDLE' || selectedCount > 0}
                                 className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold uppercase tracking-wider text-sm transition-all duration-300 border
-                                ${bagCount > 0 && phase === 'IDLE' && selectedCount === 0
+                                ${
+                                    bagCount > 0 && phase === 'IDLE' && selectedCount === 0
                                         ? theme === 'dark'
                                             ? 'bg-slate-800 border-slate-600 text-slate-200 hover:bg-slate-700'
                                             : 'bg-white border-stone-300 text-stone-800 shadow-sm hover:border-stone-400 active:bg-stone-100'
                                         : (theme === 'dark'
-                                            ? 'bg-slate-900/20 border-slate-800/50 text-slate-700'
-                                            : 'bg-stone-100/50 border-stone-200/50 text-stone-400') +
-                                        ' cursor-default opacity-50'
-                                    }`}
+                                              ? 'bg-slate-900/20 border-slate-800/50 text-slate-700'
+                                              : 'bg-stone-100/50 border-stone-200/50 text-stone-400') +
+                                          ' cursor-default opacity-50'
+                                }`}
                             >
                                 <RefreshCw size={16} />
                                 Refill ({bagCount})
