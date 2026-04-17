@@ -23,6 +23,10 @@
 | Step 07   | Replay/AI/Buff 迁移              | 迁入扩展玩法与辅助能力                   | 在既有 hook 原语和 actor 生命周期之上补齐 replay 浏览、AI 策略、Buff/Roguelike 规则、Run/Meta state 与样例                                                                                                | 回放、AI、Buff、Run/Meta 能力具备测试与文档，且无需回改 Step 02.5/03 的底层原语                                      | Step 04, Step 05, Step 06 | 单步单提交，状态与日志同步                                                                      | 待创建                                                                           | 未开始 |
 | Step 08   | 验收、删除 old、发布准备         | 完成最终收口                             | 通过总体验收、删除 `old/legacy-vite-electron/`、准备正式发布流程                                                                                                                                          | `old/legacy-vite-electron/` 被安全删除，允许进入版本发布阶段                                                         | Step 00-07 全部完成       | 单步单提交，状态与日志同步；此后才允许 tag                                                      | 待创建                                                                           | 未开始 |
 
+### 入口备注
+
+- 2026-04-17：仓库脚手架已完成一次 Step 02 入场前清理，对齐了 snapshot tiers、replay metadata、effect primitives、namespaced RNG、seq/resync envelope 的代码骨架，并清除了生成物；Step 02 状态仍保持 `未开始`，因为机械化护栏尚未接入。
+
 ### Skills 映射
 
 - `contract-change`：Step 02、Step 05、Step 07
@@ -53,6 +57,10 @@ This tracker is the execution source of truth for the full rebuild. Every step t
 | Step 06   | Connect Web/Desktop via Application Layer | Make both shells consume the same app layer                              | Integrate local, AI, online, and spectator flows through `application` and `ui`                                                                                                                                                                                          | Web and Desktop share the same view-models, interaction boundaries, and information-filtering rules                                                                             | Step 04, Step 05          | One step per commit, synchronized with status and logs                                                  | To be created                                                                    | 未开始 |
 | Step 07   | Migrate Replay/AI/Buff                    | Port extended gameplay and support features                              | Build replay browsing, AI strategy, Buff/Roguelike rules, Run/Meta state, and samples on top of the frozen hook primitives and actor lifecycle                                                                                                                           | Replay, AI, Buff, and Run/Meta features all have tests and docs without revisiting Step 02.5/03 primitives                                                                      | Step 04, Step 05, Step 06 | One step per commit, synchronized with status and logs                                                  | To be created                                                                    | 未开始 |
 | Step 08   | Acceptance, Remove old, Release Prep      | Close the rebuild safely                                                 | Pass final acceptance, delete `old/legacy-vite-electron/`, and prepare the release path                                                                                                                                                                                  | `old/legacy-vite-electron/` is safely removed and release/tagging may begin                                                                                                     | Step 00-07 complete       | One step per commit with status/log updates; tagging is only allowed after this step                    | To be created                                                                    | 未开始 |
+
+### Entrance Note
+
+- 2026-04-17: the scaffold was cleaned and aligned with the documented Step 02 vocabulary (snapshot tiers, replay metadata, effect primitives, namespaced RNG, and seq/resync envelopes), and generated outputs were removed. Step 02 remains `未开始` because the mechanical guardrails are not wired yet.
 
 ### Skill Mapping
 

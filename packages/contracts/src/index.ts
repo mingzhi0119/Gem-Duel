@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import {
+    EFFECT_ATOMS,
+    EFFECT_HOOK_POINTS,
     ERROR_CATEGORIES,
     GAME_MODES,
     GAME_PHASES,
@@ -7,18 +9,25 @@ import {
     PLAYER_IDS,
     RULESET_VERSION,
     type DomainError,
+    type HiddenState,
     type MatchContext,
     type MatchFlags,
+    type MatchState,
+    type PendingEffect,
+    type PlayerId,
     type PlayerState,
 } from '@gem-duel/domain';
 
 export const SCHEMA_VERSION = '2.0.0';
+export const ENGINE_VERSION = '2026.04-step2-prep';
 
 export const PlayerIdSchema = z.enum(PLAYER_IDS);
 export const GameModeSchema = z.enum(GAME_MODES);
 export const GamePhaseSchema = z.enum(GAME_PHASES);
 export const GemColorSchema = z.enum(GEM_COLORS);
 export const ErrorCategorySchema = z.enum(ERROR_CATEGORIES);
+export const EffectAtomSchema = z.enum(EFFECT_ATOMS);
+export const EffectHookPointSchema = z.enum(EFFECT_HOOK_POINTS);
 
 export const MatchFlagsSchema = z.object({
     roguelike: z.boolean(),
@@ -46,6 +55,11 @@ export const PlayerStateSchema = z.object({
     inventory: GemInventorySchema,
 }) satisfies z.ZodType<PlayerState>;
 
+export const PlayersByIdSchema = z.object({
+    p1: PlayerStateSchema,
+    p2: PlayerStateSchema,
+});
+
 export const MatchContextSchema = z.object({
     matchId: z.string().min(1),
     schemaVersion: z.string().min(1),
@@ -58,6 +72,23 @@ export const MatchContextSchema = z.object({
     winner: PlayerIdSchema.nullable(),
     flags: MatchFlagsSchema,
 }) satisfies z.ZodType<MatchContext>;
+
+export const PendingEffectSchema = z.object({
+    effectId: z.string().min(1),
+    atom: EffectAtomSchema,
+    hookPoint: EffectHookPointSchema,
+    owner: PlayerIdSchema.nullable(),
+    sequence: z.number().int().min(0),
+}) satisfies z.ZodType<PendingEffect>;
+
+export const HiddenStateSchema = z.object({
+    bag: z.array(GemColorSchema),
+    deckOrder: z.record(z.array(z.string().min(1))),
+    extraTurns: z.object({
+        p1: z.number().int().min(0),
+        p2: z.number().int().min(0),
+    }),
+}) satisfies z.ZodType<HiddenState>;
 
 export const GameCommandSchema = z.discriminatedUnion('type', [
     z.object({
@@ -132,30 +163,81 @@ export const GameEventSchema = z.discriminatedUnion('type', [
     z.object({ type: z.literal('privilege.used'), color: GemColorSchema }),
     z.object({ type: z.literal('royal.selected'), crownsGain: z.number().int().min(1) }),
     z.object({ type: z.literal('buff.resolved'), scoreGain: z.number().int().min(0) }),
+    z.object({
+        type: z.literal('effect.enqueued'),
+        effectId: z.string().min(1),
+        atom: EffectAtomSchema,
+        hookPoint: EffectHookPointSchema,
+    }),
+    z.object({
+        type: z.literal('effect.resolved'),
+        effectId: z.string().min(1),
+        atom: EffectAtomSchema,
+    }),
     z.object({ type: z.literal('replay.entered') }),
     z.object({ type: z.literal('replay.exited') }),
     z.object({ type: z.literal('match.finished'), winner: PlayerIdSchema }),
 ]);
 
-export const GameSnapshotSchema = z.object({
+const SharedSnapshotSchema = z.object({
     schemaVersion: z.literal(SCHEMA_VERSION),
     rulesetVersion: z.literal(RULESET_VERSION),
+    engineVersion: z.literal(ENGINE_VERSION),
     context: MatchContextSchema,
     gemBank: GemInventorySchema,
-    players: z.record(PlayerIdSchema, PlayerStateSchema),
+    players: PlayersByIdSchema,
     eventLog: z.array(GameEventSchema),
     replayCursor: z.number().int().min(0).nullable(),
+    sequence: z.number().int().min(0),
+    pendingEffects: z.array(PendingEffectSchema),
+});
+
+export const AuthoritativeSnapshotSchema = SharedSnapshotSchema.extend({
+    visibility: z.literal('authoritative'),
+    hiddenState: HiddenStateSchema,
+});
+
+export const PlayerSnapshotSchema = SharedSnapshotSchema.extend({
+    visibility: z.literal('player'),
+    viewer: PlayerIdSchema,
+});
+
+export const SpectatorSnapshotSchema = SharedSnapshotSchema.extend({
+    visibility: z.literal('spectator'),
+});
+
+export const VisibleSnapshotSchema = z.union([PlayerSnapshotSchema, SpectatorSnapshotSchema]);
+
+export const GameSnapshotSchema = AuthoritativeSnapshotSchema satisfies z.ZodType<
+    MatchState & {
+        schemaVersion: typeof SCHEMA_VERSION;
+        rulesetVersion: typeof RULESET_VERSION;
+        engineVersion: typeof ENGINE_VERSION;
+        eventLog: GameEvent[];
+        visibility: 'authoritative';
+    }
+>;
+
+export const ReplayCommandSchema = z.object({
+    clientCommandId: z.string().min(1),
+    expectedSeq: z.number().int().min(0),
+    issuedBy: PlayerIdSchema.nullable(),
+    command: GameCommandSchema,
 });
 
 export const ReplayBundleSchema = z.object({
     schemaVersion: z.literal(SCHEMA_VERSION),
     rulesetVersion: z.literal(RULESET_VERSION),
+    engineVersion: z.literal(ENGINE_VERSION),
     seed: z.number().int().nonnegative(),
     initialSnapshot: GameSnapshotSchema,
+    commands: z.array(ReplayCommandSchema),
     events: z.array(GameEventSchema),
+    finalStateHash: z.string().min(1),
     resultSummary: z.object({
         winner: PlayerIdSchema.nullable(),
         turns: z.number().int().min(0),
+        finalSeq: z.number().int().min(0),
     }),
 });
 
@@ -188,7 +270,7 @@ export const RoomSummarySchema = z.object({
 });
 
 export const RoomDetailSchema = RoomSummarySchema.extend({
-    snapshot: GameSnapshotSchema.nullable(),
+    snapshot: VisibleSnapshotSchema.nullable(),
     canJoin: z.boolean(),
     wsUrl: z.string().url(),
 });
@@ -216,16 +298,47 @@ export const ReplayDetailSchema = z.object({
     bundle: ReplayBundleSchema,
 });
 
+export const MatchCommandEnvelopeSchema = z.object({
+    clientCommandId: z.string().min(1),
+    expectedSeq: z.number().int().min(0),
+    issuedBy: PlayerIdSchema.optional(),
+    command: GameCommandSchema,
+});
+
 export const RoomWsMessageSchema = z.discriminatedUnion('type', [
-    z.object({ type: z.literal('room.join'), roomId: z.string(), playerName: z.string() }),
-    z.object({ type: z.literal('room.state'), room: RoomDetailSchema }),
-    z.object({ type: z.literal('match.command'), command: GameCommandSchema }),
-    z.object({ type: z.literal('match.patch'), snapshot: GameSnapshotSchema }),
-    z.object({ type: z.literal('match.resync'), snapshot: GameSnapshotSchema }),
-    z.object({ type: z.literal('room.leave'), roomId: z.string() }),
+    z.object({
+        type: z.literal('room.join'),
+        roomId: z.string().min(1),
+        playerName: z.string().min(1),
+        preferredSeat: PlayerIdSchema.optional(),
+    }),
+    z.object({
+        type: z.literal('room.watch'),
+        roomId: z.string().min(1),
+        spectatorName: z.string().min(1).optional(),
+    }),
+    z.object({ type: z.literal('room.state'), room: RoomDetailSchema.nullable() }),
+    z.object({ type: z.literal('match.command'), command: MatchCommandEnvelopeSchema }),
+    z.object({
+        type: z.literal('match.patch'),
+        seq: z.number().int().min(0),
+        snapshot: VisibleSnapshotSchema,
+    }),
+    z.object({
+        type: z.literal('match.resync'),
+        lastKnownSeq: z.number().int().min(0),
+        snapshot: VisibleSnapshotSchema,
+    }),
+    z.object({
+        type: z.literal('match.observe'),
+        seq: z.number().int().min(0),
+        snapshot: SpectatorSnapshotSchema,
+    }),
+    z.object({ type: z.literal('room.leave'), roomId: z.string().min(1) }),
     z.object({
         type: z.literal('room.error'),
         error: DomainErrorSchema,
+        seq: z.number().int().min(0).optional(),
     }),
 ]);
 
@@ -267,6 +380,11 @@ export const openApiDocument = {
 export type GameCommand = z.infer<typeof GameCommandSchema>;
 export type GameEvent = z.infer<typeof GameEventSchema>;
 export type GameSnapshot = z.infer<typeof GameSnapshotSchema>;
+export type AuthoritativeSnapshot = z.infer<typeof AuthoritativeSnapshotSchema>;
+export type PlayerSnapshot = z.infer<typeof PlayerSnapshotSchema>;
+export type SpectatorSnapshot = z.infer<typeof SpectatorSnapshotSchema>;
+export type VisibleSnapshot = z.infer<typeof VisibleSnapshotSchema>;
+export type ReplayCommand = z.infer<typeof ReplayCommandSchema>;
 export type ReplayBundle = z.infer<typeof ReplayBundleSchema>;
 export type RoomSummary = z.infer<typeof RoomSummarySchema>;
 export type RoomDetail = z.infer<typeof RoomDetailSchema>;
@@ -274,6 +392,7 @@ export type CreateRoomRequest = z.infer<typeof CreateRoomRequestSchema>;
 export type JoinRoomRequest = z.infer<typeof JoinRoomRequestSchema>;
 export type HealthResponse = z.infer<typeof HealthResponseSchema>;
 export type ReplayDetail = z.infer<typeof ReplayDetailSchema>;
+export type MatchCommandEnvelope = z.infer<typeof MatchCommandEnvelopeSchema>;
 export type RoomWsMessage = z.infer<typeof RoomWsMessageSchema>;
 
 export type TypedResult<T> = { ok: true; value: T } | { ok: false; error: DomainError };
@@ -291,3 +410,30 @@ export interface UiViewModel {
     snapshot: GameSnapshot;
     availableActions: UiActionDescriptor[];
 }
+
+const stripHiddenState = (snapshot: AuthoritativeSnapshot) => ({
+    schemaVersion: snapshot.schemaVersion,
+    rulesetVersion: snapshot.rulesetVersion,
+    engineVersion: snapshot.engineVersion,
+    context: snapshot.context,
+    gemBank: snapshot.gemBank,
+    players: snapshot.players,
+    eventLog: snapshot.eventLog,
+    replayCursor: snapshot.replayCursor,
+    sequence: snapshot.sequence,
+    pendingEffects: snapshot.pendingEffects,
+});
+
+export const toPlayerSnapshot = (
+    snapshot: AuthoritativeSnapshot,
+    viewer: PlayerId
+): PlayerSnapshot => ({
+    ...stripHiddenState(snapshot),
+    visibility: 'player',
+    viewer,
+});
+
+export const toSpectatorSnapshot = (snapshot: AuthoritativeSnapshot): SpectatorSnapshot => ({
+    ...stripHiddenState(snapshot),
+    visibility: 'spectator',
+});

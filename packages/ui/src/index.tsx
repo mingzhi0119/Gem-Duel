@@ -1,5 +1,13 @@
 import type { ReactNode } from 'react';
-import type { GameSnapshot, RoomSummary, UiActionDescriptor } from '@gem-duel/contracts';
+import type {
+    GameSnapshot,
+    PlayerSnapshot,
+    RoomSummary,
+    SpectatorSnapshot,
+    UiActionDescriptor,
+} from '@gem-duel/contracts';
+
+type SnapshotSummaryModel = GameSnapshot | PlayerSnapshot | SpectatorSnapshot;
 
 export const Section = ({ title, children }: { title: string; children: ReactNode }) => (
     <section className="gd-section">
@@ -10,7 +18,7 @@ export const Section = ({ title, children }: { title: string; children: ReactNod
     </section>
 );
 
-export const SnapshotSummary = ({ snapshot }: { snapshot: GameSnapshot }) => (
+export const SnapshotSummary = ({ snapshot }: { snapshot: SnapshotSummaryModel }) => (
     <div className="gd-grid">
         <div className="gd-card">
             <strong>Phase</strong>

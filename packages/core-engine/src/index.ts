@@ -3,13 +3,16 @@ import {
     type DomainError,
     RULESET_VERSION,
     createDomainError,
+    createHiddenState,
     createInitialGemBank,
     type PlayerState,
     createPlayerState,
     type GamePhase,
     type MatchFlags,
+    type NamespacedRng,
 } from '@gem-duel/domain';
 import {
+    ENGINE_VERSION,
     SCHEMA_VERSION,
     type GameCommand,
     type GameEvent,
@@ -17,10 +20,7 @@ import {
     type TypedResult,
 } from '@gem-duel/contracts';
 
-export interface RngPort {
-    next(): number;
-    nextInt(maxExclusive: number): number;
-}
+export type RngPort = NamespacedRng;
 
 export interface ClockPort {
     now(): string;
@@ -45,24 +45,18 @@ const phaseChanged = (phase: GamePhase): GameEvent => ({
     phase,
 });
 
-const cloneSnapshot = (snapshot: GameSnapshot): GameSnapshot =>
-    JSON.parse(JSON.stringify(snapshot)) as GameSnapshot;
+const cloneSnapshot = (snapshot: GameSnapshot): GameSnapshot => structuredClone(snapshot);
 
 const nextPlayer = (player: GameSnapshot['context']['currentPlayer']) =>
     player === 'p1' ? 'p2' : 'p1';
 
-const getCurrentPlayerState = (snapshot: GameSnapshot): PlayerState => {
-    const player = snapshot.players[snapshot.context.currentPlayer];
-    if (!player) {
-        throw new Error(`Missing player state for ${snapshot.context.currentPlayer}.`);
-    }
-
-    return player;
-};
+const getCurrentPlayerState = (snapshot: GameSnapshot): PlayerState =>
+    snapshot.players[snapshot.context.currentPlayer];
 
 const pushEvent = (snapshot: GameSnapshot, event: GameEvent) => {
     snapshot.eventLog.push(event);
-    snapshot.context.step += 1;
+    snapshot.sequence += 1;
+    snapshot.context.step = snapshot.sequence;
 };
 
 const setPhase = (snapshot: GameSnapshot, phase: GamePhase) => {
@@ -78,6 +72,8 @@ const createInitialSnapshot = (
 ): GameSnapshot => ({
     schemaVersion: SCHEMA_VERSION,
     rulesetVersion: RULESET_VERSION,
+    engineVersion: ENGINE_VERSION,
+    visibility: 'authoritative',
     context: {
         matchId: ports.id.next('match'),
         schemaVersion: SCHEMA_VERSION,
@@ -97,6 +93,9 @@ const createInitialSnapshot = (
     },
     eventLog: [],
     replayCursor: null,
+    sequence: 0,
+    pendingEffects: [],
+    hiddenState: createHiddenState(),
 });
 
 const machine = setup({

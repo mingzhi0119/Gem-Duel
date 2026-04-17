@@ -1,14 +1,15 @@
 import {
+    ENGINE_VERSION,
     SCHEMA_VERSION,
     type GameCommand,
     type GameSnapshot,
     type ReplayBundle,
+    type ReplayCommand,
     type TypedResult,
     type UiActionDescriptor,
     type UiViewModel,
 } from '@gem-duel/contracts';
 import {
-    bootstrapMatch,
     createMatchActor,
     dispatchCommand,
     readSnapshot,
@@ -132,15 +133,60 @@ const buildActions = (snapshot: GameSnapshot): UiActionDescriptor[] => {
     }
 };
 
-export const buildReplayBundle = (snapshot: GameSnapshot): ReplayBundle => ({
+const stableStringify = (value: unknown): string => {
+    if (value === null || typeof value !== 'object') {
+        return JSON.stringify(value);
+    }
+
+    if (Array.isArray(value)) {
+        return `[${value.map((item) => stableStringify(item)).join(',')}]`;
+    }
+
+    return `{${Object.entries(value as Record<string, unknown>)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, nestedValue]) => `${JSON.stringify(key)}:${stableStringify(nestedValue)}`)
+        .join(',')}}`;
+};
+
+const createDeterministicHash = (input: string) => {
+    let hash = 2166136261;
+    for (const char of input) {
+        hash ^= char.charCodeAt(0);
+        hash = Math.imul(hash, 16777619);
+    }
+    return `fnv1a-${(hash >>> 0).toString(16).padStart(8, '0')}`;
+};
+
+export const createSnapshotHash = (snapshot: GameSnapshot) =>
+    createDeterministicHash(stableStringify(snapshot));
+
+const createReplayCommand = (
+    snapshot: GameSnapshot,
+    command: GameCommand,
+    index: number
+): ReplayCommand => ({
+    clientCommandId: `local-command-${index + 1}`,
+    expectedSeq: snapshot.sequence,
+    issuedBy: snapshot.context.currentPlayer,
+    command,
+});
+
+export const buildReplayBundle = (
+    snapshot: GameSnapshot,
+    commands: ReplayCommand[]
+): ReplayBundle => ({
     schemaVersion: SCHEMA_VERSION,
     rulesetVersion: RULESET_VERSION,
+    engineVersion: ENGINE_VERSION,
     seed: snapshot.context.seed,
     initialSnapshot: snapshot,
+    commands,
     events: snapshot.eventLog,
+    finalStateHash: createSnapshotHash(snapshot),
     resultSummary: {
         winner: snapshot.context.winner,
         turns: snapshot.context.step,
+        finalSeq: snapshot.sequence,
     },
 });
 
@@ -156,16 +202,37 @@ export const createMatchSession = (
     ports: EnginePorts
 ): TypedResult<MatchSession> => {
     const actor = createMatchActor(input, ports);
-    const bootstrap = bootstrapMatch(actor, input.mode, input.flags);
-    if (!bootstrap.ok) {
-        return bootstrap;
+    const commandLog: ReplayCommand[] = [];
+
+    const recordedDispatch = (command: GameCommand) => {
+        const snapshotBefore = readSnapshot(actor);
+        const replayCommand = createReplayCommand(snapshotBefore, command, commandLog.length);
+        const result = dispatchCommand(actor, command);
+        if (result.ok) {
+            commandLog.push(replayCommand);
+        }
+        return result;
+    };
+
+    const selectMode = recordedDispatch({
+        type: 'SELECT_MODE',
+        mode: input.mode,
+        flags: input.flags,
+    });
+    if (!selectMode.ok) {
+        return selectMode;
+    }
+
+    const startMatch = recordedDispatch({ type: 'START_MATCH' });
+    if (!startMatch.ok) {
+        return startMatch;
     }
 
     return {
         ok: true,
         value: {
             dispatch(command) {
-                const result = dispatchCommand(actor, command);
+                const result = recordedDispatch(command);
                 if (!result.ok) {
                     return result;
                 }
@@ -178,7 +245,7 @@ export const createMatchSession = (
                 return readSnapshot(actor);
             },
             replay() {
-                return buildReplayBundle(readSnapshot(actor));
+                return buildReplayBundle(readSnapshot(actor), [...commandLog]);
             },
             viewModel() {
                 return buildUiViewModel(readSnapshot(actor));

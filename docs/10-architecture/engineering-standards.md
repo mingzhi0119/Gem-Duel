@@ -8,6 +8,7 @@
 - 任何实现都必须服从状态机、确定性、契约优先、边界隔离与信息集过滤。
 - legacy 代码只允许参考，不允许 import，不允许原样照抄。
 - 机械可验证的规则应优先落到工具与 CI；无法机械验证的细节放到 `docs/`，只在 `AGENTS.md` 保留摘要。
+- 生成产物与缓存（如 `dist/`、`.turbo/`、`.next/`、局部 `.vite` 结果）不得作为仓库真相源提交。
 
 ### Legacy 归档规则
 
@@ -65,6 +66,7 @@
 - Every implementation must obey state-machine rules, determinism, contract-first boundaries, layer isolation, and information-set filtering.
 - Legacy code may be referenced, but it may not be imported or copied verbatim.
 - Mechanically enforceable rules should move into tooling and CI first; details that cannot yet be enforced belong in `docs/`, with only a summary kept in `AGENTS.md`.
+- Generated outputs and caches such as `dist/`, `.turbo/`, `.next/`, and local `.vite` results are not source-of-truth artifacts and must not be committed.
 
 ### Legacy Archive Policy
 
