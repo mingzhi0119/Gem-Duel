@@ -71,7 +71,7 @@ export const createAuthoritativeSnapshotFixture = (): AuthoritativeSnapshot => (
     eventLog: [],
     replayCursor: null,
     sequence: 0,
-    pendingEffects: [],
+    activeEffects: [],
     hiddenState: {
         bag: [],
         deckOrder: {

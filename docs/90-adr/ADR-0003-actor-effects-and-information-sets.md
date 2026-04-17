@@ -9,6 +9,7 @@
 - Replay 的权威 wire format 采用 `MessagePack`，推荐实现库记录为 `msgpackr`。
 - 随机性统一采用 namespaced RNG streams，标准接口固定为 `fork(namespace: string)`。
 - `apps/room-service` 必须复用共享 `packages/core-engine`，不得实现第二份服务端规则引擎。
+- 具体的 Step 02.5 vocabulary 冻结（如 `activeEffects`、semantic hooks 与 lifecycle 事件集）由 `ADR-0004` 细化。
 
 ### 原因
 
@@ -26,6 +27,7 @@
 - The authoritative replay wire format is `MessagePack`, with `msgpackr` recorded as the preferred implementation library.
 - Randomness uses namespaced RNG streams, standardized on `fork(namespace: string)`.
 - `apps/room-service` must reuse the shared `packages/core-engine` and may not implement a second server-side rules engine.
+- The concrete Step 02.5 vocabulary freeze (`activeEffects`, semantic hooks, and lifecycle event names) is refined in `ADR-0004`.
 
 ### Rationale
 

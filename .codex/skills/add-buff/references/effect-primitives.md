@@ -7,6 +7,8 @@ Approved first-wave effect atoms:
 - `gain_royal`
 - `take_extra_turn`
 - `discard_to_limit`
+- `take_board_token`
+- `override_bonus_color`
 
 ## Usage Rules
 

@@ -12,12 +12,12 @@ import {
     RoomDetailSchema,
 } from './http';
 import {
+    ActiveEffectSchema,
     DomainErrorSchema,
     GemInventorySchema,
     HiddenStateSchema,
     MatchContextSchema,
     MatchFlagsSchema,
-    PendingEffectSchema,
     PlayerStateSchema,
     PlayersByIdSchema,
 } from './shared/base';
@@ -54,7 +54,7 @@ registry.register('GemInventory', GemInventorySchema);
 registry.register('PlayerState', PlayerStateSchema);
 registry.register('PlayersById', PlayersByIdSchema);
 registry.register('MatchContext', MatchContextSchema);
-registry.register('PendingEffect', PendingEffectSchema);
+registry.register('ActiveEffect', ActiveEffectSchema);
 registry.register('HiddenState', HiddenStateSchema);
 registry.register('DomainError', DomainErrorSchema);
 registry.register('GameCommand', GameCommandSchema);
@@ -287,7 +287,7 @@ export const openApiDocument: OpenApiDocument = generator.generateDocument({
         title: 'Gem Duel Contracts',
         version: SCHEMA_VERSION,
         description:
-            'Deterministic HTTP and contract surface for Gem Duel Step 02 boundary freeze.',
+            'Deterministic HTTP and contract surface for Gem Duel Step 02.5 effect and hook freeze.',
     },
     servers: [
         {

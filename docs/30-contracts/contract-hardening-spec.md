@@ -26,8 +26,26 @@
     - `gain_royal`
     - `take_extra_turn`
     - `discard_to_limit`
+- `take_board_token`
+- `override_bonus_color`
 - `EffectHookPoint` 固定为 `BEFORE_*` / `AFTER_*` 事件位，用于经典规则与 Roguelike Buff 的统一接入。
+- Match 级 hook 固定为：
+    - `BEFORE_USE_PRIVILEGE` / `AFTER_USE_PRIVILEGE`
+    - `BEFORE_REPLENISH_BOARD` / `AFTER_REPLENISH_BOARD`
+    - `BEFORE_TAKE_TOKENS` / `AFTER_TAKE_TOKENS`
+    - `BEFORE_RESERVE_CARD` / `AFTER_RESERVE_CARD`
+    - `BEFORE_BUY_CARD` / `AFTER_BUY_CARD`
+    - `BEFORE_GAIN_ROYAL` / `AFTER_GAIN_ROYAL`
+    - `BEFORE_EXTRA_TURN` / `AFTER_EXTRA_TURN`
+    - `BEFORE_DISCARD_TO_LIMIT` / `AFTER_DISCARD_TO_LIMIT`
+    - `BEFORE_VICTORY_CHECK` / `AFTER_VICTORY_CHECK`
+- Run 级 hook 占位固定为：
+    - `BEFORE_MATCH_SETUP` / `AFTER_MATCH_SETUP`
+    - `BEFORE_BUFF_ACQUISITION` / `AFTER_BUFF_ACQUISITION`
+    - `BEFORE_RUN_REWARD_SELECTION` / `AFTER_RUN_REWARD_SELECTION`
 - hook 处理采用顺序 pure reducer：前一个 hook 的输出作为后一个 hook 的输入；不引入隐式并行 merge。
+- `activeEffects` 是公开快照中的序列化生命周期视图，不是 live actor 引用。
+- effect lifecycle 事件集固定为 `effect.spawned`、`effect.started`、`effect.completed`，且 `effect.completed.outcome` 只允许 `resolved`、`skipped`、`cancelled`。
 
 ## 契约输出
 
@@ -110,8 +128,26 @@ This document defines the hardening path for `packages/contracts`. Contracts mus
     - `gain_royal`
     - `take_extra_turn`
     - `discard_to_limit`
+- `take_board_token`
+- `override_bonus_color`
 - `EffectHookPoint` is standardized around `BEFORE_*` / `AFTER_*` event hooks so classic rules and roguelike Buffs share the same integration surface.
+- The fixed Match-level hooks are:
+    - `BEFORE_USE_PRIVILEGE` / `AFTER_USE_PRIVILEGE`
+    - `BEFORE_REPLENISH_BOARD` / `AFTER_REPLENISH_BOARD`
+    - `BEFORE_TAKE_TOKENS` / `AFTER_TAKE_TOKENS`
+    - `BEFORE_RESERVE_CARD` / `AFTER_RESERVE_CARD`
+    - `BEFORE_BUY_CARD` / `AFTER_BUY_CARD`
+    - `BEFORE_GAIN_ROYAL` / `AFTER_GAIN_ROYAL`
+    - `BEFORE_EXTRA_TURN` / `AFTER_EXTRA_TURN`
+    - `BEFORE_DISCARD_TO_LIMIT` / `AFTER_DISCARD_TO_LIMIT`
+    - `BEFORE_VICTORY_CHECK` / `AFTER_VICTORY_CHECK`
+- The fixed Run-level placeholders are:
+    - `BEFORE_MATCH_SETUP` / `AFTER_MATCH_SETUP`
+    - `BEFORE_BUFF_ACQUISITION` / `AFTER_BUFF_ACQUISITION`
+    - `BEFORE_RUN_REWARD_SELECTION` / `AFTER_RUN_REWARD_SELECTION`
 - Hook processing uses sequential pure reducers: the output of hook N becomes the input of hook N+1, with no hidden parallel merge semantics.
+- `activeEffects` is the serialized lifecycle view exposed in public snapshots, not a live actor reference.
+- The effect lifecycle event set is fixed to `effect.spawned`, `effect.started`, and `effect.completed`, with `effect.completed.outcome` restricted to `resolved`, `skipped`, or `cancelled`.
 
 ## Contract Outputs
 

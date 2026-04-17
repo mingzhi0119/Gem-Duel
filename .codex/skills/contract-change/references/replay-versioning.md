@@ -2,9 +2,9 @@
 
 ## Current Repo Truth
 
-- `SCHEMA_VERSION`: `2.0.0`
+- `SCHEMA_VERSION`: `3.0.0`
 - `RULESET_VERSION`: `2026.1`
-- Current bundle implementation stores `events[]` only.
+- Current bundle implementation stores both `commands[]` and `events[]`.
 
 ## Frozen Governance Target
 

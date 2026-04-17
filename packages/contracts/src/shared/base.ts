@@ -1,16 +1,20 @@
 import { z } from 'zod';
 import {
     RULESET_VERSION,
+    type ActiveEffect,
     type DomainError,
     type HiddenState,
     type MatchContext,
     type MatchFlags,
-    type PendingEffect,
     type PlayerState,
 } from '@gem-duel/domain';
 import {
     EffectAtomSchema,
+    EffectExecutionScopeSchema,
     EffectHookPointSchema,
+    EffectLifecycleStageSchema,
+    EffectOutcomeSchema,
+    EffectSourceSchema,
     ErrorCategorySchema,
     GameModeSchema,
     GamePhaseSchema,
@@ -62,13 +66,20 @@ export const MatchContextSchema = z.object({
     flags: MatchFlagsSchema,
 }) satisfies z.ZodType<MatchContext>;
 
-export const PendingEffectSchema = z.object({
+export const ActiveEffectSchema = z.object({
     effectId: z.string().min(1),
+    parentEffectId: z.string().min(1).nullable(),
     atom: EffectAtomSchema,
     hookPoint: EffectHookPointSchema,
+    source: EffectSourceSchema,
+    scope: EffectExecutionScopeSchema,
     owner: PlayerIdSchema.nullable(),
     sequence: z.number().int().min(0),
-}) satisfies z.ZodType<PendingEffect>;
+    stage: EffectLifecycleStageSchema,
+    rngNamespace: z.string().min(1),
+}) satisfies z.ZodType<ActiveEffect>;
+
+export const EffectOutcomeValueSchema = EffectOutcomeSchema;
 
 export const HiddenStateSchema = z.object({
     bag: z.array(GemColorSchema),

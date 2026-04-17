@@ -2,7 +2,10 @@ import { z } from 'zod';
 import { MatchFlagsSchema } from './shared/base';
 import {
     EffectAtomSchema,
+    EffectExecutionScopeSchema,
     EffectHookPointSchema,
+    EffectOutcomeSchema,
+    EffectSourceSchema,
     GameModeSchema,
     GamePhaseSchema,
     GemColorSchema,
@@ -54,13 +57,6 @@ export const GameCommandSchema = z.discriminatedUnion('type', [
         crownsGain: z.number().int().min(1).max(3),
     }),
     z.object({
-        type: z.literal('BEGIN_BUFF_RESOLUTION'),
-    }),
-    z.object({
-        type: z.literal('RESOLVE_BUFF'),
-        scoreGain: z.number().int().min(0).max(3),
-    }),
-    z.object({
         type: z.literal('ENTER_REPLAY'),
     }),
     z.object({
@@ -81,17 +77,33 @@ export const GameEventSchema = z.discriminatedUnion('type', [
     z.object({ type: z.literal('card.bought'), scoreGain: z.number().int().min(0) }),
     z.object({ type: z.literal('privilege.used'), color: GemColorSchema }),
     z.object({ type: z.literal('royal.selected'), crownsGain: z.number().int().min(1) }),
-    z.object({ type: z.literal('buff.resolved'), scoreGain: z.number().int().min(0) }),
     z.object({
-        type: z.literal('effect.enqueued'),
+        type: z.literal('effect.spawned'),
         effectId: z.string().min(1),
+        parentEffectId: z.string().min(1).nullable(),
         atom: EffectAtomSchema,
         hookPoint: EffectHookPointSchema,
+        source: EffectSourceSchema,
+        scope: EffectExecutionScopeSchema,
+        owner: PlayerIdSchema.nullable(),
+        sequence: z.number().int().min(0),
+        stage: z.literal('scheduled'),
+        rngNamespace: z.string().min(1),
     }),
     z.object({
-        type: z.literal('effect.resolved'),
+        type: z.literal('effect.started'),
         effectId: z.string().min(1),
         atom: EffectAtomSchema,
+        sequence: z.number().int().min(0),
+        stage: z.literal('running'),
+    }),
+    z.object({
+        type: z.literal('effect.completed'),
+        effectId: z.string().min(1),
+        atom: EffectAtomSchema,
+        sequence: z.number().int().min(0),
+        stage: z.literal('completed'),
+        outcome: EffectOutcomeSchema,
     }),
     z.object({ type: z.literal('replay.entered') }),
     z.object({ type: z.literal('replay.exited') }),

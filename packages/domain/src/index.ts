@@ -9,7 +9,6 @@ export const GAME_PHASES = [
     'buying',
     'privilege',
     'royalResolution',
-    'buffResolution',
     'replay',
     'terminal',
 ] as const;
@@ -21,6 +20,8 @@ export const EFFECT_ATOMS = [
     'gain_royal',
     'take_extra_turn',
     'discard_to_limit',
+    'take_board_token',
+    'override_bonus_color',
 ] as const;
 export const EFFECT_HOOK_POINTS = [
     'BEFORE_USE_PRIVILEGE',
@@ -33,15 +34,38 @@ export const EFFECT_HOOK_POINTS = [
     'AFTER_RESERVE_CARD',
     'BEFORE_BUY_CARD',
     'AFTER_BUY_CARD',
-    'BEFORE_ROYAL_RESOLUTION',
-    'AFTER_ROYAL_RESOLUTION',
-    'BEFORE_BUFF_RESOLUTION',
-    'AFTER_BUFF_RESOLUTION',
+    'BEFORE_GAIN_ROYAL',
+    'AFTER_GAIN_ROYAL',
+    'BEFORE_EXTRA_TURN',
+    'AFTER_EXTRA_TURN',
     'BEFORE_DISCARD_TO_LIMIT',
     'AFTER_DISCARD_TO_LIMIT',
     'BEFORE_VICTORY_CHECK',
     'AFTER_VICTORY_CHECK',
+    'BEFORE_MATCH_SETUP',
+    'AFTER_MATCH_SETUP',
+    'BEFORE_BUFF_ACQUISITION',
+    'AFTER_BUFF_ACQUISITION',
+    'BEFORE_RUN_REWARD_SELECTION',
+    'AFTER_RUN_REWARD_SELECTION',
 ] as const;
+export const EFFECT_SOURCES = [
+    'optional_action',
+    'mandatory_action',
+    'card_ability',
+    'royal_reward',
+    'buff_hook',
+    'end_of_turn',
+    'run_reward',
+] as const;
+export const EFFECT_EXECUTION_SCOPES = [
+    'active_player',
+    'opposing_player',
+    'global_match',
+    'global_run',
+] as const;
+export const EFFECT_LIFECYCLE_STAGES = ['scheduled', 'running', 'completed'] as const;
+export const EFFECT_OUTCOMES = ['resolved', 'skipped', 'cancelled'] as const;
 export const ERROR_CATEGORIES = [
     'validation',
     'rules',
@@ -58,6 +82,10 @@ export type PlayerId = (typeof PLAYER_IDS)[number];
 export type GemColor = (typeof GEM_COLORS)[number];
 export type EffectAtom = (typeof EFFECT_ATOMS)[number];
 export type EffectHookPoint = (typeof EFFECT_HOOK_POINTS)[number];
+export type EffectSource = (typeof EFFECT_SOURCES)[number];
+export type EffectExecutionScope = (typeof EFFECT_EXECUTION_SCOPES)[number];
+export type EffectLifecycleStage = (typeof EFFECT_LIFECYCLE_STAGES)[number];
+export type EffectOutcome = (typeof EFFECT_OUTCOMES)[number];
 export type ErrorCategory = (typeof ERROR_CATEGORIES)[number];
 
 export interface DomainError {
@@ -107,12 +135,17 @@ export interface MatchContext {
     flags: MatchFlags;
 }
 
-export interface PendingEffect {
+export interface ActiveEffect {
     effectId: string;
+    parentEffectId: string | null;
     atom: EffectAtom;
     hookPoint: EffectHookPoint;
+    source: EffectSource;
+    scope: EffectExecutionScope;
     owner: PlayerId | null;
     sequence: number;
+    stage: EffectLifecycleStage;
+    rngNamespace: string;
 }
 
 export interface HiddenState {
@@ -127,7 +160,7 @@ export interface MatchState {
     players: Record<PlayerId, PlayerState>;
     sequence: number;
     replayCursor: number | null;
-    pendingEffects: PendingEffect[];
+    activeEffects: ActiveEffect[];
     hiddenState: HiddenState;
 }
 

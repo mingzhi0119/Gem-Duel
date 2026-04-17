@@ -1,16 +1,16 @@
 {
-    "schemaVersion": "2.0.0",
+    "schemaVersion": "3.0.0",
     "rulesetVersion": "2026.1",
-    "engineVersion": "2026.04-step2",
+    "engineVersion": "2026.04-step2.5",
     "seed": 7,
     "initialSnapshot": {
-        "schemaVersion": "2.0.0",
+        "schemaVersion": "3.0.0",
         "rulesetVersion": "2026.1",
-        "engineVersion": "2026.04-step2",
+        "engineVersion": "2026.04-step2.5",
         "visibility": "authoritative",
         "context": {
             "matchId": "match-1",
-            "schemaVersion": "2.0.0",
+            "schemaVersion": "3.0.0",
             "rulesetVersion": "2026.1",
             "seed": 7,
             "mode": "local",
@@ -72,7 +72,7 @@
         "eventLog": [],
         "replayCursor": null,
         "sequence": 0,
-        "pendingEffects": [],
+        "activeEffects": [],
         "hiddenState": {
             "bag": [],
             "deckOrder": {

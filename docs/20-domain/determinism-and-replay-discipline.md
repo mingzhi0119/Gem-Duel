@@ -17,6 +17,8 @@
 - `Event` 表达已经发生的领域事实。
 - `State` 只由初始快照与事件折叠得到，不得偷偷读取环境。
 - 连锁效果采用 `effect actor -> emitted event -> state transition` 的形式落入事件流。
+- effect 生命周期事件固定为 `effect.spawned -> effect.started -> effect.completed`。
+- `activeEffects` 只表示未完成 effect actor 的序列化视图，不直接序列化 actor 引用。
 - 同一组 `seed + command stream + rulesetVersion + engineVersion`，必须得到同一组 `Event` 与同一终局 `State`。
 
 ## 禁止项
@@ -40,6 +42,7 @@
 - 回放同时记录 `commands[]` 与 `events[]`；`events[]` 是权威裁决结果，`commands[]` 用于调试、训练与行为复盘。
 - 每个 replay 必须记录 `schemaVersion`、`rulesetVersion`、`engineVersion`、`seed`、`initialSnapshot`、`finalStateHash`。
 - 每个 event 都应具有可排序的 `streamPosition` 或 `seq`，以支持 room-service 增量推送与 resync。
+- `effect.completed.outcome` 只允许 `resolved`、`skipped`、`cancelled`。
 
 ## Golden Replays
 
@@ -90,6 +93,8 @@ This document defines the determinism discipline for the core engine and domain 
 - An `Event` expresses domain facts that have occurred.
 - `State` is derived only from the initial snapshot plus event folding and may not read hidden environment inputs.
 - Chained effects enter the event stream as `effect actor -> emitted event -> state transition`.
+- The lifecycle event set is frozen to `effect.spawned -> effect.started -> effect.completed`.
+- `activeEffects` is only the serialized view of unfinished effect actors and never a serialized actor reference.
 - The same `seed + command stream + rulesetVersion + engineVersion` must produce the same `Event` stream and final `State`.
 
 ## Forbidden Inputs
@@ -113,6 +118,7 @@ This document defines the determinism discipline for the core engine and domain 
 - Replays store both `commands[]` and `events[]`; `events[]` are authoritative while `commands[]` support debugging, training, and behavior review.
 - Every replay records `schemaVersion`, `rulesetVersion`, `engineVersion`, `seed`, `initialSnapshot`, and `finalStateHash`.
 - Every event should carry an ordered `streamPosition` or `seq` so room-service can support incremental delivery and resync.
+- `effect.completed.outcome` is restricted to `resolved`, `skipped`, or `cancelled`.
 
 ## Golden Replays
 

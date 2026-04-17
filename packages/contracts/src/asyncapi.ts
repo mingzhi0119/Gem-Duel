@@ -44,7 +44,7 @@ export const asyncApiDocument: AsyncApiDocument = {
         title: 'Gem Duel Realtime Contracts',
         version: SCHEMA_VERSION,
         description:
-            'Authoritative room-service WebSocket protocol with filtered snapshots, seq, resync, and spectator flows.',
+            'Authoritative room-service WebSocket protocol with filtered snapshots and Step 02.5 effect lifecycle envelopes.',
     },
     defaultContentType: 'application/json',
     servers: {

@@ -19,6 +19,7 @@ import {
     type GameSnapshot,
     type TypedResult,
 } from '@gem-duel/contracts';
+export * from './effect-lifecycle';
 
 export type RngPort = NamespacedRng;
 
@@ -94,7 +95,7 @@ const createInitialSnapshot = (
     eventLog: [],
     replayCursor: null,
     sequence: 0,
-    pendingEffects: [],
+    activeEffects: [],
     hiddenState: createHiddenState(),
 });
 
@@ -176,14 +177,6 @@ const machine = setup({
                     actions: assign(({ context }) => {
                         const match = cloneSnapshot(context.match);
                         setPhase(match, 'royalResolution');
-                        return { match };
-                    }),
-                },
-                BEGIN_BUFF_RESOLUTION: {
-                    target: 'buffResolution',
-                    actions: assign(({ context }) => {
-                        const match = cloneSnapshot(context.match);
-                        setPhase(match, 'buffResolution');
                         return { match };
                     }),
                 },
@@ -295,21 +288,6 @@ const machine = setup({
                 },
             },
         },
-        buffResolution: {
-            on: {
-                RESOLVE_BUFF: {
-                    target: 'turnIdle',
-                    actions: assign(({ context, event }) => {
-                        const match = cloneSnapshot(context.match);
-                        const player = getCurrentPlayerState(match);
-                        player.score += event.scoreGain;
-                        pushEvent(match, { type: 'buff.resolved', scoreGain: event.scoreGain });
-                        setPhase(match, 'turnIdle');
-                        return { match };
-                    }),
-                },
-            },
-        },
         replay: {
             on: {
                 EXIT_REPLAY: {
@@ -339,7 +317,6 @@ const allowedCommands: Record<GamePhase, GameCommand['type'][]> = {
         'BEGIN_BUY',
         'BEGIN_PRIVILEGE',
         'BEGIN_ROYAL_RESOLUTION',
-        'BEGIN_BUFF_RESOLUTION',
         'ENTER_REPLAY',
         'FINISH_MATCH',
     ],
@@ -348,7 +325,6 @@ const allowedCommands: Record<GamePhase, GameCommand['type'][]> = {
     buying: ['BUY_CARD'],
     privilege: ['USE_PRIVILEGE'],
     royalResolution: ['SELECT_ROYAL'],
-    buffResolution: ['RESOLVE_BUFF'],
     replay: ['EXIT_REPLAY'],
     terminal: [],
 };

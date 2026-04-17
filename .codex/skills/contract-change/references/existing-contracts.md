@@ -12,17 +12,22 @@
 - Current WebSocket message types in `packages/contracts/src/index.ts`:
     - `room.join`
     - `room.state`
+    - `room.watch`
     - `match.command`
     - `match.patch`
     - `match.resync`
+    - `match.observe`
     - `room.leave`
     - `room.error`
 - Current replay bundle fields in `packages/contracts/src/index.ts`:
     - `schemaVersion`
     - `rulesetVersion`
+    - `engineVersion`
     - `seed`
     - `initialSnapshot`
+    - `commands`
     - `events`
+    - `finalStateHash`
     - `resultSummary`
 
 ## Frozen Target From Docs
@@ -54,6 +59,7 @@
 - `GameCommand`
 - `GameEvent`
 - `GameSnapshot`
+- `ActiveEffect`
 - `ReplayBundle`
 - `RoomDetail`
 - `RoomWsMessage`

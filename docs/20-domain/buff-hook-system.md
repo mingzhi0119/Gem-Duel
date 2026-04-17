@@ -10,11 +10,50 @@
 - Buff 只以 `id` 持久化，行为通过 hook 注册表解释。
 - Buff 不直接持有宿主 API、随机源或外部 IO。
 - Step 02.5 只冻结 hook 原语与生命周期；Step 07 才填充具体 Buff 业务。
+- Buff 不引入独立的 `BUFF_RESOLUTION` 顶层 hook family，也不拥有独立主流程 phase；Buff 只是既有语义 hook 的 consumer。
+
+## 冻结后的原语
+
+- `activeEffects` 是公开快照中的序列化生命周期视图，不是 live actor 引用。
+- 经典规则完整首批 `EffectAtom` 固定为：
+    - `grant_privilege`
+    - `take_opponent_token`
+    - `gain_royal`
+    - `take_extra_turn`
+    - `discard_to_limit`
+    - `take_board_token`
+    - `override_bonus_color`
+- lifecycle 事件集固定为：
+    - `effect.spawned`
+    - `effect.started`
+    - `effect.completed`
+- `effect.completed.outcome` 只允许：
+    - `resolved`
+    - `skipped`
+    - `cancelled`
+
+## Hook 范围
+
+- Match 级 hook 固定为：
+    - `BEFORE_USE_PRIVILEGE` / `AFTER_USE_PRIVILEGE`
+    - `BEFORE_REPLENISH_BOARD` / `AFTER_REPLENISH_BOARD`
+    - `BEFORE_TAKE_TOKENS` / `AFTER_TAKE_TOKENS`
+    - `BEFORE_RESERVE_CARD` / `AFTER_RESERVE_CARD`
+    - `BEFORE_BUY_CARD` / `AFTER_BUY_CARD`
+    - `BEFORE_GAIN_ROYAL` / `AFTER_GAIN_ROYAL`
+    - `BEFORE_EXTRA_TURN` / `AFTER_EXTRA_TURN`
+    - `BEFORE_DISCARD_TO_LIMIT` / `AFTER_DISCARD_TO_LIMIT`
+    - `BEFORE_VICTORY_CHECK` / `AFTER_VICTORY_CHECK`
+- Run 级 hook 占位固定为：
+    - `BEFORE_MATCH_SETUP` / `AFTER_MATCH_SETUP`
+    - `BEFORE_BUFF_ACQUISITION` / `AFTER_BUFF_ACQUISITION`
+    - `BEFORE_RUN_REWARD_SELECTION` / `AFTER_RUN_REWARD_SELECTION`
 
 ## 推荐结构
 
 - `BuffDefinition`: 静态元数据、说明、hook 注册入口。
 - `BuffInstance`: run 中实际持有的 Buff，仅保存 `id` 与最小运行时上下文。
+- `ActiveEffect`: effect actor 的序列化视图，暴露 `effectId`、`parentEffectId`、`atom`、`hookPoint`、`source`、`scope`、`owner`、`sequence`、`stage`、`rngNamespace`。
 - `EffectHookPoint`: `BEFORE_*` / `AFTER_*` 事件位。
 - hook handler：`(state, event) => state` 或 `(state, event) => nextPayload/state` 的 pure reducer。
 
@@ -48,11 +87,50 @@ This document defines the upfront governance model for Roguelike / Buff systems.
 - Buffs persist by `id` only, while behavior is interpreted through hook registries.
 - Buffs do not own host APIs, random sources, or external IO directly.
 - Step 02.5 freezes hook primitives and lifecycle; Step 07 fills in concrete Buff business behavior.
+- Buffs do not introduce a dedicated top-level `BUFF_RESOLUTION` hook family or a standalone main-flow phase; Buffs are consumers of the existing semantic hook surface.
+
+## Frozen Primitives
+
+- `activeEffects` is the serialized lifecycle view exposed in public snapshots, not a live actor reference.
+- The first classic-complete `EffectAtom` set is fixed to:
+    - `grant_privilege`
+    - `take_opponent_token`
+    - `gain_royal`
+    - `take_extra_turn`
+    - `discard_to_limit`
+    - `take_board_token`
+    - `override_bonus_color`
+- The lifecycle event set is fixed to:
+    - `effect.spawned`
+    - `effect.started`
+    - `effect.completed`
+- `effect.completed.outcome` is restricted to:
+    - `resolved`
+    - `skipped`
+    - `cancelled`
+
+## Hook Scope
+
+- Match-level hooks are fixed to:
+    - `BEFORE_USE_PRIVILEGE` / `AFTER_USE_PRIVILEGE`
+    - `BEFORE_REPLENISH_BOARD` / `AFTER_REPLENISH_BOARD`
+    - `BEFORE_TAKE_TOKENS` / `AFTER_TAKE_TOKENS`
+    - `BEFORE_RESERVE_CARD` / `AFTER_RESERVE_CARD`
+    - `BEFORE_BUY_CARD` / `AFTER_BUY_CARD`
+    - `BEFORE_GAIN_ROYAL` / `AFTER_GAIN_ROYAL`
+    - `BEFORE_EXTRA_TURN` / `AFTER_EXTRA_TURN`
+    - `BEFORE_DISCARD_TO_LIMIT` / `AFTER_DISCARD_TO_LIMIT`
+    - `BEFORE_VICTORY_CHECK` / `AFTER_VICTORY_CHECK`
+- Run-level hook placeholders are fixed to:
+    - `BEFORE_MATCH_SETUP` / `AFTER_MATCH_SETUP`
+    - `BEFORE_BUFF_ACQUISITION` / `AFTER_BUFF_ACQUISITION`
+    - `BEFORE_RUN_REWARD_SELECTION` / `AFTER_RUN_REWARD_SELECTION`
 
 ## Recommended Structure
 
 - `BuffDefinition`: static metadata, documentation, and hook registration entrypoints.
 - `BuffInstance`: the run-time held Buff, storing only `id` plus minimal runtime context.
+- `ActiveEffect`: the serialized effect-actor view exposing `effectId`, `parentEffectId`, `atom`, `hookPoint`, `source`, `scope`, `owner`, `sequence`, `stage`, and `rngNamespace`.
 - `EffectHookPoint`: `BEFORE_*` / `AFTER_*` event hooks.
 - Hook handler: a pure reducer such as `(state, event) => state` or `(state, event) => nextPayload/state`.
 

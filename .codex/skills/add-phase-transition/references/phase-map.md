@@ -10,7 +10,6 @@ Current phase inventory from `packages/domain/src/index.ts`:
 - `buying`
 - `privilege`
 - `royalResolution`
-- `buffResolution`
 - `replay`
 - `terminal`
 
@@ -22,7 +21,6 @@ Current phase inventory from `packages/domain/src/index.ts`:
 - `turnIdle -> buying -> turnIdle`
 - `turnIdle -> privilege -> turnIdle`
 - `turnIdle -> royalResolution -> turnIdle`
-- `turnIdle -> buffResolution -> turnIdle`
 - `turnIdle -> replay -> turnIdle`
 - `turnIdle -> terminal`
 
@@ -30,3 +28,4 @@ Current phase inventory from `packages/domain/src/index.ts`:
 
 - Step 03 upgrades this to an actor-based machine, but the semantic adjacency still needs to stay explicit.
 - Chained effects and extra turns should be modeled through effect actors, not hidden cross-phase jumps.
+- Buff is a semantic hook consumer, not a standalone phase in the main match flow.

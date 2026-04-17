@@ -3,9 +3,9 @@ import { RULESET_VERSION, type MatchState, type PlayerId } from '@gem-duel/domai
 import type { GameEvent } from './game';
 import { GameEventSchema } from './game';
 import {
+    ActiveEffectSchema,
     HiddenStateSchema,
     MatchContextSchema,
-    PendingEffectSchema,
     PlayersByIdSchema,
     GemInventorySchema,
 } from './shared/base';
@@ -21,7 +21,7 @@ const SharedSnapshotSchema = z.object({
     eventLog: z.array(GameEventSchema),
     replayCursor: z.number().int().min(0).nullable(),
     sequence: z.number().int().min(0),
-    pendingEffects: z.array(PendingEffectSchema),
+    activeEffects: z.array(ActiveEffectSchema),
 });
 
 export const AuthoritativeSnapshotSchema = SharedSnapshotSchema.extend({
@@ -66,7 +66,7 @@ const stripHiddenState = (snapshot: AuthoritativeSnapshot) => ({
     eventLog: snapshot.eventLog,
     replayCursor: snapshot.replayCursor,
     sequence: snapshot.sequence,
-    pendingEffects: snapshot.pendingEffects,
+    activeEffects: snapshot.activeEffects,
 });
 
 export const toPlayerSnapshot = (

@@ -1,0 +1,97 @@
+# Step 02.5 Log - Effect/Hook Primitive Freeze
+
+## ZH
+
+- 日期：2026-04-17
+- 作者：Codex
+- Step ID：Step 02.5
+- 本步目标：冻结 Effect/Hook vocabulary、actor 生命周期与 Buff 接入原语，让 Step 03 / 04 / 07 只能填实现而不能再回改底层词汇。
+- 实际改动内容：
+    - 将公开快照字段 `pendingEffects` 统一重命名为 `activeEffects`，并同步到 `domain`、`contracts`、fixtures、tests 与最小 engine skeleton
+    - 冻结新的公开类型：`EffectAtom`、`EffectHookPoint`、`EffectSource`、`EffectExecutionScope`、`EffectLifecycleStage`、`EffectOutcome`、`ActiveEffect`
+    - 将 `EffectAtom` 扩成经典规则首批完整集合：`grant_privilege`、`take_opponent_token`、`gain_royal`、`take_extra_turn`、`discard_to_limit`、`take_board_token`、`override_bonus_color`
+    - 将 hook inventory 改为 semantic naming，并扩展到 Match + Run：保留 `BEFORE_*/AFTER_*` 语义 hook，新增 `BEFORE_MATCH_SETUP`、`BEFORE_BUFF_ACQUISITION`、`BEFORE_RUN_REWARD_SELECTION` 等 Run 级占位
+    - 明确废止 `BEFORE_ROYAL_RESOLUTION` / `AFTER_ROYAL_RESOLUTION`、`BEFORE_BUFF_RESOLUTION` / `AFTER_BUFF_RESOLUTION` 这类 phase-oriented 顶层 hook family
+    - 将 effect lifecycle 事件升级为 `effect.spawned`、`effect.started`、`effect.completed`，并冻结 `completed.outcome = resolved | skipped | cancelled`
+    - 在 `packages/core-engine` 中新增最小 lifecycle skeleton，负责 `scheduled -> running -> completed` 和 deterministic metadata（`effectId`、`parentEffectId`、`sequence`、`rngNamespace`），但不偷跑 Step 03 的完整 actor orchestration
+    - 同步更新治理文档、ADR 与本地 Skills 参考资料，确保 Step 03 / 07 不再读取旧 vocabulary
+- 涉及路径：
+    - `packages/domain/`
+    - `packages/contracts/`
+    - `packages/core-engine/`
+    - `packages/application/`
+    - `docs/20-domain/`
+    - `docs/30-contracts/`
+    - `docs/90-adr/`
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+    - `.codex/skills/add-buff/`
+    - `.codex/skills/add-phase-transition/`
+    - `.codex/skills/contract-change/`
+- 关键决策：
+    - hook 范围固定为 `Match + Run`
+    - hook naming 以语义优先，弃用 `ROYAL_RESOLUTION` / `BUFF_RESOLUTION` 这类 phase-oriented 命名
+    - `EffectAtom` 本步直接冻结为 classic-complete，而不是后续再补洞
+    - `activeEffects` 只是公开快照中的序列化视图，不表示可序列化的 actor 实例
+    - Buff 不是主流程 phase，也不拥有独立的顶层 hook family；Buff 只是 frozen semantic hooks 的 consumer
+- 风险/阻塞：
+    - 主 match machine 仍保留 `royalResolution` 这类 Step 03 前过渡 phase；完整 actor handoff 与 phase 收紧留到 Step 03
+    - Run/Meta 业务仍未实现；本步只冻结 Match + Run hook vocabulary 与占位
+- 验证命令：
+    - `pnpm contracts:generate`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+- 下一步：进入 Step 03，围绕已冻结的 `EffectAtom` / `EffectHookPoint` / lifecycle / `activeEffects` 推进 actor-based state machine，不再改名、不再重写基础语义。
+- 对应 Commit：`feat(step2.5): freeze effect hooks and actor lifecycle vocabulary`
+
+## EN
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 02.5
+- Goal: freeze the Effect/Hook vocabulary, actor lifecycle, and Buff integration primitives so Step 03 / 04 / 07 can only fill in behavior instead of renaming or reshaping the base semantics.
+- Actual changes:
+    - Renamed the public snapshot field from `pendingEffects` to `activeEffects` across `domain`, `contracts`, fixtures, tests, and the minimal engine skeleton
+    - Froze the new public types: `EffectAtom`, `EffectHookPoint`, `EffectSource`, `EffectExecutionScope`, `EffectLifecycleStage`, `EffectOutcome`, and `ActiveEffect`
+    - Expanded `EffectAtom` to the classic-complete first-wave set: `grant_privilege`, `take_opponent_token`, `gain_royal`, `take_extra_turn`, `discard_to_limit`, `take_board_token`, and `override_bonus_color`
+    - Replaced phase-oriented hook names with semantic Match + Run hooks, including run-level placeholders such as `BEFORE_MATCH_SETUP`, `BEFORE_BUFF_ACQUISITION`, and `BEFORE_RUN_REWARD_SELECTION`
+    - Explicitly retired `BEFORE_ROYAL_RESOLUTION` / `AFTER_ROYAL_RESOLUTION` and `BEFORE_BUFF_RESOLUTION` / `AFTER_BUFF_RESOLUTION` as top-level hook families
+    - Upgraded effect lifecycle events to `effect.spawned`, `effect.started`, and `effect.completed`, and froze `completed.outcome = resolved | skipped | cancelled`
+    - Added a minimal lifecycle skeleton in `packages/core-engine` that owns `scheduled -> running -> completed` and deterministic metadata (`effectId`, `parentEffectId`, `sequence`, `rngNamespace`) without jumping ahead to Step 03 orchestration
+    - Updated governance docs, ADRs, and local Skills references so Step 03 / 07 no longer read stale vocabulary
+- Touched paths:
+    - `packages/domain/`
+    - `packages/contracts/`
+    - `packages/core-engine/`
+    - `packages/application/`
+    - `docs/20-domain/`
+    - `docs/30-contracts/`
+    - `docs/90-adr/`
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+    - `.codex/skills/add-buff/`
+    - `.codex/skills/add-phase-transition/`
+    - `.codex/skills/contract-change/`
+- Key decisions:
+    - Hook scope is fixed to `Match + Run`
+    - Semantic naming wins over phase-oriented names such as `ROYAL_RESOLUTION` and `BUFF_RESOLUTION`
+    - `EffectAtom` is frozen as classic-complete in this step instead of being expanded later
+    - `activeEffects` is a serialized public-view field, not a serialized actor instance
+    - Buff is not a main-flow phase and does not own a private top-level hook family; it is only a consumer of the frozen semantic hooks
+- Risks / blockers:
+    - The main match machine still keeps transitional phases such as `royalResolution`; the full actor handoff and phase tightening belong to Step 03
+    - Run/Meta gameplay is still not implemented; this step only freezes Match + Run hook vocabulary and placeholders
+- Validation commands:
+    - `pnpm contracts:generate`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+- Next step: enter Step 03 and build the actor-based state machine around the frozen `EffectAtom`, `EffectHookPoint`, lifecycle events, and `activeEffects` without renaming or widening the base semantics.
+- Commit reference: `feat(step2.5): freeze effect hooks and actor lifecycle vocabulary`

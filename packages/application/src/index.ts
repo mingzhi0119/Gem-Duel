@@ -57,11 +57,6 @@ const buildActions = (snapshot: GameSnapshot): UiActionDescriptor[] => {
                     label: 'Begin Royal Resolution',
                     command: { type: 'BEGIN_ROYAL_RESOLUTION' },
                 },
-                {
-                    id: 'begin-buff',
-                    label: 'Begin Buff Resolution',
-                    command: { type: 'BEGIN_BUFF_RESOLUTION' },
-                },
                 { id: 'replay', label: 'Enter Replay', command: { type: 'ENTER_REPLAY' } },
                 {
                     id: 'finish',
@@ -122,14 +117,6 @@ const buildActions = (snapshot: GameSnapshot): UiActionDescriptor[] => {
                     id: 'royal-1',
                     label: 'Select Royal (+1 Crown)',
                     command: { type: 'SELECT_ROYAL', crownsGain: 1 },
-                },
-            ];
-        case 'buffResolution':
-            return [
-                {
-                    id: 'buff-1',
-                    label: 'Resolve Buff (+1 Score)',
-                    command: { type: 'RESOLVE_BUFF', scoreGain: 1 },
                 },
             ];
         case 'replay':

@@ -44,6 +44,7 @@
 - 任何命令都必须经过 phase guard；非法命令返回 typed result 错误而不是裸异常。
 - 核心引擎内部禁止时间、随机、网络、数据库和宿主 API。
 - Effect/Hook 原语在经典规则迁移前冻结：`EffectAtom`、`EffectHookPoint`、actor 生命周期、hook 顺序与冲突处理一旦确认，不在 Step 07 回改。
+- `activeEffects` 作为公开快照中的序列化生命周期视图固定下来，不表示 live actor 引用。
 
 ### 领域状态策略
 
@@ -65,6 +66,7 @@
 ### 数据契约
 
 - 关键公开接口：`GameCommand`、`GameEvent`、`EffectAtom`、`EffectHookPoint`、`AuthoritativeSnapshot`、`PlayerSnapshot`、`SpectatorSnapshot`、`ReplayBundle`、`RoomDetail`、`UiViewModel`。
+- Step 02.5 进一步冻结 `ActiveEffect`、`EffectSource`、`EffectExecutionScope`、`EffectLifecycleStage`、`EffectOutcome` 作为公开 vocabulary。
 - `SeededRng` 采用 namespaced RNG streams，标准接口包含 `fork(namespace: string)`。
 - Replay 采用权威 `MessagePack` bundle，JSON 只作为调试/导出视图。
 - `ReplayBundle` 至少包含 `schemaVersion`、`rulesetVersion`、`engineVersion`、`seed`、`initialSnapshot`、`commands[]`、`events[]`、`finalStateHash`、`resultSummary`。
@@ -82,8 +84,10 @@
 
 - Buff 采用 pure hook reducer 模型，不允许在引擎核心散落 hard-coded if/else。
 - Buff 只以 `id` 持久化，行为由 hook 注册表解释。
+- Buff 不拥有独立的 `BUFF_RESOLUTION` 顶层 hook family，也不拥有独立主流程 phase；只消费既有语义 hook。
 - hook 顺序、冲突处理、组合顺序、测试粒度与 replay 序列化规则必须文档化。
 - Step 02.5 只冻结 Buff 接入原语与 hook 点，不实现具体 Buff；Step 07 只填充 Buff 业务内容、Run/Meta 规则与样例。
+- Step 02.5 的 hook 范围固定为 Match + Run，并采用语义命名如 `GAIN_ROYAL` 与 `EXTRA_TURN`。
 
 ### 测试矩阵
 
@@ -161,6 +165,7 @@
 - Every command must pass a phase guard; invalid commands return typed results instead of raw exceptions.
 - The core engine may not access time, randomness, network, databases, or host APIs directly.
 - Effect/Hook primitives are frozen before classic-rule migration: `EffectAtom`, `EffectHookPoint`, actor lifecycle, hook order, and conflict handling must not be revisited in Step 07.
+- `activeEffects` is frozen as the serialized lifecycle view exposed in public snapshots and never represents live actor references.
 
 ### Domain State Strategy
 
@@ -182,6 +187,7 @@
 ### Data Contracts
 
 - The main public interfaces are `GameCommand`, `GameEvent`, `EffectAtom`, `EffectHookPoint`, `AuthoritativeSnapshot`, `PlayerSnapshot`, `SpectatorSnapshot`, `ReplayBundle`, `RoomDetail`, and `UiViewModel`.
+- Step 02.5 also freezes `ActiveEffect`, `EffectSource`, `EffectExecutionScope`, `EffectLifecycleStage`, and `EffectOutcome` as public vocabulary.
 - `SeededRng` uses namespaced RNG streams and standardizes on `fork(namespace: string)`.
 - Replay uses an authoritative `MessagePack` bundle; JSON is for debug/export views only.
 - `ReplayBundle` contains at least `schemaVersion`, `rulesetVersion`, `engineVersion`, `seed`, `initialSnapshot`, `commands[]`, `events[]`, `finalStateHash`, and `resultSummary`.
@@ -199,8 +205,10 @@
 
 - Buffs use a pure hook reducer model; hard-coded if/else branches scattered across the engine are not allowed.
 - Buffs persist by `id` only, while behavior is interpreted through hook registries.
+- Buffs do not own a dedicated `BUFF_RESOLUTION` top-level hook family or a standalone main-flow phase; they consume the existing semantic hook surface.
 - Hook order, conflict handling, composition order, test granularity, and replay serialization rules must be documented.
 - Step 02.5 freezes the Buff integration primitives and hook points only; Step 07 fills in concrete Buff business logic, Run/Meta rules, and samples.
+- Step 02.5 freezes Match + Run hook scope and semantic hook names such as `GAIN_ROYAL` and `EXTRA_TURN`.
 
 ### Test Matrix
 
