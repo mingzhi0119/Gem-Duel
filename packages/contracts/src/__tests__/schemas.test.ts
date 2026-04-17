@@ -24,8 +24,8 @@ describe('contracts schemas', () => {
         });
 
         expect(command.type).toBe('TAKE_GEM');
-        expect(SCHEMA_VERSION).toBe('3.0.0');
-        expect(ENGINE_VERSION).toBe('2026.04-step2.5');
+        expect(SCHEMA_VERSION).toBe('4.0.0');
+        expect(ENGINE_VERSION).toBe('2026.04-step3');
     });
 
     it('projects authoritative snapshots into player-safe snapshots', () => {

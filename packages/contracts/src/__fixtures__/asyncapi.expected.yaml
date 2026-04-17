@@ -316,7 +316,6 @@ components:
                 - reserving
                 - buying
                 - privilege
-                - royalResolution
                 - replay
                 - terminal
               type: string
@@ -354,7 +353,7 @@ components:
           type: object
         engineVersion:
           enum:
-            - 2026.04-step2.5
+            - 2026.04-step3
           type: string
         eventLog:
           items:
@@ -392,7 +391,6 @@ components:
                       - reserving
                       - buying
                       - privilege
-                      - royalResolution
                       - replay
                       - terminal
                     type: string
@@ -891,7 +889,7 @@ components:
           type: string
         schemaVersion:
           enum:
-            - 3.0.0
+            - 4.0.0
           type: string
         sequence:
           minimum: 0
@@ -1190,7 +1188,6 @@ components:
                 - reserving
                 - buying
                 - privilege
-                - royalResolution
                 - replay
                 - terminal
               type: string
@@ -1612,7 +1609,6 @@ components:
                 - reserving
                 - buying
                 - privilege
-                - royalResolution
                 - replay
                 - terminal
               type: string
@@ -1650,7 +1646,7 @@ components:
           type: object
         engineVersion:
           enum:
-            - 2026.04-step2.5
+            - 2026.04-step3
           type: string
         eventLog:
           items:
@@ -1688,7 +1684,6 @@ components:
                       - reserving
                       - buying
                       - privilege
-                      - royalResolution
                       - replay
                       - terminal
                     type: string
@@ -2187,7 +2182,7 @@ components:
           type: string
         schemaVersion:
           enum:
-            - 3.0.0
+            - 4.0.0
           type: string
         sequence:
           minimum: 0
@@ -2769,7 +2764,6 @@ components:
             - reserving
             - buying
             - privilege
-            - royalResolution
             - replay
             - terminal
           type: string
@@ -2960,7 +2954,6 @@ components:
                     - reserving
                     - buying
                     - privilege
-                    - royalResolution
                     - replay
                     - terminal
                   type: string
@@ -2998,7 +2991,7 @@ components:
               type: object
             engineVersion:
               enum:
-                - 2026.04-step2.5
+                - 2026.04-step3
               type: string
             eventLog:
               items:
@@ -3036,7 +3029,6 @@ components:
                           - reserving
                           - buying
                           - privilege
-                          - royalResolution
                           - replay
                           - terminal
                         type: string
@@ -3497,7 +3489,7 @@ components:
               type: string
             schemaVersion:
               enum:
-                - 3.0.0
+                - 4.0.0
               type: string
             sequence:
               minimum: 0
@@ -3671,7 +3663,6 @@ components:
                         - reserving
                         - buying
                         - privilege
-                        - royalResolution
                         - replay
                         - terminal
                       type: string
@@ -3709,7 +3700,7 @@ components:
                   type: object
                 engineVersion:
                   enum:
-                    - 2026.04-step2.5
+                    - 2026.04-step3
                   type: string
                 eventLog:
                   items:
@@ -3747,7 +3738,6 @@ components:
                               - reserving
                               - buying
                               - privilege
-                              - royalResolution
                               - replay
                               - terminal
                             type: string
@@ -4208,7 +4198,7 @@ components:
                   type: string
                 schemaVersion:
                   enum:
-                    - 3.0.0
+                    - 4.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -4372,7 +4362,6 @@ components:
                         - reserving
                         - buying
                         - privilege
-                        - royalResolution
                         - replay
                         - terminal
                       type: string
@@ -4410,7 +4399,7 @@ components:
                   type: object
                 engineVersion:
                   enum:
-                    - 2026.04-step2.5
+                    - 2026.04-step3
                   type: string
                 eventLog:
                   items:
@@ -4448,7 +4437,6 @@ components:
                               - reserving
                               - buying
                               - privilege
-                              - royalResolution
                               - replay
                               - terminal
                             type: string
@@ -4909,7 +4897,7 @@ components:
                   type: string
                 schemaVersion:
                   enum:
-                    - 3.0.0
+                    - 4.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -5083,7 +5071,6 @@ components:
                         - reserving
                         - buying
                         - privilege
-                        - royalResolution
                         - replay
                         - terminal
                       type: string
@@ -5121,7 +5108,7 @@ components:
                   type: object
                 engineVersion:
                   enum:
-                    - 2026.04-step2.5
+                    - 2026.04-step3
                   type: string
                 eventLog:
                   items:
@@ -5159,7 +5146,6 @@ components:
                               - reserving
                               - buying
                               - privilege
-                              - royalResolution
                               - replay
                               - terminal
                             type: string
@@ -5620,7 +5606,7 @@ components:
                   type: string
                 schemaVersion:
                   enum:
-                    - 3.0.0
+                    - 4.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -5784,7 +5770,6 @@ components:
                         - reserving
                         - buying
                         - privilege
-                        - royalResolution
                         - replay
                         - terminal
                       type: string
@@ -5822,7 +5807,7 @@ components:
                   type: object
                 engineVersion:
                   enum:
-                    - 2026.04-step2.5
+                    - 2026.04-step3
                   type: string
                 eventLog:
                   items:
@@ -5860,7 +5845,6 @@ components:
                               - reserving
                               - buying
                               - privilege
-                              - royalResolution
                               - replay
                               - terminal
                             type: string
@@ -6321,7 +6305,7 @@ components:
                   type: string
                 schemaVersion:
                   enum:
-                    - 3.0.0
+                    - 4.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -6621,7 +6605,6 @@ components:
                 - reserving
                 - buying
                 - privilege
-                - royalResolution
                 - replay
                 - terminal
               type: string
@@ -6659,7 +6642,7 @@ components:
           type: object
         engineVersion:
           enum:
-            - 2026.04-step2.5
+            - 2026.04-step3
           type: string
         eventLog:
           items:
@@ -6697,7 +6680,6 @@ components:
                       - reserving
                       - buying
                       - privilege
-                      - royalResolution
                       - replay
                       - terminal
                     type: string
@@ -7158,7 +7140,7 @@ components:
           type: string
         schemaVersion:
           enum:
-            - 3.0.0
+            - 4.0.0
           type: string
         sequence:
           minimum: 0
@@ -7461,7 +7443,7 @@ components:
           type: array
         engineVersion:
           enum:
-            - 2026.04-step2.5
+            - 2026.04-step3
           type: string
         events:
           items:
@@ -7499,7 +7481,6 @@ components:
                       - reserving
                       - buying
                       - privilege
-                      - royalResolution
                       - replay
                       - terminal
                     type: string
@@ -7925,7 +7906,6 @@ components:
                     - reserving
                     - buying
                     - privilege
-                    - royalResolution
                     - replay
                     - terminal
                   type: string
@@ -7963,7 +7943,7 @@ components:
               type: object
             engineVersion:
               enum:
-                - 2026.04-step2.5
+                - 2026.04-step3
               type: string
             eventLog:
               items:
@@ -8001,7 +7981,6 @@ components:
                           - reserving
                           - buying
                           - privilege
-                          - royalResolution
                           - replay
                           - terminal
                         type: string
@@ -8500,7 +8479,7 @@ components:
               type: string
             schemaVersion:
               enum:
-                - 3.0.0
+                - 4.0.0
               type: string
             sequence:
               minimum: 0
@@ -8549,7 +8528,7 @@ components:
           type: string
         schemaVersion:
           enum:
-            - 3.0.0
+            - 4.0.0
           type: string
         seed:
           minimum: 0
@@ -8985,7 +8964,7 @@ components:
               type: array
             engineVersion:
               enum:
-                - 2026.04-step2.5
+                - 2026.04-step3
               type: string
             events:
               items:
@@ -9023,7 +9002,6 @@ components:
                           - reserving
                           - buying
                           - privilege
-                          - royalResolution
                           - replay
                           - terminal
                         type: string
@@ -9449,7 +9427,6 @@ components:
                         - reserving
                         - buying
                         - privilege
-                        - royalResolution
                         - replay
                         - terminal
                       type: string
@@ -9487,7 +9464,7 @@ components:
                   type: object
                 engineVersion:
                   enum:
-                    - 2026.04-step2.5
+                    - 2026.04-step3
                   type: string
                 eventLog:
                   items:
@@ -9525,7 +9502,6 @@ components:
                               - reserving
                               - buying
                               - privilege
-                              - royalResolution
                               - replay
                               - terminal
                             type: string
@@ -10024,7 +10000,7 @@ components:
                   type: string
                 schemaVersion:
                   enum:
-                    - 3.0.0
+                    - 4.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -10073,7 +10049,7 @@ components:
               type: string
             schemaVersion:
               enum:
-                - 3.0.0
+                - 4.0.0
               type: string
             seed:
               minimum: 0
@@ -10259,7 +10235,6 @@ components:
                         - reserving
                         - buying
                         - privilege
-                        - royalResolution
                         - replay
                         - terminal
                       type: string
@@ -10297,7 +10272,7 @@ components:
                   type: object
                 engineVersion:
                   enum:
-                    - 2026.04-step2.5
+                    - 2026.04-step3
                   type: string
                 eventLog:
                   items:
@@ -10335,7 +10310,6 @@ components:
                               - reserving
                               - buying
                               - privilege
-                              - royalResolution
                               - replay
                               - terminal
                             type: string
@@ -10796,7 +10770,7 @@ components:
                   type: string
                 schemaVersion:
                   enum:
-                    - 3.0.0
+                    - 4.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -10960,7 +10934,6 @@ components:
                         - reserving
                         - buying
                         - privilege
-                        - royalResolution
                         - replay
                         - terminal
                       type: string
@@ -10998,7 +10971,7 @@ components:
                   type: object
                 engineVersion:
                   enum:
-                    - 2026.04-step2.5
+                    - 2026.04-step3
                   type: string
                 eventLog:
                   items:
@@ -11036,7 +11009,6 @@ components:
                               - reserving
                               - buying
                               - privilege
-                              - royalResolution
                               - replay
                               - terminal
                             type: string
@@ -11497,7 +11469,7 @@ components:
                   type: string
                 schemaVersion:
                   enum:
-                    - 3.0.0
+                    - 4.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -11781,7 +11753,6 @@ components:
                             - reserving
                             - buying
                             - privilege
-                            - royalResolution
                             - replay
                             - terminal
                           type: string
@@ -11819,7 +11790,7 @@ components:
                       type: object
                     engineVersion:
                       enum:
-                        - 2026.04-step2.5
+                        - 2026.04-step3
                       type: string
                     eventLog:
                       items:
@@ -11857,7 +11828,6 @@ components:
                                   - reserving
                                   - buying
                                   - privilege
-                                  - royalResolution
                                   - replay
                                   - terminal
                                 type: string
@@ -12318,7 +12288,7 @@ components:
                       type: string
                     schemaVersion:
                       enum:
-                        - 3.0.0
+                        - 4.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -12482,7 +12452,6 @@ components:
                             - reserving
                             - buying
                             - privilege
-                            - royalResolution
                             - replay
                             - terminal
                           type: string
@@ -12520,7 +12489,7 @@ components:
                       type: object
                     engineVersion:
                       enum:
-                        - 2026.04-step2.5
+                        - 2026.04-step3
                       type: string
                     eventLog:
                       items:
@@ -12558,7 +12527,6 @@ components:
                                   - reserving
                                   - buying
                                   - privilege
-                                  - royalResolution
                                   - replay
                                   - terminal
                                 type: string
@@ -13019,7 +12987,7 @@ components:
                       type: string
                     schemaVersion:
                       enum:
-                        - 3.0.0
+                        - 4.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -13327,7 +13295,6 @@ components:
                                 - reserving
                                 - buying
                                 - privilege
-                                - royalResolution
                                 - replay
                                 - terminal
                               type: string
@@ -13365,7 +13332,7 @@ components:
                           type: object
                         engineVersion:
                           enum:
-                            - 2026.04-step2.5
+                            - 2026.04-step3
                           type: string
                         eventLog:
                           items:
@@ -13403,7 +13370,6 @@ components:
                                       - reserving
                                       - buying
                                       - privilege
-                                      - royalResolution
                                       - replay
                                       - terminal
                                     type: string
@@ -13864,7 +13830,7 @@ components:
                           type: string
                         schemaVersion:
                           enum:
-                            - 3.0.0
+                            - 4.0.0
                           type: string
                         sequence:
                           minimum: 0
@@ -14028,7 +13994,6 @@ components:
                                 - reserving
                                 - buying
                                 - privilege
-                                - royalResolution
                                 - replay
                                 - terminal
                               type: string
@@ -14066,7 +14031,7 @@ components:
                           type: object
                         engineVersion:
                           enum:
-                            - 2026.04-step2.5
+                            - 2026.04-step3
                           type: string
                         eventLog:
                           items:
@@ -14104,7 +14069,6 @@ components:
                                       - reserving
                                       - buying
                                       - privilege
-                                      - royalResolution
                                       - replay
                                       - terminal
                                     type: string
@@ -14565,7 +14529,7 @@ components:
                           type: string
                         schemaVersion:
                           enum:
-                            - 3.0.0
+                            - 4.0.0
                           type: string
                         sequence:
                           minimum: 0
@@ -14972,7 +14936,6 @@ components:
                             - reserving
                             - buying
                             - privilege
-                            - royalResolution
                             - replay
                             - terminal
                           type: string
@@ -15010,7 +14973,7 @@ components:
                       type: object
                     engineVersion:
                       enum:
-                        - 2026.04-step2.5
+                        - 2026.04-step3
                       type: string
                     eventLog:
                       items:
@@ -15048,7 +15011,6 @@ components:
                                   - reserving
                                   - buying
                                   - privilege
-                                  - royalResolution
                                   - replay
                                   - terminal
                                 type: string
@@ -15509,7 +15471,7 @@ components:
                       type: string
                     schemaVersion:
                       enum:
-                        - 3.0.0
+                        - 4.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -15673,7 +15635,6 @@ components:
                             - reserving
                             - buying
                             - privilege
-                            - royalResolution
                             - replay
                             - terminal
                           type: string
@@ -15711,7 +15672,7 @@ components:
                       type: object
                     engineVersion:
                       enum:
-                        - 2026.04-step2.5
+                        - 2026.04-step3
                       type: string
                     eventLog:
                       items:
@@ -15749,7 +15710,6 @@ components:
                                   - reserving
                                   - buying
                                   - privilege
-                                  - royalResolution
                                   - replay
                                   - terminal
                                 type: string
@@ -16210,7 +16170,7 @@ components:
                       type: string
                     schemaVersion:
                       enum:
-                        - 3.0.0
+                        - 4.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -16383,7 +16343,6 @@ components:
                             - reserving
                             - buying
                             - privilege
-                            - royalResolution
                             - replay
                             - terminal
                           type: string
@@ -16421,7 +16380,7 @@ components:
                       type: object
                     engineVersion:
                       enum:
-                        - 2026.04-step2.5
+                        - 2026.04-step3
                       type: string
                     eventLog:
                       items:
@@ -16459,7 +16418,6 @@ components:
                                   - reserving
                                   - buying
                                   - privilege
-                                  - royalResolution
                                   - replay
                                   - terminal
                                 type: string
@@ -16920,7 +16878,7 @@ components:
                       type: string
                     schemaVersion:
                       enum:
-                        - 3.0.0
+                        - 4.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -17084,7 +17042,6 @@ components:
                             - reserving
                             - buying
                             - privilege
-                            - royalResolution
                             - replay
                             - terminal
                           type: string
@@ -17122,7 +17079,7 @@ components:
                       type: object
                     engineVersion:
                       enum:
-                        - 2026.04-step2.5
+                        - 2026.04-step3
                       type: string
                     eventLog:
                       items:
@@ -17160,7 +17117,6 @@ components:
                                   - reserving
                                   - buying
                                   - privilege
-                                  - royalResolution
                                   - replay
                                   - terminal
                                 type: string
@@ -17621,7 +17577,7 @@ components:
                       type: string
                     schemaVersion:
                       enum:
-                        - 3.0.0
+                        - 4.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -17793,7 +17749,6 @@ components:
                         - reserving
                         - buying
                         - privilege
-                        - royalResolution
                         - replay
                         - terminal
                       type: string
@@ -17831,7 +17786,7 @@ components:
                   type: object
                 engineVersion:
                   enum:
-                    - 2026.04-step2.5
+                    - 2026.04-step3
                   type: string
                 eventLog:
                   items:
@@ -17869,7 +17824,6 @@ components:
                               - reserving
                               - buying
                               - privilege
-                              - royalResolution
                               - replay
                               - terminal
                             type: string
@@ -18330,7 +18284,7 @@ components:
                   type: string
                 schemaVersion:
                   enum:
-                    - 3.0.0
+                    - 4.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -18550,7 +18504,6 @@ components:
                 - reserving
                 - buying
                 - privilege
-                - royalResolution
                 - replay
                 - terminal
               type: string
@@ -18588,7 +18541,7 @@ components:
           type: object
         engineVersion:
           enum:
-            - 2026.04-step2.5
+            - 2026.04-step3
           type: string
         eventLog:
           items:
@@ -18626,7 +18579,6 @@ components:
                       - reserving
                       - buying
                       - privilege
-                      - royalResolution
                       - replay
                       - terminal
                     type: string
@@ -19087,7 +19039,7 @@ components:
           type: string
         schemaVersion:
           enum:
-            - 3.0.0
+            - 4.0.0
           type: string
         sequence:
           minimum: 0
@@ -19247,7 +19199,6 @@ components:
                     - reserving
                     - buying
                     - privilege
-                    - royalResolution
                     - replay
                     - terminal
                   type: string
@@ -19285,7 +19236,7 @@ components:
               type: object
             engineVersion:
               enum:
-                - 2026.04-step2.5
+                - 2026.04-step3
               type: string
             eventLog:
               items:
@@ -19323,7 +19274,6 @@ components:
                           - reserving
                           - buying
                           - privilege
-                          - royalResolution
                           - replay
                           - terminal
                         type: string
@@ -19784,7 +19734,7 @@ components:
               type: string
             schemaVersion:
               enum:
-                - 3.0.0
+                - 4.0.0
               type: string
             sequence:
               minimum: 0
@@ -19948,7 +19898,6 @@ components:
                     - reserving
                     - buying
                     - privilege
-                    - royalResolution
                     - replay
                     - terminal
                   type: string
@@ -19986,7 +19935,7 @@ components:
               type: object
             engineVersion:
               enum:
-                - 2026.04-step2.5
+                - 2026.04-step3
               type: string
             eventLog:
               items:
@@ -20024,7 +19973,6 @@ components:
                           - reserving
                           - buying
                           - privilege
-                          - royalResolution
                           - replay
                           - terminal
                         type: string
@@ -20485,7 +20433,7 @@ components:
               type: string
             schemaVersion:
               enum:
-                - 3.0.0
+                - 4.0.0
               type: string
             sequence:
               minimum: 0
@@ -20511,7 +20459,7 @@ defaultContentType: application/json
 info:
   description: Authoritative room-service WebSocket protocol with filtered snapshots and Step 02.5 effect lifecycle envelopes.
   title: Gem Duel Realtime Contracts
-  version: 3.0.0
+  version: 4.0.0
 operations:
   joinRoomSocket:
     action: send

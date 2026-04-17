@@ -8,7 +8,6 @@ export const GAME_PHASES = [
     'reserving',
     'buying',
     'privilege',
-    'royalResolution',
     'replay',
     'terminal',
 ] as const;

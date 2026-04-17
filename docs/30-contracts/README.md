@@ -10,6 +10,7 @@
 - 契约 drift 校验命令：`pnpm contracts:verify`；完整契约检查命令：`pnpm check-contracts`。
 - 契约硬化、Problem Details、AsyncAPI 与 snapshot 要求请参考 [`contract-hardening-spec.md`](./contract-hardening-spec.md)。
 - 三类 Snapshot、effect/hook 契约、MessagePack replay 与在线协议字段也以 [`contract-hardening-spec.md`](./contract-hardening-spec.md) 为准。
+- Step 03 对 `royalResolution` phase surface 与 replay/hash ownership 的破坏性变更说明请参考 [`step-03-phase-replay-migration-note.md`](./step-03-phase-replay-migration-note.md)。
 
 ## EN
 
@@ -21,3 +22,4 @@
 - Contract drift verification runs through `pnpm contracts:verify`, while the full contract check runs through `pnpm check-contracts`.
 - See [`contract-hardening-spec.md`](./contract-hardening-spec.md) for contract hardening, Problem Details, AsyncAPI, and snapshot requirements.
 - Snapshot tiers, effect/hook contracts, MessagePack replay rules, and online protocol fields also follow [`contract-hardening-spec.md`](./contract-hardening-spec.md).
+- See [`step-03-phase-replay-migration-note.md`](./step-03-phase-replay-migration-note.md) for the Step 03 breaking changes to the public phase surface and replay/hash ownership.

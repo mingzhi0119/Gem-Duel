@@ -18,12 +18,15 @@
 - [`20-domain/splendor-duel-official-rulebook.md`](./20-domain/splendor-duel-official-rulebook.md): 官方规则书摘要与领域建模结论
 - [`30-contracts/README.md`](./30-contracts/README.md): HTTP、WebSocket、Replay 契约
 - [`30-contracts/contract-hardening-spec.md`](./30-contracts/contract-hardening-spec.md): 契约硬化、schema 真相源与生成策略
+- [`30-contracts/step-03-phase-replay-migration-note.md`](./30-contracts/step-03-phase-replay-migration-note.md): Step 03 phase surface 与 replay/hash ownership 迁移说明
 - [`40-operations/README.md`](./40-operations/README.md): 部署、观测、CI/CD 与运行策略
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent 工具、CI 护栏与 `.codex`/MCP 规划
 - [`40-operations/skills-governance.md`](./40-operations/skills-governance.md): 项目本地 Skills 的质量标准、步骤映射与目录治理
 - [`90-adr/ADR-0001-greenfield-monorepo.md`](./90-adr/ADR-0001-greenfield-monorepo.md): 首个架构决策记录
 - [`90-adr/ADR-0002-mechanical-agent-guardrails.md`](./90-adr/ADR-0002-mechanical-agent-guardrails.md): Agent 机械化护栏决策
 - [`90-adr/ADR-0003-actor-effects-and-information-sets.md`](./90-adr/ADR-0003-actor-effects-and-information-sets.md): 连锁效果、信息集与 replay 流设计决策
+- [`90-adr/ADR-0004-step-02.5-effect-hook-freeze.md`](./90-adr/ADR-0004-step-02.5-effect-hook-freeze.md): Step 02.5 Effect/Hook 原语冻结决策
+- [`90-adr/ADR-0005-step-03-phase-tightening-and-replay-authority.md`](./90-adr/ADR-0005-step-03-phase-tightening-and-replay-authority.md): Step 03 phase 收紧与 replay/hash 权责下沉决策
 - [`99-legacy/README.md`](./99-legacy/README.md): 旧实现与旧文档归档入口
 
 ## EN
@@ -44,10 +47,13 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`20-domain/splendor-duel-official-rulebook.md`](./20-domain/splendor-duel-official-rulebook.md): Official rulebook digest and rebuild-facing modeling notes
 - [`30-contracts/README.md`](./30-contracts/README.md): HTTP, WebSocket, and replay contracts
 - [`30-contracts/contract-hardening-spec.md`](./30-contracts/contract-hardening-spec.md): Contract hardening, schema truth sources, and generation strategy
+- [`30-contracts/step-03-phase-replay-migration-note.md`](./30-contracts/step-03-phase-replay-migration-note.md): Step 03 migration note for the phase surface and replay/hash ownership
 - [`40-operations/README.md`](./40-operations/README.md): Deployment, observability, CI/CD, and runtime strategy
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent tooling, CI guardrails, and `.codex`/MCP planning
 - [`40-operations/skills-governance.md`](./40-operations/skills-governance.md): Quality bar, step mapping, and directory governance for project-local skills
 - [`90-adr/ADR-0001-greenfield-monorepo.md`](./90-adr/ADR-0001-greenfield-monorepo.md): Initial architecture decision record
 - [`90-adr/ADR-0002-mechanical-agent-guardrails.md`](./90-adr/ADR-0002-mechanical-agent-guardrails.md): Mechanical guardrails for agents
 - [`90-adr/ADR-0003-actor-effects-and-information-sets.md`](./90-adr/ADR-0003-actor-effects-and-information-sets.md): Actor effects, information sets, and replay-stream design decision
+- [`90-adr/ADR-0004-step-02.5-effect-hook-freeze.md`](./90-adr/ADR-0004-step-02.5-effect-hook-freeze.md): Step 02.5 decision for effect/hook primitive freeze
+- [`90-adr/ADR-0005-step-03-phase-tightening-and-replay-authority.md`](./90-adr/ADR-0005-step-03-phase-tightening-and-replay-authority.md): Step 03 decision for phase tightening and replay/hash authority
 - [`99-legacy/README.md`](./99-legacy/README.md): Legacy implementation and document archive index

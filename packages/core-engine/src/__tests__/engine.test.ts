@@ -1,67 +1,90 @@
+import { ENGINE_VERSION } from '@gem-duel/contracts';
 import { describe, expect, it } from 'vitest';
-import { bootstrapMatch, createMatchActor, dispatchCommand, readSnapshot } from '../index';
+import { createSnapshotHash, dispatchCommand, readSnapshot } from '../index';
+import { createBootstrappedLocalActor } from './test-ports';
 
-const createTestRng = () => ({
-    next: () => 0.5,
-    nextInt: (maxExclusive: number) => Math.min(maxExclusive - 1, 1),
-    fork: () => createTestRng(),
-});
+describe('core engine Step 03 hardening', () => {
+    it('produces the same snapshot and finalStateHash for the same command stream', () => {
+        const actorA = createBootstrappedLocalActor(7).actor;
+        const actorB = createBootstrappedLocalActor(7).actor;
 
-const makePorts = () => {
-    let counter = 0;
-    return {
-        rng: createTestRng(),
-        clock: {
-            now: () => '2026-01-01T00:00:00.000Z',
-        },
-        id: {
-            next: (prefix = 'id') => `${prefix}-${++counter}`,
-        },
-    };
-};
-
-describe('core engine determinism', () => {
-    it('produces the same snapshot for the same command stream', () => {
-        const portsA = makePorts();
-        const portsB = makePorts();
-        const actorA = createMatchActor(
-            {
-                seed: 7,
-                mode: 'local',
-                flags: { roguelike: false, onlineAuthoritative: false, aiEnabled: false },
-            },
-            portsA
-        );
-        const actorB = createMatchActor(
-            {
-                seed: 7,
-                mode: 'local',
-                flags: { roguelike: false, onlineAuthoritative: false, aiEnabled: false },
-            },
-            portsB
-        );
-
-        bootstrapMatch(actorA, 'local', {
-            roguelike: false,
-            onlineAuthoritative: false,
-            aiEnabled: false,
-        });
-        bootstrapMatch(actorB, 'local', {
-            roguelike: false,
-            onlineAuthoritative: false,
-            aiEnabled: false,
-        });
-
-        dispatchCommand(actorA, { type: 'BEGIN_GEM_SELECTION' });
-        dispatchCommand(actorA, { type: 'TAKE_GEM', color: 'blue' });
-        dispatchCommand(actorB, { type: 'BEGIN_GEM_SELECTION' });
-        dispatchCommand(actorB, { type: 'TAKE_GEM', color: 'blue' });
+        for (const actor of [actorA, actorB]) {
+            expect(dispatchCommand(actor, { type: 'BEGIN_GEM_SELECTION' }).ok).toBe(true);
+            expect(dispatchCommand(actor, { type: 'TAKE_GEM', color: 'blue' }).ok).toBe(true);
+            expect(dispatchCommand(actor, { type: 'BEGIN_ROYAL_RESOLUTION' }).ok).toBe(true);
+            expect(dispatchCommand(actor, { type: 'SELECT_ROYAL', crownsGain: 2 }).ok).toBe(true);
+        }
 
         const snapshotA = readSnapshot(actorA);
         const snapshotB = readSnapshot(actorB);
 
         expect(snapshotA).toEqual(snapshotB);
-        expect(snapshotA.sequence).toBeGreaterThan(0);
-        expect(snapshotA.engineVersion).toBe('2026.04-step2.5');
+        expect(createSnapshotHash(snapshotA)).toBe(createSnapshotHash(snapshotB));
+        expect(snapshotA.engineVersion).toBe(ENGINE_VERSION);
+    });
+
+    it('represents royal handoff through activeEffects without changing the public phase', () => {
+        const { actor, forkNamespaces } = createBootstrappedLocalActor(9);
+
+        const handoff = dispatchCommand(actor, { type: 'BEGIN_ROYAL_RESOLUTION' });
+        expect(handoff.ok).toBe(true);
+        if (!handoff.ok) {
+            return;
+        }
+
+        expect(handoff.value.snapshot.context.phase).toBe('turnIdle');
+        expect(handoff.value.snapshot.activeEffects).toHaveLength(1);
+        expect(handoff.value.snapshot.activeEffects[0]).toMatchObject({
+            atom: 'gain_royal',
+            stage: 'running',
+            owner: 'p1',
+        });
+        expect(handoff.value.snapshot.eventLog.at(-2)).toMatchObject({
+            type: 'effect.spawned',
+            atom: 'gain_royal',
+            stage: 'scheduled',
+        });
+        expect(handoff.value.snapshot.eventLog.at(-1)).toMatchObject({
+            type: 'effect.started',
+            atom: 'gain_royal',
+            stage: 'running',
+        });
+        expect(forkNamespaces).toHaveLength(1);
+        expect(forkNamespaces[0]).toContain('royal');
+    });
+
+    it('guards SELECT_ROYAL until a royal effect is active and blocks other idle commands while it is pending', () => {
+        const { actor } = createBootstrappedLocalActor(11);
+
+        const prematureSelect = dispatchCommand(actor, { type: 'SELECT_ROYAL', crownsGain: 1 });
+        expect(prematureSelect.ok).toBe(false);
+        if (!prematureSelect.ok) {
+            expect(prematureSelect.error.code).toBe('ENGINE_PHASE_GUARD');
+        }
+
+        expect(dispatchCommand(actor, { type: 'BEGIN_ROYAL_RESOLUTION' }).ok).toBe(true);
+
+        const blockedBuy = dispatchCommand(actor, { type: 'BEGIN_BUY' });
+        expect(blockedBuy.ok).toBe(false);
+        if (!blockedBuy.ok) {
+            expect(blockedBuy.error.code).toBe('ENGINE_PHASE_GUARD');
+        }
+
+        const selectedRoyal = dispatchCommand(actor, { type: 'SELECT_ROYAL', crownsGain: 3 });
+        expect(selectedRoyal.ok).toBe(true);
+        if (!selectedRoyal.ok) {
+            return;
+        }
+
+        expect(selectedRoyal.value.snapshot.activeEffects).toEqual([]);
+        expect(selectedRoyal.value.snapshot.eventLog.at(-2)).toMatchObject({
+            type: 'royal.selected',
+            crownsGain: 3,
+        });
+        expect(selectedRoyal.value.snapshot.eventLog.at(-1)).toMatchObject({
+            type: 'effect.completed',
+            atom: 'gain_royal',
+            outcome: 'resolved',
+        });
     });
 });

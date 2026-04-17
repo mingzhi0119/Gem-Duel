@@ -14,7 +14,7 @@
             "rulesetVersion": "2026.1",
             "seed": 7,
             "mode": "local",
-            "phase": "turnIdle",
+            "phase": "initialization",
             "step": 0,
             "currentPlayer": "p1",
             "winner": null,
@@ -88,19 +88,98 @@
     },
     "commands": [
         {
-            "clientCommandId": "cmd-1",
+            "clientCommandId": "golden-command-1",
             "expectedSeq": 0,
             "issuedBy": "p1",
             "command": {
-                "type": "BEGIN_GEM_SELECTION"
+                "type": "SELECT_MODE",
+                "mode": "local",
+                "flags": {
+                    "roguelike": false,
+                    "onlineAuthoritative": false,
+                    "aiEnabled": false
+                }
+            }
+        },
+        {
+            "clientCommandId": "golden-command-2",
+            "expectedSeq": 2,
+            "issuedBy": "p1",
+            "command": {
+                "type": "START_MATCH"
+            }
+        },
+        {
+            "clientCommandId": "golden-command-3",
+            "expectedSeq": 4,
+            "issuedBy": "p1",
+            "command": {
+                "type": "BEGIN_ROYAL_RESOLUTION"
+            }
+        },
+        {
+            "clientCommandId": "golden-command-4",
+            "expectedSeq": 6,
+            "issuedBy": "p1",
+            "command": {
+                "type": "SELECT_ROYAL",
+                "crownsGain": 2
             }
         }
     ],
-    "events": [],
-    "finalStateHash": "hash-1",
+    "events": [
+        {
+            "type": "match.modeSelected",
+            "mode": "local"
+        },
+        {
+            "type": "phase.changed",
+            "phase": "modeSelection"
+        },
+        {
+            "type": "match.started"
+        },
+        {
+            "type": "phase.changed",
+            "phase": "turnIdle"
+        },
+        {
+            "type": "effect.spawned",
+            "effectId": "match-1-royal-5",
+            "parentEffectId": null,
+            "atom": "gain_royal",
+            "hookPoint": "BEFORE_GAIN_ROYAL",
+            "source": "royal_reward",
+            "scope": "active_player",
+            "owner": "p1",
+            "sequence": 5,
+            "stage": "scheduled",
+            "rngNamespace": "match/match-1/royal/5/match-1-royal-5"
+        },
+        {
+            "type": "effect.started",
+            "effectId": "match-1-royal-5",
+            "atom": "gain_royal",
+            "sequence": 5,
+            "stage": "running"
+        },
+        {
+            "type": "royal.selected",
+            "crownsGain": 2
+        },
+        {
+            "type": "effect.completed",
+            "effectId": "match-1-royal-5",
+            "atom": "gain_royal",
+            "sequence": 5,
+            "stage": "completed",
+            "outcome": "resolved"
+        }
+    ],
+    "finalStateHash": "fnv1a-3c3d631b",
     "resultSummary": {
         "winner": null,
-        "turns": 0,
-        "finalSeq": 0
+        "turns": 8,
+        "finalSeq": 8
     }
 }

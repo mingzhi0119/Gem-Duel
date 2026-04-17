@@ -13,8 +13,8 @@ import {
     PLAYER_IDS,
 } from '@gem-duel/domain';
 
-export const SCHEMA_VERSION = '3.0.0';
-export const ENGINE_VERSION = '2026.04-step2.5';
+export const SCHEMA_VERSION = '4.0.0';
+export const ENGINE_VERSION = '2026.04-step3';
 
 export const PlayerIdSchema = z.enum(PLAYER_IDS);
 export const GameModeSchema = z.enum(GAME_MODES);

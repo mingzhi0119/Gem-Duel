@@ -80,6 +80,7 @@ const effectLifecycleMachine = setup({
 export type EffectLifecycleActor = ReturnType<typeof createEffectLifecycleActor>;
 
 export const createEffectLifecycleActor = (effect: Omit<ActiveEffect, 'stage'> | ActiveEffect) => {
+    const requestedStage = 'stage' in effect ? effect.stage : 'scheduled';
     const actor = createActor(effectLifecycleMachine, {
         input: {
             effect: {
@@ -90,6 +91,11 @@ export const createEffectLifecycleActor = (effect: Omit<ActiveEffect, 'stage'> |
     });
 
     actor.start();
+    if (requestedStage === 'running') {
+        actor.send({ type: 'START' });
+    } else if (requestedStage === 'completed') {
+        throw new Error('Completed effects cannot be rehydrated into active lifecycle actors.');
+    }
     return actor;
 };
 

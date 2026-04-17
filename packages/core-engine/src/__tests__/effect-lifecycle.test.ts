@@ -1,52 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
-    bootstrapMatch,
+    createEffectLifecycleActor,
     completeEffect,
-    createMatchActor,
+    readEffectLifecycle,
     spawnEffect,
     startEffect,
     readSnapshot,
 } from '../index';
-
-const createTestRng = () => ({
-    next: () => 0.5,
-    nextInt: (maxExclusive: number) => Math.min(maxExclusive - 1, 1),
-    fork: () => createTestRng(),
-});
-
-const makePorts = () => {
-    let counter = 0;
-    return {
-        rng: createTestRng(),
-        clock: {
-            now: () => '2026-01-01T00:00:00.000Z',
-        },
-        id: {
-            next: (prefix = 'id') => `${prefix}-${++counter}`,
-        },
-    };
-};
+import { createBootstrappedLocalActor } from './test-ports';
 
 describe('effect lifecycle skeleton', () => {
     it('tracks spawned, started, and completed effects with deterministic metadata', () => {
-        const actor = createMatchActor(
-            {
-                seed: 7,
-                mode: 'local',
-                flags: { roguelike: false, onlineAuthoritative: false, aiEnabled: false },
-            },
-            makePorts()
-        );
-
-        const bootstrapped = bootstrapMatch(actor, 'local', {
-            roguelike: false,
-            onlineAuthoritative: false,
-            aiEnabled: false,
-        });
-        expect(bootstrapped.ok).toBe(true);
-        if (!bootstrapped.ok) {
-            return;
-        }
+        const { actor } = createBootstrappedLocalActor(7);
 
         const spawned = spawnEffect(readSnapshot(actor), {
             effectId: 'effect-1',
@@ -83,7 +48,10 @@ describe('effect lifecycle skeleton', () => {
             sequence: 3,
         });
 
-        const completed = completeEffect(started.snapshot, spawned.actor, 'resolved');
+        const rehydratedRunningActor = createEffectLifecycleActor(started.effect);
+        expect(readEffectLifecycle(rehydratedRunningActor).effect.stage).toBe('running');
+
+        const completed = completeEffect(started.snapshot, rehydratedRunningActor, 'resolved');
         expect(completed.snapshot.activeEffects).toEqual([]);
         expect(completed.snapshot.eventLog.at(-1)).toMatchObject({
             type: 'effect.completed',

@@ -8,6 +8,8 @@ import type {
 } from '@gem-duel/contracts';
 import type { EnginePorts, IdPort } from '@gem-duel/core-engine';
 import { createDomainError } from '@gem-duel/domain';
+import { uniformInt } from 'pure-rand/distribution/uniformInt';
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 
 const hashNamespace = (value: string) => {
     let hash = 2166136261;
@@ -20,20 +22,17 @@ const hashNamespace = (value: string) => {
 
 export const createSeededRng = (seed: number, stream = 'root') => {
     const baseSeed = seed || 1;
-    let current = baseSeed;
+    const generator = xoroshiro128plus(baseSeed);
 
-    const next = () => {
-        current |= 0;
-        current = (current + 0x6d2b79f5) | 0;
-        let t = Math.imul(current ^ (current >>> 15), 1 | current);
-        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
+    const next = () => (generator.next() >>> 0) / 4294967296;
 
     return {
         next,
         nextInt(maxExclusive: number) {
-            return Math.floor(next() * maxExclusive);
+            if (maxExclusive <= 1) {
+                return 0;
+            }
+            return uniformInt(generator, 0, maxExclusive - 1);
         },
         fork(namespace: string) {
             return createSeededRng(

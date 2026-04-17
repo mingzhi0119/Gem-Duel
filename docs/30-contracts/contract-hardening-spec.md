@@ -45,6 +45,7 @@
     - `BEFORE_RUN_REWARD_SELECTION` / `AFTER_RUN_REWARD_SELECTION`
 - hook 处理采用顺序 pure reducer：前一个 hook 的输出作为后一个 hook 的输入；不引入隐式并行 merge。
 - `activeEffects` 是公开快照中的序列化生命周期视图，不是 live actor 引用。
+- Step 03 后，公开 snapshot phase 不再包含 `royalResolution`；Royal pending handoff 改由 `activeEffects` 与命令合法性共同表达。
 - effect lifecycle 事件集固定为 `effect.spawned`、`effect.started`、`effect.completed`，且 `effect.completed.outcome` 只允许 `resolved`、`skipped`、`cancelled`。
 
 ## 契约输出
@@ -52,6 +53,7 @@
 - HTTP 契约：通过 `@asteasolutions/zod-to-openapi` 生成 OpenAPI 3.1。
 - WebSocket / event 契约：采用 AsyncAPI 3.0 作为目标描述格式。
 - Replay 契约：权威 wire format 为 `MessagePack`，推荐实现库记录为 `msgpackr`；JSON 只作为调试/导出视图。
+- Step 03 的 replay build、stable hash projection 与 verify helper 固定由 `packages/core-engine` 输出；`packages/application` 不再拥有 `finalStateHash` 权威。
 - HTTP 错误表达：对齐 `RFC 9457 Problem Details for HTTP APIs`。
 - 运行时 root barrel `@gem-duel/contracts` 不得 re-export 文档生成或校验模块；OpenAPI / AsyncAPI 入口固定为 `@gem-duel/contracts/openapi` 与 `@gem-duel/contracts/asyncapi`，避免 Web/Client bundle 引入 Node-only 依赖。
 - 提交到仓库的生成产物固定为：
@@ -61,6 +63,7 @@
     - `packages/contracts/src/__fixtures__/openapi.expected.json`
     - `packages/contracts/src/__fixtures__/asyncapi.expected.yaml`
     - `packages/contracts/src/__fixtures__/replay/*.json`
+- repo 中提交的 replay fixtures / golden fixtures 是权威 replay bundle 的 JSON debug/export 视图，而不是对 `MessagePack` authority 的否定。
 - 生成命令：`pnpm contracts:generate`
 - 漂移校验命令：`pnpm contracts:verify`
 
@@ -147,6 +150,7 @@ This document defines the hardening path for `packages/contracts`. Contracts mus
     - `BEFORE_RUN_REWARD_SELECTION` / `AFTER_RUN_REWARD_SELECTION`
 - Hook processing uses sequential pure reducers: the output of hook N becomes the input of hook N+1, with no hidden parallel merge semantics.
 - `activeEffects` is the serialized lifecycle view exposed in public snapshots, not a live actor reference.
+- After Step 03, the public snapshot phase no longer includes `royalResolution`; pending royal handoff is represented through `activeEffects` plus command legality.
 - The effect lifecycle event set is fixed to `effect.spawned`, `effect.started`, and `effect.completed`, with `effect.completed.outcome` restricted to `resolved`, `skipped`, or `cancelled`.
 
 ## Contract Outputs
@@ -154,6 +158,7 @@ This document defines the hardening path for `packages/contracts`. Contracts mus
 - HTTP contracts: generate OpenAPI 3.1 through `@asteasolutions/zod-to-openapi`.
 - WebSocket / event contracts: use AsyncAPI 3.0 as the target description format.
 - Replay contracts: the authoritative wire format is `MessagePack`, with `msgpackr` recorded as the preferred implementation; JSON exists only for debug/export views.
+- Step 03 fixes replay build, stable hash projection, and verify helpers inside `packages/core-engine`; `packages/application` no longer owns `finalStateHash` authority.
 - HTTP error representation: align with `RFC 9457 Problem Details for HTTP APIs`.
 - The runtime root barrel `@gem-duel/contracts` must not re-export documentation generation or validation modules; OpenAPI / AsyncAPI entrypoints are fixed at `@gem-duel/contracts/openapi` and `@gem-duel/contracts/asyncapi` so Web/Client bundles do not pull in Node-only dependencies.
 - Generated artifacts committed to the repo are fixed at:
@@ -163,6 +168,7 @@ This document defines the hardening path for `packages/contracts`. Contracts mus
     - `packages/contracts/src/__fixtures__/openapi.expected.json`
     - `packages/contracts/src/__fixtures__/asyncapi.expected.yaml`
     - `packages/contracts/src/__fixtures__/replay/*.json`
+- Replay fixtures and repo golden fixtures remain JSON debug/export views of the authoritative replay bundle rather than a replacement for `MessagePack` authority.
 - Generation command: `pnpm contracts:generate`
 - Drift verification command: `pnpm contracts:verify`
 
