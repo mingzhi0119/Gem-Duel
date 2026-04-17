@@ -164,10 +164,11 @@
 
 #### Phase 2.5 - `packages/ui` 布局、Design Tokens 与 Visual Harness
 
-状态：`In Progress`（2026-04-17）。日志：
+状态：`Completed`（2026-04-17）。日志：
 
 - [`logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md`](./logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md)
 - [`logs/phase-2.5-ui-layout-and-visual-harness-wave-1.md`](./logs/phase-2.5-ui-layout-and-visual-harness-wave-1.md)
+- [`logs/phase-2.5-visual-harness-completion.md`](./logs/phase-2.5-visual-harness-completion.md)
 
 治理主文档：[`phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md)
 
@@ -185,6 +186,11 @@
     - `packages/ui` 已拆出 `board/`、`drawer/`、`hud/`、`primitives/`、`styles/`、`tables/`、`views/`；
     - shared shell / token 样式已从 `apps/web/app/globals.css` 收回到 `@gem-duel/ui/styles.css`；
     - `/playground` 静态 fixture 页面已落地，可在不启动 live session 的情况下渲染 package-owned scene scaffold。
+- 本阶段现已补齐的收口结果：
+    - `packages/ui` 现已通过 `PlaygroundSceneFrame` + 扩展后的 `BoardSceneScaffold` 承载 board / market / player-zone / prompt / run 数据的静态组合场景；
+    - `/playground/*` 已扩成多 scene visual harness，而不是单页 fixture；
+    - `pnpm check-visual` 已接线为 Playwright screenshot baseline guardrail，基线场景现覆盖 `classic-selection`、`spectator-resync`、`run-sidecar`、`terminal-victory`；
+    - Playwright 临时运行输出已固定到已 ignore 的 `tmp/playwright/test-results`，不会把视觉校验漂移带入提交边界。
 
 完成标准：
 

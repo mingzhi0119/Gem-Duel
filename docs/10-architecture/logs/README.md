@@ -17,6 +17,7 @@
 - [`phase-2-pending-selection-wave-2.md`](./phase-2-pending-selection-wave-2.md): Phase 2 第二轮落地日志，记录引擎拥有的 pending-selection command/snapshot/projection surface
 - [`phase-2.5-ui-layout-and-visual-harness-kickoff.md`](./phase-2.5-ui-layout-and-visual-harness-kickoff.md): Phase 2.5 启动日志，确认 `packages/ui` layout、tokens 与 visual harness 的治理入口
 - [`phase-2.5-ui-layout-and-visual-harness-wave-1.md`](./phase-2.5-ui-layout-and-visual-harness-wave-1.md): Phase 2.5 第一轮落地日志，记录 `packages/ui` 目录拆分、shared-style ownership 与 `/playground` 基线
+- [`phase-2.5-visual-harness-completion.md`](./phase-2.5-visual-harness-completion.md): Phase 2.5 完成日志，记录多 scene playground、`pnpm check-visual` 与 committed screenshot baselines
 
 ## EN
 
@@ -35,3 +36,4 @@ This directory stores landing logs for phases tracked in `docs/10-architecture/f
 - [`phase-2-pending-selection-wave-2.md`](./phase-2-pending-selection-wave-2.md): Phase 2 second landing wave for the engine-owned pending-selection command/snapshot/projection surface
 - [`phase-2.5-ui-layout-and-visual-harness-kickoff.md`](./phase-2.5-ui-layout-and-visual-harness-kickoff.md): Phase 2.5 kickoff log for `packages/ui` layout, tokens, and the visual harness
 - [`phase-2.5-ui-layout-and-visual-harness-wave-1.md`](./phase-2.5-ui-layout-and-visual-harness-wave-1.md): Phase 2.5 first landing wave for the `packages/ui` layout split, shared-style ownership, and `/playground` baseline
+- [`phase-2.5-visual-harness-completion.md`](./phase-2.5-visual-harness-completion.md): Phase 2.5 completion log for the multi-scene playground, `pnpm check-visual`, and committed screenshot baselines

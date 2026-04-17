@@ -12,6 +12,7 @@
         "check-commit": "node ./tools/check-commit.mjs",
         "check-contracts": "corepack pnpm contracts:verify && corepack pnpm --filter @gem-duel/contracts test",
         "check-deps": "depcruise --config .dependency-cruiser.cjs apps packages tools",
+        "check-visual": "node ./tools/check-visual.mjs",
         "contracts:generate": "corepack pnpm --filter @gem-duel/contracts generate",
         "contracts:verify": "corepack pnpm --filter @gem-duel/contracts verify:generated",
         "dev": "node ./tools/run-turbo.mjs run dev --parallel",
@@ -35,6 +36,7 @@
         ]
     },
     "devDependencies": {
+        "@playwright/test": "^1.51.1",
         "@eslint/js": "^9.38.0",
         "@fast-check/vitest": "^0.3.0",
         "@types/node": "^24.6.0",

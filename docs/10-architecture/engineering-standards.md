@@ -57,6 +57,7 @@
 - 当前 `pnpm check-commit` + `.husky/pre-push` 已覆盖至少两项：
     - commit / PR 前除 staged set 外不得有额外未提交残留，push 前工作树必须完全 clean；
     - 已知 drift-prone 生成步骤不得把非真相源文件写回受跟踪路径。
+- `pnpm check-visual` 的运行输出必须写入已 ignore 的临时路径；当前 Playwright output 已固定到 `tmp/playwright/test-results`，而提交真相面只包含 `apps/web/tests/visual/*.spec.ts` 与 committed screenshot baselines。
 - 后续可继续扩展 `pnpm check-commit`，例如覆盖更多 drift-prone tracked files 或按包分层的生成产物约束。
 
 ### 文档与命名规范
@@ -87,6 +88,7 @@
 - core-engine/domain 的纯度由 ESLint restricted rules 落地，必要时补 `Semgrep`。
 - 契约层由 `zod`、OpenAPI 3.1、AsyncAPI 3.0、generated drift checks 与 fixture tests 收紧。
 - replay 与确定性计划以 namespaced RNG、`MessagePack`、golden replays 与性质测试收紧。
+- Phase 2.5 的视觉基线由 `pnpm check-visual` 收紧；当前实现使用 Playwright 对 `/playground/*` 场景做 screenshot compare，并把临时运行输出导向 `tmp/`。
 
 ## EN
 

@@ -6,3 +6,4 @@ export { TurnHud } from './hud/turn-hud';
 export { SidecarDrawer } from './drawer/sidecar-drawer';
 export { RoomTable } from './tables/room-table';
 export { MatchView } from './views/match-view';
+export { PlaygroundSceneFrame } from './playground/scene-frame';

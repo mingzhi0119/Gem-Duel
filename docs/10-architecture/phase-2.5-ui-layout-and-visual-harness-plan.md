@@ -37,6 +37,22 @@ packages/ui/src/
 3. 再建立静态 playground / fixture scene。
 4. 最后引入 screenshot baseline 与 `check-visual` 草案。
 
+### 本阶段收口决策
+
+- visual harness 采用 `apps/web/app/playground/*` 作为静态场景入口，而不是先接入 Storybook/Ladle。
+- playground 至少要覆盖：
+    - classic player turn / pending selection
+    - spectator / waiting or resync style state
+    - run-sidecar or prompt-heavy state
+    - terminal / completed state
+- `check-visual` 采用 Playwright screenshot baseline，先对 playground 场景做截图，不等待 Phase 3 完整盘面 renderer。
+- `check-visual` 由仓库级脚本负责启动 `apps/web`、等待 `/playground` 可访问、再执行 screenshot compare；这样 shell/workspace 不需要各自重复接线。
+- Playwright 的临时运行输出固定写入已 ignore 的 `tmp/playwright/test-results`；受版本控制的真相面只包含 spec 文件与 committed baselines。
+- Phase 2.5 完成时，roadmap 与 phase log 必须明确：
+    - visual baseline 已开始建立；
+    - `packages/ui` 已能在静态 fixture 下承载 Phase 3 primitives；
+    - Phase 3 仍需补 full-board primitives 本身，不能把 visual harness completion 误读为 full-board renderer completion。
+
 ### 非目标
 
 - 不在本阶段完成 full-board renderer。
@@ -79,6 +95,22 @@ packages/ui/src/
 2. Move current `gd-*` shared-shell styling ownership next.
 3. Add the static playground / fixture-scene surface next.
 4. Add the screenshot baseline and `check-visual` draft last.
+
+### Closure Decisions For This Phase
+
+- The visual harness uses `apps/web/app/playground/*` as the static-scene surface rather than introducing Storybook/Ladle first.
+- The playground must cover at least:
+    - a classic player-turn / pending-selection scene
+    - a spectator / waiting or resync-flavored scene
+    - a run-sidecar or prompt-heavy scene
+    - a terminal / completed scene
+- `check-visual` uses a Playwright screenshot baseline against those playground scenes without waiting for the finished Phase 3 board renderer.
+- The repo-level `check-visual` script owns starting `apps/web`, waiting for `/playground`, and running screenshot comparison so shells do not need duplicate wiring.
+- Playwright's temporary run output is fixed to the ignored `tmp/playwright/test-results` path; the versioned truth surface contains only the specs and committed baselines.
+- When Phase 2.5 closes, the roadmap and phase log must explicitly say:
+    - the visual baseline has started;
+    - `packages/ui` is now a viable host for Phase 3 primitives under static fixtures;
+    - Phase 3 still owns the full-board primitives themselves and is not implicitly complete.
 
 ### Non-Goals
 

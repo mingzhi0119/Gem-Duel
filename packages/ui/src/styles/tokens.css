@@ -13,4 +13,11 @@
     --gd-shadow: 0 18px 50px rgba(68, 78, 96, 0.08);
     --gd-radius-panel: 20px;
     --gd-radius-pill: 999px;
+    --gd-gem-blue: #2f74b5;
+    --gd-gem-white: #f7f4e8;
+    --gd-gem-green: #1b7f5b;
+    --gd-gem-black: #2d3748;
+    --gd-gem-red: #b63c3c;
+    --gd-gem-pearl: #ceb9db;
+    --gd-gem-gold: #d6a329;
 }

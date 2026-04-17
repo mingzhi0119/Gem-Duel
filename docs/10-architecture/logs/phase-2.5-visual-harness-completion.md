@@ -1,0 +1,135 @@
+# Phase 2.5 Log - Visual Harness Completion
+
+## ZH
+
+- 日期：2026-04-17
+- Phase：Phase 2.5
+- 状态：完成
+- 范围：把 `packages/ui` 的静态场景宿主、shared-style ownership 与 screenshot baseline 一起收口到可进入 Phase 3 的状态。
+- 本次完成结果：
+    - `packages/ui` 已新增 `playground/scene-frame.tsx`，并把 `BoardSceneScaffold` 扩成静态 full-board scene host，可同时承载：
+        - board cells
+        - market slots
+        - player zones
+        - royal offers
+        - prompt stack
+        - selection draft
+        - run panel 摘要
+    - `apps/web/app/playground/*` 已从单页 fixture 扩成多 scene visual harness：
+        - `classic-selection`
+        - `spectator-resync`
+        - `run-sidecar`
+        - `terminal-victory`
+    - `pnpm check-visual` 已落地，当前实现会：
+        - 构建 `apps/web`
+        - 启动本地 `next start`
+        - 等待 `/playground`
+        - 运行 Playwright screenshot compare
+    - 第一轮 committed screenshot baselines 已入库，位置为：
+        - `apps/web/tests/visual/playground.spec.ts`
+        - `apps/web/tests/visual/playground.spec.ts-snapshots/*.png`
+    - Playwright 运行期输出已改写到已 ignore 的 `tmp/playwright/test-results`，避免视觉校验制造 worktree 漂移。
+- 对 Phase 3 的直接前置价值：
+    - Phase 3 现在可以直接把 `BoardGrid`、`MarketStack`、`PlayerZone`、`PromptBanner` 等 primitives 填进既有 scene host；
+    - 不再需要额外搭建样机路由、截图入口或 shared-style ownership。
+- 当前明确非目标：
+    - 本次没有把 `/play/local` 切为 full-board 默认入口；
+    - 本次没有完成真实产品盘面 renderer；
+    - spectator / resync 的语义门禁仍由 Phase 6 测试收口。
+- 涉及文件：
+    - `packages/ui/src/board/board-scaffold.tsx`
+    - `packages/ui/src/playground/scene-frame.tsx`
+    - `packages/ui/src/styles/tokens.css`
+    - `packages/ui/src/styles/shell.css`
+    - `packages/ui/src/index.tsx`
+    - `apps/web/app/playground/page.tsx`
+    - `apps/web/app/playground/[sceneId]/page.tsx`
+    - `apps/web/app/playground/scene-fixtures.tsx`
+    - `apps/web/tests/visual/playground.spec.ts`
+    - `apps/web/tests/visual/playground.spec.ts-snapshots/*.png`
+    - `playwright.config.ts`
+    - `tools/check-visual.mjs`
+    - `package.json`
+    - `pnpm-lock.yaml`
+    - `AGENTS.md`
+    - `docs/10-architecture/engineering-standards.md`
+    - `docs/10-architecture/agent-guardrails-matrix.md`
+    - `docs/10-architecture/phase-2.5-ui-layout-and-visual-harness-plan.md`
+    - `docs/10-architecture/full-board-ui-roadmap.md`
+- 验证：
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `pnpm check-visual`
+    - `git restore -- apps/web/next-env.d.ts`
+
+## EN
+
+- Date: 2026-04-17
+- Phase: Phase 2.5
+- Status: Completed
+- Scope: close the `packages/ui` static-scene host, shared-style ownership, and screenshot baseline so Phase 3 can start on top of a stable harness.
+- Completed results:
+    - `packages/ui` now adds `playground/scene-frame.tsx`, and `BoardSceneScaffold` now acts as a static full-board scene host that can carry:
+        - board cells
+        - market slots
+        - player zones
+        - royal offers
+        - prompt stack
+        - selection draft
+        - run panel summaries
+    - `apps/web/app/playground/*` has expanded from a single fixture page into a multi-scene visual harness:
+        - `classic-selection`
+        - `spectator-resync`
+        - `run-sidecar`
+        - `terminal-victory`
+    - `pnpm check-visual` is now wired. The current implementation:
+        - builds `apps/web`
+        - starts a local `next start`
+        - waits for `/playground`
+        - runs a Playwright screenshot comparison
+    - The first committed screenshot baselines now live in:
+        - `apps/web/tests/visual/playground.spec.ts`
+        - `apps/web/tests/visual/playground.spec.ts-snapshots/*.png`
+    - Playwright runtime output now writes into the ignored `tmp/playwright/test-results` path so visual checks do not create worktree drift.
+- Direct prerequisite value for Phase 3:
+    - Phase 3 can now drop `BoardGrid`, `MarketStack`, `PlayerZone`, `PromptBanner`, and other primitives into an existing scene host;
+    - no additional mock route, screenshot entrypoint, or shared-style ownership work is required first.
+- Explicit non-goals:
+    - this change does not switch `/play/local` to the full-board default;
+    - this change does not complete the real product board renderer;
+    - semantic spectator / resync gates still belong to Phase 6 testing.
+- Touched files:
+    - `packages/ui/src/board/board-scaffold.tsx`
+    - `packages/ui/src/playground/scene-frame.tsx`
+    - `packages/ui/src/styles/tokens.css`
+    - `packages/ui/src/styles/shell.css`
+    - `packages/ui/src/index.tsx`
+    - `apps/web/app/playground/page.tsx`
+    - `apps/web/app/playground/[sceneId]/page.tsx`
+    - `apps/web/app/playground/scene-fixtures.tsx`
+    - `apps/web/tests/visual/playground.spec.ts`
+    - `apps/web/tests/visual/playground.spec.ts-snapshots/*.png`
+    - `playwright.config.ts`
+    - `tools/check-visual.mjs`
+    - `package.json`
+    - `pnpm-lock.yaml`
+    - `AGENTS.md`
+    - `docs/10-architecture/engineering-standards.md`
+    - `docs/10-architecture/agent-guardrails-matrix.md`
+    - `docs/10-architecture/phase-2.5-ui-layout-and-visual-harness-plan.md`
+    - `docs/10-architecture/full-board-ui-roadmap.md`
+- Validation:
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `pnpm check-visual`
+    - `git restore -- apps/web/next-env.d.ts`
