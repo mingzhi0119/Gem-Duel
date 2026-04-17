@@ -8,7 +8,8 @@
     "dependencies": {
         "@gem-duel/contracts": "workspace:*",
         "@gem-duel/core-engine": "workspace:*",
-        "@gem-duel/domain": "workspace:*"
+        "@gem-duel/domain": "workspace:*",
+        "pure-rand": "^8.4.0"
     },
     "scripts": {
         "build": "tsc -p tsconfig.json",

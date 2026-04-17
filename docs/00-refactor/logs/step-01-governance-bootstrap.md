@@ -211,3 +211,37 @@
     - Future skill additions must keep the tracker mapping current or the governance layer will drift
 - Next step: enter `Step 02` and turn the documented contract, phase, replay, and Buff workflows into executable repo guardrails
 - Commit reference: `docs(governance): add project-local skills for refactor workflows`
+
+### Additional Entry: 2026-04-17 (Step 02 Readiness Cleanup)
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 01
+- Goal: align the scaffold, engine, and repo layout with the frozen Step 02 documentation before Step 02 officially starts.
+- Actual changes:
+    - Realigned `packages/contracts` with the documented Step 02 vocabulary by adding snapshot tiers, replay metadata, effect primitives, seq/idempotency envelopes, and projection helpers
+    - Realigned `packages/domain` with frozen rebuild concepts such as `MatchState`, `RunState`, `MetaState`, namespaced RNG streams, pending effects, and hidden authoritative state
+    - Updated the engine/application/room-service scaffold so replay bundles include `engineVersion`, `commands[]`, and `finalStateHash`, while room-service now emits visible snapshots plus seq/resync/idempotency placeholders
+    - Generalized UI snapshot rendering to accept authoritative, player, and spectator snapshots
+    - Removed generated build outputs and caches so the repository returns to source-only truth before Step 02 implementation work begins
+- Touched paths:
+    - `packages/domain/src/index.ts`
+    - `packages/contracts/src/index.ts`
+    - `packages/contracts/src/__tests__/schemas.test.ts`
+    - `packages/core-engine/src/index.ts`
+    - `packages/core-engine/src/__tests__/engine.test.ts`
+    - `packages/application/src/index.ts`
+    - `packages/adapters/src/index.ts`
+    - `packages/ui/src/index.tsx`
+    - `apps/room-service/src/index.ts`
+    - `apps/room-service/package.json`
+- Key decisions:
+    - Treat the current engine snapshot as the authoritative tier and derive player/spectator snapshots through explicit projection helpers
+    - Add namespaced RNG support and replay hashing to the scaffold now, even though full Step 02 enforcement and Step 03 actorization are still pending
+    - Keep room-service as a thin wrapper around shared application/core-engine code instead of introducing any server-only rule fork
+    - Delete local build artifacts (`dist`, `.turbo`, `.next`, package-local `.vite` caches) after verification so the repo stays clean for Step 02
+- Risks / blockers:
+    - The repo is ready to enter Step 02, but mechanical guardrails such as dependency-cruiser, boundaries linting, contract snapshots, and AsyncAPI generation are still not wired
+    - The state machine is still the pre-Step-03 skeleton; actor-based effect execution remains future work
+- Next step: start `Step 02` by wiring the executable guardrails around the newly aligned contract and domain skeleton
+- Commit reference: pending current cleanup commit

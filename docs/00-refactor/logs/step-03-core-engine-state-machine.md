@@ -1,0 +1,89 @@
+# Step 03 Log - Core-Engine State Machine Hardening
+
+## ZH
+
+- 日期：2026-04-17
+- 作者：Codex
+- Step ID：Step 03
+- 本步目标：围绕 Step 02 / 02.5 已冻结的 contracts、phase vocabulary 与 effect lifecycle，收紧 core-engine 状态机、Royal actor handoff、replay/hash ownership、golden replay regression 与性质测试。
+- 实际改动内容：
+    - 先更新 tracker、Step log、ADR、contract migration note 与 determinism / contract governance 文档，再落地 Step 03 的跨边界语义变化。
+    - 从 `packages/domain` 与 `packages/contracts` 的公开 `GamePhase` surface 中移除 `royalResolution`，将 `SCHEMA_VERSION` 升级为 `4.0.0`、`ENGINE_VERSION` 升级为 `2026.04-step3`，并重生成 OpenAPI / AsyncAPI artifacts 与 committed fixtures，顺带收口既有 OpenAPI drift。
+    - 在 `packages/core-engine/src/runtime.ts` 中拆出新的引擎运行时，使用 public phase + `activeEffects` 共同决定命令合法性；`BEGIN_ROYAL_RESOLUTION` 不再切换公开 phase，而是创建并启动 `gain_royal` effect actor，`SELECT_ROYAL` 仅在对应 Royal effect 处于 active 时合法。
+    - 在 `packages/core-engine/src/replay.ts` 中新增 replay helper，集中维护稳定 snapshot 投影、确定性 `finalStateHash`、replay bundle 组装、重放执行与 replay verify；`packages/application` 改为直接消费这些 engine-owned helper，不再本地计算哈希。
+    - 将 seeded RNG adapter 切换为 `pure-rand`，保留 `fork(namespace)` 接口，并在 Royal effect / replay 路径真正消费 namespaced fork。
+    - 新增 Step 03 golden replay `packages/core-engine/__replays__/golden/royal-handoff.step03.json`，补齐 state-machine / replay / property tests，覆盖 Royal handoff、typed guard、deterministic hash 与 golden regression。
+- 涉及路径：
+    - `.codex/skills/add-phase-transition/references/`
+    - `docs/00-refactor/`
+    - `docs/20-domain/`
+    - `docs/30-contracts/`
+    - `docs/90-adr/`
+    - `packages/domain/`
+    - `packages/contracts/`
+    - `packages/core-engine/`
+    - `packages/application/`
+    - `packages/adapters/`
+    - `package.json`
+    - `pnpm-lock.yaml`
+- 关键决策：
+    - `royalResolution` 从公开 `GamePhase` surface 移除，Royal 交接改走 `activeEffects`
+    - `finalStateHash`、replay build/verify 与稳定 hash helper 收拢到 `packages/core-engine`
+    - repo 中的 golden replay fixture 继续以 JSON debug/export view 形式保存，但其语义来源是权威 replay bundle
+    - Step 03 只硬化 skeleton state machine；经典规则细节仍留给 Step 04
+- 风险/阻塞：
+    - 无新增阻塞；唯一明确留存的边界是 Royal 仍为 skeleton actor handoff，完整经典规则语义继续在 Step 04 迁入
+- 验证：
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+- 下一步：进入 Step 04 前，仅需围绕经典规则迁移继续扩展 actor skeleton；Step 03 已完成验收
+- 对应 Commit：待补
+
+## EN
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 03
+- Goal: harden the core-engine state machine around the Step 02 / 02.5 frozen contracts, phase vocabulary, and effect lifecycle by tightening royal actor handoff, replay/hash ownership, golden replay regression, and property tests.
+- Actual changes:
+    - Updated the tracker, Step log, ADR, contract migration note, and determinism / contract governance docs before landing the Step 03 cross-boundary behavior changes.
+    - Removed `royalResolution` from the public `GamePhase` surface in `packages/domain` and `packages/contracts`, bumped `SCHEMA_VERSION` to `4.0.0` and `ENGINE_VERSION` to `2026.04-step3`, and regenerated the OpenAPI / AsyncAPI artifacts plus committed fixtures while absorbing the pre-existing OpenAPI drift.
+    - Split the runtime into `packages/core-engine/src/runtime.ts` and replaced the flat phase table with guard logic driven by the public phase plus `activeEffects`; `BEGIN_ROYAL_RESOLUTION` now spawns and starts a `gain_royal` effect actor instead of entering a public phase, and `SELECT_ROYAL` is only legal while that royal effect is active.
+    - Added `packages/core-engine/src/replay.ts` so replay hashing, stable snapshot projection, replay bundle assembly, replay execution, and replay verification all live beside the engine; `packages/application` now consumes those engine-owned helpers instead of computing hashes locally.
+    - Switched the seeded RNG adapter to `pure-rand`, kept the `fork(namespace)` interface, and exercised namespaced forks on the royal effect and replay paths.
+    - Added the Step 03 golden replay at `packages/core-engine/__replays__/golden/royal-handoff.step03.json` and new state-machine, replay, and property tests covering royal handoff, typed guards, deterministic hashes, and golden replay regression.
+- Touched paths:
+    - `.codex/skills/add-phase-transition/references/`
+    - `docs/00-refactor/`
+    - `docs/20-domain/`
+    - `docs/30-contracts/`
+    - `docs/90-adr/`
+    - `packages/domain/`
+    - `packages/contracts/`
+    - `packages/core-engine/`
+    - `packages/application/`
+    - `packages/adapters/`
+    - `package.json`
+    - `pnpm-lock.yaml`
+- Key decisions:
+    - `royalResolution` leaves the public `GamePhase` surface and royal handoff moves through `activeEffects`
+    - `finalStateHash`, replay build/verify, and stable hash helpers move beside `packages/core-engine`
+    - Repository golden replays remain JSON debug/export views, but they describe the authoritative replay bundle semantics
+    - Step 03 hardens only the skeleton state machine; full classic-rule semantics remain in Step 04
+- Risks / blockers:
+    - No active blocker remains; the only explicit deferred boundary is that royal handling still represents a skeleton actor handoff and full classic-rule semantics move to Step 04
+- Validation:
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+- Next step: move on to Step 04 for classic-rule migration while keeping the Step 03 actor skeleton intact; Step 03 acceptance is complete
+- Commit reference: pending

@@ -8,6 +8,11 @@
         "node": ">=22.0.0"
     },
     "scripts": {
+        "check-boundaries": "eslint . --ext .ts,.tsx,.mts,.cts --max-warnings 0",
+        "check-contracts": "corepack pnpm contracts:verify && corepack pnpm --filter @gem-duel/contracts test",
+        "check-deps": "depcruise --config .dependency-cruiser.cjs apps packages tools",
+        "contracts:generate": "corepack pnpm --filter @gem-duel/contracts generate",
+        "contracts:verify": "corepack pnpm --filter @gem-duel/contracts verify:generated",
         "dev": "node ./tools/run-turbo.mjs run dev --parallel",
         "dev:web": "corepack pnpm --filter @gem-duel/web dev",
         "dev:room": "corepack pnpm --filter @gem-duel/room-service dev",
@@ -21,7 +26,7 @@
         "typecheck": "node ./tools/run-turbo.mjs run typecheck",
         "format": "prettier --write .",
         "prepare": "husky",
-        "legacy:notes": "node -e \"console.log('Legacy Vite/Electron source lives in ./old/legacy-vite-electron and is read-only reference during the greenfield rebuild.')\""
+        "legacy:notes": "node -e \"console.log('Legacy extracts now live in ./docs/99-legacy and deeper archaeology should use git history rather than a live legacy source tree.')\""
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx,mjs,cjs,json,md,css}": [
@@ -30,11 +35,15 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.38.0",
+        "@fast-check/vitest": "^0.3.0",
         "@types/node": "^24.6.0",
         "@types/react": "^19.2.2",
         "@types/react-dom": "^19.2.2",
+        "dependency-cruiser": "^17.3.10",
         "eslint": "^9.38.0",
+        "eslint-plugin-boundaries": "^6.0.2",
         "eslint-plugin-react-hooks": "^5.2.0",
+        "fast-check": "^4.7.0",
         "globals": "^16.4.0",
         "husky": "^9.1.7",
         "lint-staged": "^16.2.0",

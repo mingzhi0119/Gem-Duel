@@ -1,0 +1,97 @@
+# Step 07 Log - Replay / AI / Buff Migration
+
+## ZH
+
+- 日期：2026-04-17
+- 作者：Codex
+- Step ID：Step 07
+- 本步目标：在 Step 02.5 已冻结的 effect/hook vocabulary 之上，补齐本地 / AI Roguelike vertical slice，包括 replay 浏览、AI strategy harness、starter Buff registry，以及最小可跑通的 Run/Meta 状态闭环。
+- 实施顺序：
+    - 先补 tracker、Step log、Step 07 contract migration note 与 legacy clean-room extraction notes；
+    - 再扩 `packages/contracts` / `packages/domain` 的 run / buff / snapshot surface；
+    - 然后把 deterministic run helpers、starter Buff hook 执行、AI 候选评分和 replay inspector 落入 `packages/core-engine` 与 `packages/application`；
+    - 最后接 Web / Desktop 共享入口、golden replay、测试与全量验收。
+- 当前状态：已完成。
+- 关键前置：
+    - Step 04 已封口 classic rules，Step 05 已封口 room-service authority，Step 06 已把 Web / Desktop 收敛到 shared application/ui boundary。
+    - Step 07 可以扩 snapshot / replay / run contracts，但必须保持 `room-service` 在线协议不新增 message family。
+- 风险/边界：
+    - 禁止回改 Step 02.5 已冻结的 `EffectAtom`、`EffectHookPoint`、lifecycle event vocabulary。
+    - 禁止把 Buff / Run / AI 规则搬进 `apps/web`、`apps/desktop`、`packages/ui` 或 `apps/room-service`。
+    - AI trace 只允许出现在本地 dev shell / replay inspector，不进入在线 payload 或 replay wire shape。
+- 目标落点：
+    - `packages/domain`：starter Buff catalog、Run/Meta 类型与 starter unlock pool。
+    - `packages/contracts`：`run` contract surface、`runContext` snapshot 扩展、regenerated OpenAPI / AsyncAPI / fixtures。
+    - `packages/core-engine`：run helpers、starter Buff hook 执行、hash/replay coverage。
+    - `packages/application`：`createRunSession()`、AI strategy harness、replay inspector。
+    - `apps/web` / `packages/ui`：Roguelike 入口、AI trace panel、interactive replay browsing。
+- 完成结果：
+    - `packages/domain` 已落地 5 个 starter Buff catalog、starter unlock pool、`RunState` / `MetaState` / `RunContext` 类型与默认 meta helpers。
+    - `packages/contracts` 已新增 `run` contract surface，并把 `runContext` 接入 snapshot-bearing surfaces、fixtures、OpenAPI 与 AsyncAPI。
+    - `packages/core-engine` 已补齐 deterministic run helpers、starter Buff runtime、buff-aware gem cap / privilege / reserved-buy 调整，以及 replay hash 对 buff runtime state 的覆盖。
+    - `packages/application` 已新增 `createRunSession()`、deterministic AI strategy harness、interactive replay inspector model，并保持 AI trace 仅在本地壳层暴露。
+    - `apps/web` / `packages/ui` 已接好 Roguelike 入口、AI trace panel 与 replay inspector；`room-service` 仍保持 classic-only protocol family。
+- Golden replay：
+    - `privilege-favor-setup.step07.json`
+    - `down-payment-reserve-buy.step07.json`
+    - `extortion-second-replenish.step07.json`
+    - `double-agent-privilege-double.step07.json`
+    - `deep-pockets-threshold.step07.json`
+- 验收：
+    - `pnpm contracts:generate`
+    - `pnpm contracts:verify`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+
+## EN
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 07
+- Goal: build a local / AI roguelike vertical slice on top of the Step 02.5 frozen effect/hook vocabulary, including replay browsing, an AI strategy harness, a starter Buff registry, and a minimal Run/Meta loop.
+- Execution order:
+    - first land the tracker, Step log, Step 07 contract migration note, and the clean-room legacy extraction notes;
+    - then extend `packages/contracts` / `packages/domain` with the run / buff / snapshot surface;
+    - then land deterministic run helpers, starter Buff hook execution, AI candidate scoring, and the replay inspector in `packages/core-engine` and `packages/application`;
+    - finally wire the shared Web / Desktop entrypoints, golden replays, tests, and full acceptance validation.
+- Current status: completed.
+- Key preconditions:
+    - Step 04 sealed the classic rules, Step 05 sealed the room-service authority layer, and Step 06 converged Web / Desktop onto the shared application/ui boundary.
+    - Step 07 may expand snapshot / replay / run contracts, but it must keep the room-service online protocol stable without adding a new message family.
+- Risks / boundaries:
+    - Do not revisit the Step 02.5-frozen `EffectAtom`, `EffectHookPoint`, or lifecycle event vocabulary.
+    - Do not move Buff / Run / AI gameplay logic into `apps/web`, `apps/desktop`, `packages/ui`, or `apps/room-service`.
+    - AI traces may surface only in local dev shells / replay inspection and may not enter online payloads or the replay wire shape.
+- Target landing areas:
+    - `packages/domain`: starter Buff catalog, Run/Meta types, and the starter unlock pool.
+    - `packages/contracts`: the `run` contract surface, the `runContext` snapshot expansion, and regenerated OpenAPI / AsyncAPI / fixtures.
+    - `packages/core-engine`: run helpers, starter Buff hook execution, and hash/replay coverage.
+    - `packages/application`: `createRunSession()`, the AI strategy harness, and the replay inspector.
+    - `apps/web` / `packages/ui`: the roguelike entrypoint, AI trace panel, and interactive replay browsing.
+- Completion outcome:
+    - `packages/domain` now carries the 5-entry starter Buff catalog, the starter unlock pool, and the concrete `RunState` / `MetaState` / `RunContext` types plus default meta helpers.
+    - `packages/contracts` now exposes the `run` contract surface and threads `runContext` through snapshot-bearing surfaces, fixtures, OpenAPI, and AsyncAPI artifacts.
+    - `packages/core-engine` now owns deterministic run helpers, starter Buff runtime execution, buff-aware gem-cap / privilege / reserved-buy adjustments, and replay hashing that includes buff runtime state.
+    - `packages/application` now provides `createRunSession()`, the deterministic AI strategy harness, and the interactive replay inspector model while keeping AI traces local-only.
+    - `apps/web` / `packages/ui` now expose the roguelike entrypoint, AI trace panel, and replay inspector, while `room-service` remains classic-only at the protocol-family level.
+- Golden replays:
+    - `privilege-favor-setup.step07.json`
+    - `down-payment-reserve-buy.step07.json`
+    - `extortion-second-replenish.step07.json`
+    - `double-agent-privilege-double.step07.json`
+    - `deep-pockets-threshold.step07.json`
+- Acceptance:
+    - `pnpm contracts:generate`
+    - `pnpm contracts:verify`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`

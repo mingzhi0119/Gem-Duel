@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { openApiDocument } from '@gem-duel/contracts';
+import { ENGINE_VERSION, SCHEMA_VERSION } from '@gem-duel/contracts';
 import { Section } from '@gem-duel/ui';
 
 export default function HomePage() {
@@ -17,15 +17,19 @@ export default function HomePage() {
                     <p className="gd-muted">EN</p>
                     <p>
                         The repo now runs on a monorepo layout with a deterministic engine, typed
-                        contracts, a Next.js shell, an Electron shell, and a Fastify room-service
-                        scaffold.
+                        contracts, a shared Web/Desktop shell boundary, and an authoritative
+                        room-service that can drive local, AI, online, and spectator flows through
+                        the same application-layer view models.
                     </p>
                     <div className="gd-action-list">
                         <Link className="gd-link" href="/play/local">
                             Launch Local Demo
                         </Link>
+                        <Link className="gd-link" href="/play/run">
+                            Launch Roguelike Run
+                        </Link>
                         <Link className="gd-link" href="/rooms">
-                            Inspect Room APIs
+                            Create or Join a Room
                         </Link>
                         <Link className="gd-link" href="/rulebook">
                             Read Rulebook Strategy
@@ -33,8 +37,13 @@ export default function HomePage() {
                     </div>
                 </div>
                 <div className="gd-panel">
-                    <p className="gd-muted">Public Surface</p>
-                    <pre>{JSON.stringify(openApiDocument.paths, null, 2)}</pre>
+                    <p className="gd-muted">Contract Surface</p>
+                    <p>Schema Version: {SCHEMA_VERSION}</p>
+                    <p>Engine Version: {ENGINE_VERSION}</p>
+                    <p>
+                        HTTP and WebSocket contract artifacts are generated into
+                        `packages/contracts/generated/` and validated during Step 02.
+                    </p>
                 </div>
             </section>
 
@@ -50,7 +59,7 @@ export default function HomePage() {
                     </div>
                     <div className="gd-card">
                         <strong>Legacy</strong>
-                        <span>Existing old/legacy-vite-electron remains read-only reference</span>
+                        <span>Legacy extracts now live in docs/99-legacy and git history</span>
                     </div>
                 </div>
             </Section>

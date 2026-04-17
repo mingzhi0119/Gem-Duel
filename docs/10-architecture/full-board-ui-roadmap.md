@@ -1,0 +1,589 @@
+# Full Board UI Audit and Roadmap
+
+## ZH
+
+### 文档定位
+
+本文是 Opus 4.7 严格审计后的 full-board UI 整改主文档，用来统一记录：
+
+- 当前“工程收口”与“产品完成”的边界；
+- 审计发现与风险归属；
+- 按 Phase 排序的整改路线图、前置门与完成标准；
+- 后续需要进入 code / contract / test 实施的具体落点。
+
+### 审计结论
+
+- Step 00-08 在工程边界上属于“强达成”：分层、contracts、determinism、room-service authority、replay 与 release gate 已经闭环。
+- 当前产品完成度仍属“弱达成”：默认玩家入口仍是 deterministic validation shell，不是完整盘面 UI。
+- 后续整改必须把“工程收口”与“玩家可用产品”分开治理；本路线图就是产品侧和 presentation/projection 侧的正式 backlog。
+
+### 当前基线
+
+- `packages/ui` 当前默认 `MatchView` 仍以 snapshot 摘要、action list、event log、replay inspector 为主。
+- `/play/local`、`/play/ai`、`/play/run`、`/rooms/[roomId]` 当前共享的是验证壳，不是完整产品盘面。
+- 当前壳适合：
+    - 校验 command legality；
+    - 验证 replay / hash / event sequencing；
+    - 调试 local / AI / run / room session 的状态推进。
+- 当前壳不适合：
+    - 让未读规则书的玩家独立完成一局；
+    - 作为 full-board product UI 的默认发布面；
+    - 作为 Desktop offline 分发已验证的依据。
+
+### 不变约束
+
+- `packages/ui` 只负责展示和交互回调，不承载规则、计分、Buff 或 authority 逻辑。
+- `packages/application` 继续作为 view-model projection 边界；若盘面 UI 缺字段，先扩 projection / contracts，再做 renderer。
+- `apps/web` 与 `apps/desktop` 只做壳层、路由、transport 和页面状态，不重算隐藏信息。
+- `apps/room-service` 继续只下发 viewer-filtered snapshot 与 application-projected actions。
+- 不引入第二套 desktop-specific gameplay renderer。
+- 不导回 legacy code；旧版只作为视觉/交互意图参考，来源限定为 `docs/99-legacy/` 与 git history。
+
+### 审计发现与 Phase 归属
+
+| Finding | 摘要                                                            | 严重度 | 主责 Phase | 次责 Phase |
+| ------- | --------------------------------------------------------------- | ------ | ---------- | ---------- |
+| F1      | `release-ready` 与“产品完成”口径混淆                            | 高     | Phase 0    | Phase 4    |
+| F2      | Desktop shared shell 断言过满，offline bundle 未验证            | 高     | Phase 0    | Phase 8    |
+| F3      | 枚举式 `UiActionDescriptor` 不适合多阶段盘面交互                | 高     | Phase 2    | Phase 4    |
+| F4      | `UiViewModel` 缺少盘面 presentation / viewer / session 状态字段 | 高     | Phase 2    | Phase 6    |
+| F5      | step log / tracker 缺 acceptance evidence，治理可信度不足       | 中高   | Phase 0    | 持续治理   |
+| F6      | `packages/application/src/index.ts` 巨文件阻碍扩展              | 中高   | Phase 1    | Phase 2    |
+| F7      | `packages/ui` 缺 layout、design tokens 与 visual harness        | 中     | Phase 2.5  | Phase 3    |
+| F8      | spectator / resync / out-of-turn 一致性缺测试门禁               | 中     | Phase 6    | Phase 2    |
+| F9      | 缺 classic local first 的玩家路径验收矩阵                       | 中     | Phase 4    | Phase 7    |
+| F10     | AI 策略与本地 session 绑定过紧，缺 parity/golden 约束           | 中低   | Phase 5    | Phase 1    |
+| F11     | 玩家首页仍暴露治理/调试口径与 schema 信息                       | 低     | Phase 0    | Phase 4    |
+
+### 按 Phase 排序的整改路线图
+
+#### Phase 0 - 口径降级、发布边界与审计证据
+
+目标：先修正认知风险，确保任何入口都不会把 Step 08 误读为产品 GA。
+
+覆盖发现：F1、F2、F5、F11。
+
+本阶段输出：
+
+- 在 tracker、release-prep、Step 06/08 log 与架构文档中明确：
+    - Step 00-08 = engineering closure；
+    - full-board product completion 另行追踪；
+    - Desktop offline 分发尚未验收；
+    - `v1.0.0+` 语义版本需等待 Phase 4，Desktop offline 需等待 Phase 8。
+- 在 step-log 规范中新增 acceptance evidence 要求：commit SHA、CI run id、golden replay hash 摘要或 validation-output 摘要。
+- 记录一个后续代码整改项：将 `apps/web/app/page.tsx` 的 hero / marketing copy 从“完整产品已就绪”降级为“deterministic validation shell + roadmap link”；本次 doc-only pass 不改代码，只在文档内确认为待办。
+
+完成标准：
+
+- 从 tracker、release-prep、Step 06/08 和 architecture 入口都能读到一致口径。
+- 审计读者不会再把 Step 08 视作产品发布完成。
+- 后续 step log 模板具备 acceptance evidence 字段。
+
+#### Phase 1 - Application / UI 仓库结构清理
+
+目标：在不改契约的前提下，先清出 projection 与 UI 扩展空间。
+
+覆盖发现：F6、F10。
+
+本阶段输出：
+
+- 把 `packages/application/src/index.ts` 按职责拆分为 sessions、view-model、ai、replay 等目录。
+- 把 `packages/ui` 建立基础目录结构与 barrel，而不是继续单文件堆叠。
+- 不改 behavior，不改 cross-boundary contract，只做 layout / ownership 清理。
+
+完成标准：
+
+- 无 contract drift。
+- `check-deps`、`check-boundaries`、`test`、`build` 仍通过。
+- 后续 Phase 2-6 的 PR 不再强依赖单个巨文件扩展。
+
+#### Phase 2 - 交互范式 ADR + `UiViewModel` 2.0 契约扩展
+
+目标：先决定“多选盘面交互怎么表达”，再做 board-facing projection。
+
+覆盖发现：F3、F4、F6。
+
+本阶段前置门：
+
+- 必须先写一份短 ADR，明确二选一：
+    - A. 把多位置选择统一成 effect-prompt / pending-selection 风格的原子化命令；
+    - B. 允许客户端维护 draft intent。
+- 默认推荐 A，因为它更贴近 Step 02.5 已冻结的 `activeEffects / effectPrompts` 语义，也更适合 online / spectator / replay 同步中间状态。
+
+本阶段输出：
+
+- 若走 A：新增 pending-selection 风格 command / phase surface，并通过 `contract-change` + `add-phase-transition` 流程治理。
+- `UiViewModelSchema` 至少补齐下列候选字段：
+    - `viewerRole`
+    - `seat`
+    - `sessionStatus`
+    - `boardCells[]`
+    - `marketSlots[]`
+    - `royalOffers[]`
+    - `promptStack[]`
+    - `selectionDraft?`
+    - `runPanel?`
+- `room-live-client` 等页面不得继续在页面层临时推导 `room.status` / viewer / selectable state。
+- spectator / replay / room filtering 语义必须一起进入 projection contract，而不是延后到页面实现时再补。
+
+完成标准：
+
+- 所有 board-facing 页面都能从同一套 projection 获取完整盘面数据。
+- UI renderer 不需要根据 phase 自己猜隐藏信息或合法交互。
+- migration note、fixtures、contract regen 与 property tests 同步更新。
+
+#### Phase 2.5 - `packages/ui` 布局、Design Tokens 与 Visual Harness
+
+目标：在真正做 full board renderer 前，先建立 UI primitives 的载体与视觉基线。
+
+覆盖发现：F7。
+
+本阶段输出：
+
+- `packages/ui/src/{primitives,board,hud,drawer,styles}/` 基础目录。
+- `tokens.css` / theme layer，把 `gd-*` 样式从 app-scope 收回到 `packages/ui`。
+- 静态渲染 playground 或 Storybook/Ladle 风格 visual harness。
+- screenshot baseline 机制与 `check-visual` 类门禁草案。
+
+完成标准：
+
+- `packages/ui` 可以脱离实际 engine session 渲染静态 full-board scene。
+- 视觉 token 与 shared primitives 不再依赖 `apps/web` 的页面级样式偶然成立。
+- 视觉回归基线从这里开始建立，而不是等到最后补。
+
+#### Phase 3 - Shared Board Primitives
+
+目标：建立完整盘面 UI 需要的共享 primitives 与 sidecar 组合。
+
+覆盖发现：F7。
+
+本阶段输出：
+
+- `BoardGrid`
+- `TokenCell`
+- `MarketStack`
+- `CardSlot`
+- `ReserveTray`
+- `RoyalCourt`
+- `PlayerZone`
+- `TurnHud`
+- `PromptBanner`
+- `SelectionOverlay`
+- `SidecarDrawer`
+- `ReplayDrawer`
+- `AiTraceDrawer`
+- `RunPanel`
+
+完成标准：
+
+- `packages/ui` 能独立渲染静态完整盘面。
+- shared UI 只依赖 contract-facing display model。
+- visual harness 与 screenshot baseline 可覆盖关键盘面 scene。
+
+#### Phase 4 - `/play/local` Full Board + Player Path Acceptance
+
+目标：先把 classic local board 做成真正可玩的默认入口。
+
+覆盖发现：F1、F3、F9、F11。
+
+本阶段输出：
+
+- `/play/local` 切到 full-board scene，旧调试壳只保留为 debug fallback。
+- 依据 Phase 2 的 ADR 接入多选/串联交互。
+- 把 hero / marketing copy 与默认入口行为一起降级到真实口径。
+- 新增 **Player Path Acceptance Matrix**，至少覆盖：
+    - 首回合取 3 枚连线宝石；
+    - 购买第一张 pyramid 卡；
+    - 使用 privilege 取 2 格；
+    - 保留第三层盲卡并拿 gold；
+    - 购买触发 take bonus token；
+    - 触发 gain royal；
+    - 胜利条件满足后 terminal overlay；
+    - debug fallback 可切回按钮壳。
+
+完成标准：
+
+- 玩家不读按钮列表也能完成 classic 核心流程。
+- Phase 4 完成前，不得把产品语义版本升级到 `v1.0.0+`。
+- Player Path Acceptance Matrix 具备 E2E 或明确人工验收脚本。
+
+#### Phase 5 - `/play/ai` 与 `/play/run` Parity
+
+目标：让 AI 与 run 路径共享主盘面，只把辅助信息放进 sidecar。
+
+覆盖发现：F10。
+
+本阶段输出：
+
+- `AiTraceDrawer` 与 `RunPanel` 接入 full-board scene。
+- AI 策略从 session glue 中拆出，形成可测试的 `ai/` surface。
+- 固定 seed 的 AI replay / finalStateHash 基线。
+
+完成标准：
+
+- local / AI / run 三条本地入口共享主盘面结构。
+- AI / run 的差异只体现在 sidecar，而不是第二套主布局。
+
+#### Phase 6 - `/rooms/[roomId]`、Spectator 与 Online 一致性门禁
+
+目标：把 online player / spectator / resync / disconnected / waiting 状态收拢到同一盘面体系，并补齐泄漏防线。
+
+覆盖发现：F4、F8。
+
+本阶段输出：
+
+- `room-live-client` 切换到 shared `BoardScene`。
+- `viewerRole='spectator'` 自动禁用交互。
+- property test：spectator DOM / serialized view model 不得泄漏 `hiddenState`、`deckOrder`、他方 reserve 牌面等信息。
+- resync / seq-gap / out-of-turn seat 的 Playwright 或等价集成测试。
+
+完成标准：
+
+- local / AI / run / online player / spectator 全部收敛到同一套盘面体系。
+- spectator visibility invariants 成为正式门禁，而不是人工约定。
+- room-service 仍只负责 filtered data，不承担 renderer-specific branching。
+
+#### Phase 7 - Replay、QA、A11y、Mobile 与 Product Finish
+
+目标：补齐 replay 盘面化、视觉回归、无障碍和小屏策略，完成产品级打磨。
+
+覆盖发现：F9。
+
+本阶段输出：
+
+- replay inspector 复用 full-board scene，支持 timeline、step forward/backward、hash badge。
+- 正式视觉回归基线、a11y 检查、键盘路径与 loading skeleton。
+- 小屏 / mobile 策略定稿。
+- i18n / UI 字符串外化。
+
+完成标准：
+
+- full-board UI 可玩、可回放、可验证、可访问。
+- 默认玩家入口不再暴露按钮列表壳。
+
+#### Phase 8 - Desktop Offline Packaging Validation
+
+目标：最后单列验证 Desktop 是否真的能消费 shared shell 并独立分发。
+
+覆盖发现：F2。
+
+本阶段输出：
+
+- Desktop runtime 与 Web shell 的真实装配方案定稿：`next start` child process、受限 export、或其他明确方案。
+- Desktop 构建、启动、资源加载与主盘面 smoke/e2e。
+- 对 release-prep 的 Desktop artifact 口径重新收口。
+
+完成标准：
+
+- Desktop 不再仅靠“理论上共享 Web routes”被视作完成。
+- `apps/desktop` 在构建与启动层面具备可验证的 full-board runtime。
+
+### 默认决策
+
+- 默认继续复用 shared application/ui boundary，不新开 package，也不回退到页面内 rule-aware renderer。
+- 默认视觉方向向 dark tactical dashboard 靠拢，而不是扩展当前白底调试布局。
+- 默认先做 classic local board，再追 AI / run / online parity。
+- 默认保留 debug / replay / trace，但把它们放到 sidecar / drawer，而不是主舞台。
+
+### 立即可执行的高 ROI 顺序
+
+1. 完成 Phase 0 的口径降级与 step-log evidence 模板。
+2. 完成 Phase 1 的 `application` / `ui` 结构清理。
+3. 在 Phase 2 开始前先写 board-selection-model ADR。
+4. 再做 `UiViewModel` 2.0 的 additive contract change。
+5. 在 Phase 2.5 建立 design tokens 与 visual harness。
+6. 最后再切 `/play/local`，避免 renderer 落地后整体返工。
+
+## EN
+
+### Document Role
+
+This document is the authoritative full-board UI remediation plan after the Opus 4.7 strict audit. It records:
+
+- the boundary between engineering closure and product completion;
+- the audit findings and their ownership;
+- the phase-sorted roadmap, decision gates, and done criteria;
+- the future code / contract / test landing areas required to finish the product-facing board experience.
+
+### Audit Summary
+
+- Step 00-08 is a strong success at the engineering-boundary level: layering, contracts, determinism, room-service authority, replay, and release gates are closed.
+- Product completion remains weak: the default player entrypoint is still a deterministic validation shell rather than a full board UI.
+- Follow-up work must treat engineering closure and player-facing product completion as different tracks. This roadmap is the formal backlog for the product/presentation/projection side.
+
+### Current Baseline
+
+- `packages/ui` still exposes `MatchView` primarily as snapshot summary, action list, event log, and replay inspector.
+- `/play/local`, `/play/ai`, `/play/run`, and `/rooms/[roomId]` currently share a validation shell, not a product-grade board surface.
+- The shell is good for:
+    - command-legality validation;
+    - replay / hash / event-sequencing verification;
+    - debugging local / AI / run / room session progression.
+- The shell is not good for:
+    - allowing a new player to finish a match without a rulebook;
+    - acting as the default full-board product surface;
+    - serving as proof that Desktop offline distribution is validated.
+
+### Invariants
+
+- `packages/ui` remains presentation plus interaction callbacks only; it may not own rules, scoring, Buff, or authority logic.
+- `packages/application` remains the view-model projection boundary; if the board UI is missing fields, projection/contracts must expand first and only then the renderer.
+- `apps/web` and `apps/desktop` stay responsible for shell, routing, transport, and page state only; they may not reconstruct hidden information.
+- `apps/room-service` continues to send viewer-filtered snapshots plus application-projected actions only.
+- No separate desktop-specific gameplay renderer is introduced.
+- No legacy code is imported back; the old product remains reference only through `docs/99-legacy/` plus git history.
+
+### Findings and Phase Ownership
+
+| Finding | Summary                                                                        | Severity    | Primary Phase | Secondary Phase    |
+| ------- | ------------------------------------------------------------------------------ | ----------- | ------------- | ------------------ |
+| F1      | `release-ready` is too easy to misread as product completion                   | High        | Phase 0       | Phase 4            |
+| F2      | Desktop shared-shell claim is too strong; offline bundle is unverified         | High        | Phase 0       | Phase 8            |
+| F3      | Enumerated `UiActionDescriptor` does not fit real multi-step board interaction | High        | Phase 2       | Phase 4            |
+| F4      | `UiViewModel` lacks board-presentation / viewer / session-state fields         | High        | Phase 2       | Phase 6            |
+| F5      | Step logs and tracker lack acceptance evidence anchors                         | Medium-high | Phase 0       | Ongoing governance |
+| F6      | `packages/application/src/index.ts` is a growth-blocking god file              | Medium-high | Phase 1       | Phase 2            |
+| F7      | `packages/ui` lacks layout, design tokens, and a visual harness                | Medium      | Phase 2.5     | Phase 3            |
+| F8      | Spectator / resync / out-of-turn consistency is not test-gated                 | Medium      | Phase 6       | Phase 2            |
+| F9      | No player-path acceptance matrix for classic local first                       | Medium      | Phase 4       | Phase 7            |
+| F10     | AI strategy is too tightly coupled to local session glue                       | Medium-low  | Phase 5       | Phase 1            |
+| F11     | Player homepage still exposes governance/debug/schema messaging                | Low         | Phase 0       | Phase 4            |
+
+### Phase-Sorted Remediation Roadmap
+
+#### Phase 0 - Wording Downgrade, Release Scope, and Audit Evidence
+
+Goal: fix the interpretation risk first so no entrypoint can read Step 08 as product GA.
+
+Covers: F1, F2, F5, F11.
+
+Outputs:
+
+- Clarify in the tracker, release-prep doc, Step 06/08 logs, and architecture docs that:
+    - Step 00-08 = engineering closure;
+    - full-board product completion is tracked separately;
+    - Desktop offline distribution is still unaccepted;
+    - `v1.0.0+` requires Phase 4, and Desktop offline release requires Phase 8.
+- Add an acceptance-evidence rule to the step-log guide: commit SHA, CI run id, golden replay hash summary, or validation-output summary.
+- Record a follow-up code task to downgrade `apps/web/app/page.tsx` hero/marketing copy from "product complete" language to "deterministic validation shell + roadmap link." This doc-only pass records the requirement but does not edit code.
+
+Done criteria:
+
+- Tracker, release-prep, Step 06/08, and architecture entrypoints all say the same thing.
+- Audit readers can no longer treat Step 08 as product-release completion.
+- The step-log template now has an acceptance-evidence field.
+
+#### Phase 1 - Application / UI Repository Structure Cleanup
+
+Goal: create room for projection and UI growth without changing contracts yet.
+
+Covers: F6, F10.
+
+Outputs:
+
+- Split `packages/application/src/index.ts` into sessions, view-model, ai, replay, and similar folders.
+- Give `packages/ui` a baseline directory layout and barrel structure instead of growing as a single file.
+- Keep the work non-behavioral and non-contractual.
+
+Done criteria:
+
+- No contract drift.
+- `check-deps`, `check-boundaries`, `test`, and `build` still pass.
+- Later Phase 2-6 work no longer depends on a single god file.
+
+#### Phase 2 - Interaction ADR + `UiViewModel` 2.0 Contract Expansion
+
+Goal: decide how multi-step board interaction is represented before building the board-facing projection.
+
+Covers: F3, F4, F6.
+
+Entry gate:
+
+- Write a short ADR that chooses one of:
+    - A. convert multi-position selection into effect-prompt / pending-selection style atomic commands;
+    - B. allow client-side draft intent.
+- A is the default recommendation because it aligns better with the Step 02.5-frozen `activeEffects / effectPrompts` semantics and with online / spectator / replay synchronization of intermediate state.
+
+Outputs:
+
+- If A is chosen, add pending-selection-style command / phase surface through the `contract-change` + `add-phase-transition` workflow.
+- Expand `UiViewModelSchema` with at least:
+    - `viewerRole`
+    - `seat`
+    - `sessionStatus`
+    - `boardCells[]`
+    - `marketSlots[]`
+    - `royalOffers[]`
+    - `promptStack[]`
+    - `selectionDraft?`
+    - `runPanel?`
+- Stop letting `room-live-client` and similar pages infer `room.status`, viewer role, or selectable state locally.
+- Move spectator / replay / room filtering semantics into the projection contract instead of postponing them to page implementation.
+
+Done criteria:
+
+- All board-facing pages can consume the same projected board data.
+- The UI renderer no longer has to infer hidden state or legal interaction on its own.
+- Migration notes, fixtures, contract regeneration, and property tests are updated together.
+
+#### Phase 2.5 - `packages/ui` Layout, Design Tokens, and Visual Harness
+
+Goal: establish the host for UI primitives and visual baselines before building the real board renderer.
+
+Covers: F7.
+
+Outputs:
+
+- Baseline directories such as `packages/ui/src/{primitives,board,hud,drawer,styles}/`.
+- A token/theme layer such as `tokens.css`, moving `gd-*` styling out of app scope and back into `packages/ui`.
+- A static rendering playground or Storybook/Ladle-style harness.
+- A screenshot-baseline plan and a future `check-visual` guardrail.
+
+Done criteria:
+
+- `packages/ui` can render static full-board scenes without a live engine session.
+- Visual tokens and shared primitives no longer depend on `apps/web` page-local styling by accident.
+- Visual-regression baselines begin here instead of being delayed until the end.
+
+#### Phase 3 - Shared Board Primitives
+
+Goal: build the shared primitives and sidecar surfaces required for the full board UI.
+
+Covers: F7.
+
+Outputs:
+
+- `BoardGrid`
+- `TokenCell`
+- `MarketStack`
+- `CardSlot`
+- `ReserveTray`
+- `RoyalCourt`
+- `PlayerZone`
+- `TurnHud`
+- `PromptBanner`
+- `SelectionOverlay`
+- `SidecarDrawer`
+- `ReplayDrawer`
+- `AiTraceDrawer`
+- `RunPanel`
+
+Done criteria:
+
+- `packages/ui` can render a static full board on its own.
+- Shared UI depends only on contract-facing display models.
+- The visual harness and screenshot baseline cover key board scenes.
+
+#### Phase 4 - `/play/local` Full Board + Player Path Acceptance
+
+Goal: make classic local board the first genuinely playable default entrypoint.
+
+Covers: F1, F3, F9, F11.
+
+Outputs:
+
+- Switch `/play/local` to a full-board scene and keep the old debug shell as fallback only.
+- Drive multi-step interaction according to the Phase 2 ADR.
+- Downgrade hero/marketing language and default-entry behavior to match the real product state.
+- Add a **Player Path Acceptance Matrix** covering at least:
+    - first turn taking 3 linked gems;
+    - buying the first pyramid card;
+    - using privilege for 2 cells;
+    - reserving a blind tier-3 card and taking gold;
+    - resolving take-bonus-token;
+    - resolving gain-royal;
+    - showing the terminal overlay on victory;
+    - keeping a debug fallback route/switch.
+
+Done criteria:
+
+- Players can finish the classic core flow without reading raw action buttons.
+- Product-semantic versions `v1.0.0+` remain blocked until this phase is complete.
+- The Player Path Acceptance Matrix has either E2E coverage or explicit manual acceptance scripts.
+
+#### Phase 5 - `/play/ai` and `/play/run` Parity
+
+Goal: move AI and run flows onto the same main board, with auxiliary state in sidecars only.
+
+Covers: F10.
+
+Outputs:
+
+- Hook `AiTraceDrawer` and `RunPanel` into the shared full-board scene.
+- Split AI strategy into a more testable `ai/` surface rather than burying it inside session glue.
+- Add fixed-seed AI replay / `finalStateHash` baselines.
+
+Done criteria:
+
+- Local / AI / run all share the same main board structure.
+- AI / run differences are isolated to sidecars, not separate main layouts.
+
+#### Phase 6 - `/rooms/[roomId]`, Spectator, and Online Consistency Gates
+
+Goal: converge online player / spectator / resync / disconnected / waiting states into one board system and add leak-prevention gates.
+
+Covers: F4, F8.
+
+Outputs:
+
+- Move `room-live-client` onto the shared `BoardScene`.
+- Make `viewerRole='spectator'` disable interaction automatically.
+- Add property tests ensuring spectator DOM / serialized view models do not leak `hiddenState`, `deckOrder`, or opponent reserve-card faces.
+- Add Playwright or equivalent integration tests for resync, seq-gap, and out-of-turn seats.
+
+Done criteria:
+
+- Local / AI / run / online player / spectator all converge on the same board system.
+- Spectator-visibility invariants become a real gate rather than a manual promise.
+- `room-service` still sends filtered data only and does not take on renderer-specific branching.
+
+#### Phase 7 - Replay, QA, A11y, Mobile, and Product Finish
+
+Goal: complete replay-on-board, visual regression, accessibility, and small-screen polish.
+
+Covers: F9.
+
+Outputs:
+
+- Reuse the full-board scene for replay inspection with timeline, step forward/backward, and hash badge.
+- Formal visual-regression baselines, accessibility checks, keyboard paths, and loading skeletons.
+- A finalized small-screen / mobile strategy.
+- i18n / externalized UI strings.
+
+Done criteria:
+
+- The full-board UI is playable, debuggable, replay-aware, and accessible.
+- The default player entrypoint no longer exposes the text-summary + button-list shell.
+
+#### Phase 8 - Desktop Offline Packaging Validation
+
+Goal: validate Desktop as an actual shared-shell distribution target instead of a theoretical one.
+
+Covers: F2.
+
+Outputs:
+
+- Finalize a real Desktop runtime assembly plan with the Web shell: `next start` child process, constrained export, or another explicit supported strategy.
+- Desktop build, launch, asset-loading, and full-board smoke/e2e coverage.
+- Re-close the Desktop artifact wording in release-prep once validated.
+
+Done criteria:
+
+- Desktop is no longer treated as complete merely because it theoretically reuses Web routes.
+- `apps/desktop` has a verifiable full-board runtime at the build/startup layer.
+
+### Default Decisions
+
+- Continue reusing the shared application/ui boundary; do not add a new package or return to page-local rule-aware renderers.
+- Default the visual direction toward a dark tactical dashboard rather than extending the current white debug layout.
+- Deliver classic local board first, then AI / run / online parity.
+- Keep debug / replay / trace tooling, but move it into sidecar / drawer surfaces instead of the main stage.
+
+### Immediate High-ROI Order
+
+1. Finish Phase 0 wording downgrade and the step-log evidence template.
+2. Finish Phase 1 `application` / `ui` structure cleanup.
+3. Write the board-selection-model ADR before Phase 2 coding starts.
+4. Then land the additive `UiViewModel` 2.0 contract change.
+5. Establish design tokens and the visual harness in Phase 2.5.
+6. Only then switch `/play/local`, to avoid redoing the renderer.

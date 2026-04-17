@@ -1,0 +1,109 @@
+# Step 02 Log - Contracts/Domain Boundary Freeze
+
+## ZH
+
+- 日期：2026-04-17
+- 作者：Codex
+- Step ID：Step 02
+- 本步目标：冻结 `contracts/domain` 边界，把依赖矩阵、契约生成物、contract fixtures 与阻断式护栏一起落地。
+- 实际改动内容：
+    - 修正现有越层依赖：把 `apps/web` 的本地/AI session bootstrap 上收进 `packages/application`，移除 `apps/web` 对 `@gem-duel/adapters` 的直接依赖与 import
+    - 冻结依赖矩阵，并在根 `AGENTS.md`、工程规范、护栏矩阵中改为显式允许依赖表
+    - 新增 `dependency-cruiser` 配置与 `eslint-plugin-boundaries` 规则，连同 pure-core ESLint 禁令一起接入本地校验
+    - 新增根命令：`pnpm check-deps`、`pnpm check-boundaries`、`pnpm check-contracts`、`pnpm contracts:generate`、`pnpm contracts:verify`
+    - 更新 CI：`build.yml` 与 `release.yml` 都在 typecheck/test/build 前运行 `check-deps` 和 `check-contracts`
+    - 将 `packages/contracts` 从大一统 `index.ts` 拆成 `shared/`、`game.ts`、`snapshots.ts`、`replay.ts`、`http.ts`、`websocket.ts`、`ui.ts`、`openapi.ts`、`asyncapi.ts`
+    - 将 `@gem-duel/contracts` 的运行时 root barrel 与 OpenAPI/AsyncAPI 文档生成入口隔离，避免 Web/Client bundle 拉入 `@asyncapi/parser` 等 Node-only 依赖
+    - 生成并提交 OpenAPI 3.1 / AsyncAPI 3.0 产物到 `packages/contracts/generated/`
+    - 增加 contract fixtures 与 tests：schema parse、OpenAPI drift、AsyncAPI validation/drift、最小 replay wire-shape fixture
+- 涉及路径：
+    - `apps/web/`
+    - `packages/application/`
+    - `packages/contracts/`
+    - `.dependency-cruiser.cjs`
+    - `eslint.config.mjs`
+    - `.github/workflows/build.yml`
+    - `.github/workflows/release.yml`
+    - `AGENTS.md`
+    - `docs/10-architecture/`
+    - `docs/30-contracts/`
+    - `docs/40-operations/agent-tooling-rollout.md`
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+- 关键决策：
+    - `apps/web` 与 `apps/desktop` 维持 shell-only 边界，不得直接 import `adapters`
+    - `packages/application` 是本地/AI session bootstrap 的唯一壳层入口，`room-service` 继续使用 injected ports 入口
+    - `packages/contracts/generated/openapi/openapi.json` 与 `packages/contracts/generated/asyncapi/asyncapi.yaml` 作为可提交、可 drift 校验的契约生成物入库
+    - `@gem-duel/contracts` 根入口只承载运行时安全导出，文档生成入口固定走 `@gem-duel/contracts/openapi` 与 `@gem-duel/contracts/asyncapi`
+    - Step 02 直接包含 contract snapshots / fixtures；若 rollout 文档与 tracker 冲突，以 tracker 为准
+- 风险/阻塞：
+    - `commitlint` / `commitizen` / `.codex/config.toml` / MCP 护栏仍未接线，按计划留在后续 wave
+    - Step 02.5 之前仍未开始 actor 化 effect 执行，当前 engine 仍是 Step 03 前骨架
+- 生成物路径与验证命令：
+    - `packages/contracts/generated/openapi/openapi.json`
+    - `packages/contracts/generated/asyncapi/asyncapi.yaml`
+    - `packages/contracts/src/__fixtures__/openapi.expected.json`
+    - `packages/contracts/src/__fixtures__/asyncapi.expected.yaml`
+    - `packages/contracts/src/__fixtures__/replay/minimal-replay.json`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+- 下一步：进入 `Step 02.5`，冻结 `EffectAtom`、`EffectHookPoint`、effect actor 生命周期与 hook 顺序，不回改 Step 02 的底层边界。
+- 对应 Commit：`feat(step2): freeze contracts-domain boundaries and wire guardrails`
+
+## EN
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 02
+- Goal: freeze the `contracts/domain` boundary and land the dependency matrix, generated contract artifacts, contract fixtures, and blocking guardrails together.
+- Actual changes:
+    - Fixed the known layer violation by moving local/AI session bootstrap out of `apps/web` and into `packages/application`, then removing `apps/web` imports and dependencies on `@gem-duel/adapters`
+    - Froze the dependency matrix and replaced the ambiguous arrow-only rule with an explicit allowlist in the root `AGENTS.md`, engineering standards, and guardrail matrix docs
+    - Added `dependency-cruiser` configuration and `eslint-plugin-boundaries` rules, together with pure-core ESLint restrictions, as active local checks
+    - Added root commands: `pnpm check-deps`, `pnpm check-boundaries`, `pnpm check-contracts`, `pnpm contracts:generate`, and `pnpm contracts:verify`
+    - Updated CI so both `build.yml` and `release.yml` run `check-deps` and `check-contracts` before typecheck/test/build
+    - Split `packages/contracts` from a monolithic `index.ts` into `shared/`, `game.ts`, `snapshots.ts`, `replay.ts`, `http.ts`, `websocket.ts`, `ui.ts`, `openapi.ts`, and `asyncapi.ts`
+    - Isolated the runtime root barrel from OpenAPI/AsyncAPI document generation so Web/Client bundles do not pull in Node-only parser dependencies
+    - Generated and committed OpenAPI 3.1 and AsyncAPI 3.0 artifacts under `packages/contracts/generated/`
+    - Added contract fixtures and tests for schema parsing, OpenAPI drift, AsyncAPI validation/drift, and minimal replay wire-shape parsing
+- Touched paths:
+    - `apps/web/`
+    - `packages/application/`
+    - `packages/contracts/`
+    - `.dependency-cruiser.cjs`
+    - `eslint.config.mjs`
+    - `.github/workflows/build.yml`
+    - `.github/workflows/release.yml`
+    - `AGENTS.md`
+    - `docs/10-architecture/`
+    - `docs/30-contracts/`
+    - `docs/40-operations/agent-tooling-rollout.md`
+    - `docs/00-refactor/rebuild-execution-tracker.md`
+- Key decisions:
+    - `apps/web` and `apps/desktop` remain shell-only and may not import `adapters` directly
+    - `packages/application` becomes the only shell-facing bootstrap entrypoint for local/AI sessions, while `room-service` keeps the injected-ports entrypoint
+    - `packages/contracts/generated/openapi/openapi.json` and `packages/contracts/generated/asyncapi/asyncapi.yaml` are committed and drift-checked as Step 02 contract artifacts
+    - The root `@gem-duel/contracts` entrypoint stays runtime-safe, while document generation is fixed behind `@gem-duel/contracts/openapi` and `@gem-duel/contracts/asyncapi`
+    - Step 02 includes contract snapshots / fixtures immediately; when rollout docs conflict with the tracker, the tracker wins
+- Risks / blockers:
+    - `commitlint`, `commitizen`, `.codex/config.toml`, and MCP guardrails are still deferred to later waves by design
+    - Effect execution is not actorized yet; the current engine remains the Step 03-prep skeleton until Step 02.5/03 land
+- Artifact paths and validation commands:
+    - `packages/contracts/generated/openapi/openapi.json`
+    - `packages/contracts/generated/asyncapi/asyncapi.yaml`
+    - `packages/contracts/src/__fixtures__/openapi.expected.json`
+    - `packages/contracts/src/__fixtures__/asyncapi.expected.yaml`
+    - `packages/contracts/src/__fixtures__/replay/minimal-replay.json`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+- Next step: enter `Step 02.5` to freeze `EffectAtom`, `EffectHookPoint`, effect-actor lifecycle, and hook ordering without revisiting the Step 02 boundary layer.
+- Commit reference: `feat(step2): freeze contracts-domain boundaries and wire guardrails`

@@ -12,6 +12,7 @@
     - `docs/00-refactor/rebuild-execution-tracker.md`
     - 对应 `logs/step-XX-<slug>.md`
     - 与该步骤对应的提交说明
+- 自 2026-04-17 审计补充后，新的或补写的 step log 应显式记录至少一种验收证据：commit SHA、CI run id、golden replay hash 摘要，或经 hash/截断后的验证输出摘要。
 
 ### 日志模板
 
@@ -24,6 +25,7 @@
 - 关键决策
 - 风险/阻塞
 - 下一步
+- 验收证据
 - 对应 Commit
 
 ## EN
@@ -38,6 +40,7 @@ This directory stores per-step logs for the full rebuild. Logs must be maintaine
     - `docs/00-refactor/rebuild-execution-tracker.md`
     - the matching `logs/step-XX-<slug>.md`
     - the commit message boundary for that step
+- After the 2026-04-17 audit follow-up, any new or backfilled step log should include at least one acceptance-evidence anchor: commit SHA, CI run id, golden replay hash summary, or a hashed/truncated validation-output summary.
 
 ### Log Template
 
@@ -50,4 +53,5 @@ This directory stores per-step logs for the full rebuild. Logs must be maintaine
 - Key decisions
 - Risks / blockers
 - Next step
+- Acceptance evidence
 - Commit reference

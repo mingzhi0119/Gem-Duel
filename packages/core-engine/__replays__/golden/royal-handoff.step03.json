@@ -1,0 +1,185 @@
+{
+    "schemaVersion": "4.0.0",
+    "rulesetVersion": "2026.1",
+    "engineVersion": "2026.04-step3",
+    "seed": 7,
+    "initialSnapshot": {
+        "schemaVersion": "4.0.0",
+        "rulesetVersion": "2026.1",
+        "engineVersion": "2026.04-step3",
+        "visibility": "authoritative",
+        "context": {
+            "matchId": "match-1",
+            "schemaVersion": "4.0.0",
+            "rulesetVersion": "2026.1",
+            "seed": 7,
+            "mode": "local",
+            "phase": "initialization",
+            "step": 0,
+            "currentPlayer": "p1",
+            "winner": null,
+            "flags": {
+                "roguelike": false,
+                "onlineAuthoritative": false,
+                "aiEnabled": false
+            }
+        },
+        "gemBank": {
+            "blue": 4,
+            "white": 4,
+            "green": 4,
+            "black": 4,
+            "red": 4,
+            "pearl": 2,
+            "gold": 3
+        },
+        "players": {
+            "p1": {
+                "id": "p1",
+                "score": 0,
+                "crowns": 0,
+                "privileges": 0,
+                "reservedCards": 0,
+                "tableauCards": 0,
+                "inventory": {
+                    "blue": 0,
+                    "white": 0,
+                    "green": 0,
+                    "black": 0,
+                    "red": 0,
+                    "pearl": 0,
+                    "gold": 0
+                }
+            },
+            "p2": {
+                "id": "p2",
+                "score": 0,
+                "crowns": 0,
+                "privileges": 1,
+                "reservedCards": 0,
+                "tableauCards": 0,
+                "inventory": {
+                    "blue": 0,
+                    "white": 0,
+                    "green": 0,
+                    "black": 0,
+                    "red": 0,
+                    "pearl": 0,
+                    "gold": 0
+                }
+            }
+        },
+        "eventLog": [],
+        "replayCursor": null,
+        "sequence": 0,
+        "activeEffects": [],
+        "hiddenState": {
+            "bag": [],
+            "deckOrder": {
+                "level1": [],
+                "level2": [],
+                "level3": []
+            },
+            "extraTurns": {
+                "p1": 0,
+                "p2": 0
+            }
+        }
+    },
+    "commands": [
+        {
+            "clientCommandId": "golden-command-1",
+            "expectedSeq": 0,
+            "issuedBy": "p1",
+            "command": {
+                "type": "SELECT_MODE",
+                "mode": "local",
+                "flags": {
+                    "roguelike": false,
+                    "onlineAuthoritative": false,
+                    "aiEnabled": false
+                }
+            }
+        },
+        {
+            "clientCommandId": "golden-command-2",
+            "expectedSeq": 2,
+            "issuedBy": "p1",
+            "command": {
+                "type": "START_MATCH"
+            }
+        },
+        {
+            "clientCommandId": "golden-command-3",
+            "expectedSeq": 4,
+            "issuedBy": "p1",
+            "command": {
+                "type": "BEGIN_ROYAL_RESOLUTION"
+            }
+        },
+        {
+            "clientCommandId": "golden-command-4",
+            "expectedSeq": 6,
+            "issuedBy": "p1",
+            "command": {
+                "type": "SELECT_ROYAL",
+                "crownsGain": 2
+            }
+        }
+    ],
+    "events": [
+        {
+            "type": "match.modeSelected",
+            "mode": "local"
+        },
+        {
+            "type": "phase.changed",
+            "phase": "modeSelection"
+        },
+        {
+            "type": "match.started"
+        },
+        {
+            "type": "phase.changed",
+            "phase": "turnIdle"
+        },
+        {
+            "type": "effect.spawned",
+            "effectId": "match-1-royal-5",
+            "parentEffectId": null,
+            "atom": "gain_royal",
+            "hookPoint": "BEFORE_GAIN_ROYAL",
+            "source": "royal_reward",
+            "scope": "active_player",
+            "owner": "p1",
+            "sequence": 5,
+            "stage": "scheduled",
+            "rngNamespace": "match/match-1/royal/5/match-1-royal-5"
+        },
+        {
+            "type": "effect.started",
+            "effectId": "match-1-royal-5",
+            "atom": "gain_royal",
+            "sequence": 5,
+            "stage": "running"
+        },
+        {
+            "type": "royal.selected",
+            "crownsGain": 2
+        },
+        {
+            "type": "effect.completed",
+            "effectId": "match-1-royal-5",
+            "atom": "gain_royal",
+            "sequence": 5,
+            "stage": "completed",
+            "outcome": "resolved"
+        }
+    ],
+    "finalStateHash": "fnv1a-3c3d631b",
+    "resultSummary": {
+        "winner": null,
+        "turns": 8,
+        "finalSeq": 8
+    }
+}

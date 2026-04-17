@@ -1,0 +1,373 @@
+{
+    "schemaVersion": "6.0.0",
+    "rulesetVersion": "2026.1",
+    "engineVersion": "2026.04-step7",
+    "seed": 7,
+    "initialSnapshot": {
+        "schemaVersion": "6.0.0",
+        "rulesetVersion": "2026.1",
+        "engineVersion": "2026.04-step7",
+        "visibility": "authoritative",
+        "context": {
+            "matchId": "match-1",
+            "schemaVersion": "6.0.0",
+            "rulesetVersion": "2026.1",
+            "seed": 7,
+            "mode": "local",
+            "phase": "turnIdle",
+            "step": 0,
+            "currentPlayer": "p1",
+            "winner": null,
+            "victoryReason": null,
+            "flags": {
+                "roguelike": false,
+                "onlineAuthoritative": false,
+                "aiEnabled": false
+            },
+            "turn": {
+                "turnNumber": 1,
+                "segment": "optional",
+                "optionalStep": "privilege",
+                "mandatoryActionTaken": false,
+                "pendingDiscardCount": 0
+            }
+        },
+        "board": [
+            {
+                "positionId": "r2c2",
+                "row": 2,
+                "col": 2,
+                "token": null
+            },
+            {
+                "positionId": "r2c3",
+                "row": 2,
+                "col": 3,
+                "token": null
+            },
+            {
+                "positionId": "r3c3",
+                "row": 3,
+                "col": 3,
+                "token": null
+            },
+            {
+                "positionId": "r3c2",
+                "row": 3,
+                "col": 2,
+                "token": null
+            },
+            {
+                "positionId": "r3c1",
+                "row": 3,
+                "col": 1,
+                "token": null
+            },
+            {
+                "positionId": "r2c1",
+                "row": 2,
+                "col": 1,
+                "token": null
+            },
+            {
+                "positionId": "r1c1",
+                "row": 1,
+                "col": 1,
+                "token": null
+            },
+            {
+                "positionId": "r1c2",
+                "row": 1,
+                "col": 2,
+                "token": null
+            },
+            {
+                "positionId": "r1c3",
+                "row": 1,
+                "col": 3,
+                "token": null
+            },
+            {
+                "positionId": "r1c4",
+                "row": 1,
+                "col": 4,
+                "token": null
+            },
+            {
+                "positionId": "r2c4",
+                "row": 2,
+                "col": 4,
+                "token": null
+            },
+            {
+                "positionId": "r3c4",
+                "row": 3,
+                "col": 4,
+                "token": null
+            },
+            {
+                "positionId": "r4c4",
+                "row": 4,
+                "col": 4,
+                "token": null
+            },
+            {
+                "positionId": "r4c3",
+                "row": 4,
+                "col": 3,
+                "token": null
+            },
+            {
+                "positionId": "r4c2",
+                "row": 4,
+                "col": 2,
+                "token": null
+            },
+            {
+                "positionId": "r4c1",
+                "row": 4,
+                "col": 1,
+                "token": null
+            },
+            {
+                "positionId": "r4c0",
+                "row": 4,
+                "col": 0,
+                "token": null
+            },
+            {
+                "positionId": "r3c0",
+                "row": 3,
+                "col": 0,
+                "token": null
+            },
+            {
+                "positionId": "r2c0",
+                "row": 2,
+                "col": 0,
+                "token": null
+            },
+            {
+                "positionId": "r1c0",
+                "row": 1,
+                "col": 0,
+                "token": null
+            },
+            {
+                "positionId": "r0c0",
+                "row": 0,
+                "col": 0,
+                "token": null
+            },
+            {
+                "positionId": "r0c1",
+                "row": 0,
+                "col": 1,
+                "token": null
+            },
+            {
+                "positionId": "r0c2",
+                "row": 0,
+                "col": 2,
+                "token": null
+            },
+            {
+                "positionId": "r0c3",
+                "row": 0,
+                "col": 3,
+                "token": null
+            },
+            {
+                "positionId": "r0c4",
+                "row": 0,
+                "col": 4,
+                "token": null
+            }
+        ],
+        "pyramid": [
+            {
+                "level": 1,
+                "slots": [
+                    {
+                        "level": 1,
+                        "slot": 1,
+                        "card": null
+                    },
+                    {
+                        "level": 1,
+                        "slot": 2,
+                        "card": null
+                    },
+                    {
+                        "level": 1,
+                        "slot": 3,
+                        "card": null
+                    },
+                    {
+                        "level": 1,
+                        "slot": 4,
+                        "card": null
+                    },
+                    {
+                        "level": 1,
+                        "slot": 5,
+                        "card": null
+                    }
+                ]
+            },
+            {
+                "level": 2,
+                "slots": [
+                    {
+                        "level": 2,
+                        "slot": 1,
+                        "card": null
+                    },
+                    {
+                        "level": 2,
+                        "slot": 2,
+                        "card": null
+                    },
+                    {
+                        "level": 2,
+                        "slot": 3,
+                        "card": null
+                    },
+                    {
+                        "level": 2,
+                        "slot": 4,
+                        "card": null
+                    }
+                ]
+            },
+            {
+                "level": 3,
+                "slots": [
+                    {
+                        "level": 3,
+                        "slot": 1,
+                        "card": null
+                    },
+                    {
+                        "level": 3,
+                        "slot": 2,
+                        "card": null
+                    },
+                    {
+                        "level": 3,
+                        "slot": 3,
+                        "card": null
+                    }
+                ]
+            }
+        ],
+        "royalSupply": [],
+        "privilegeSupply": 3,
+        "players": {
+            "p1": {
+                "id": "p1",
+                "score": 0,
+                "crowns": 0,
+                "privileges": 0,
+                "inventory": {
+                    "blue": 0,
+                    "white": 0,
+                    "green": 0,
+                    "black": 0,
+                    "red": 0,
+                    "pearl": 0,
+                    "gold": 0
+                },
+                "reserveSlots": [
+                    {
+                        "slotId": "reserve-1",
+                        "sourceLevel": null,
+                        "card": null
+                    },
+                    {
+                        "slotId": "reserve-2",
+                        "sourceLevel": null,
+                        "card": null
+                    },
+                    {
+                        "slotId": "reserve-3",
+                        "sourceLevel": null,
+                        "card": null
+                    }
+                ],
+                "tableau": [],
+                "royals": []
+            },
+            "p2": {
+                "id": "p2",
+                "score": 0,
+                "crowns": 0,
+                "privileges": 1,
+                "inventory": {
+                    "blue": 0,
+                    "white": 0,
+                    "green": 0,
+                    "black": 0,
+                    "red": 0,
+                    "pearl": 0,
+                    "gold": 0
+                },
+                "reserveSlots": [
+                    {
+                        "slotId": "reserve-1",
+                        "sourceLevel": null,
+                        "card": null
+                    },
+                    {
+                        "slotId": "reserve-2",
+                        "sourceLevel": null,
+                        "card": null
+                    },
+                    {
+                        "slotId": "reserve-3",
+                        "sourceLevel": null,
+                        "card": null
+                    }
+                ],
+                "tableau": [],
+                "royals": []
+            }
+        },
+        "eventLog": [],
+        "replayCursor": null,
+        "sequence": 0,
+        "runContext": null,
+        "activeEffects": [],
+        "effectPrompts": [],
+        "hiddenState": {
+            "bag": [],
+            "deckOrder": {
+                "level1": [],
+                "level2": [],
+                "level3": []
+            },
+            "extraTurns": {
+                "p1": 0,
+                "p2": 0
+            }
+        }
+    },
+    "commands": [
+        {
+            "clientCommandId": "cmd-1",
+            "expectedSeq": 0,
+            "issuedBy": "p1",
+            "command": {
+                "type": "BEGIN_GEM_SELECTION"
+            }
+        }
+    ],
+    "events": [],
+    "finalStateHash": "hash-1",
+    "resultSummary": {
+        "winner": null,
+        "reason": null,
+        "turns": 0,
+        "finalSeq": 0
+    }
+}

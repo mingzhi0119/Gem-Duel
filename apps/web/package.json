@@ -14,7 +14,6 @@
     "dependencies": {
         "@gem-duel/application": "workspace:*",
         "@gem-duel/contracts": "workspace:*",
-        "@gem-duel/adapters": "workspace:*",
         "@gem-duel/ui": "workspace:*",
         "next": "^16.0.0",
         "react": "^19.2.0",

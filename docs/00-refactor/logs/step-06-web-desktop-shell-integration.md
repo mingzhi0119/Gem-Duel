@@ -1,0 +1,79 @@
+# Step 06 Log - Web/Desktop Shell Integration
+
+## ZH
+
+- 日期：2026-04-17
+- 作者：Codex
+- Step ID：Step 06
+- 本步目标：让 Web 与 Desktop 通过共享 `packages/application` 与 `packages/ui` 消费同一套本地、AI、在线与观战 view-model / interaction boundary，而不是在壳层各自重写命令入口和信息过滤逻辑。
+- 实施顺序：
+    - 先补 tracker、Step log、Step 06 contract migration note 与 shell/application integration 文档；
+    - 再把房间/UI 跨边界 payload 收口为 viewer-scoped `availableActions` 与共享 `UiViewModel` 组合；
+    - 然后调整 `packages/application`、`apps/room-service`、`apps/web` 与 `packages/ui`，让本地/AI/在线/观战都走同一套 UI 组合边界；
+    - 最后补测试、生成契约产物并执行全量验收。
+- 当前状态：已完成。
+- 关键前置：
+    - Step 04 与 Step 05 已分别封口，classic rules 与 room-service authority 已具备独立边界。
+    - Step 06 可以扩 room/UI 契约，但必须先更新 `packages/contracts` 与对应文档。
+- 风险/边界：
+    - Desktop 仍是 Electron 壳，不得引入规则逻辑或第二套 renderer-side authority。
+    - Web API routes 仍只能做 BFF / proxy，不得承载在线裁决。
+    - online / spectator UI 只允许消费 viewer-filtered snapshot 与 application-scoped actions，不得反向拼接权威隐藏信息。
+- 落地结果：
+    - `UiActionDescriptor` 已提升为 schema-backed contract，`RoomDetail`、`match.patch`、`match.resync` 与 `match.observe` 已统一携带 viewer-scoped `availableActions`。
+    - `packages/application` 已同时支持 authoritative-snapshot 与 visible-snapshot 两条 `UiViewModel` 组合路径，并确保 spectator 与非当前行动玩家不会收到可执行 action 集。
+    - `apps/room-service` 已改为通过 `session.viewModel(viewer)` 下发玩家 / spectator 视图与 action descriptors，而不是在 transport 层重算 UI 边界；同时新增了“非当前 seat 不能代打当前玩家”的服务端约束。
+    - `packages/ui` 已提供共享 `MatchView` 展示组合，`apps/web` 的本地、AI、在线与观战页面都已落到同一套 view-model / action-list 组合面上。
+    - Web 房间页已切到 `room.join` / `room.watch` 的实时入口，并可处理 `room.state`、`match.patch`、`match.resync`、`match.observe` 与 replay 路由；Desktop 继续通过同一套 Web routes / UI 组合消费 shared app layer，并新增 runtime badge 显示 shell 身份。
+- 验收：
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+- 审计后澄清（2026-04-17 / Opus 4.7）：
+    - 这里的“Web 与 Desktop 共享 view model / UI boundary”应解读为 shared application/ui boundary 已收口，而不是“Desktop 产品分发面已验证完成”。
+    - 当前完成态仍是 deterministic validation shell，而不是完整盘面 UI；full board/product completion 改由 [`../../10-architecture/full-board-ui-roadmap.md`](../../10-architecture/full-board-ui-roadmap.md) 的 Phase 0-8 继续治理。
+    - Desktop 目前被记录为“通过同一套 Web shell 路由消费 shared app layer”；offline standalone / `file://` fallback 并未在本步形成可发布承诺，后续单列到 full-board roadmap Phase 8。
+- 对应 Commit：Step 06 代码边界、tracker、step log 与验收记录已完成同步。
+
+## EN
+
+- Date: 2026-04-17
+- Author: Codex
+- Step ID: Step 06
+- Goal: make Web and Desktop consume the same local, AI, online, and spectator view-model / interaction boundary through shared `packages/application` and `packages/ui` rather than re-implementing command entrypoints or information filtering in each shell.
+- Execution order:
+    - first land the tracker, Step log, Step 06 contract migration note, and the shell/application integration doc;
+    - then converge the room/UI cross-boundary payloads around viewer-scoped `availableActions` plus shared `UiViewModel` composition;
+    - then update `packages/application`, `apps/room-service`, `apps/web`, and `packages/ui` so local, AI, online, and spectator paths share the same UI boundary;
+    - finally add tests, regenerate contract artifacts, and run the full acceptance suite.
+- Current status: complete.
+- Key preconditions:
+    - Step 04 and Step 05 are already sealed independently, so the classic rules and room-service authority boundaries are in place.
+    - Step 06 may expand the room/UI contract surface, but must update `packages/contracts` and the matching docs first.
+- Risks / boundaries:
+    - Desktop remains an Electron shell only and may not gain rule logic or a second renderer-side authority layer.
+    - Web API routes remain BFF / proxy only and may not host online authority.
+    - Online and spectator UI may consume only viewer-filtered snapshots plus application-scoped actions and may never reconstruct authoritative hidden information client-side.
+- Landed results:
+    - `UiActionDescriptor` is now a schema-backed contract, and `RoomDetail`, `match.patch`, `match.resync`, and `match.observe` now carry viewer-scoped `availableActions`.
+    - `packages/application` now supports shared `UiViewModel` composition from both authoritative snapshots and visible snapshots, while ensuring spectators and non-active players receive no actionable command set.
+    - `apps/room-service` now delivers player / spectator UI boundaries through `session.viewModel(viewer)` instead of recomputing them in the transport layer, and it now rejects out-of-turn seats server-side.
+    - `packages/ui` now exposes a shared `MatchView` composition, and the Web local, AI, online, and spectator routes now consume the same view-model / action-list surface.
+    - The Web room route now enters live play through `room.join` / `room.watch`, handles `room.state`, `match.patch`, `match.resync`, `match.observe`, and replay navigation, while Desktop continues to consume the same shared application/UI boundary through the same Web routes and now exposes its shell identity through a runtime badge.
+- Validation:
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+- Post-audit clarification (2026-04-17 / Opus 4.7):
+    - "Web and Desktop share the same view-model / UI boundary" should now be read as shared application/ui-boundary closure, not as proof that Desktop distribution is fully validated.
+    - The completed state here is still a deterministic validation shell, not a player-complete full board UI; product-facing closure now continues in [`../../10-architecture/full-board-ui-roadmap.md`](../../10-architecture/full-board-ui-roadmap.md) Phase 0-8.
+    - Desktop is currently documented as consuming the shared app layer through the same Web routes; the offline standalone / `file://` fallback remains outside this step's validated promise and is deferred to full-board roadmap Phase 8.
+- Commit reference: the Step 06 code boundary, tracker, step log, and acceptance record are now synchronized.

@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { CreateRoomPanel } from './components/create-room-panel';
 import { Section } from '@gem-duel/ui';
 
 export default function RoomsPage() {
@@ -10,12 +10,8 @@ export default function RoomsPage() {
                     EN: The authoritative online match lifecycle lives in room-service; the Next app
                     only hosts the shell and BFF routes.
                 </p>
-                <div className="gd-action-list">
-                    <Link className="gd-link" href="/rooms/demo-room">
-                        Open Demo Room Route
-                    </Link>
-                </div>
             </Section>
+            <CreateRoomPanel />
         </>
     );
 }

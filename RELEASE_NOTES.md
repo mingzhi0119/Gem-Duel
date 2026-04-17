@@ -2,8 +2,8 @@
 
 ## ZH
 
-当前仓库进入 `2.x` 绿地重构阶段，正式发布说明将转移到 `docs/40-operations/` 与后续 ADR/变更日志中维护。旧版发布说明请参考 git 历史与 `old/legacy-vite-electron/` 归档。
+当前仓库已完成重构收口，正式发布说明与发布前检查入口统一转移到 [`docs/40-operations/release-prep.md`](./docs/40-operations/release-prep.md)。Step 08 只为未来的 tag 发布流程放行，不会自动创建任何 tag。
 
 ## EN
 
-The repository is now in the `2.x` greenfield rebuild phase. Formal release notes will move into `docs/40-operations/` and future ADR/changelog records. Refer to git history and `old/legacy-vite-electron/` for pre-rebuild release details.
+The repository has completed the rebuild handoff, and the release-ready entrypoint now lives in [`docs/40-operations/release-prep.md`](./docs/40-operations/release-prep.md). Step 08 only unlocks the future tag-based release flow; it does not create tags automatically.

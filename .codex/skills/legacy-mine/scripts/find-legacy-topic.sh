@@ -9,8 +9,8 @@ if [ -z "${TOPIC}" ]; then
 fi
 
 echo "Existing extraction notes:"
-rg --line-number "${TOPIC}" docs/99-legacy || true
+rg --line-number --glob 'extracted-*.md' "${TOPIC}" docs/99-legacy || true
 
 echo
-echo "Legacy source candidates:"
-rg --line-number "${TOPIC}" old/legacy-vite-electron || true
+echo "Git history candidates:"
+git log --oneline --all -S"${TOPIC}" -- . || true
