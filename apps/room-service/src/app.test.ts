@@ -130,6 +130,18 @@ const openSockets = async (port: number, roomId: string) =>
         SocketHarness.connect(`ws://127.0.0.1:${port}/ws/rooms/${roomId}`),
     ]);
 
+const nextMessageOfType = async <TType extends RoomWsMessage['type']>(
+    socket: SocketHarness,
+    type: TType
+): Promise<Extract<RoomWsMessage, { type: TType }>> => {
+    while (true) {
+        const message = await socket.nextMessage();
+        if (message.type === type) {
+            return message as Extract<RoomWsMessage, { type: TType }>;
+        }
+    }
+};
+
 const createCompletingSession = (request: CreateRoomRequest): TypedResult<MatchSession> => {
     const seed = request.seed ?? 20260416;
     const base = createMatchSession(
@@ -261,7 +273,17 @@ describe('buildRoomServiceApp', () => {
             roomId: room.roomId,
             playerName: 'Bob',
         });
-        const p2State = await p2.nextMessage();
+        const [p1StatusUpdate, p2State] = await Promise.all([p1.nextMessage(), p2.nextMessage()]);
+        expect(p1StatusUpdate.type).toBe('room.state');
+        if (
+            p1StatusUpdate.type !== 'room.state' ||
+            p1StatusUpdate.room?.snapshot?.visibility !== 'player'
+        ) {
+            throw new Error('Expected updated player room.state for p1 after p2 joins.');
+        }
+        expect(p1StatusUpdate.room.snapshot.viewer).toBe('p1');
+        expect(p1StatusUpdate.room.playerCount).toBe(2);
+        expect(p1StatusUpdate.room.status).toBe('active');
         expect(p2State.type).toBe('room.state');
         if (p2State.type !== 'room.state' || p2State.room?.snapshot?.visibility !== 'player') {
             throw new Error('Expected player room.state for p2.');
@@ -395,6 +417,8 @@ describe('buildRoomServiceApp', () => {
             playerName: 'Bob',
         });
         await p2.nextMessage();
+        const p1ActiveState = await nextMessageOfType(p1, 'room.state');
+        expect(p1ActiveState.room?.status).toBe('active');
         spectator.send({
             type: 'room.watch',
             roomId: room.roomId,
@@ -501,6 +525,8 @@ describe('buildRoomServiceApp', () => {
             playerName: 'Bob',
         });
         await p2.nextMessage();
+        const p1ActiveState = await nextMessageOfType(p1, 'room.state');
+        expect(p1ActiveState.room?.status).toBe('active');
         spectator.send({
             type: 'room.watch',
             roomId: room.roomId,
@@ -618,6 +644,8 @@ describe('buildRoomServiceApp', () => {
             playerName: 'Bob',
         });
         const p2State = await p2.nextMessage();
+        const p1ActiveState = await nextMessageOfType(p1, 'room.state');
+        expect(p1ActiveState.room?.status).toBe('active');
 
         if (p1State.type !== 'room.state' || p2State.type !== 'room.state') {
             throw new Error('Expected initial room.state messages.');
@@ -660,12 +688,14 @@ describe('buildRoomServiceApp', () => {
             playerName: 'Bob',
         });
         await p2.nextMessage();
+        const p1ActiveState = await nextMessageOfType(p1, 'room.state');
+        expect(p1ActiveState.room?.status).toBe('active');
 
         p1.send({
             type: 'room.leave',
             roomId: room.roomId,
         });
-        const leftState = await p1.nextMessage();
+        const [leftState, p2StatusUpdate] = await Promise.all([p1.nextMessage(), p2.nextMessage()]);
         expect(leftState.type).toBe('room.state');
         if (leftState.type !== 'room.state' || !leftState.room) {
             throw new Error('Expected room.state after room.leave.');
@@ -673,6 +703,15 @@ describe('buildRoomServiceApp', () => {
         expect(leftState.room.playerCount).toBe(1);
         expect(leftState.room.status).toBe('waiting');
         expect(leftState.room.snapshot?.visibility).toBe('spectator');
+        expect(p2StatusUpdate.type).toBe('room.state');
+        if (
+            p2StatusUpdate.type !== 'room.state' ||
+            p2StatusUpdate.room?.snapshot?.visibility !== 'player'
+        ) {
+            throw new Error('Expected room.state update for remaining bound player.');
+        }
+        expect(p2StatusUpdate.room.playerCount).toBe(1);
+        expect(p2StatusUpdate.room.status).toBe('waiting');
 
         const afterLeave = readJson<RoomDetail>(
             await (await fetch(`${urlBase}/rooms/${room.roomId}`)).text()
@@ -722,6 +761,8 @@ describe('buildRoomServiceApp', () => {
             playerName: 'Bob',
         });
         await p2.nextMessage();
+        const p1ActiveState = await nextMessageOfType(p1, 'room.state');
+        expect(p1ActiveState.room?.status).toBe('active');
 
         if (p1State.type !== 'room.state' || p1State.room?.snapshot?.visibility !== 'player') {
             throw new Error('Expected player room.state.');

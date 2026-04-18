@@ -24,7 +24,7 @@ export const AiTraceDrawer = ({ traces }: { traces: AiTraceEntry[] }) =>
         </SidecarDrawer>
     ) : (
         <SidecarDrawer title="AI Trace">
-            <ol className="gd-log gd-trace-list">
+            <ol className="gd-log gd-trace-list" tabIndex={0} aria-label="AI trace log">
                 {traces.map((trace) => (
                     <li key={`${trace.sequence}-${trace.chosenActionId}`}>
                         <div className="gd-card-slot-meta">

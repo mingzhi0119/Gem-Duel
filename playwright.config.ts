@@ -5,6 +5,7 @@ export default defineConfig({
     fullyParallel: false,
     outputDir: './tmp/playwright/test-results',
     reporter: 'line',
+    snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}{ext}',
     use: {
         baseURL: process.env.GEM_DUEL_VISUAL_BASE_URL ?? 'http://127.0.0.1:3101',
         colorScheme: 'light',

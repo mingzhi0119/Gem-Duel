@@ -1,38 +1,11 @@
-import { spawn, spawnSync } from 'node:child_process';
-import net from 'node:net';
+import { spawn } from 'node:child_process';
 import process from 'node:process';
-import { setTimeout as delay } from 'node:timers/promises';
+import { HOST, startStandaloneWebServer, stopServer } from './standalone-web-server.mjs';
+import { resolvePort, waitForServer } from './replay-fixture-server.mjs';
 
-const HOST = '127.0.0.1';
 const isWindows = process.platform === 'win32';
 
 const commandFor = (binary) => (isWindows ? `${binary}.cmd` : binary);
-
-const resolvePort = async (envName, label) => {
-    if (process.env[envName]) {
-        return Number(process.env[envName]);
-    }
-
-    while (true) {
-        const port = await new Promise((resolve, reject) => {
-            const server = net.createServer();
-            server.unref();
-            server.on('error', reject);
-            server.listen(0, HOST, () => {
-                const address = server.address();
-                if (address && typeof address === 'object') {
-                    server.close(() => resolve(address.port));
-                    return;
-                }
-                server.close(() => reject(new Error(`Unable to resolve a free port for ${label}`)));
-            });
-        });
-
-        if (typeof port === 'number' && port >= 10_000) {
-            return port;
-        }
-    }
-};
 
 const runCommand = (command, args, extraEnv = {}) =>
     new Promise((resolve, reject) => {
@@ -59,27 +32,6 @@ const runCommand = (command, args, extraEnv = {}) =>
         });
     });
 
-const waitForServer = async (url, timeoutMs = 60000) => {
-    const startedAt = Date.now();
-    let lastError;
-
-    while (Date.now() - startedAt < timeoutMs) {
-        try {
-            const response = await fetch(url, { redirect: 'manual' });
-            if (response.ok || response.status === 307 || response.status === 308) {
-                return;
-            }
-        } catch (error) {
-            lastError = error;
-        }
-        await delay(1000);
-    }
-
-    throw new Error(
-        `Timed out waiting for ${url}${lastError instanceof Error ? `: ${lastError.message}` : ''}`
-    );
-};
-
 const startRoomService = (port) =>
     spawn(process.execPath, ['node_modules/tsx/dist/cli.mjs', 'apps/room-service/src/index.ts'], {
         cwd: process.cwd(),
@@ -90,36 +42,6 @@ const startRoomService = (port) =>
         },
         shell: false,
     });
-
-const startWeb = (port, roomServicePort) =>
-    spawn(
-        process.execPath,
-        ['node_modules/next/dist/bin/next', 'start', '--hostname', HOST, '--port', String(port)],
-        {
-            cwd: `${process.cwd()}/apps/web`,
-            stdio: 'ignore',
-            env: {
-                ...process.env,
-                ROOM_SERVICE_URL: `http://${HOST}:${roomServicePort}`,
-            },
-            shell: false,
-        }
-    );
-
-const stopServer = (server) => {
-    if (!server || server.killed || server.pid == null) {
-        return;
-    }
-
-    if (isWindows) {
-        spawnSync('taskkill', ['/pid', String(server.pid), '/t', '/f'], {
-            stdio: 'ignore',
-        });
-        return;
-    }
-
-    server.kill('SIGTERM');
-};
 
 const forwardArgs = process.argv.slice(2);
 
@@ -132,7 +54,9 @@ const main = async () => {
     await runCommand(commandFor('pnpm'), ['build:web']);
 
     const roomService = startRoomService(roomServicePort);
-    const web = startWeb(webPort, roomServicePort);
+    const web = await startStandaloneWebServer(webPort, {
+        ROOM_SERVICE_URL: `http://${HOST}:${roomServicePort}`,
+    });
     const cleanup = () => {
         stopServer(web);
         stopServer(roomService);

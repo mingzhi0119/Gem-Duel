@@ -258,6 +258,22 @@ export const createRoomAuthority = (options: RoomAuthorityOptions): RoomAuthorit
         });
     };
 
+    const broadcastRoomState = (room: RoomRuntime) => {
+        const connectionIds = roomConnectionIds.get(room.roomId);
+        if (!connectionIds) {
+            return;
+        }
+
+        for (const connectionId of connectionIds) {
+            const connection = connections.get(connectionId);
+            if (!connection || connection.binding.kind === 'unbound') {
+                continue;
+            }
+
+            sendBoundRoomState(connection, room, connection.wsUrl);
+        }
+    };
+
     const broadcastSuccessfulCommand = (room: RoomRuntime, cached: CachedCommandResult) => {
         const connectionIds = roomConnectionIds.get(room.roomId);
         if (!connectionIds) {
@@ -423,7 +439,7 @@ export const createRoomAuthority = (options: RoomAuthorityOptions): RoomAuthorit
                         playerName: message.playerName,
                     };
                     roomStore.upsert(room);
-                    sendBoundRoomState(connection, room, connection.wsUrl);
+                    broadcastRoomState(room);
                     return;
                 }
                 case 'room.watch': {
@@ -449,6 +465,7 @@ export const createRoomAuthority = (options: RoomAuthorityOptions): RoomAuthorit
                 case 'room.leave': {
                     releaseBinding(connection);
                     sendBoundRoomState(connection, room, connection.wsUrl);
+                    broadcastRoomState(room);
                     return;
                 }
                 case 'match.command': {
@@ -569,9 +586,13 @@ export const createRoomAuthority = (options: RoomAuthorityOptions): RoomAuthorit
                 return;
             }
 
+            const room = getRoom(connection.roomId);
             releaseBinding(connection);
             removeConnectionFromRoom(connection.roomId, connection.connectionId);
             connections.delete(connection.connectionId);
+            if (room) {
+                broadcastRoomState(room);
+            }
         },
     };
 };

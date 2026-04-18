@@ -94,3 +94,28 @@ test('Phase 6 row 2: out-of-turn player sees the shared board but cannot act', a
         await Promise.all([p1.close(), p2.close()]);
     }
 });
+
+test('Hardening row: room-status cosmetic badge fanout stays in sync across bound players', async ({
+    browser,
+    request,
+}) => {
+    const roomId = await createOnlineRoom(request);
+    const p1 = await openRoomPage(browser, roomId);
+    const p2 = await openRoomPage(browser, roomId);
+
+    try {
+        await bindRoomPage(p1, 'Join as P1', 'player');
+        await expect(p1.getByTestId('boardscene-session-status')).toHaveText('waiting-opponent');
+
+        await bindRoomPage(p2, 'Join as P2', 'player');
+        await expect(p2.getByTestId('boardscene-session-status')).toHaveText('active');
+        await expect(p1.getByTestId('boardscene-session-status')).toHaveText('active');
+
+        await p2.getByRole('button', { name: 'Leave Stream' }).click();
+        await expect(p2.getByText('This viewer is currently connected read-only')).toBeVisible();
+        await expect(p2.getByTestId('boardscene-viewer-role')).toHaveText('spectator');
+        await expect(p1.getByTestId('boardscene-session-status')).toHaveText('waiting-opponent');
+    } finally {
+        await Promise.all([p1.close(), p2.close()]);
+    }
+});

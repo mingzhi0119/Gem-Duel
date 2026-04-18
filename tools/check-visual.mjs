@@ -1,8 +1,8 @@
-import { spawn, spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import process from 'node:process';
+import { HOST, startStandaloneWebServer, stopServer } from './standalone-web-server.mjs';
 import { resolvePort, startReplayFixtureServer, waitForServer } from './replay-fixture-server.mjs';
 
-const HOST = '127.0.0.1';
 const isWindows = process.platform === 'win32';
 
 const commandFor = (binary) => (isWindows ? `${binary}.cmd` : binary);
@@ -32,49 +32,13 @@ const runCommand = (command, args, extraEnv = {}) =>
         });
     });
 
-const startServer = (port, replayBaseUrl) =>
-    spawn(
-        commandFor('pnpm'),
-        [
-            '--filter',
-            '@gem-duel/web',
-            'exec',
-            'next',
-            'start',
-            '--hostname',
-            HOST,
-            '--port',
-            String(port),
-        ],
-        {
-            cwd: process.cwd(),
-            stdio: 'inherit',
-            env: {
-                ...process.env,
-                ROOM_SERVICE_URL: replayBaseUrl,
-            },
-            shell: isWindows,
-        }
-    );
-
-const stopServer = (server) => {
-    if (!server || server.killed || server.pid == null) {
-        return;
-    }
-
-    if (isWindows) {
-        spawnSync('taskkill', ['/pid', String(server.pid), '/t', '/f'], {
-            stdio: 'ignore',
-        });
-        return;
-    }
-
-    server.kill('SIGTERM');
-};
-
 const forwardArgs = process.argv.slice(2);
 
 const main = async () => {
+    if (process.env.CI && forwardArgs.some((arg) => arg.startsWith('--update-snapshots'))) {
+        throw new Error('check-visual may not run with --update-snapshots in CI.');
+    }
+
     const port = await resolvePort('GEM_DUEL_VISUAL_PORT', 'check-visual');
     const fixturePort = await resolvePort('GEM_DUEL_VISUAL_REPLAY_PORT', 'check-visual fixture');
     const baseUrl = `http://${HOST}:${port}`;
@@ -82,7 +46,9 @@ const main = async () => {
 
     await runCommand(commandFor('pnpm'), ['build:web']);
 
-    const server = startServer(port, fixtureServer.baseUrl);
+    const server = await startStandaloneWebServer(port, {
+        ROOM_SERVICE_URL: fixtureServer.baseUrl,
+    });
     const cleanup = async () => {
         stopServer(server);
         await fixtureServer.stop();

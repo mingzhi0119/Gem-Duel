@@ -9,6 +9,7 @@
     },
     "scripts": {
         "check-boundaries": "eslint . --ext .ts,.tsx,.mts,.cts --max-warnings 0",
+        "check-a11y": "node ./tools/check-a11y.mjs",
         "check-commit": "node ./tools/check-commit.mjs",
         "check-contracts": "corepack pnpm contracts:verify && corepack pnpm --filter @gem-duel/contracts test",
         "check-deps": "depcruise --config .dependency-cruiser.cjs apps packages tools",
@@ -41,9 +42,10 @@
         ]
     },
     "devDependencies": {
-        "@playwright/test": "^1.51.1",
+        "@axe-core/playwright": "^4.11.2",
         "@eslint/js": "^9.38.0",
         "@fast-check/vitest": "^0.3.0",
+        "@playwright/test": "^1.51.1",
         "@types/node": "^24.6.0",
         "@types/react": "^19.2.2",
         "@types/react-dom": "^19.2.2",

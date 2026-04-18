@@ -1,8 +1,8 @@
-import { spawn, spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import process from 'node:process';
+import { HOST, startStandaloneWebServer, stopServer } from './standalone-web-server.mjs';
 import { resolvePort, startReplayFixtureServer, waitForServer } from './replay-fixture-server.mjs';
 
-const HOST = '127.0.0.1';
 const isWindows = process.platform === 'win32';
 
 const commandFor = (binary) => (isWindows ? `${binary}.cmd` : binary);
@@ -32,46 +32,6 @@ const runCommand = (command, args, extraEnv = {}) =>
         });
     });
 
-const startWebServer = (port, replayBaseUrl) =>
-    spawn(
-        commandFor('pnpm'),
-        [
-            '--filter',
-            '@gem-duel/web',
-            'exec',
-            'next',
-            'start',
-            '--hostname',
-            HOST,
-            '--port',
-            String(port),
-        ],
-        {
-            cwd: process.cwd(),
-            stdio: 'inherit',
-            shell: isWindows,
-            env: {
-                ...process.env,
-                ROOM_SERVICE_URL: replayBaseUrl,
-            },
-        }
-    );
-
-const stopServer = (server) => {
-    if (!server || server.killed || server.pid == null) {
-        return;
-    }
-
-    if (isWindows) {
-        spawnSync('taskkill', ['/pid', String(server.pid), '/t', '/f'], {
-            stdio: 'ignore',
-        });
-        return;
-    }
-
-    server.kill('SIGTERM');
-};
-
 const forwardArgs = process.argv.slice(2);
 
 const main = async () => {
@@ -82,7 +42,9 @@ const main = async () => {
 
     await runCommand(commandFor('pnpm'), ['build:web']);
 
-    const webServer = startWebServer(webPort, fixtureServer.baseUrl);
+    const webServer = await startStandaloneWebServer(webPort, {
+        ROOM_SERVICE_URL: fixtureServer.baseUrl,
+    });
     const cleanup = async () => {
         stopServer(webServer);
         await fixtureServer.stop();
