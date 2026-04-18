@@ -3,13 +3,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createAiMatchSession, createLocalMatchSession } from '@gem-duel/application';
 import type { UiActionDescriptor } from '@gem-duel/contracts';
-import { AiTraceDrawer, BoardScene, MatchView, ReplayDrawer, Section } from '@gem-duel/ui';
+import { Section } from '@gem-duel/ui';
 
 import {
     createLocalPhase4ScenarioSession,
     getLocalPhase4Scenario,
     type LocalPhase4ScenarioId,
 } from '../local/scenarios';
+import { SessionBoardShell } from './session-board-shell';
 
 export function MatchPlayground({
     mode,
@@ -81,84 +82,76 @@ export function MatchPlayground({
         setRefreshKey((value) => value + 1);
     };
 
-    const defaultNote = (
-        <p className="gd-muted">
-            ZH: 本地默认入口正在从 deterministic validation shell 迁移到 product-facing BoardScene。
-            EN: The local default entry is moving from the deterministic validation shell to the
-            product-facing BoardScene.
-        </p>
-    );
-
-    if (mode === 'local' && shellMode === 'default') {
-        return (
-            <>
-                {interactiveReady ? <span hidden data-testid="phase4-interactive-ready" /> : null}
-                <BoardScene
-                    viewModel={viewModel}
-                    currentFinalStateHash={currentFinalStateHash}
-                    scenarioMeta={
-                        scenario
-                            ? {
-                                  id: scenario.id,
-                                  startingFixtureSource: scenario.startingFixtureSource,
-                                  expectedFinalStateHash: scenario.expectedFinalStateHash,
-                              }
-                            : null
-                    }
-                    onSelect={handleAction}
-                    error={error}
-                    note={defaultNote}
-                />
-                {replayInspector.ok ? <ReplayDrawer model={replayInspector.value} /> : null}
-            </>
+    const boardNote =
+        mode === 'ai' ? (
+            <p className="gd-muted">
+                ZH: `/play/ai` 现已复用与 classic-local 相同的 product-facing BoardScene；AI trace
+                仅保留为附加 sidecar。 EN: `/play/ai` now reuses the same product-facing BoardScene
+                as classic local, with AI trace kept as an auxiliary sidecar only.
+            </p>
+        ) : (
+            <p className="gd-muted">
+                ZH: 默认 classic-local 入口现已稳定使用 product-facing BoardScene。 EN: The default
+                classic-local entry now stably uses the product-facing BoardScene.
+            </p>
         );
-    }
+
+    const legacyShellNote = (
+        <>
+            <p className="gd-muted">
+                ZH: 这是应用层 session 直接驱动核心引擎的最小闭环。 EN: This is the minimal vertical
+                slice from the application layer to the deterministic core engine.
+            </p>
+            {scenario ? (
+                <div className="gd-muted">
+                    <p>
+                        Scenario: <strong data-testid="phase4-scenario-id">{scenario.id}</strong>
+                    </p>
+                    <p>Fixture Source: {scenario.startingFixtureSource}</p>
+                    <p>
+                        Expected finalStateHash:{' '}
+                        <span data-testid="phase4-expected-hash">
+                            {scenario.expectedFinalStateHash}
+                        </span>
+                    </p>
+                    <p>
+                        Current finalStateHash:{' '}
+                        <span data-testid="current-final-state-hash">{currentFinalStateHash}</span>
+                    </p>
+                </div>
+            ) : null}
+            {shellMode === 'debug' ? (
+                <p className="gd-muted" data-testid="phase4-shell-mode">
+                    Debug shell fallback is active for this local route.
+                </p>
+            ) : null}
+        </>
+    );
 
     return (
         <>
             {interactiveReady ? <span hidden data-testid="phase4-interactive-ready" /> : null}
-            <MatchView
+            <SessionBoardShell
+                eyebrow={mode === 'ai' ? 'Classic AI' : 'Classic Local'}
                 viewModel={viewModel}
-                onSelect={handleAction}
-                error={error}
-                note={
-                    <>
-                        <p className="gd-muted">
-                            ZH: 这是应用层 session 直接驱动核心引擎的最小闭环。 EN: This is the
-                            minimal vertical slice from the application layer to the deterministic
-                            core engine.
-                        </p>
-                        {scenario ? (
-                            <div className="gd-muted">
-                                <p>
-                                    Scenario:{' '}
-                                    <strong data-testid="phase4-scenario-id">{scenario.id}</strong>
-                                </p>
-                                <p>Fixture Source: {scenario.startingFixtureSource}</p>
-                                <p>
-                                    Expected finalStateHash:{' '}
-                                    <span data-testid="phase4-expected-hash">
-                                        {scenario.expectedFinalStateHash}
-                                    </span>
-                                </p>
-                                <p>
-                                    Current finalStateHash:{' '}
-                                    <span data-testid="current-final-state-hash">
-                                        {currentFinalStateHash}
-                                    </span>
-                                </p>
-                            </div>
-                        ) : null}
-                        {shellMode === 'debug' ? (
-                            <p className="gd-muted" data-testid="phase4-shell-mode">
-                                Debug shell fallback is active for this local route.
-                            </p>
-                        ) : null}
-                    </>
+                currentFinalStateHash={currentFinalStateHash}
+                scenarioMeta={
+                    scenario
+                        ? {
+                              id: scenario.id,
+                              startingFixtureSource: scenario.startingFixtureSource,
+                              expectedFinalStateHash: scenario.expectedFinalStateHash,
+                          }
+                        : null
                 }
+                onSelect={handleAction}
+                replayInspector={replayInspector.ok ? replayInspector.value : null}
+                aiTrace={mode === 'ai' ? aiTrace : []}
+                shellMode={shellMode}
+                boardNote={boardNote}
+                legacyShellNote={legacyShellNote}
+                error={error}
             />
-            {replayInspector.ok ? <ReplayDrawer model={replayInspector.value} /> : null}
-            {mode === 'ai' ? <AiTraceDrawer traces={aiTrace} /> : null}
         </>
     );
 }

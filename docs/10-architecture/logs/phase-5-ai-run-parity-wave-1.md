@@ -1,0 +1,85 @@
+# Phase 5 Log - AI/Run Shared Main-Board Wave 1
+
+## ZH
+
+- 日期：2026-04-18
+- Phase：Phase 5
+- 状态：In Progress
+- 范围：
+    - 让 `/play/ai` 默认复用 shared `BoardScene` 主盘面，而不再退回 validation shell；
+    - 让 `/play/run` 在 active match 存在时切到同一主盘面，并把 run 特有信息收回 sidecar；
+    - 增加 Phase 5 UI parity 的自动化入口，先锁定产品表面的共享主布局。
+- 本轮已落地结果：
+    - 新增 `apps/web/app/play/components/session-board-shell.tsx`，把 `BoardScene` / legacy `MatchView` fallback / replay drawer / AI trace drawer 收口为同一 app-shell 组合层；
+    - `packages/ui/src/views/board-scene.tsx` 现支持：
+        - 可配置 `eyebrow`，避免 `/play/ai` 与 `/play/run` 继续显示 `Classic Local`；
+        - 额外 `extraSidecars` 插槽，使 run/status/draft 等差异仅留在 sidecar；
+        - 更新后的 Additional Actions 文案，不再声称 “Phase 4 is still in progress”；
+    - `/play/ai` 现通过 `MatchPlayground -> SessionBoardShell -> BoardScene` 走与 `/play/local` 同一主盘面；
+    - `/play/run` 在存在 active match 时现走同一 `BoardScene` 主盘面，run 状态与 Buff draft 被放入额外 sidecar；
+    - 新增 `pnpm check-phase5` 与 `apps/web/tests/phase5/ai-run-parity.spec.ts`，覆盖：
+        - `/play/ai` 默认使用 `BoardScene` 且保留 `AiTraceDrawer`；
+        - `/play/run` 完成 starter Buff draft 后切入同一主盘面，并保留 run sidecar / AI trace 差异。
+- 关键涉及文件：
+    - `apps/web/app/play/components/session-board-shell.tsx`
+    - `apps/web/app/play/components/match-playground.tsx`
+    - `apps/web/app/play/components/run-playground.tsx`
+    - `packages/ui/src/views/board-scene.tsx`
+    - `apps/web/tests/phase5/ai-run-parity.spec.ts`
+    - `tools/check-phase5.mjs`
+    - `package.json`
+- 尚未完成项：
+    - `packages/application/src/sessions/match.ts` 中的 AI turn loop 仍未抽到独立可测模块；
+    - 固定 seed 的 AI / run `finalStateHash` 基线仍未冻结为明确测试常量；
+    - Phase 5 完成日志、roadmap `Completed` 标记与 release-prep wording 仍待最终闭环。
+- Validation：
+    - 待本波代码收口后统一执行：
+        - `pnpm check-deps`
+        - `pnpm check-boundaries`
+        - `pnpm lint`
+        - `pnpm typecheck`
+        - `pnpm test`
+        - `pnpm build`
+        - `pnpm check-phase5`
+
+## EN
+
+- Date: 2026-04-18
+- Phase: Phase 5
+- Status: In Progress
+- Scope:
+    - move `/play/ai` onto the shared `BoardScene` main board instead of the validation shell;
+    - move `/play/run` onto the same main board whenever an active run match exists, while keeping run-specific state in sidecars;
+    - add the first automated UI parity entrypoint for Phase 5 so the shared product surface is frozen early.
+- Landed in this wave:
+    - added `apps/web/app/play/components/session-board-shell.tsx` to collapse `BoardScene`, the legacy `MatchView` fallback, the replay drawer, and the AI trace drawer into one app-shell composition layer;
+    - `packages/ui/src/views/board-scene.tsx` now supports:
+        - a configurable `eyebrow`, so `/play/ai` and `/play/run` no longer say `Classic Local`;
+        - an `extraSidecars` slot so run/status/draft differences stay in sidecars only;
+        - refreshed Additional Actions wording that no longer claims “Phase 4 is still in progress”;
+    - `/play/ai` now flows through `MatchPlayground -> SessionBoardShell -> BoardScene`, matching the same main-board surface as `/play/local`;
+    - `/play/run` now uses the same `BoardScene` main surface whenever an active match exists, with run status and Buff draft moved into extra sidecars;
+    - added `pnpm check-phase5` plus `apps/web/tests/phase5/ai-run-parity.spec.ts`, covering:
+        - `/play/ai` defaulting to `BoardScene` while keeping `AiTraceDrawer`;
+        - `/play/run` entering that same main board after the starter Buff draft while preserving run sidecars / AI trace as the remaining difference.
+- Key touched files:
+    - `apps/web/app/play/components/session-board-shell.tsx`
+    - `apps/web/app/play/components/match-playground.tsx`
+    - `apps/web/app/play/components/run-playground.tsx`
+    - `packages/ui/src/views/board-scene.tsx`
+    - `apps/web/tests/phase5/ai-run-parity.spec.ts`
+    - `tools/check-phase5.mjs`
+    - `package.json`
+- Still unfinished:
+    - the AI turn loop in `packages/application/src/sessions/match.ts` is not yet extracted into a standalone testable module;
+    - fixed-seed AI / run `finalStateHash` baselines are not yet frozen into explicit test constants;
+    - the Phase 5 completion log, roadmap `Completed` status, and release-prep wording still need the final closeout wave.
+- Validation:
+    - to be run after this wave is fully stabilized:
+        - `pnpm check-deps`
+        - `pnpm check-boundaries`
+        - `pnpm lint`
+        - `pnpm typecheck`
+        - `pnpm test`
+        - `pnpm build`
+        - `pnpm check-phase5`

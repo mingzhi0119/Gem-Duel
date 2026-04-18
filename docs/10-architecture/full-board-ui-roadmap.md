@@ -329,6 +329,10 @@ Evidence Caveat：
 
 #### Phase 5 - `/play/ai` 与 `/play/run` Parity
 
+状态：`In Progress`（2026-04-18）。日志：
+
+- [`logs/phase-5-ai-run-parity-wave-1.md`](./logs/phase-5-ai-run-parity-wave-1.md)
+
 目标：让 AI 与 run 路径共享主盘面，只把辅助信息放进 sidecar。
 
 覆盖发现：F10。
@@ -338,6 +342,7 @@ Evidence Caveat：
 - `AiTraceDrawer` 与 `RunPanel` 接入 full-board scene。
 - AI 策略从 session glue 中拆出，形成可测试的 `ai/` surface。
 - 固定 seed 的 AI replay / finalStateHash 基线。
+- `pnpm check-phase5` 自动化验证 `/play/ai` 与 `/play/run` 的主盘面 parity。
 
 完成标准：
 
@@ -726,6 +731,10 @@ Done criteria:
 
 #### Phase 5 - `/play/ai` and `/play/run` Parity
 
+Status: `In Progress` (2026-04-18). Logs:
+
+- [`logs/phase-5-ai-run-parity-wave-1.md`](./logs/phase-5-ai-run-parity-wave-1.md)
+
 Goal: move AI and run flows onto the same main board, with auxiliary state in sidecars only.
 
 Covers: F10.
@@ -735,6 +744,7 @@ Outputs:
 - Hook `AiTraceDrawer` and `RunPanel` into the shared full-board scene.
 - Split AI strategy into a more testable `ai/` surface rather than burying it inside session glue.
 - Add fixed-seed AI replay / `finalStateHash` baselines.
+- Add `pnpm check-phase5` as the automated parity gate for `/play/ai` and `/play/run`.
 
 Done criteria:
 

@@ -105,19 +105,23 @@ const getToolbarLabel = (action: UiActionDescriptor) => {
 };
 
 export const BoardScene = ({
+    eyebrow = 'Classic Local',
     viewModel,
     currentFinalStateHash,
     scenarioMeta = null,
     onSelect,
     error,
     note,
+    extraSidecars = null,
 }: {
+    eyebrow?: string;
     viewModel: UiViewModel;
     currentFinalStateHash: string;
     scenarioMeta?: BoardSceneScenarioMeta | null;
     onSelect?: (action: UiActionDescriptor) => void;
     error?: string | null;
     note?: ReactNode;
+    extraSidecars?: ReactNode;
 }) => {
     const toolbarActions = viewModel.availableActions.filter((action) =>
         TOOLBAR_COMMANDS.has(action.command.type)
@@ -219,7 +223,7 @@ export const BoardScene = ({
         <section className="gd-board-scene" data-testid="board-scene">
             <header className="gd-board-scene-header">
                 <div>
-                    <p className="gd-scene-eyebrow">Classic Local</p>
+                    <p className="gd-scene-eyebrow">{eyebrow}</p>
                     <h1>{viewModel.title}</h1>
                     <p className="gd-muted">{viewModel.subtitle}</p>
                     {note}
@@ -391,11 +395,14 @@ export const BoardScene = ({
                         </SidecarDrawer>
                     ) : null}
 
+                    {extraSidecars}
+
                     {fallbackActions.length > 0 && onSelect ? (
                         <SidecarDrawer title="Additional Actions">
                             <p className="gd-muted">
-                                Unmapped legal actions remain available here so the local board does
-                                not strand the session while Phase 4 is still in progress.
+                                Unmapped legal actions remain available here so this shared board
+                                surface never strands the session while later parity phases keep
+                                collapsing onto it.
                             </p>
                             <ActionList actions={fallbackActions} onSelect={onSelect} />
                         </SidecarDrawer>

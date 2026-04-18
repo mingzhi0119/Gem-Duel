@@ -13,6 +13,7 @@
         "check-contracts": "corepack pnpm contracts:verify && corepack pnpm --filter @gem-duel/contracts test",
         "check-deps": "depcruise --config .dependency-cruiser.cjs apps packages tools",
         "check-phase4": "node ./tools/check-phase4.mjs",
+        "check-phase5": "node ./tools/check-phase5.mjs",
         "check-visual": "node ./tools/check-visual.mjs",
         "contracts:generate": "corepack pnpm --filter @gem-duel/contracts generate",
         "contracts:verify": "corepack pnpm --filter @gem-duel/contracts verify:generated",
