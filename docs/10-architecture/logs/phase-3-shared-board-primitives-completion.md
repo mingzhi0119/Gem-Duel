@@ -29,17 +29,20 @@
     - Phase 4 仍需把 `/play/local` 真正切到可玩的 full-board 默认入口；
     - Phase 5/7 仍需继续把 run / replay 的产品级交互与最终视觉打磨做完；
     - 本阶段完成不等于产品完成，只表示 shared full-board primitive layer 已收口。
-- 验证：
+- Rebaseline reason and reviewed diffs：
+    - `pnpm check-visual -- --update-snapshots` 在本阶段仅用于刷新 shared drawers 接线后的 screenshot baseline；
+    - 重录涉及的 committed baseline 主要是 `classic-selection` 与 `run-sidecar`；
+    - 该步骤只说明基线被更新，不应单独当作最终回归证明。
+- Final regression run (without snapshot updates)：
     - `pnpm check-deps`
     - `pnpm check-boundaries`
     - `pnpm lint`
     - `pnpm typecheck`
     - `pnpm test`
     - `pnpm build`
-    - `pnpm check-visual -- --update-snapshots`
     - `pnpm check-visual`
 - Acceptance evidence：
-    - visual baseline：`classic-selection` 与 `run-sidecar` 已因 shared drawers 接线而重录；
+    - platform caveat：当前 committed screenshot baseline 仍为 `*-win32.png`，平台固定策略与 CI 禁止重录仍属后续治理项；
     - shell drift：`apps/web/next-env.d.ts` 构建漂移将在提交前恢复；
     - 提交边界：本阶段完成记录与 commit 边界同步。
 
@@ -72,16 +75,19 @@
     - Phase 4 still has to switch `/play/local` to the genuinely playable default full-board surface;
     - Phase 5/7 still own the product-grade run / replay interaction polish and final visual refinement;
     - completing this phase does not mean product completion, only that the shared full-board primitive layer is closed.
-- Validation:
+- Rebaseline reason and reviewed diffs:
+    - `pnpm check-visual -- --update-snapshots` was used in this phase only to refresh the screenshot baseline after wiring the shared drawers;
+    - the main committed-baseline refreshes were `classic-selection` and `run-sidecar`;
+    - that step explains the rebaseline but does not count as final regression proof by itself.
+- Final regression run (without snapshot updates):
     - `pnpm check-deps`
     - `pnpm check-boundaries`
     - `pnpm lint`
     - `pnpm typecheck`
     - `pnpm test`
     - `pnpm build`
-    - `pnpm check-visual -- --update-snapshots`
     - `pnpm check-visual`
 - Acceptance evidence:
-    - visual baseline: `classic-selection` and `run-sidecar` were re-recorded because the shared drawers are now wired in;
+    - platform caveat: the currently committed screenshot baseline is still `*-win32.png`, so platform pinning and CI-side snapshot-update blocking remain follow-up governance work;
     - shell drift: the generated `apps/web/next-env.d.ts` drift will be restored before commit;
     - commit boundary: this completion log stays aligned with the commit boundary for the phase.

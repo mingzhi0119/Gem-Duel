@@ -83,7 +83,7 @@
 
 #### Phase 1 - Application / UI 仓库结构清理
 
-状态：`In Progress`（2026-04-17）。日志：[`logs/phase-1-application-ui-structure-kickoff.md`](./logs/phase-1-application-ui-structure-kickoff.md)
+状态：`Delayed / At Risk`（2026-04-17）。日志：[`logs/phase-1-application-ui-structure-kickoff.md`](./logs/phase-1-application-ui-structure-kickoff.md)
 
 目标：在不改契约的前提下，先清出 projection 与 UI 扩展空间。
 
@@ -92,8 +92,8 @@
 本阶段输出：
 
 - `packages/application` 与 `packages/ui` 的目标目录、write-scope、迁移顺序与非目标治理说明见 [`phase-1-application-ui-structure-plan.md`](./phase-1-application-ui-structure-plan.md)。
-- 把 `packages/application/src/index.ts` 按职责拆分为 sessions、view-model、ai、replay 等目录。
-- 把 `packages/ui` 建立基础目录结构与 barrel，而不是继续单文件堆叠。
+- `packages/ui` 的目录与 barrel 目标已通过后续的 Phase 2.5 / 3 间接落地，但 `packages/application` 的无语义拆分尚未开始。
+- `packages/application/src/index.ts` 当前仍是单文件，且当前实测为 **1470 行**；这使本阶段从“按顺序推进”转为“Phase 4 前必须补的阻塞治理门”。
 - 不改 behavior，不改 cross-boundary contract，只做 layout / ownership 清理。
 
 本阶段明确非目标：
@@ -107,14 +107,38 @@
 - 无 contract drift。
 - `check-deps`、`check-boundaries`、`test`、`build` 仍通过。
 - 后续 Phase 2-6 的 PR 不再强依赖单个巨文件扩展。
+- 在 Phase 1a 完成前，新增 projection / helper 逻辑不得继续回写 `packages/application/src/index.ts`。
+
+#### Phase 1a - Application Emergency Split
+
+状态：`Planned / Blocking Gate before Phase 4`（2026-04-17）。
+
+目标：只拆 `packages/application/src/index.ts`，不改契约、不改行为，把 Phase 1 的核心治理债前置补齐。
+
+本阶段输出：
+
+- 强制拆出 `sessions`；
+- 强制拆出 `view-model/projection`；
+- 强制拆出 `ai`；
+- 强制拆出 `replay-inspector`；
+- 强制拆出 `effect-prompt / selection helpers`；
+- `index.ts` 最终仅保留 orchestration + barrel，目标收敛到 **300 行以内**。
+
+完成标准：
+
+- 对外 export surface 保持兼容；
+- contract、runtime、replay 行为不发生语义变化；
+- `packages/application/src/index.ts` 不再承担新增 projection/helper 的默认落点；
+- 本阶段完成前，Phase 4 不得启动默认入口切换。
 
 #### Phase 2 - 交互范式 ADR + `UiViewModel` 2.0 契约扩展
 
-状态：`In Progress`（2026-04-17）。日志：
+状态：`Closed (contract/runtime); UI consumer migration deferred to Phase 6`（2026-04-17）。日志：
 
 - [`logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md`](./logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md)
 - [`logs/phase-2-adr-and-contract-wave-1.md`](./logs/phase-2-adr-and-contract-wave-1.md)
 - [`logs/phase-2-pending-selection-wave-2.md`](./logs/phase-2-pending-selection-wave-2.md)
+- [`logs/phase-2-contract-runtime-closure.md`](./logs/phase-2-contract-runtime-closure.md)
 
 目标：先决定“多选盘面交互怎么表达”，再做 board-facing projection。
 
@@ -148,7 +172,7 @@
     - `promptStack[]`
     - `selectionDraft?`
     - `runPanel?`
-- `room-live-client` 等页面不得继续在页面层临时推导 `room.status` / viewer / selectable state。
+- `room-live-client` 等页面的最终 shared `BoardScene` consumer migration 移交给 Phase 6，但 contract/projection 已不再允许页面层自由拼接 `room.status` / viewer / selectable state。
 - spectator / replay / room filtering 语义必须一起进入 projection contract，而不是延后到页面实现时再补。
 - 当前已落第二波 Phase 2 结果：
     - `TAKE_TOKENS` / `USE_PRIVILEGE` 已开始切到引擎拥有的 pending-selection command surface，而不是页面枚举所有组合；
@@ -156,11 +180,20 @@
     - `packages/application` 已改为从 `snapshot.pendingSelection` 投影 `selectionDraft` 与 board-cell selected/selectable 状态；
     - property / engine / view-model tests 已补覆盖 pending-selection 的确认与取消路径。
 
+本阶段关闭范围 / 冻结点：
+
+- `UiViewModel v2` 已作为后续 UI/fixture/projection 的 contract 基线；
+- `pendingSelection` 已作为引擎拥有的多阶段交互 surface 落入 contract、runtime 与 replay-visible state；
+- `roomStatus` additive contract 已落地，不再把 room 级状态口径留给页面层自由拼接；
+- `UiSessionStatus = 'replay'` 当前已有 producer，不作为本轮待修 contract 问题；
+- `room-live-client` 最终切到 shared `BoardScene` 的 consumer migration 移交给 Phase 6，不再作为 Phase 2 未完成项挂账。
+
 完成标准：
 
 - 所有 board-facing 页面都能从同一套 projection 获取完整盘面数据。
 - UI renderer 不需要根据 phase 自己猜隐藏信息或合法交互。
 - migration note、fixtures、contract regen 与 property tests 同步更新。
+- 后续若仅剩 consumer migration / shared BoardScene 接入，不再据此把 Phase 2 回退成 `In Progress`。
 
 #### Phase 2.5 - `packages/ui` 布局、Design Tokens 与 Visual Harness
 
@@ -238,6 +271,12 @@
 - `/play/local`、`/play/ai`、`/play/run` 与 `/replays/[replayId]` 已开始直接复用 shared drawers；
 - `/playground/*` 的 visual harness 已覆盖 board primitives、ReplayDrawer 与 AiTraceDrawer，并完成新的 committed baseline。
 
+Evidence Caveat：
+
+- `pnpm check-visual -- --update-snapshots` 只能视为 rebaseline，不构成最终回归证明；
+- 当前 committed screenshot baseline 仍为 `*-win32.png`，平台策略与 CI 禁止重录仍属于后续治理项；
+- Phase 3 的“已完成”表示 shared primitives 已落地，不等于 visual-governance 已完全硬化。
+
 完成标准：
 
 - `packages/ui` 能独立渲染静态完整盘面。
@@ -255,6 +294,7 @@
 - `/play/local` 切到 full-board scene，旧调试壳只保留为 debug fallback。
 - 依据 Phase 2 的 ADR 接入多选/串联交互。
 - 把 hero / marketing copy 与默认入口行为一起降级到真实口径。
+- 在进入 E2E / 人工验收前，先冻结每条路径的 `seed`、`starting snapshot / fixture` 与 `expected finalStateHash` 三元组。
 - 新增 **Player Path Acceptance Matrix**，至少覆盖：
     - 首回合取 3 枚连线宝石；
     - 购买第一张 pyramid 卡；
@@ -298,7 +338,7 @@
 
 - `room-live-client` 切换到 shared `BoardScene`。
 - `viewerRole='spectator'` 自动禁用交互。
-- property test：spectator DOM / serialized view model 不得泄漏 `hiddenState`、`deckOrder`、他方 reserve 牌面等信息。
+- property test：spectator DOM / serialized view model 不得泄漏 `hiddenState`、`deckOrder`、他方 reserve 牌面或对手 `pendingSelection` 草稿等信息。
 - resync / seq-gap / out-of-turn seat 的 Playwright 或等价集成测试。
 
 完成标准：
@@ -351,12 +391,10 @@
 
 ### 立即可执行的高 ROI 顺序
 
-1. 完成 Phase 0 的口径降级与 step-log evidence 模板。
-2. 完成 Phase 1 的 `application` / `ui` 结构清理。
-3. 在 Phase 2 开始前先写 board-selection-model ADR。
-4. 再做 `UiViewModel` 2.0 的 additive contract change。
-5. 在 Phase 2.5 建立 design tokens 与 visual harness。
-6. 最后再切 `/play/local`，避免 renderer 落地后整体返工。
+1. Milestone A：锁定事实状态与 phase 口径。
+2. Milestone B：完成 `Phase 1a - Application Emergency Split`。
+3. Milestone C：在 Phase 4 前冻结 player-path matrix 的 `seed / fixture / finalStateHash` 三元组。
+4. Milestone D：在 Phase 6 前补齐 spectator invariants，并把泄漏字段清单写成正式门禁契约。
 
 ## EN
 
@@ -441,7 +479,7 @@ Done criteria:
 
 #### Phase 1 - Application / UI Repository Structure Cleanup
 
-Status: `In Progress` (2026-04-17). Log: [`logs/phase-1-application-ui-structure-kickoff.md`](./logs/phase-1-application-ui-structure-kickoff.md)
+Status: `Delayed / At Risk` (2026-04-17). Log: [`logs/phase-1-application-ui-structure-kickoff.md`](./logs/phase-1-application-ui-structure-kickoff.md)
 
 Goal: create room for projection and UI growth without changing contracts yet.
 
@@ -450,8 +488,8 @@ Covers: F6, F10.
 Outputs:
 
 - The target layout, write scopes, migration order, and non-goals for `packages/application` and `packages/ui` are documented in [`phase-1-application-ui-structure-plan.md`](./phase-1-application-ui-structure-plan.md).
-- Split `packages/application/src/index.ts` into sessions, view-model, ai, replay, and similar folders.
-- Give `packages/ui` a baseline directory layout and barrel structure instead of growing as a single file.
+- The `packages/ui` side of the cleanup has effectively landed indirectly through Phase 2.5 / 3, but the no-semantics `packages/application` split still has not started.
+- `packages/application/src/index.ts` remains a single file and currently measures **1470 lines**, turning this phase from “the next orderly step” into a blocking cleanup gate before Phase 4.
 - Keep the work non-behavioral and non-contractual.
 
 Explicit non-goals:
@@ -465,10 +503,38 @@ Done criteria:
 - No contract drift.
 - `check-deps`, `check-boundaries`, `test`, and `build` still pass.
 - Later Phase 2-6 work no longer depends on a single god file.
+- Until Phase 1a lands, no new projection/helper logic may be appended back into `packages/application/src/index.ts`.
+
+#### Phase 1a - Application Emergency Split
+
+Status: `Planned / Blocking Gate before Phase 4` (2026-04-17).
+
+Goal: split only `packages/application/src/index.ts` without changing contracts or behavior, and force the core Phase 1 governance debt to close before the default-entry migration starts.
+
+Outputs:
+
+- mandatory `sessions` split;
+- mandatory `view-model/projection` split;
+- mandatory `ai` split;
+- mandatory `replay-inspector` split;
+- mandatory `effect-prompt / selection helpers` split;
+- reduce `index.ts` to orchestration + barrel only, targeting **under 300 lines**.
+
+Done criteria:
+
+- The external export surface remains compatible.
+- Contract, runtime, and replay behavior stay semantically unchanged.
+- `packages/application/src/index.ts` is no longer the default sink for new projection/helper growth.
+- Phase 4 may not start its default-entry switch until this gate is closed.
 
 #### Phase 2 - Interaction ADR + `UiViewModel` 2.0 Contract Expansion
 
-Status: `In Progress` (2026-04-17). Log: [`logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md`](./logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md)
+Status: `Closed (contract/runtime); UI consumer migration deferred to Phase 6` (2026-04-17). Logs:
+
+- [`logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md`](./logs/phase-2-interaction-adr-and-uiviewmodel-kickoff.md)
+- [`logs/phase-2-adr-and-contract-wave-1.md`](./logs/phase-2-adr-and-contract-wave-1.md)
+- [`logs/phase-2-pending-selection-wave-2.md`](./logs/phase-2-pending-selection-wave-2.md)
+- [`logs/phase-2-contract-runtime-closure.md`](./logs/phase-2-contract-runtime-closure.md)
 
 Goal: decide how multi-step board interaction is represented before building the board-facing projection.
 
@@ -502,14 +568,23 @@ Outputs:
     - `promptStack[]`
     - `selectionDraft?`
     - `runPanel?`
-- Stop letting `room-live-client` and similar pages infer `room.status`, viewer role, or selectable state locally.
+- Final shared-`BoardScene` consumer migration for `room-live-client` and similar pages is deferred to Phase 6, but the contract/projection surface no longer permits page-local reconstruction of `room.status`, viewer role, or selectable state.
 - Move spectator / replay / room filtering semantics into the projection contract instead of postponing them to page implementation.
+
+Closure scope / freeze point:
+
+- `UiViewModel v2` is now the contract baseline for later UI / fixture / projection work.
+- `pendingSelection` is now the engine-owned multi-step interaction surface across contract, runtime, and replay-visible state.
+- `roomStatus` is already landed as an additive contract rather than a page-local convention.
+- `UiSessionStatus = 'replay'` already has a producer and is therefore not tracked as unresolved contract debt in this pass.
+- Final consumer migration of `room-live-client` onto the shared `BoardScene` moves to Phase 6 instead of keeping Phase 2 artificially open.
 
 Done criteria:
 
 - All board-facing pages can consume the same projected board data.
 - The UI renderer no longer has to infer hidden state or legal interaction on its own.
 - Migration notes, fixtures, contract regeneration, and property tests are updated together.
+- Consumer migration and shared-BoardScene adoption alone are no longer used to re-open Phase 2.
 
 #### Phase 2.5 - `packages/ui` Layout, Design Tokens, and Visual Harness
 
@@ -578,6 +653,12 @@ Closure results for the phase:
 - `/play/local`, `/play/ai`, `/play/run`, and `/replays/[replayId]` now reuse the shared drawers directly;
 - the `/playground/*` visual harness now covers the board primitives together with `ReplayDrawer` and `AiTraceDrawer`, with refreshed committed baselines.
 
+Evidence Caveat:
+
+- `pnpm check-visual -- --update-snapshots` counts only as rebaselining, not as final regression proof.
+- The currently committed screenshot baseline is still `*-win32.png`, so platform policy and CI-side snapshot-update blocking remain follow-up governance work.
+- Phase 3 being `Completed` means the shared primitives landed; it does not mean visual governance is already fully hardened.
+
 Done criteria:
 
 - `packages/ui` can render a static full board on its own.
@@ -595,6 +676,7 @@ Outputs:
 - Switch `/play/local` to a full-board scene and keep the old debug shell as fallback only.
 - Drive multi-step interaction according to the Phase 2 ADR.
 - Downgrade hero/marketing language and default-entry behavior to match the real product state.
+- Before E2E/manual acceptance begins, freeze the `seed`, `starting snapshot / fixture`, and `expected finalStateHash` triad for each path.
 - Add a **Player Path Acceptance Matrix** covering at least:
     - first turn taking 3 linked gems;
     - buying the first pyramid card;
@@ -638,7 +720,7 @@ Outputs:
 
 - Move `room-live-client` onto the shared `BoardScene`.
 - Make `viewerRole='spectator'` disable interaction automatically.
-- Add property tests ensuring spectator DOM / serialized view models do not leak `hiddenState`, `deckOrder`, or opponent reserve-card faces.
+- Add property tests ensuring spectator DOM / serialized view models do not leak `hiddenState`, `deckOrder`, opponent reserve-card faces, or opponent `pendingSelection` drafts.
 - Add Playwright or equivalent integration tests for resync, seq-gap, and out-of-turn seats.
 
 Done criteria:
@@ -691,9 +773,7 @@ Done criteria:
 
 ### Immediate High-ROI Order
 
-1. Finish Phase 0 wording downgrade and the step-log evidence template.
-2. Finish Phase 1 `application` / `ui` structure cleanup.
-3. Write the board-selection-model ADR before Phase 2 coding starts.
-4. Then land the additive `UiViewModel` 2.0 contract change.
-5. Establish design tokens and the visual harness in Phase 2.5.
-6. Only then switch `/play/local`, to avoid redoing the renderer.
+1. Milestone A: lock the factual state and phase wording.
+2. Milestone B: complete `Phase 1a - Application Emergency Split`.
+3. Milestone C: freeze the Phase 4 player-path `seed / fixture / finalStateHash` triads.
+4. Milestone D: define spectator invariants as a formal gate before Phase 6.
