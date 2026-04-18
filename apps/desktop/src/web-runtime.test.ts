@@ -8,21 +8,10 @@ import {
 
 describe('desktop web runtime helpers', () => {
     it('resolves the bundled standalone server relative to the desktop dist directory', () => {
-        const runtimeDir = path.join('E:', 'simonbb', 'Gem-Duel', 'apps', 'desktop', 'dist');
+        const runtimeDir = path.join(process.cwd(), 'dist');
 
         expect(resolveStandaloneServerScript(runtimeDir)).toBe(
-            path.join(
-                'E:',
-                'simonbb',
-                'Gem-Duel',
-                'apps',
-                'web',
-                '.next',
-                'standalone',
-                'apps',
-                'web',
-                'server.js'
-            )
+            path.resolve(process.cwd(), '../web/.next/standalone/apps/web/server.js')
         );
     });
 
