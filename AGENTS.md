@@ -47,6 +47,7 @@
 - Current validation: `pnpm check-boundaries`
 - Current validation: `pnpm check-commit`
 - Current validation: `pnpm check-contracts`
+- Current validation: `pnpm check-a11y`
 - Current validation: `pnpm check-visual`
 - Current generation: `pnpm contracts:generate`
 - Current verification: `pnpm contracts:verify`

@@ -2,7 +2,7 @@
 
 ## ZH
 
-本目录记录 `docs/10-architecture/full-board-ui-roadmap.md` 各 Phase 的落地日志。
+本目录记录 `docs/10-architecture/full-board-ui-roadmap.md` 的各 Phase 落地日志，以及 Phase 关闭后的 hardening wave 收口日志。
 
 - 每次完成一个 roadmap phase，必须补对应日志，并把 roadmap 状态同步改为 `Completed` 或等价完成标记。
 - 日志应记录：日期、范围、落地结果、涉及文件、剩余风险与验证结果。
@@ -31,10 +31,11 @@
 - [`phase-6-room-boardscene-and-spectator-gates-completion.md`](./phase-6-room-boardscene-and-spectator-gates-completion.md): Phase 6 完成日志，记录 `/rooms/[roomId]` 切到 shared `BoardScene`、spectator pending-selection redaction、`check-phase6` 与 resync/越权门禁
 - [`phase-7-replay-boardscene-and-product-finish-completion.md`](./phase-7-replay-boardscene-and-product-finish-completion.md): Phase 7 完成日志，记录 `/replays/[replayId]` 复用 shared `BoardScene`、timeline/hash/keyboard/i18n 收口与 replay desktop/mobile visual baselines
 - [`phase-8-desktop-offline-packaging-validation.md`](./phase-8-desktop-offline-packaging-validation.md): Phase 8 完成日志，记录 Desktop 通过 embedded standalone web runtime、static asset sync、`preload.cjs` bridge 与 `check-phase8` 关闭 offline runtime gate
+- [`hardening-wave-1-standalone-room-visual-a11y.md`](./hardening-wave-1-standalone-room-visual-a11y.md): Hardening Wave 1 收口日志，记录 standalone browser gates、room-status cosmetic fanout、平台无关 visual baseline 与 `check-a11y`
 
 ## EN
 
-This directory stores landing logs for phases tracked in `docs/10-architecture/full-board-ui-roadmap.md`.
+This directory stores landing logs for phases tracked in `docs/10-architecture/full-board-ui-roadmap.md`, plus post-phase hardening-wave closeout logs.
 
 - Whenever a roadmap phase is completed, the matching log must be written and the roadmap status must be updated to `Completed` or an equivalent completion marker.
 - Logs should record the date, scope, landed results, touched files, remaining risks, and validation outcomes.
@@ -63,3 +64,4 @@ This directory stores landing logs for phases tracked in `docs/10-architecture/f
 - [`phase-6-room-boardscene-and-spectator-gates-completion.md`](./phase-6-room-boardscene-and-spectator-gates-completion.md): Phase 6 completion log for moving `/rooms/[roomId]` onto the shared `BoardScene`, redacting spectator pending-selection state, and landing the `check-phase6` browser/integration gate
 - [`phase-7-replay-boardscene-and-product-finish-completion.md`](./phase-7-replay-boardscene-and-product-finish-completion.md): Phase 7 completion log for moving `/replays/[replayId]` onto the shared `BoardScene`, closing timeline/hash/keyboard/i18n on the replay surface, and adding replay desktop/mobile visual baselines
 - [`phase-8-desktop-offline-packaging-validation.md`](./phase-8-desktop-offline-packaging-validation.md): Phase 8 completion log for closing Desktop offline runtime validation through the embedded standalone web runtime, static-asset sync, the `preload.cjs` bridge, and `check-phase8`
+- [`hardening-wave-1-standalone-room-visual-a11y.md`](./hardening-wave-1-standalone-room-visual-a11y.md): Hardening Wave 1 closeout for standalone browser gates, room-status cosmetic fanout, platform-agnostic visual baselines, and `check-a11y`
