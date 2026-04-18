@@ -186,9 +186,17 @@ export const buildRoomServiceApp = async (
                 }
             );
 
-            socket.on('message', (raw) => {
+            socket.on('message', (raw: unknown) => {
                 try {
-                    const message = RoomWsMessageSchema.parse(JSON.parse(raw.toString()));
+                    const serialized =
+                        typeof raw === 'string'
+                            ? raw
+                            : Buffer.isBuffer(raw)
+                              ? raw.toString()
+                              : Array.isArray(raw)
+                                ? Buffer.concat(raw).toString()
+                                : String(raw);
+                    const message = RoomWsMessageSchema.parse(JSON.parse(serialized));
                     if (
                         message.type === 'room.state' ||
                         message.type === 'match.patch' ||
@@ -211,7 +219,7 @@ export const buildRoomServiceApp = async (
                     }
 
                     authority.onMessage(connectionId, message);
-                } catch (error) {
+                } catch (error: unknown) {
                     app.log.error(error);
                 }
             });
@@ -220,7 +228,7 @@ export const buildRoomServiceApp = async (
                 authority.onDisconnect(connectionId);
             });
 
-            socket.on('error', (error) => {
+            socket.on('error', (error: unknown) => {
                 app.log.error(error);
             });
         });
