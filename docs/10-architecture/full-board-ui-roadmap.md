@@ -200,6 +200,10 @@
 
 #### Phase 3 - Shared Board Primitives
 
+状态：`In Progress`（2026-04-17）。日志：
+
+- [`logs/phase-3-shared-board-primitives-wave-1.md`](./logs/phase-3-shared-board-primitives-wave-1.md)
+
 目标：建立完整盘面 UI 需要的共享 primitives 与 sidecar 组合。
 
 覆盖发现：F7。
@@ -220,6 +224,12 @@
 - `ReplayDrawer`
 - `AiTraceDrawer`
 - `RunPanel`
+
+第一波落地范围：
+
+- 先把 `BoardGrid`、`TokenCell`、`MarketStack`、`CardSlot`、`ReserveTray`、`PlayerZone`、`RoyalCourt`、`PromptBanner`、`SelectionOverlay`、`RunPanel` 从当前 scaffold 中正式抽成 `packages/ui` primitives；
+- 先让 `/playground/*` 与 static scene host 消费这些 primitives，暂不切换 `/play/local` 默认主画面；
+- `ReplayDrawer` / `AiTraceDrawer` 允许在后续波次补齐，不阻塞本 phase 启动。
 
 完成标准：
 
@@ -496,7 +506,11 @@ Done criteria:
 
 #### Phase 2.5 - `packages/ui` Layout, Design Tokens, and Visual Harness
 
-Status: `In Progress` (2026-04-17). Log: [`logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md`](./logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md)
+Status: `Completed` (2026-04-17). Logs:
+
+- [`logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md`](./logs/phase-2.5-ui-layout-and-visual-harness-kickoff.md)
+- [`logs/phase-2.5-ui-layout-and-visual-harness-wave-1.md`](./logs/phase-2.5-ui-layout-and-visual-harness-wave-1.md)
+- [`logs/phase-2.5-visual-harness-completion.md`](./logs/phase-2.5-visual-harness-completion.md)
 
 Governance doc: [`phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md)
 
@@ -519,6 +533,10 @@ Done criteria:
 
 #### Phase 3 - Shared Board Primitives
 
+Status: `In Progress` (2026-04-17). Logs:
+
+- [`logs/phase-3-shared-board-primitives-wave-1.md`](./logs/phase-3-shared-board-primitives-wave-1.md)
+
 Goal: build the shared primitives and sidecar surfaces required for the full board UI.
 
 Covers: F7.
@@ -539,6 +557,12 @@ Outputs:
 - `ReplayDrawer`
 - `AiTraceDrawer`
 - `RunPanel`
+
+First-wave scope:
+
+- extract `BoardGrid`, `TokenCell`, `MarketStack`, `CardSlot`, `ReserveTray`, `PlayerZone`, `RoyalCourt`, `PromptBanner`, `SelectionOverlay`, and `RunPanel` into first-class `packages/ui` primitives;
+- make `/playground/*` and the static scene host consume those primitives before switching the `/play/local` default surface;
+- allow `ReplayDrawer` / `AiTraceDrawer` to land in later waves without blocking Phase 3 startup.
 
 Done criteria:
 

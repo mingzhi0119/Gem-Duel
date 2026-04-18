@@ -203,11 +203,29 @@
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
+.gd-market-stack,
+.gd-market-lane,
+.gd-sidecar-stack {
+    display: grid;
+    gap: 0.85rem;
+}
+
+.gd-market-lane-header,
+.gd-card-slot-meta,
+.gd-player-zone-header {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
 .gd-market-slot,
 .gd-player-zone,
 .gd-royal-offer,
 .gd-prompt-card,
-.gd-scene-link-card {
+.gd-scene-link-card,
+.gd-selection-overlay,
+.gd-run-panel {
     border: 1px solid var(--gd-border);
     border-radius: 16px;
     background: var(--gd-surface);
@@ -228,6 +246,19 @@
     background: var(--gd-accent-soft);
 }
 
+.gd-card-slot-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--gd-radius-pill);
+    background: var(--gd-surface-strong);
+    color: white;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
 .gd-player-metrics {
     display: flex;
     flex-wrap: wrap;
@@ -236,14 +267,35 @@
     font-size: 0.92rem;
 }
 
-.gd-selection-chip,
-.gd-run-chip {
+.gd-reserve-tray,
+.gd-inventory-grid,
+.gd-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.gd-reserve-slot,
+.gd-token-pill,
+.gd-chip {
     display: inline-grid;
-    gap: 0.2rem;
-    padding: 0.8rem 1rem;
-    border-radius: 16px;
+    gap: 0.15rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 12px;
     border: 1px solid var(--gd-border);
-    background: var(--gd-surface);
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.gd-reserve-slot.is-occupied,
+.gd-chip,
+.gd-selection-overlay {
+    border-color: rgba(0, 109, 119, 0.32);
+}
+
+.gd-chip {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--gd-accent);
 }
 
 .gd-board-cell {
@@ -292,6 +344,34 @@
 
 .gd-board-cell.is-gold {
     background: linear-gradient(180deg, rgba(214, 163, 41, 0.2), var(--gd-surface));
+}
+
+.gd-token-pill.is-blue {
+    background: linear-gradient(180deg, rgba(47, 116, 181, 0.16), rgba(255, 255, 255, 0.92));
+}
+
+.gd-token-pill.is-white {
+    background: linear-gradient(180deg, rgba(247, 244, 232, 0.92), rgba(255, 255, 255, 0.94));
+}
+
+.gd-token-pill.is-green {
+    background: linear-gradient(180deg, rgba(27, 127, 91, 0.16), rgba(255, 255, 255, 0.92));
+}
+
+.gd-token-pill.is-black {
+    background: linear-gradient(180deg, rgba(45, 55, 72, 0.18), rgba(255, 255, 255, 0.9));
+}
+
+.gd-token-pill.is-red {
+    background: linear-gradient(180deg, rgba(182, 60, 60, 0.16), rgba(255, 255, 255, 0.92));
+}
+
+.gd-token-pill.is-pearl {
+    background: linear-gradient(180deg, rgba(206, 185, 219, 0.25), rgba(255, 255, 255, 0.92));
+}
+
+.gd-token-pill.is-gold {
+    background: linear-gradient(180deg, rgba(214, 163, 41, 0.2), rgba(255, 255, 255, 0.92));
 }
 
 .gd-board-pos {

@@ -1,0 +1,91 @@
+# Phase 3 Log - Shared Board Primitives Wave 1
+
+## ZH
+
+- 日期：2026-04-17
+- Phase：Phase 3
+- 状态：进行中
+- 范围：启动 shared board primitives 的第一波抽离，把当前 `BoardSceneScaffold` 中的静态组合块正式沉到 `packages/ui` 组件面，并让静态 visual harness 真正消费这些 primitives。
+- 本波目标：
+    - 抽离 `BoardGrid` / `TokenCell`
+    - 抽离 `MarketStack` / `CardSlot`
+    - 抽离 `ReserveTray` / `PlayerZone`
+    - 抽离 `RoyalCourt` / `PromptBanner` / `SelectionOverlay` / `RunPanel`
+    - 让 `/playground/*` 直接消费这些 primitives，而不是继续依赖 scaffold 内联结构
+- 已落地结果：
+    - 新增 `packages/ui/src/board/board-grid.tsx`、`token-cell.tsx`、`card-slot.tsx`、`market-stack.tsx`、`reserve-tray.tsx`、`player-zone.tsx`、`royal-court.tsx`、`prompt-banner.tsx`、`selection-overlay.tsx`、`run-panel.tsx`；
+    - `packages/ui/src/board/board-scaffold.tsx` 已改为组合上述 primitives，而不是继续内联 market / board / player / sidecar 结构；
+    - `packages/ui/src/index.tsx` 已导出本波 primitives，供后续 shared scene / shell 复用；
+    - `packages/ui/src/styles/shell.css` 已补齐 Phase 3 第一波所需的 layout / slot / chip / player-zone / sidecar class contract；
+    - `apps/web/tests/visual/playground.spec.ts-snapshots/*.png` 已按新 scaffold 更新 baseline，`check-visual` 通过。
+- 关键涉及文件：
+    - `packages/ui/src/board/*`
+    - `packages/ui/src/index.tsx`
+    - `packages/ui/src/styles/shell.css`
+    - `apps/web/tests/visual/playground.spec.ts-snapshots/*`
+    - `docs/10-architecture/full-board-ui-roadmap.md`
+- 明确非目标：
+    - 不在本波切 `/play/local` 默认入口
+    - 不在本波完成真实产品级 full-board renderer
+    - 不在本波处理 replay / ai sidecar 的最终外观
+- 剩余风险 / 未完成项：
+    - `ReplayDrawer` / `AiTraceDrawer` 仍未作为 Phase 3 primitives 落地；
+    - 当前 `BoardSceneScaffold` 仍是静态 scene host，不是 Phase 4 的真实可玩 board scene；
+    - Phase 3 尚未完成，后续仍需把 primitives 继续收敛成更完整的 shared board composition。
+- 验证：
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `pnpm check-visual -- --update-snapshots`
+    - `pnpm check-visual`
+- Acceptance evidence：
+    - validation output：本波 visual baseline 已重录并通过复检；
+    - worktree hygiene：`apps/web/next-env.d.ts` 构建漂移已在提交前恢复。
+
+## EN
+
+- Date: 2026-04-17
+- Phase: Phase 3
+- Status: In Progress
+- Scope: start the first shared-board-primitives wave by moving the current static composition blocks out of `BoardSceneScaffold` and into real `packages/ui` components, then make the static visual harness consume them directly.
+- Wave goals:
+    - extract `BoardGrid` / `TokenCell`
+    - extract `MarketStack` / `CardSlot`
+    - extract `ReserveTray` / `PlayerZone`
+    - extract `RoyalCourt` / `PromptBanner` / `SelectionOverlay` / `RunPanel`
+    - make `/playground/*` consume those primitives directly instead of relying on scaffold-local markup
+- Landed results:
+    - added `packages/ui/src/board/board-grid.tsx`, `token-cell.tsx`, `card-slot.tsx`, `market-stack.tsx`, `reserve-tray.tsx`, `player-zone.tsx`, `royal-court.tsx`, `prompt-banner.tsx`, `selection-overlay.tsx`, and `run-panel.tsx`;
+    - rewired `packages/ui/src/board/board-scaffold.tsx` to compose those primitives instead of keeping inline market / board / player / sidecar markup;
+    - re-exported the first-wave primitives from `packages/ui/src/index.tsx` for later shared-scene reuse;
+    - expanded `packages/ui/src/styles/shell.css` with the layout / slot / chip / player-zone / sidecar class contract needed by this wave;
+    - updated `apps/web/tests/visual/playground.spec.ts-snapshots/*.png` to the new scaffold baseline and re-ran `check-visual` successfully.
+- Touched files:
+    - `packages/ui/src/board/*`
+    - `packages/ui/src/index.tsx`
+    - `packages/ui/src/styles/shell.css`
+    - `apps/web/tests/visual/playground.spec.ts-snapshots/*`
+    - `docs/10-architecture/full-board-ui-roadmap.md`
+- Explicit non-goals:
+    - do not switch `/play/local` to the new default entry in this wave
+    - do not finish the real product-grade full-board renderer in this wave
+    - do not finalize replay / AI sidecar visuals in this wave
+- Remaining risks / unfinished work:
+    - `ReplayDrawer` / `AiTraceDrawer` are still pending as later Phase 3 primitives;
+    - `BoardSceneScaffold` is still a static scene host rather than the genuinely playable Phase 4 board scene;
+    - Phase 3 is not complete yet and still needs a fuller shared board composition pass.
+- Validation:
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `pnpm check-visual -- --update-snapshots`
+    - `pnpm check-visual`
+- Acceptance evidence:
+    - validation output: the visual baseline was re-recorded for this wave and passed the follow-up verification run;
+    - worktree hygiene: the generated `apps/web/next-env.d.ts` drift was restored before commit.
