@@ -83,17 +83,18 @@
 
 #### Phase 1 - Application / UI 仓库结构清理
 
-状态：`Delayed / At Risk`（2026-04-17）。日志：[`logs/phase-1-application-ui-structure-kickoff.md`](./logs/phase-1-application-ui-structure-kickoff.md)
+状态：`Completed`（2026-04-18）。日志：[`logs/phase-1-application-ui-structure-kickoff.md`](./logs/phase-1-application-ui-structure-kickoff.md)、[`logs/phase-1a-application-emergency-split-completion.md`](./logs/phase-1a-application-emergency-split-completion.md)
 
-目标：在不改契约的前提下，先清出 projection 与 UI 扩展空间。
+目标：在不改契约的前提下，先清出 projection 与 UI 扩展空间；这条结构清理线已经通过 Phase 1a emergency split 闭环。
 
 覆盖发现：F6、F10。
 
 本阶段输出：
 
 - `packages/application` 与 `packages/ui` 的目标目录、write-scope、迁移顺序与非目标治理说明见 [`phase-1-application-ui-structure-plan.md`](./phase-1-application-ui-structure-plan.md)。
-- `packages/ui` 的目录与 barrel 目标已通过后续的 Phase 2.5 / 3 间接落地，但 `packages/application` 的无语义拆分尚未开始。
-- `packages/application/src/index.ts` 当前仍是单文件，且当前实测为 **1470 行**；这使本阶段从“按顺序推进”转为“Phase 4 前必须补的阻塞治理门”。
+- `packages/application` 的无语义拆分已经落地，`src/index.ts` 现为 barrel / export surface。
+- `packages/ui` 的目录与 barrel 目标已通过后续的 Phase 2.5 / 3 间接落地。
+- 该 phase 已关闭 Gate 1 的 blocking cleanup 风险，不再依赖单个 god file 继续承接 projection 扩展。
 - 不改 behavior，不改 cross-boundary contract，只做 layout / ownership 清理。
 
 本阶段明确非目标：
@@ -111,17 +112,17 @@
 
 #### Phase 1a - Application Emergency Split
 
-状态：`Planned / Blocking Gate before Phase 4`（2026-04-17）。
+状态：`Completed / Blocking gate closed`（2026-04-18）。日志：[`logs/phase-1a-application-emergency-split-completion.md`](./logs/phase-1a-application-emergency-split-completion.md)
 
 目标：只拆 `packages/application/src/index.ts`，不改契约、不改行为，把 Phase 1 的核心治理债前置补齐。
 
 本阶段输出：
 
-- 强制拆出 `sessions`；
-- 强制拆出 `view-model/projection`；
-- 强制拆出 `ai`；
-- 强制拆出 `replay-inspector`；
-- 强制拆出 `effect-prompt / selection helpers`；
+- `shared/types.ts`
+- `replay/inspector.ts`
+- `ai/heuristic.ts`
+- `view-model/{metadata,actions,board,market,player-zones,prompts,selection,run-panel,index}.ts`
+- `sessions/{match,run}.ts`
 - `index.ts` 最终仅保留 orchestration + barrel，目标收敛到 **300 行以内**。
 
 完成标准：
@@ -129,7 +130,7 @@
 - 对外 export surface 保持兼容；
 - contract、runtime、replay 行为不发生语义变化；
 - `packages/application/src/index.ts` 不再承担新增 projection/helper 的默认落点；
-- 本阶段完成前，Phase 4 不得启动默认入口切换。
+- 本阶段完成后，Phase 4 可以继续按后续 gate 推进，不再被这个 cleanup gate 阻塞。
 
 #### Phase 2 - 交互范式 ADR + `UiViewModel` 2.0 契约扩展
 
@@ -479,17 +480,17 @@ Done criteria:
 
 #### Phase 1 - Application / UI Repository Structure Cleanup
 
-Status: `Delayed / At Risk` (2026-04-17). Log: [`logs/phase-1-application-ui-structure-kickoff.md`](./logs/phase-1-application-ui-structure-kickoff.md)
+Status: `Completed` (2026-04-18). Logs: [`logs/phase-1-application-ui-structure-kickoff.md`](./logs/phase-1-application-ui-structure-kickoff.md), [`logs/phase-1a-application-emergency-split-completion.md`](./logs/phase-1a-application-emergency-split-completion.md)
 
-Goal: create room for projection and UI growth without changing contracts yet.
+Goal: create room for projection and UI growth without changing contracts yet; this cleanup line is now closed via the Phase 1a emergency split.
 
 Covers: F6, F10.
 
 Outputs:
 
 - The target layout, write scopes, migration order, and non-goals for `packages/application` and `packages/ui` are documented in [`phase-1-application-ui-structure-plan.md`](./phase-1-application-ui-structure-plan.md).
-- The `packages/ui` side of the cleanup has effectively landed indirectly through Phase 2.5 / 3, but the no-semantics `packages/application` split still has not started.
-- `packages/application/src/index.ts` remains a single file and currently measures **1470 lines**, turning this phase from “the next orderly step” into a blocking cleanup gate before Phase 4.
+- The `packages/ui` side of the cleanup has effectively landed indirectly through Phase 2.5 / 3.
+- The no-semantics `packages/application` split has now landed, and `packages/application/src/index.ts` is barrel/export routing only.
 - Keep the work non-behavioral and non-contractual.
 
 Explicit non-goals:
@@ -503,21 +504,21 @@ Done criteria:
 - No contract drift.
 - `check-deps`, `check-boundaries`, `test`, and `build` still pass.
 - Later Phase 2-6 work no longer depends on a single god file.
-- Until Phase 1a lands, no new projection/helper logic may be appended back into `packages/application/src/index.ts`.
+- The blocking cleanup gate is now closed, and any later projection/helper logic must continue in the new modules instead of re-growing `packages/application/src/index.ts`.
 
 #### Phase 1a - Application Emergency Split
 
-Status: `Planned / Blocking Gate before Phase 4` (2026-04-17).
+Status: `Completed / Blocking gate closed` (2026-04-18). Log: [`logs/phase-1a-application-emergency-split-completion.md`](./logs/phase-1a-application-emergency-split-completion.md)
 
-Goal: split only `packages/application/src/index.ts` without changing contracts or behavior, and force the core Phase 1 governance debt to close before the default-entry migration starts.
+Goal: split only `packages/application/src/index.ts` without changing contracts or behavior, and close the core Phase 1 governance debt before the default-entry migration starts.
 
 Outputs:
 
-- mandatory `sessions` split;
-- mandatory `view-model/projection` split;
-- mandatory `ai` split;
-- mandatory `replay-inspector` split;
-- mandatory `effect-prompt / selection helpers` split;
+- `shared/types`
+- `replay/inspector`
+- `ai/heuristic`
+- `view-model/{metadata,actions,board,market,player-zones,prompts,selection,run-panel,index}`
+- `sessions/{match,run}`
 - reduce `index.ts` to orchestration + barrel only, targeting **under 300 lines**.
 
 Done criteria:
@@ -525,7 +526,7 @@ Done criteria:
 - The external export surface remains compatible.
 - Contract, runtime, and replay behavior stay semantically unchanged.
 - `packages/application/src/index.ts` is no longer the default sink for new projection/helper growth.
-- Phase 4 may not start its default-entry switch until this gate is closed.
+- Phase 4 may continue because this gate is now closed.
 
 #### Phase 2 - Interaction ADR + `UiViewModel` 2.0 Contract Expansion
 
@@ -774,6 +775,6 @@ Done criteria:
 ### Immediate High-ROI Order
 
 1. Milestone A: lock the factual state and phase wording.
-2. Milestone B: complete `Phase 1a - Application Emergency Split`.
+2. Milestone B: `Phase 1a - Application Emergency Split` closed.
 3. Milestone C: freeze the Phase 4 player-path `seed / fixture / finalStateHash` triads.
 4. Milestone D: define spectator invariants as a formal gate before Phase 6.

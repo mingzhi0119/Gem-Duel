@@ -33,6 +33,12 @@
     - 在 Phase 1a 完成前，禁止再向 `packages/application/src/index.ts` 追加新的 projection / helper 逻辑；
     - 若后续确有新增 projection 工作，必须优先落到新模块，而不是继续扩大 god file。
 
+### Completion Addendum（2026-04-18）
+
+- Phase 1a 现已完成，紧邻的关闭日志见 [`phase-1a-application-emergency-split-completion.md`](./phase-1a-application-emergency-split-completion.md)。
+- 当前仓库中的 `packages/application/src/index.ts` 已退化为 barrel / export surface，`packages/application/src/` 已按 shared types、replay、ai、view-model 与 sessions 完成责任拆分。
+- 这份 kickoff log 继续保留为历史启动记录，不再代表当前 Phase 1 / Phase 1a 的未完成状态。
+
 ## EN
 
 - Date: 2026-04-17
@@ -65,3 +71,9 @@
 - Temporary incremental rule:
     - until Phase 1a lands, no new projection/helper logic may be appended to `packages/application/src/index.ts`;
     - if later work still needs new projection code, it must go into new modules instead of further expanding the god file.
+
+### Completion Addendum (2026-04-18)
+
+- Phase 1a is now complete; the closeout log is [`phase-1a-application-emergency-split-completion.md`](./phase-1a-application-emergency-split-completion.md).
+- In the current repository state, `packages/application/src/index.ts` is a barrel/export surface and `packages/application/src/` is split by responsibility across shared types, replay, ai, view-model, and sessions.
+- This kickoff log remains a historical record of the gate opening, not the current phase status.

@@ -11,7 +11,8 @@
 ### 当前日志
 
 - [`phase-0-wording-downgrade-and-entry-scope.md`](./phase-0-wording-downgrade-and-entry-scope.md): Phase 0 口径降级、发布边界与首页验证壳文案收口
-- [`phase-1-application-ui-structure-kickoff.md`](./phase-1-application-ui-structure-kickoff.md): Phase 1 启动日志，现含独立审计后的 delayed/at-risk addendum、1470 行 god file 风险与临时增量规则
+- [`phase-1-application-ui-structure-kickoff.md`](./phase-1-application-ui-structure-kickoff.md): Phase 1 启动日志，现含独立审计后的 delayed/at-risk addendum、历史 god file 风险与临时增量规则
+- [`phase-1a-application-emergency-split-completion.md`](./phase-1a-application-emergency-split-completion.md): Phase 1a 完成日志，记录 application emergency split 关闭与 barrel 化结果
 - [`phase-2-interaction-adr-and-uiviewmodel-kickoff.md`](./phase-2-interaction-adr-and-uiviewmodel-kickoff.md): Phase 2 启动日志，确认 ADR 前置门、`UiViewModel` 2.0 contract prep 与后续迁移顺序
 - [`phase-2-adr-and-contract-wave-1.md`](./phase-2-adr-and-contract-wave-1.md): Phase 2 第一轮 ADR + `UiViewModel` 2.0 contract/projection 落地日志
 - [`phase-2-pending-selection-wave-2.md`](./phase-2-pending-selection-wave-2.md): Phase 2 第二轮落地日志，记录引擎拥有的 pending-selection command/snapshot/projection surface
@@ -33,7 +34,8 @@ This directory stores landing logs for phases tracked in `docs/10-architecture/f
 ### Current Logs
 
 - [`phase-0-wording-downgrade-and-entry-scope.md`](./phase-0-wording-downgrade-and-entry-scope.md): Phase 0 wording downgrade, release-scope clarification, and homepage validation-shell wording closure
-- [`phase-1-application-ui-structure-kickoff.md`](./phase-1-application-ui-structure-kickoff.md): Phase 1 kickoff log, now including the independent-audit delayed/at-risk addendum, the 1470-line god-file risk, and the temporary incremental rule
+- [`phase-1-application-ui-structure-kickoff.md`](./phase-1-application-ui-structure-kickoff.md): Phase 1 kickoff log, now including the independent-audit delayed/at-risk addendum, the historical god-file risk, and the temporary incremental rule
+- [`phase-1a-application-emergency-split-completion.md`](./phase-1a-application-emergency-split-completion.md): Phase 1a completion log, recording the application emergency split closeout and barrelization result
 - [`phase-2-interaction-adr-and-uiviewmodel-kickoff.md`](./phase-2-interaction-adr-and-uiviewmodel-kickoff.md): Phase 2 kickoff log for the ADR gate, `UiViewModel` 2.0 contract prep, and the later migration order
 - [`phase-2-adr-and-contract-wave-1.md`](./phase-2-adr-and-contract-wave-1.md): Phase 2 log for the first ADR + `UiViewModel` 2.0 contract/projection landing wave
 - [`phase-2-pending-selection-wave-2.md`](./phase-2-pending-selection-wave-2.md): Phase 2 second landing wave for the engine-owned pending-selection command/snapshot/projection surface

@@ -4,22 +4,19 @@
 
 ### 文档定位
 
-本文是 `docs/10-architecture/full-board-ui-roadmap.md` Phase 1 的治理落地件，定义 `packages/application` 与 `packages/ui` 的目标目录、write-scope、迁移顺序与非目标，用于约束后续“只做结构清理、不改契约与行为”的拆分工作。
+本文是 `docs/10-architecture/full-board-ui-roadmap.md` Phase 1 / Phase 1a 的治理落地件，记录 `packages/application` 已完成的 emergency split 结果、目标目录、write-scope、迁移顺序与非目标，用于约束后续“只做结构清理、不改契约与行为”的拆分工作。
 
-### 现状压力点
+### 已落地结构
 
-- `packages/application/src/index.ts` 当前同时承载：
-    - session surface 与 exported types；
-    - effect-prompt 读取与 `availableActions` 枚举；
-    - replay inspector model；
-    - AI heuristic；
-    - `UiViewModel` projection；
-    - local / AI / run session factories。
-- `packages/ui/src/index.tsx` 当前同时承载：
-    - `Section` 等基础布局；
-    - `SnapshotSummary` 与 `ActionList`；
-    - `MatchView` 与 `RoomTable`。
-- `apps/web/app/globals.css` 中的 `gd-*` 样式仍是当前 shared shell 的真实样式来源，但该样式迁移属于 Phase 2.5 的 design tokens / visual harness 范围，不在本 phase 内。
+- `packages/application/src/index.ts` 已退化为 barrel / export surface。
+- `packages/application/src/` 现在按职责拆分为：
+    - `shared/types.ts`
+    - `replay/inspector.ts`
+    - `ai/heuristic.ts`
+    - `view-model/{metadata,actions,board,market,player-zones,prompts,selection,run-panel,index}.ts`
+    - `sessions/{match,run}.ts`
+- `packages/ui/src/index.tsx` 也已完成目录归档与 barrel 化，Phase 1 的结构治理因此在 application/ui 两侧都具备一致的 ownership 形态。
+- shared shell 的 `gd-*` 样式 ownership 现已进入 `packages/ui/src/styles/*`，`apps/web/app/globals.css` 只保留 app-scope 布局；这部分迁移属于已完成的 Phase 2.5 收口结果，而不是 Phase 1 新增输出。
 
 ### Phase 1 不变边界
 
@@ -31,9 +28,9 @@
 
 ### `packages/application` 目标布局
 
-Phase 1 完成后，`packages/application` 应收敛到“barrel + 分职责目录”，而不是继续把所有逻辑堆在单个入口文件中。
+Phase 1 / Phase 1a 完成后，`packages/application` 已收敛到“barrel + 分职责目录”，而不是继续把所有逻辑堆在单个入口文件中。
 
-目标布局：
+当前布局：
 
 ```text
 packages/application/src/
@@ -45,9 +42,14 @@ packages/application/src/
   ai/
     heuristic.ts
   view-model/
-    prompts.ts
+    metadata.ts
     actions.ts
-    summary.ts
+    board.ts
+    market.ts
+    player-zones.ts
+    prompts.ts
+    selection.ts
+    run-panel.ts
     index.ts
   sessions/
     match.ts
@@ -79,10 +81,20 @@ packages/application/src/
     - `getBuyCardLabel`
     - `getReserveCardLabel`
     - `buildActions`
-- `view-model/summary.ts`
+- `view-model/board.ts`
+    - `buildBoardCells`
+- `view-model/market.ts`
+    - `buildMarketSlots`
+- `view-model/player-zones.ts`
+    - `buildPlayerZones`
+- `view-model/metadata.ts`
     - `buildVisibleSnapshot`
     - `buildUiTitle`
     - `buildUiSubtitle`
+- `view-model/selection.ts`
+    - `buildSelectionDraft`
+- `view-model/run-panel.ts`
+    - `buildRunPanel`
 - `view-model/index.ts`
     - `buildVisibleUiViewModel`
     - `buildRoomUiViewModel`
@@ -97,22 +109,45 @@ packages/application/src/
 
 ### `packages/ui` 目标布局
 
-Phase 1 的 `packages/ui` 目标是建立目录和 ownership，不是一次性做视觉系统迁移。
+Phase 1 的 `packages/ui` 目标是建立目录和 ownership，不是一次性做视觉系统迁移。后续 Phase 2.5 / 3 已把它推进到更细的 board/drawer/hud/playground 结构。
 
-目标布局：
+当前布局：
 
 ```text
 packages/ui/src/
   index.tsx
   primitives/
-    Section.tsx
-  summary/
-    SnapshotSummary.tsx
-  actions/
-    ActionList.tsx
+    action-list.tsx
+    section.tsx
+    snapshot-summary.tsx
+  board/
+    board-scaffold.tsx
+    board-grid.tsx
+    card-slot.tsx
+    market-stack.tsx
+    player-zone.tsx
+    prompt-banner.tsx
+    reserve-tray.tsx
+    royal-court.tsx
+    run-panel.tsx
+    selection-overlay.tsx
+    token-cell.tsx
+  drawer/
+    ai-trace-drawer.tsx
+    replay-drawer.tsx
+    sidecar-drawer.tsx
+  hud/
+    turn-hud.tsx
+  playground/
+    scene-frame.tsx
+  tables/
+    room-table.tsx
   views/
-    MatchView.tsx
-    RoomTable.tsx
+    match-view.tsx
+  styles/
+    index.css
+    shell.css
+    tokens.css
 ```
 
 治理要求：
@@ -125,7 +160,7 @@ packages/ui/src/
 
 1. 先抽 `packages/application/src/shared/types.ts`，确保 public export surface 有稳定承接点。
 2. 再抽 `replay/inspector.ts` 与 `ai/heuristic.ts`，优先削减与 session glue 弱耦合的中段逻辑。
-3. 再抽 `view-model/{prompts,actions,summary,index}.ts`，把 projection 相关逻辑从 session factory 中分离。
+3. 再抽 `view-model/{metadata,actions,board,market,player-zones,prompts,selection,run-panel,index}.ts`，把 projection 相关逻辑从 session factory 中分离。
 4. 最后拆 `sessions/{match,run}.ts`，并让根 `index.ts` 退化为 barrel。
 5. `packages/ui` 采取同样顺序：先 primitive/summary/action，再 views，最后让 `src/index.tsx` 只保留 re-export。
 6. 消费侧只做 import path 对齐，不混入额外行为改动。
@@ -147,7 +182,7 @@ packages/ui/src/
 
 ### 完成定义
 
-- `packages/application/src/index.ts` 不再承载全部逻辑，只保留 barrel / export routing。
+- `packages/application/src/index.ts` 已退化为 barrel / export routing。
 - `packages/ui/src/index.tsx` 不再承载完整实现，只保留 barrel / export routing。
 - `check-deps`、`check-boundaries`、`test`、`build` 在结构清理后仍通过。
 - 对外 contract surface、页面行为与 replay/hash 结果保持不变。
@@ -156,22 +191,19 @@ packages/ui/src/
 
 ### Document Role
 
-This document is the governance landing artifact for Phase 1 in `docs/10-architecture/full-board-ui-roadmap.md`. It defines the target layout, write scopes, migration order, and non-goals for the `packages/application` and `packages/ui` cleanup so the later split remains structural only, without smuggling in contract or behavior changes.
+This document is the governance landing artifact for Phase 1 / Phase 1a in `docs/10-architecture/full-board-ui-roadmap.md`. It records the landed emergency split shape for `packages/application` and the remaining ownership rules for `packages/ui`, keeping the split structural only and free of contract or behavior changes.
 
-### Current Pressure Points
+### Landed Structure
 
-- `packages/application/src/index.ts` currently owns all of the following at once:
-    - session surface and exported types;
-    - effect-prompt readers plus `availableActions` enumeration;
-    - replay inspector modeling;
-    - AI heuristic logic;
-    - `UiViewModel` projection;
-    - local / AI / run session factories.
-- `packages/ui/src/index.tsx` currently combines:
-    - basic layout such as `Section`;
-    - `SnapshotSummary` and `ActionList`;
-    - `MatchView` and `RoomTable`.
-- The `gd-*` styling in `apps/web/app/globals.css` remains the current shared-shell style source, but moving it is part of the Phase 2.5 design-token / visual-harness scope, not Phase 1.
+- `packages/application/src/index.ts` now serves as a barrel / export router.
+- `packages/application/src/` is split by responsibility into:
+    - `shared/types.ts`
+    - `replay/inspector.ts`
+    - `ai/heuristic.ts`
+    - `view-model/{metadata,actions,board,market,player-zones,prompts,selection,run-panel,index}.ts`
+    - `sessions/{match,run}.ts`
+- `packages/ui/src/index.tsx` also follows the barrel / export router pattern after the later UI cleanup waves.
+- Shared-shell `gd-*` style ownership now lives under `packages/ui/src/styles/*`, while `apps/web/app/globals.css` stays app-scoped. That migration was part of the completed Phase 2.5 closeout, not new Phase 1 scope.
 
 ### Phase 1 Invariants
 
@@ -183,9 +215,9 @@ This document is the governance landing artifact for Phase 1 in `docs/10-archite
 
 ### Target Layout for `packages/application`
 
-By the end of Phase 1, `packages/application` should be a barrel plus responsibility-based folders rather than a single god file.
+The landed Phase 1 / Phase 1a split keeps `packages/application` as a barrel plus responsibility-based folders rather than a single god file.
 
-Target layout:
+Current layout:
 
 ```text
 packages/application/src/
@@ -197,9 +229,14 @@ packages/application/src/
   ai/
     heuristic.ts
   view-model/
-    prompts.ts
+    metadata.ts
     actions.ts
-    summary.ts
+    board.ts
+    market.ts
+    player-zones.ts
+    prompts.ts
+    selection.ts
+    run-panel.ts
     index.ts
   sessions/
     match.ts
@@ -227,10 +264,20 @@ Suggested ownership:
     - `buildPositionSelections`
     - buy/reserve labels
     - `buildActions`
-- `view-model/summary.ts`
+- `view-model/board.ts`
+    - `buildBoardCells`
+- `view-model/market.ts`
+    - `buildMarketSlots`
+- `view-model/player-zones.ts`
+    - `buildPlayerZones`
+- `view-model/metadata.ts`
     - `buildVisibleSnapshot`
     - `buildUiTitle`
     - `buildUiSubtitle`
+- `view-model/selection.ts`
+    - `buildSelectionDraft`
+- `view-model/run-panel.ts`
+    - `buildRunPanel`
 - `view-model/index.ts`
     - `buildVisibleUiViewModel`
     - `buildRoomUiViewModel`
@@ -245,22 +292,45 @@ Suggested ownership:
 
 ### Target Layout for `packages/ui`
 
-The Phase 1 goal for `packages/ui` is ownership and directory shape, not a one-shot visual-system migration.
+The Phase 1 goal for `packages/ui` is ownership and directory shape, not a one-shot visual-system migration. The later cleanup waves now show the richer board/drawer/hud/playground split that followed.
 
-Target layout:
+Current layout:
 
 ```text
 packages/ui/src/
   index.tsx
   primitives/
-    Section.tsx
-  summary/
-    SnapshotSummary.tsx
-  actions/
-    ActionList.tsx
+    action-list.tsx
+    section.tsx
+    snapshot-summary.tsx
+  board/
+    board-scaffold.tsx
+    board-grid.tsx
+    card-slot.tsx
+    market-stack.tsx
+    player-zone.tsx
+    prompt-banner.tsx
+    reserve-tray.tsx
+    royal-court.tsx
+    run-panel.tsx
+    selection-overlay.tsx
+    token-cell.tsx
+  drawer/
+    ai-trace-drawer.tsx
+    replay-drawer.tsx
+    sidecar-drawer.tsx
+  hud/
+    turn-hud.tsx
+  playground/
+    scene-frame.tsx
+  tables/
+    room-table.tsx
   views/
-    MatchView.tsx
-    RoomTable.tsx
+    match-view.tsx
+  styles/
+    index.css
+    shell.css
+    tokens.css
 ```
 
 Governance rules:
@@ -273,7 +343,7 @@ Governance rules:
 
 1. Extract `packages/application/src/shared/types.ts` first so the public export surface has a stable anchor.
 2. Extract `replay/inspector.ts` and `ai/heuristic.ts` next, because they reduce mid-file density without touching the contract surface.
-3. Extract `view-model/{prompts,actions,summary,index}.ts` next so projection logic stops living beside session factories.
+3. Extract `view-model/{metadata,actions,board,market,player-zones,prompts,selection,run-panel,index}.ts` next so projection logic stops living beside session factories.
 4. Split `sessions/{match,run}.ts` last and let root `index.ts` collapse into a barrel.
 5. Apply the same sequence to `packages/ui`: primitive/summary/action first, then views, then make `src/index.tsx` a re-export surface only.
 6. Consumers should absorb import-path alignment only, not unrelated behavior changes.
@@ -295,7 +365,7 @@ Governance rules:
 
 ### Definition of Done
 
-- `packages/application/src/index.ts` no longer contains the full implementation and becomes a barrel/export router.
+- `packages/application/src/index.ts` has already been reduced to barrel/export routing.
 - `packages/ui/src/index.tsx` no longer contains the full implementation and becomes a barrel/export router.
 - `check-deps`, `check-boundaries`, `test`, and `build` still pass after the cleanup.
 - Outward contract surface, page behavior, and replay/hash results stay unchanged.

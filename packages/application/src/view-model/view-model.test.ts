@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { buildRoomUiViewModel, buildVisibleUiViewModel, createLocalMatchSession } from './index';
+
+import { createLocalMatchSession } from '../sessions/match';
+import { buildRoomUiViewModel, buildVisibleUiViewModel } from './index';
 
 describe('application view-model composition', () => {
     it('scopes authoritative actions to the active player only', () => {
