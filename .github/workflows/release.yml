@@ -16,23 +16,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+          run_install: false
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: pnpm
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Activate pnpm
-        run: corepack prepare pnpm@10.33.0 --activate
-
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
       - name: Final acceptance gates
         run: |
+          pnpm contracts:generate
+          pnpm contracts:verify
           pnpm check-deps
           pnpm check-boundaries
           pnpm check-contracts
@@ -40,6 +42,13 @@ jobs:
           pnpm typecheck
           pnpm test
           pnpm build
+          pnpm check-phase4
+          pnpm check-phase5
+          pnpm check-phase6
+          pnpm check-phase7
+          pnpm check-phase8
+          pnpm check-a11y
+          pnpm check-visual
 
       - name: Build desktop shell
         run: pnpm --filter @gem-duel/desktop build
