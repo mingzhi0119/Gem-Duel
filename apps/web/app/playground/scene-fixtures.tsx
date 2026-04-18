@@ -549,6 +549,7 @@ const replayFixtureModel: ReplayDrawerModel = {
                 currentPlayer: 'p1',
                 step: 10,
             }),
+            snapshotHash: 'fixture-step-hash-0',
         },
         {
             index: 1,
@@ -559,6 +560,7 @@ const replayFixtureModel: ReplayDrawerModel = {
                 currentPlayer: 'p1',
                 step: 11,
             }),
+            snapshotHash: 'fixture-step-hash-1',
         },
         {
             index: 2,
@@ -570,6 +572,7 @@ const replayFixtureModel: ReplayDrawerModel = {
                 },
             },
             snapshot: selectionSnapshot,
+            snapshotHash: 'fixture-step-hash-2',
         },
         {
             index: 3,
@@ -580,6 +583,7 @@ const replayFixtureModel: ReplayDrawerModel = {
                 currentPlayer: 'p1',
                 step: 13,
             }),
+            snapshotHash: 'fixture-step-hash-3',
         },
     ],
 };

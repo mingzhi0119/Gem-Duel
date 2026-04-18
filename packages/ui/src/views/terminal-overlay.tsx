@@ -1,25 +1,42 @@
 import type { VisibleSnapshot } from '@gem-duel/contracts';
+import { getUiMessages, type UiLocale } from '../i18n/messages';
 
 export const TerminalOverlay = ({
     snapshot,
     currentFinalStateHash,
+    locale = 'en',
+    surface = 'play',
 }: {
     snapshot: VisibleSnapshot;
     currentFinalStateHash: string;
-}) => (
-    <div className="gd-terminal-overlay" data-testid="terminal-overlay">
-        <div className="gd-terminal-overlay-card">
-            <p className="gd-scene-eyebrow">Match Complete</p>
-            <h2>Local match finished</h2>
-            <p className="gd-muted">
-                Winner: <strong>{snapshot.context.winner ?? 'unknown'}</strong>
-                {' • '}
-                Reason: <strong>{snapshot.context.victoryReason ?? 'none'}</strong>
-            </p>
-            <p className="gd-muted">
-                Current finalStateHash:{' '}
-                <code data-testid="terminal-final-state-hash">{currentFinalStateHash}</code>
-            </p>
+    locale?: UiLocale;
+    surface?: 'play' | 'replay' | 'room';
+}) => {
+    const messages = getUiMessages(locale).terminalOverlay;
+    const title =
+        surface === 'replay'
+            ? messages.replayTitle
+            : surface === 'room'
+              ? messages.roomTitle
+              : messages.localTitle;
+
+    return (
+        <div className="gd-terminal-overlay" data-testid="terminal-overlay">
+            <div className="gd-terminal-overlay-card">
+                <p className="gd-scene-eyebrow">{messages.eyebrow}</p>
+                <h2>{title}</h2>
+                <p className="gd-muted">
+                    {messages.winnerLabel}:{' '}
+                    <strong>{snapshot.context.winner ?? messages.unknownWinner}</strong>
+                    {' • '}
+                    {messages.reasonLabel}:{' '}
+                    <strong>{snapshot.context.victoryReason ?? messages.noReason}</strong>
+                </p>
+                <p className="gd-muted">
+                    {messages.hashLabel}:{' '}
+                    <code data-testid="terminal-final-state-hash">{currentFinalStateHash}</code>
+                </p>
+            </div>
         </div>
-    </div>
-);
+    );
+};

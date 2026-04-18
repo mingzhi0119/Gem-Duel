@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import type {
     UiActionDescriptor,
     UiMarketSlot,
@@ -15,6 +15,7 @@ import { RunPanel } from '../board/run-panel';
 import { SelectionOverlay } from '../board/selection-overlay';
 import { SidecarDrawer } from '../drawer/sidecar-drawer';
 import { TurnHud } from '../hud/turn-hud';
+import { getUiMessages, type UiLocale } from '../i18n/messages';
 import { TerminalOverlay } from './terminal-overlay';
 
 export interface BoardSceneScenarioMeta {
@@ -114,6 +115,8 @@ export const BoardScene = ({
     error,
     note,
     extraSidecars = null,
+    locale = 'en',
+    surface = 'play',
 }: {
     eyebrow?: string;
     viewModel: UiViewModel;
@@ -124,7 +127,11 @@ export const BoardScene = ({
     error?: string | null;
     note?: ReactNode;
     extraSidecars?: ReactNode;
+    locale?: UiLocale;
+    surface?: 'play' | 'replay' | 'room';
 }) => {
+    const headingId = useId();
+    const messages = getUiMessages(locale).boardScene;
     const toolbarActions = viewModel.availableActions.filter((action) =>
         TOOLBAR_COMMANDS.has(action.command.type)
     );
@@ -222,11 +229,16 @@ export const BoardScene = ({
     };
 
     return (
-        <section className="gd-board-scene" data-testid="board-scene">
+        <section
+            className="gd-board-scene"
+            data-testid="board-scene"
+            lang={locale}
+            aria-labelledby={headingId}
+        >
             <header className="gd-board-scene-header">
                 <div>
                     <p className="gd-scene-eyebrow">{eyebrow}</p>
-                    <h1>{viewModel.title}</h1>
+                    <h1 id={headingId}>{viewModel.title}</h1>
                     <p className="gd-muted">{viewModel.subtitle}</p>
                     {note}
                 </div>
@@ -239,7 +251,7 @@ export const BoardScene = ({
                     </span>
                     {currentFinalStateHash ? (
                         <span className="gd-hash-badge">
-                            hash{' '}
+                            {messages.hashLabel}{' '}
                             <code data-testid="current-final-state-hash">
                                 {currentFinalStateHash}
                             </code>
@@ -260,7 +272,7 @@ export const BoardScene = ({
             <div className="gd-board-scene-layout">
                 <div className="gd-board-scene-main">
                     <div className="gd-board-scene-topline">
-                        <SidecarDrawer title="Turn HUD">
+                        <SidecarDrawer title={messages.turnHudTitle}>
                             <TurnHud viewModel={viewModel} />
                             {toolbarActions.length > 0 ? (
                                 <div
@@ -279,23 +291,23 @@ export const BoardScene = ({
                                         </button>
                                     ))}
                                 </div>
-                            ) : (
-                                <p className="gd-muted">No turn-level setup actions available.</p>
-                            )}
+                            ) : surface === 'replay' ? (
+                                <p className="gd-muted">{messages.replayReadOnlyNote}</p>
+                            ) : null}
                         </SidecarDrawer>
 
                         {scenarioMeta ? (
-                            <SidecarDrawer title="Scenario Fixture">
+                            <SidecarDrawer title={messages.scenarioFixtureTitle}>
                                 <div className="gd-scenario-meta">
                                     <p>
-                                        Scenario:{' '}
+                                        {messages.scenarioLabel}:{' '}
                                         <strong data-testid="phase4-scenario-id">
                                             {scenarioMeta.id}
                                         </strong>
                                     </p>
                                     <p>{scenarioMeta.startingFixtureSource}</p>
                                     <p>
-                                        Expected finalStateHash:{' '}
+                                        {messages.expectedHashLabel}:{' '}
                                         <span data-testid="phase4-expected-hash">
                                             {scenarioMeta.expectedFinalStateHash}
                                         </span>
@@ -312,14 +324,16 @@ export const BoardScene = ({
                                 currentFinalStateHash={
                                     currentFinalStateHash ?? hashUnavailableLabel
                                 }
+                                locale={locale}
+                                surface={surface}
                             />
                         ) : null}
 
                         <section className="gd-scaffold-region">
                             <div className="gd-section-header">
-                                <h2>Market</h2>
+                                <h2>{messages.marketTitle}</h2>
                                 <span className="gd-muted">
-                                    {viewModel.marketSlots.length} slots
+                                    {viewModel.marketSlots.length} {messages.marketSlotsLabel}
                                 </span>
                             </div>
                             <MarketStack
@@ -333,9 +347,9 @@ export const BoardScene = ({
 
                         <section className="gd-scaffold-region">
                             <div className="gd-section-header">
-                                <h2>Board</h2>
+                                <h2>{messages.boardTitle}</h2>
                                 <span className="gd-muted">
-                                    {viewModel.boardCells.length} cells
+                                    {viewModel.boardCells.length} {messages.boardCellsLabel}
                                 </span>
                             </div>
                             <BoardGrid
@@ -354,9 +368,9 @@ export const BoardScene = ({
 
                         <section className="gd-scaffold-region">
                             <div className="gd-section-header">
-                                <h2>Players</h2>
+                                <h2>{messages.playersTitle}</h2>
                                 <span className="gd-muted">
-                                    {viewModel.playerZones.length} zones
+                                    {viewModel.playerZones.length} {messages.playerZonesLabel}
                                 </span>
                             </div>
                             <div className="gd-player-zone-grid">
@@ -370,13 +384,13 @@ export const BoardScene = ({
 
                 <div className="gd-board-scene-sidecar">
                     {viewModel.promptStack.length > 0 ? (
-                        <SidecarDrawer title="Prompts">
+                        <SidecarDrawer title={messages.promptsTitle}>
                             <PromptBanner prompts={viewModel.promptStack} />
                         </SidecarDrawer>
                     ) : null}
 
                     {viewModel.royalOffers.length > 0 ? (
-                        <SidecarDrawer title="Royal Court">
+                        <SidecarDrawer title={messages.royalCourtTitle}>
                             <RoyalCourt
                                 offers={viewModel.royalOffers}
                                 onSelectOffer={onSelect ? handleRoyalSelect : undefined}
@@ -386,7 +400,7 @@ export const BoardScene = ({
                     ) : null}
 
                     {viewModel.selectionDraft ? (
-                        <SidecarDrawer title="Selection Draft">
+                        <SidecarDrawer title={messages.selectionDraftTitle}>
                             <SelectionOverlay selectionDraft={viewModel.selectionDraft} />
                             <div className="gd-selection-controls">
                                 {confirmAction ? (
@@ -416,7 +430,7 @@ export const BoardScene = ({
                     ) : null}
 
                     {viewModel.runPanel ? (
-                        <SidecarDrawer title="Run Sidecar">
+                        <SidecarDrawer title={messages.runSidecarTitle}>
                             <RunPanel runPanel={viewModel.runPanel} />
                         </SidecarDrawer>
                     ) : null}
@@ -424,12 +438,8 @@ export const BoardScene = ({
                     {extraSidecars}
 
                     {fallbackActions.length > 0 && onSelect ? (
-                        <SidecarDrawer title="Additional Actions">
-                            <p className="gd-muted">
-                                Unmapped legal actions remain available here so this shared board
-                                surface never strands the session while later parity phases keep
-                                collapsing onto it.
-                            </p>
+                        <SidecarDrawer title={messages.additionalActionsTitle}>
+                            <p className="gd-muted">{messages.additionalActionsNote}</p>
                             <ActionList actions={fallbackActions} onSelect={onSelect} />
                         </SidecarDrawer>
                     ) : null}

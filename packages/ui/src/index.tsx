@@ -13,6 +13,7 @@ export { PromptBanner } from './board/prompt-banner';
 export { SelectionOverlay } from './board/selection-overlay';
 export { RunPanel } from './board/run-panel';
 export { TurnHud } from './hud/turn-hud';
+export { getUiMessages, resolveUiLocale, type UiLocale, type UiMessages } from './i18n/messages';
 export { SidecarDrawer } from './drawer/sidecar-drawer';
 export {
     ReplayDrawer,

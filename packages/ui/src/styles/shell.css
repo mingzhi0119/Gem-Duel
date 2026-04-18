@@ -252,6 +252,29 @@
     gap: 0.45rem;
 }
 
+.gd-replay-toolbar,
+.gd-replay-meta,
+.gd-locale-switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    align-items: center;
+}
+
+.gd-replay-note {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.gd-button:focus-visible,
+.gd-link:focus-visible,
+.gd-chip-button:focus-visible,
+.gd-board-cell-button:focus-visible,
+.gd-royal-offer:focus-visible {
+    outline: 3px solid rgba(0, 109, 119, 0.48);
+    outline-offset: 2px;
+}
+
 .gd-card-slot-primary,
 .gd-card-slot-primary.is-static {
     display: grid;
@@ -545,5 +568,33 @@
 
     .gd-board-scene-badges {
         justify-content: start;
+    }
+}
+
+@media (max-width: 640px) {
+    .gd-board-scene,
+    .gd-sidecar-drawer,
+    .gd-section,
+    .gd-panel {
+        padding: 1rem;
+    }
+
+    .gd-board-grid {
+        gap: 0.4rem;
+    }
+
+    .gd-board-cell {
+        min-height: 72px;
+        padding: 0.6rem;
+    }
+
+    .gd-board-scene-header h1 {
+        font-size: clamp(1.35rem, 4vw + 0.8rem, 1.8rem);
+    }
+
+    .gd-market-grid,
+    .gd-player-zone-grid,
+    .gd-scene-link-grid {
+        grid-template-columns: 1fr;
     }
 }

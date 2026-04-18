@@ -1,44 +1,36 @@
 import { proxyReplay } from '@/lib/room-service';
 import { buildReplayInspectorModel } from '@gem-duel/application';
-import { ReplayDrawer, Section } from '@gem-duel/ui';
+import { Section, resolveUiLocale } from '@gem-duel/ui';
+import { ReplayClient } from './replay-client';
 
-export default async function ReplayPage({ params }: { params: Promise<{ replayId: string }> }) {
+export default async function ReplayPage({
+    params,
+    searchParams,
+}: {
+    params: Promise<{ replayId: string }>;
+    searchParams: Promise<{ lang?: string }>;
+}) {
     const { replayId } = await params;
+    const { lang } = await searchParams;
+    const locale = resolveUiLocale(lang);
     const { status, body } = await proxyReplay(replayId);
 
-    return (
-        <>
-            <Section title={`Replay ${replayId}`}>
-                <p className="gd-muted">
-                    ZH: 回放页消费权威 `ReplayBundle`，用于确认线上房间最终产物与版本边界。 EN:
-                    Replay pages consume the authoritative `ReplayBundle` so the shells can inspect
-                    the final room-service output and version boundary.
-                </p>
-                {status >= 400 || 'bundle' in body === false ? (
-                    <p>{'message' in body ? body.message : 'Replay is currently unavailable.'}</p>
-                ) : (
-                    <div className="gd-grid">
-                        <div className="gd-card">
-                            <strong>Winner</strong>
-                            <span>{body.bundle.resultSummary.winner ?? 'pending'}</span>
-                        </div>
-                        <div className="gd-card">
-                            <strong>Reason</strong>
-                            <span>{body.bundle.resultSummary.reason ?? 'pending'}</span>
-                        </div>
-                        <div className="gd-card">
-                            <strong>Commands</strong>
-                            <span>{body.bundle.commands.length}</span>
-                        </div>
-                    </div>
-                )}
+    if (status >= 400 || 'bundle' in body === false) {
+        return (
+            <Section title={`${locale === 'zh' ? '回放' : 'Replay'} ${replayId}`}>
+                <p>{'message' in body ? body.message : 'Replay is currently unavailable.'}</p>
             </Section>
-            {status < 400 && 'bundle' in body
-                ? (() => {
-                      const inspector = buildReplayInspectorModel(body.bundle);
-                      return inspector.ok ? <ReplayDrawer model={inspector.value} /> : null;
-                  })()
-                : null}
-        </>
-    );
+        );
+    }
+
+    const inspector = buildReplayInspectorModel(body.bundle);
+    if (!inspector.ok) {
+        return (
+            <Section title={`${locale === 'zh' ? '回放' : 'Replay'} ${replayId}`}>
+                <p>{inspector.error.message}</p>
+            </Section>
+        );
+    }
+
+    return <ReplayClient replayId={replayId} locale={locale} inspector={inspector.value} />;
 }

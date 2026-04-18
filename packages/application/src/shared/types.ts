@@ -49,6 +49,7 @@ export interface ReplayInspectorStep {
     label: string;
     command: ReplayCommand | null;
     snapshot: GameSnapshot;
+    snapshotHash: string;
 }
 
 export interface ReplayInspectorModel {

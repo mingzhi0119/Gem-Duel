@@ -7,6 +7,7 @@ import type {
 } from '@gem-duel/contracts';
 import { createEnginePorts } from '@gem-duel/adapters';
 import {
+    createSnapshotHash,
     createMatchActorFromSnapshot,
     dispatchCommand,
     readSnapshot,
@@ -44,6 +45,7 @@ export const buildReplayInspectorModel = (
             label: 'Initial Snapshot',
             command: null,
             snapshot: readSnapshot(actor),
+            snapshotHash: createSnapshotHash(readSnapshot(actor)),
         },
     ];
 
@@ -57,6 +59,7 @@ export const buildReplayInspectorModel = (
             label: `${replayCommand.command.type} #${index + 1}`,
             command: replayCommand,
             snapshot: result.value.snapshot,
+            snapshotHash: createSnapshotHash(result.value.snapshot),
         });
     }
 
