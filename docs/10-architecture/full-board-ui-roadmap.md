@@ -300,6 +300,12 @@ Evidence Caveat：
     - `/play/local?scenario=<row-id>` 已支持 deterministic scenario bootstrap；
     - `pnpm check-phase4` 已接线为 repo-level automation entrypoint，当前先验证 bootstrap-level deterministic startup；
     - Player Path Acceptance Matrix 已冻结 8 条路径的 `seed + starting fixture + expected finalStateHash` 三元组。
+- Gate 3 当前已落第一波产品化结果，详见 [`logs/phase-4-boardscene-local-default-wave-1.md`](./logs/phase-4-boardscene-local-default-wave-1.md)：
+    - `/play/local` 默认 renderer 已切到 shared `BoardScene`；
+    - `?shell=debug` 继续保留 legacy `MatchView + ReplayDrawer` fallback；
+    - `BoardSceneScaffold` 保持 playground/debug-only，不回流到产品入口；
+    - board / market / royal affordance 只在 unique payload match 成立时才可交互；
+    - unmapped legal actions 仍暂存于 Additional Actions sidecar，等待 Gate 4 全量自动化收口。
 - `/play/local` 切到 full-board scene，旧调试壳只保留为 debug fallback。
 - 依据 Phase 2 的 ADR 接入多选/串联交互。
 - 把 hero / marketing copy 与默认入口行为一起降级到真实口径。
@@ -691,6 +697,12 @@ Outputs:
     - `/play/local?scenario=<row-id>` already supports deterministic scenario bootstrap;
     - `pnpm check-phase4` is now wired as the repo-level automation entrypoint and currently validates bootstrap-level deterministic startup;
     - the Player Path Acceptance Matrix now freezes the `seed + starting fixture + expected finalStateHash` triad for all 8 rows.
+- The first Gate 3 productization wave is now landed; see [`logs/phase-4-boardscene-local-default-wave-1.md`](./logs/phase-4-boardscene-local-default-wave-1.md):
+    - the default `/play/local` renderer now uses the shared `BoardScene`;
+    - `?shell=debug` still preserves the legacy `MatchView + ReplayDrawer` fallback;
+    - `BoardSceneScaffold` remains playground/debug-only and does not flow back into the product entrypoint;
+    - board / market / royal affordances become interactive only when a unique payload match exists;
+    - unmapped legal actions still remain in an Additional Actions sidecar until Gate 4 closes the full automation surface.
 - Switch `/play/local` to a full-board scene and keep the old debug shell as fallback only.
 - Drive multi-step interaction according to the Phase 2 ADR.
 - Downgrade hero/marketing language and default-entry behavior to match the real product state.

@@ -1,0 +1,101 @@
+# Phase 4 Log - Local BoardScene Default Entry Wave 1
+
+## ZH
+
+- 日期：2026-04-18
+- Phase：Phase 4
+- 状态：In Progress / Gate 3 landed
+- 范围：
+    - 新增 shared `BoardScene` 作为 `/play/local` 的产品化包装；
+    - 保留 `BoardSceneScaffold` 为 playground/debug-only，不把开发文案带回玩家入口；
+    - 将 `/play/local` 默认 renderer 从 `MatchView` 切到 `BoardScene`；
+    - 保留 `/play/local?shell=debug` 为 legacy `MatchView + ReplayDrawer` fallback；
+    - 仅在 unique payload match 成立时，把 `availableActions` 暴露为 board/market/royal affordances。
+- 本阶段已落地结果：
+    - `@gem-duel/ui` 新增 `BoardScene` 与 `TerminalOverlay` shared surface；
+    - board cell click 现只映射：
+        - `TAKE_TOKENS_ADD_POSITION`
+        - `USE_PRIVILEGE_ADD_POSITION`
+        - `TAKE_EFFECT_BOARD_TOKEN`
+    - market primary / secondary affordance 现只映射：
+        - `BUY_CARD`
+        - `RESERVE_CARD`
+    - royal offer click 现只映射 `SELECT_ROYAL`；
+    - pending-selection 的 confirm / cancel 现通过显式 controls 落在 BoardScene sidecar；
+    - 无法唯一映射的合法动作不会被 UI 猜测，而是保留到 Additional Actions sidecar，避免 Phase 4 期间的页面层规则推导；
+    - current `finalStateHash` 现在作为稳定 `data-testid` 暴露，供 Gate 4 自动化断言复用。
+- 关键涉及文件：
+    - `packages/ui/src/views/board-scene.tsx`
+    - `packages/ui/src/views/terminal-overlay.tsx`
+    - `packages/ui/src/board/{board-grid,token-cell,card-slot,market-stack,royal-court}.tsx`
+    - `packages/ui/src/index.tsx`
+    - `packages/ui/src/styles/shell.css`
+    - `apps/web/app/play/components/match-playground.tsx`
+    - `apps/web/tests/phase4/local-scenario-bootstrap.spec.ts`
+- 当前仍未完成的 Phase 4 输出：
+    - 8 条玩家路径目前仍只有 bootstrap-level spec，尚未全部升级为真实交互自动化；
+    - Additional Actions sidecar 仍承担少量 unmapped legal actions 的兜底，不代表 Gate 4 已关闭；
+    - 经典 local 默认入口虽然已切到 BoardScene，但 acceptance matrix 的每一行仍需 Playwright 按 frozen hash 真正点击通关。
+- 风险与约束：
+    - reserve gold cell 继续只作为视觉提示，不作为 dispatch target；`RESERVE_CARD` 的唯一映射键仍是 source object，而不是 gold position；
+    - 若后续发现 `SELECT_BONUS_COLOR`、`STEAL_OPPONENT_TOKEN`、`DISCARD_TOKEN` 等需要 first-class board affordance，必须明确作为 Gate 4 的产品化扩展，而不是在当前 gate 偷做规则推导；
+    - `/play/ai`、`/play/run`、`/rooms/[roomId]` 仍停留在原 shell，不随本 gate 切换 renderer。
+- Validation：
+    - `pnpm --filter @gem-duel/ui typecheck`
+    - `pnpm --filter @gem-duel/web typecheck`
+    - `pnpm --filter @gem-duel/ui lint`
+    - `pnpm --filter @gem-duel/web lint`
+- Acceptance evidence：
+    - `/play/local` 默认路径已改为 shared `BoardScene`；
+    - `?shell=debug` 仍保留 legacy shell；
+    - bootstrap spec 已改为识别 `board-scene` 与 `terminal-overlay`，为 Gate 4 自动化继续演进提供稳定 hook。
+
+## EN
+
+- Date: 2026-04-18
+- Phase: Phase 4
+- Status: In Progress / Gate 3 landed
+- Scope:
+    - add shared `BoardScene` as the product wrapper for `/play/local`;
+    - keep `BoardSceneScaffold` playground/debug-only so its developer copy does not leak back into the player flow;
+    - switch the default `/play/local` renderer from `MatchView` to `BoardScene`;
+    - preserve `/play/local?shell=debug` as the legacy `MatchView + ReplayDrawer` fallback;
+    - expose `availableActions` as board/market/royal affordances only when a unique payload match exists.
+- Landed results:
+    - `@gem-duel/ui` now exports shared `BoardScene` and `TerminalOverlay` surfaces;
+    - board-cell clicks now map only to:
+        - `TAKE_TOKENS_ADD_POSITION`
+        - `USE_PRIVILEGE_ADD_POSITION`
+        - `TAKE_EFFECT_BOARD_TOKEN`
+    - market primary / secondary affordances now map only to:
+        - `BUY_CARD`
+        - `RESERVE_CARD`
+    - royal-offer clicks now map only to `SELECT_ROYAL`;
+    - pending-selection confirm / cancel is now rendered as explicit controls inside the BoardScene sidecar;
+    - legal actions that cannot be mapped uniquely are not guessed by the UI and instead remain in an Additional Actions sidecar, preventing page-local rule inference while Phase 4 is still open;
+    - the current `finalStateHash` is now exposed through a stable `data-testid` for Gate 4 automation reuse.
+- Key touched files:
+    - `packages/ui/src/views/board-scene.tsx`
+    - `packages/ui/src/views/terminal-overlay.tsx`
+    - `packages/ui/src/board/{board-grid,token-cell,card-slot,market-stack,royal-court}.tsx`
+    - `packages/ui/src/index.tsx`
+    - `packages/ui/src/styles/shell.css`
+    - `apps/web/app/play/components/match-playground.tsx`
+    - `apps/web/tests/phase4/local-scenario-bootstrap.spec.ts`
+- Still unfinished inside Phase 4:
+    - the 8 player paths still have bootstrap-level specs only and are not yet fully upgraded to player-driven interaction automation;
+    - the Additional Actions sidecar still carries a small fallback surface for unmapped legal actions, which does not mean Gate 4 is closed;
+    - although the classic local default entry now uses BoardScene, every row in the acceptance matrix still needs Playwright completion against its frozen hash.
+- Risks and constraints:
+    - the reserve gold cell remains a visual cue only and not a dispatch target; the unique key for `RESERVE_CARD` is still the source object, not the gold position;
+    - if `SELECT_BONUS_COLOR`, `STEAL_OPPONENT_TOKEN`, `DISCARD_TOKEN`, or similar commands later need first-class affordances, that must be treated as an explicit Gate 4 product extension instead of being smuggled in as rule inference here;
+    - `/play/ai`, `/play/run`, and `/rooms/[roomId]` remain on their current shells and do not switch renderer in this gate.
+- Validation:
+    - `pnpm --filter @gem-duel/ui typecheck`
+    - `pnpm --filter @gem-duel/web typecheck`
+    - `pnpm --filter @gem-duel/ui lint`
+    - `pnpm --filter @gem-duel/web lint`
+- Acceptance evidence:
+    - the default `/play/local` path now renders the shared `BoardScene`;
+    - `?shell=debug` still preserves the legacy shell;
+    - the bootstrap spec now recognizes `board-scene` and `terminal-overlay`, giving Gate 4 automation a stable hook surface to extend.

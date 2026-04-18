@@ -23,6 +23,7 @@
 - [`phase-3-shared-board-primitives-wave-1.md`](./phase-3-shared-board-primitives-wave-1.md): Phase 3 第一波日志，记录 shared board primitives 的落地结果、剩余缺口与 visual baseline 更新
 - [`phase-3-shared-board-primitives-completion.md`](./phase-3-shared-board-primitives-completion.md): Phase 3 完成日志，现含 rebaseline vs final regression 的分离验证记录与 `*-win32.png` evidence caveat
 - [`phase-4-preflight-acceptance-matrix-and-scenario-harness.md`](./phase-4-preflight-acceptance-matrix-and-scenario-harness.md): Phase 4 Gate 2 preflight 日志，记录 acceptance matrix、`/play/local?scenario=` 启动面与 `pnpm check-phase4`
+- [`phase-4-boardscene-local-default-wave-1.md`](./phase-4-boardscene-local-default-wave-1.md): Phase 4 Gate 3 日志，记录 `/play/local` 切到 `BoardScene`、debug fallback 保留与 unique-action affordance 映射
 
 ## EN
 
@@ -47,3 +48,4 @@ This directory stores landing logs for phases tracked in `docs/10-architecture/f
 - [`phase-3-shared-board-primitives-wave-1.md`](./phase-3-shared-board-primitives-wave-1.md): Phase 3 first-wave log for the landed shared board primitives, the remaining gaps, and the refreshed visual baseline
 - [`phase-3-shared-board-primitives-completion.md`](./phase-3-shared-board-primitives-completion.md): Phase 3 completion log, now with split rebaseline/final-regression evidence and the `*-win32.png` platform caveat
 - [`phase-4-preflight-acceptance-matrix-and-scenario-harness.md`](./phase-4-preflight-acceptance-matrix-and-scenario-harness.md): Phase 4 Gate 2 preflight log for the acceptance matrix, the `/play/local?scenario=` bootstrap surface, and `pnpm check-phase4`
+- [`phase-4-boardscene-local-default-wave-1.md`](./phase-4-boardscene-local-default-wave-1.md): Phase 4 Gate 3 log for the `/play/local` switch to `BoardScene`, the preserved debug fallback, and unique-action affordance mapping

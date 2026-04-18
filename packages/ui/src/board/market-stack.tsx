@@ -3,7 +3,19 @@ import { CardSlot } from './card-slot';
 
 const zoneOrder = ['pyramid', 'deck', 'reserve'] as const;
 
-export const MarketStack = ({ slots }: { slots: UiMarketSlot[] }) => {
+export const MarketStack = ({
+    slots,
+    onBuySlot,
+    onReserveSlot,
+    isBuyDisabled,
+    isReserveDisabled,
+}: {
+    slots: UiMarketSlot[];
+    onBuySlot?: (slot: UiMarketSlot) => void;
+    onReserveSlot?: (slot: UiMarketSlot) => void;
+    isBuyDisabled?: (slot: UiMarketSlot) => boolean;
+    isReserveDisabled?: (slot: UiMarketSlot) => boolean;
+}) => {
     if (slots.length === 0) {
         return <p className="gd-muted">No market fixture slots in this scene.</p>;
     }
@@ -23,7 +35,20 @@ export const MarketStack = ({ slots }: { slots: UiMarketSlot[] }) => {
                         </div>
                         <div className="gd-market-grid">
                             {zoneSlots.map((slot) => (
-                                <CardSlot key={slot.ref} slot={slot} />
+                                <CardSlot
+                                    key={slot.ref}
+                                    slot={slot}
+                                    onBuy={
+                                        onBuySlot && slot.selectableAsBuy ? onBuySlot : undefined
+                                    }
+                                    onReserve={
+                                        onReserveSlot && slot.selectableAsReserve
+                                            ? onReserveSlot
+                                            : undefined
+                                    }
+                                    buyDisabled={isBuyDisabled?.(slot) ?? false}
+                                    reserveDisabled={isReserveDisabled?.(slot) ?? false}
+                                />
                             ))}
                         </div>
                     </section>

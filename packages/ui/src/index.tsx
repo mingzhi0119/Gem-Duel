@@ -21,5 +21,7 @@ export {
 } from './drawer/replay-drawer';
 export { AiTraceDrawer, type AiTraceCandidate, type AiTraceEntry } from './drawer/ai-trace-drawer';
 export { RoomTable } from './tables/room-table';
+export { BoardScene, type BoardSceneScenarioMeta } from './views/board-scene';
 export { MatchView } from './views/match-view';
+export { TerminalOverlay } from './views/terminal-overlay';
 export { PlaygroundSceneFrame } from './playground/scene-frame';

@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { createAiMatchSession, createLocalMatchSession } from '@gem-duel/application';
 import type { UiActionDescriptor } from '@gem-duel/contracts';
-import { AiTraceDrawer, MatchView, ReplayDrawer, Section } from '@gem-duel/ui';
+import { AiTraceDrawer, BoardScene, MatchView, ReplayDrawer, Section } from '@gem-duel/ui';
 
 import {
     createLocalPhase4ScenarioSession,
@@ -61,6 +61,7 @@ export function MatchPlayground({
 
     const session = sessionResult.value;
     const viewModel = session.viewModel();
+    const currentFinalStateHash = session.replay().finalStateHash;
     const replayInspector = session.replayInspector();
     const aiTrace = session.aiTrace();
 
@@ -74,6 +75,38 @@ export function MatchPlayground({
         setError(null);
         setRefreshKey((value) => value + 1);
     };
+
+    const defaultNote = (
+        <p className="gd-muted">
+            ZH: 本地默认入口正在从 deterministic validation shell 迁移到 product-facing BoardScene。
+            EN: The local default entry is moving from the deterministic validation shell to the
+            product-facing BoardScene.
+        </p>
+    );
+
+    if (mode === 'local' && shellMode === 'default') {
+        return (
+            <>
+                <BoardScene
+                    viewModel={viewModel}
+                    currentFinalStateHash={currentFinalStateHash}
+                    scenarioMeta={
+                        scenario
+                            ? {
+                                  id: scenario.id,
+                                  startingFixtureSource: scenario.startingFixtureSource,
+                                  expectedFinalStateHash: scenario.expectedFinalStateHash,
+                              }
+                            : null
+                    }
+                    onSelect={handleAction}
+                    error={error}
+                    note={defaultNote}
+                />
+                {replayInspector.ok ? <ReplayDrawer model={replayInspector.value} /> : null}
+            </>
+        );
+    }
 
     return (
         <>
@@ -99,6 +132,12 @@ export function MatchPlayground({
                                     Expected finalStateHash:{' '}
                                     <span data-testid="phase4-expected-hash">
                                         {scenario.expectedFinalStateHash}
+                                    </span>
+                                </p>
+                                <p>
+                                    Current finalStateHash:{' '}
+                                    <span data-testid="current-final-state-hash">
+                                        {currentFinalStateHash}
                                     </span>
                                 </p>
                             </div>

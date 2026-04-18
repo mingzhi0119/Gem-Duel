@@ -19,14 +19,17 @@ for (const scenario of listLocalPhase4Scenarios()) {
             scenario.expectedFinalStateHash
         );
         await expect(page.getByText(scenario.startingFixtureSource)).toBeVisible();
-        await expect(page.getByText('Available Actions')).toBeVisible();
+        await expect(page.getByTestId('current-final-state-hash')).toBeVisible();
 
         if (scenario.id === 'terminal-victory') {
-            await expect(page.getByText('No actions available for this viewer.')).toBeVisible();
+            await expect(page.getByTestId('terminal-overlay')).toBeVisible();
         }
 
         if (scenario.id === 'debug-shell-fallback') {
             await expect(page.getByTestId('phase4-shell-mode')).toBeVisible();
+            await expect(page.getByText('Available Actions')).toBeVisible();
+        } else {
+            await expect(page.getByTestId('board-scene')).toBeVisible();
         }
     });
 }
