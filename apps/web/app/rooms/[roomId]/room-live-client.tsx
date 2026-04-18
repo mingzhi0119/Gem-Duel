@@ -21,7 +21,7 @@ import {
     type UiActionDescriptor,
     type UiViewModel,
 } from '@gem-duel/contracts';
-import { MatchView, Section } from '@gem-duel/ui';
+import { BoardScene, Section } from '@gem-duel/ui';
 import { fetchRoomDetail } from '@/lib/browser-room-service';
 
 type BindingState = 'unbound' | 'player' | 'spectator';
@@ -170,7 +170,10 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
                 if (cancelled) {
                     return;
                 }
-                applyRoomDetail(detail);
+                startTransition(() => {
+                    setRoom(detail);
+                    setViewModel(detail ? buildRoomUiViewModel(detail) : null);
+                });
             })
             .catch((caughtError) => {
                 if (cancelled) {
@@ -193,7 +196,7 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
                 socketRef.current = null;
             }
         };
-    }, [applyRoomDetail, roomId]);
+    }, [roomId]);
 
     const handleJoin = (preferredSeat?: PlayerId) => {
         pendingBindingRef.current = 'player';
@@ -252,6 +255,21 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
     const handleNameSubmit = (event: FormEvent) => {
         event.preventDefault();
     };
+
+    const canSubmitActions =
+        binding === 'player' &&
+        socketState === 'open' &&
+        viewModel?.viewerRole === 'player' &&
+        viewModel.snapshot.visibility === 'player';
+    const boardNote = viewModel ? (
+        <p className="gd-muted">
+            {viewModel.viewerRole === 'spectator'
+                ? 'Spectators receive filtered state only and cannot submit commands.'
+                : canSubmitActions
+                  ? 'Commands are submitted through room-service with viewer-filtered state and authoritative sequencing.'
+                  : 'This viewer is currently connected read-only; wait for the authoritative stream to re-enable commands.'}
+        </p>
+    ) : null;
 
     return (
         <>
@@ -341,14 +359,18 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
             </Section>
 
             {viewModel ? (
-                <MatchView
+                <BoardScene
+                    eyebrow="Online Room"
                     viewModel={viewModel}
-                    onSelect={binding === 'player' ? handleAction : undefined}
-                    emptyActionLabel={
-                        binding === 'spectator'
-                            ? 'Spectators receive filtered state only.'
-                            : 'No actions are currently available for this viewer.'
+                    currentFinalStateHash={null}
+                    hashUnavailableLabel={
+                        room?.status === 'completed'
+                            ? 'Replay hash in replay view'
+                            : 'Authoritative live stream'
                     }
+                    onSelect={canSubmitActions ? handleAction : undefined}
+                    note={boardNote}
+                    error={lastError}
                 />
             ) : (
                 <Section title="Realtime View">

@@ -129,4 +129,5 @@ export const toPlayerSnapshot = (
 export const toSpectatorSnapshot = (snapshot: AuthoritativeSnapshot): SpectatorSnapshot => ({
     ...stripHiddenState(snapshot),
     visibility: 'spectator',
+    pendingSelection: null,
 });

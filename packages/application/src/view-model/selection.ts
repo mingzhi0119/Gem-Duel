@@ -59,6 +59,10 @@ export const buildSelectionDraft = (snapshot: VisibleSnapshot): UiSelectionDraft
         }
     }
 
+    if (snapshot.visibility === 'spectator') {
+        return null;
+    }
+
     if (snapshot.pendingSelection?.action === 'TAKE_TOKENS') {
         return {
             model: 'pending-command',

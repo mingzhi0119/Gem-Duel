@@ -108,6 +108,7 @@ export const BoardScene = ({
     eyebrow = 'Classic Local',
     viewModel,
     currentFinalStateHash,
+    hashUnavailableLabel = 'Live hash unavailable',
     scenarioMeta = null,
     onSelect,
     error,
@@ -116,7 +117,8 @@ export const BoardScene = ({
 }: {
     eyebrow?: string;
     viewModel: UiViewModel;
-    currentFinalStateHash: string;
+    currentFinalStateHash?: string | null;
+    hashUnavailableLabel?: string;
     scenarioMeta?: BoardSceneScenarioMeta | null;
     onSelect?: (action: UiActionDescriptor) => void;
     error?: string | null;
@@ -229,12 +231,27 @@ export const BoardScene = ({
                     {note}
                 </div>
                 <div className="gd-board-scene-badges">
-                    <span className="gd-shell-badge">{viewModel.sessionStatus}</span>
-                    <span className="gd-shell-badge">{viewModel.viewerRole}</span>
-                    <span className="gd-hash-badge">
-                        hash{' '}
-                        <code data-testid="current-final-state-hash">{currentFinalStateHash}</code>
+                    <span className="gd-shell-badge" data-testid="boardscene-session-status">
+                        {viewModel.sessionStatus}
                     </span>
+                    <span className="gd-shell-badge" data-testid="boardscene-viewer-role">
+                        {viewModel.viewerRole}
+                    </span>
+                    {currentFinalStateHash ? (
+                        <span className="gd-hash-badge">
+                            hash{' '}
+                            <code data-testid="current-final-state-hash">
+                                {currentFinalStateHash}
+                            </code>
+                        </span>
+                    ) : (
+                        <span
+                            className="gd-shell-badge"
+                            data-testid="current-final-state-hash-unavailable"
+                        >
+                            {hashUnavailableLabel}
+                        </span>
+                    )}
                 </div>
             </header>
 
@@ -255,6 +272,7 @@ export const BoardScene = ({
                                             key={action.id}
                                             type="button"
                                             className="gd-button"
+                                            disabled={!onSelect}
                                             onClick={() => onSelect?.(action)}
                                         >
                                             {getToolbarLabel(action)}
@@ -291,7 +309,9 @@ export const BoardScene = ({
                         {showTerminalOverlay ? (
                             <TerminalOverlay
                                 snapshot={viewModel.snapshot}
-                                currentFinalStateHash={currentFinalStateHash}
+                                currentFinalStateHash={
+                                    currentFinalStateHash ?? hashUnavailableLabel
+                                }
                             />
                         ) : null}
 
@@ -304,8 +324,8 @@ export const BoardScene = ({
                             </div>
                             <MarketStack
                                 slots={viewModel.marketSlots}
-                                onBuySlot={handleBuy}
-                                onReserveSlot={handleReserve}
+                                onBuySlot={onSelect ? handleBuy : undefined}
+                                onReserveSlot={onSelect ? handleReserve : undefined}
                                 isBuyDisabled={(slot) => buyActions.get(slot.ref) === null}
                                 isReserveDisabled={(slot) => reserveActions.get(slot.ref) === null}
                             />
@@ -321,7 +341,11 @@ export const BoardScene = ({
                             <BoardGrid
                                 cells={viewModel.boardCells}
                                 label="Local board"
-                                onSelectCell={(cell) => handleBoardCellSelect(cell.positionId)}
+                                onSelectCell={
+                                    onSelect
+                                        ? (cell) => handleBoardCellSelect(cell.positionId)
+                                        : undefined
+                                }
                                 isCellDisabled={(cell) =>
                                     !cell.selectable || boardActions.get(cell.positionId) === null
                                 }
@@ -355,7 +379,7 @@ export const BoardScene = ({
                         <SidecarDrawer title="Royal Court">
                             <RoyalCourt
                                 offers={viewModel.royalOffers}
-                                onSelectOffer={handleRoyalSelect}
+                                onSelectOffer={onSelect ? handleRoyalSelect : undefined}
                                 isDisabled={(offer) => royalActions.get(offer.royalId) === null}
                             />
                         </SidecarDrawer>
@@ -370,6 +394,7 @@ export const BoardScene = ({
                                         type="button"
                                         className="gd-button"
                                         data-testid="selection-confirm"
+                                        disabled={!onSelect}
                                         onClick={() => onSelect?.(confirmAction)}
                                     >
                                         {confirmAction.label}
@@ -380,6 +405,7 @@ export const BoardScene = ({
                                         type="button"
                                         className="gd-button gd-button-muted"
                                         data-testid="selection-cancel"
+                                        disabled={!onSelect}
                                         onClick={() => onSelect?.(cancelAction)}
                                     >
                                         {cancelAction.label}

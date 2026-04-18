@@ -2,6 +2,7 @@ import type { AddressInfo } from 'node:net';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
     buildReplayInspectorModel,
+    buildVisibleUiViewModel,
     buildUiViewModel,
     createMatchSession,
     type MatchSession,
@@ -480,6 +481,120 @@ describe('buildRoomServiceApp', () => {
         expect(resync.snapshot.sequence).toBe(p1Patch.snapshot.sequence);
         expect(resync.roomStatus).toBe('active');
         expect(resync.availableActions).toEqual(p1Patch.availableActions);
+
+        await Promise.all([p1.close(), p2.close(), spectator.close()]);
+    });
+
+    it('redacts spectator pending-selection drafts while keeping player resync state intact', async () => {
+        const room = await createRoom(urlBase);
+        const [p1, p2, spectator] = await openSockets(port, room.roomId);
+
+        p1.send({
+            type: 'room.join',
+            roomId: room.roomId,
+            playerName: 'Alice',
+        });
+        const p1State = await p1.nextMessage();
+        p2.send({
+            type: 'room.join',
+            roomId: room.roomId,
+            playerName: 'Bob',
+        });
+        await p2.nextMessage();
+        spectator.send({
+            type: 'room.watch',
+            roomId: room.roomId,
+            spectatorName: 'Spec',
+        });
+        await spectator.nextMessage();
+
+        if (p1State.type !== 'room.state' || p1State.room?.snapshot?.visibility !== 'player') {
+            throw new Error('Expected player room.state.');
+        }
+
+        p1.send({
+            type: 'match.command',
+            command: {
+                clientCommandId: 'cmd-begin-selection',
+                expectedSeq: p1State.room.snapshot.sequence,
+                command: { type: 'BEGIN_GEM_SELECTION' },
+            },
+        });
+
+        const [p1BeginPatch] = await Promise.all([
+            p1.nextMessage(),
+            p2.nextMessage(),
+            spectator.nextMessage(),
+        ]);
+
+        expect(p1BeginPatch.type).toBe('match.patch');
+        if (p1BeginPatch.type !== 'match.patch' || p1BeginPatch.snapshot.visibility !== 'player') {
+            throw new Error('Expected a player-scoped match.patch after BEGIN_GEM_SELECTION.');
+        }
+
+        const addPositionAction = p1BeginPatch.availableActions.find(
+            (action) => action.command.type === 'TAKE_TOKENS_ADD_POSITION'
+        );
+        if (!addPositionAction || addPositionAction.command.type !== 'TAKE_TOKENS_ADD_POSITION') {
+            throw new Error('Expected TAKE_TOKENS_ADD_POSITION after BEGIN_GEM_SELECTION.');
+        }
+
+        p1.send({
+            type: 'match.command',
+            command: {
+                clientCommandId: 'cmd-add-selection',
+                expectedSeq: p1BeginPatch.snapshot.sequence,
+                command: addPositionAction.command,
+            },
+        });
+
+        const [p1SelectionPatch, _p2SelectionPatch, spectatorObserve] = await Promise.all([
+            p1.nextMessage(),
+            p2.nextMessage(),
+            spectator.nextMessage(),
+        ]);
+
+        expect(p1SelectionPatch.type).toBe('match.patch');
+        expect(spectatorObserve.type).toBe('match.observe');
+        if (
+            p1SelectionPatch.type !== 'match.patch' ||
+            p1SelectionPatch.snapshot.visibility !== 'player' ||
+            spectatorObserve.type !== 'match.observe'
+        ) {
+            throw new Error('Expected player patch plus spectator observe after selection.');
+        }
+
+        expect(p1SelectionPatch.snapshot.pendingSelection).toMatchObject({
+            action: 'TAKE_TOKENS',
+            selectedPositions: [addPositionAction.command.positionId],
+        });
+        expect(spectatorObserve.snapshot.pendingSelection).toBeNull();
+        expect(spectatorObserve.availableActions).toEqual([]);
+
+        const spectatorView = buildVisibleUiViewModel(
+            spectatorObserve.snapshot,
+            spectatorObserve.availableActions,
+            { roomStatus: spectatorObserve.roomStatus }
+        );
+        expect(spectatorView.selectionDraft).toBeNull();
+        expect(spectatorView.boardCells.some((cell) => cell.selected)).toBe(false);
+
+        p1.send({
+            type: 'match.command',
+            command: {
+                clientCommandId: 'cmd-stale-after-selection',
+                expectedSeq: p1BeginPatch.snapshot.sequence,
+                command: { type: 'BEGIN_RESERVE' },
+            },
+        });
+        const resync = await p1.nextMessage();
+        expect(resync.type).toBe('match.resync');
+        if (resync.type !== 'match.resync' || resync.snapshot.visibility !== 'player') {
+            throw new Error('Expected a player-scoped match.resync after stale seq.');
+        }
+        expect(resync.snapshot.pendingSelection).toEqual(
+            p1SelectionPatch.snapshot.pendingSelection
+        );
 
         await Promise.all([p1.close(), p2.close(), spectator.close()]);
     });
