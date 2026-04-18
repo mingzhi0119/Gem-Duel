@@ -29,6 +29,12 @@ const waitForDesktopWindow = async (electronApp: ElectronApplication) => {
     return page;
 };
 
+const readShellTheme = async (page: Awaited<ReturnType<typeof waitForDesktopWindow>>) =>
+    page.evaluate(() => ({
+        themeMode: document.documentElement.dataset.gdThemeMode ?? null,
+        resolvedTheme: document.documentElement.dataset.gdResolvedTheme ?? null,
+    }));
+
 const closeDesktopShell = async (electronApp: ElectronApplication | null) => {
     if (!electronApp) {
         return;
@@ -77,6 +83,23 @@ test.describe('Phase 8 desktop shell assembly', () => {
             await page.waitForURL(new RegExp(`/play/local\\?scenario=${PHASE8_SMOKE_SCENARIO}$`));
             await expect(page.getByTestId('phase4-interactive-ready')).toHaveCount(1);
             await expect(page.getByTestId('board-scene')).toBeVisible();
+            await expect(page.getByTestId('boardscene-header')).toBeVisible();
+            await expect(page.getByTestId('turn-hud')).toBeVisible();
+            await expect(page.getByTestId('turn-hud-action-counter')).toBeVisible();
+            await expect(page.getByTestId('boardscene-stage')).toBeVisible();
+            await expect(page.getByTestId('boardscene-footer')).toBeVisible();
+            await expect(page.getByTestId('player-zone-p1')).toBeVisible();
+            await expect(page.getByTestId('player-zone-p2')).toBeVisible();
+            await expect(page.getByTestId('boardscene-rail')).toBeVisible();
+            await expect(page.getByTestId('session-rail')).toBeVisible();
+
+            await page.getByRole('radio', { name: 'Light' }).check();
+            await expect
+                .poll(() => readShellTheme(page))
+                .toMatchObject({
+                    themeMode: 'light',
+                    resolvedTheme: 'light',
+                });
 
             await page.getByTestId('board-cell-r2c1').click();
             await page.getByTestId('board-cell-r2c2').click();

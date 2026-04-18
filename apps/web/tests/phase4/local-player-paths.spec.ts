@@ -13,6 +13,12 @@ const expectCurrentHash = async (page: Page, scenarioId: LocalPhase4ScenarioId) 
     );
 };
 
+const readStageWidth = async (page: Page) => {
+    const bounds = await page.getByTestId('boardscene-stage').boundingBox();
+    expect(bounds).not.toBeNull();
+    return Math.round(bounds!.width);
+};
+
 test('Phase 4 row 1: first turn takes 3 linked gems', async ({ page }) => {
     await page.goto('/play/local?scenario=take-three-linked-gems');
     await waitForInteractiveReady(page);
@@ -84,7 +90,13 @@ test('Phase 4 row 6: resolve the gain-royal prompt', async ({ page }) => {
 test('Phase 4 row 7: show the terminal victory overlay', async ({ page }) => {
     await page.goto('/play/local?scenario=terminal-victory');
     await waitForInteractiveReady(page);
+    const stageWidth = await readStageWidth(page);
+
+    await expect(page.getByTestId('terminal-overlay-trigger')).toBeVisible();
+    await page.getByTestId('terminal-overlay-trigger').click();
     await expect(page.getByTestId('terminal-overlay')).toBeVisible();
+    await expect(page.getByTestId('terminal-final-state-hash')).toBeVisible();
+    await expect(await readStageWidth(page)).toBe(stageWidth);
 
     await expectCurrentHash(page, 'terminal-victory');
 });

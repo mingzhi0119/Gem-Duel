@@ -3,8 +3,10 @@
 import type { ReactNode } from 'react';
 import type { AiDecisionTrace, ReplayInspectorModel } from '@gem-duel/application';
 import type { UiActionDescriptor, UiViewModel } from '@gem-duel/contracts';
+import type { UiLocale } from '@gem-duel/ui';
 import type { BoardSceneScenarioMeta } from '@gem-duel/ui';
 import { AiTraceDrawer, BoardScene, MatchView, ReplayDrawer } from '@gem-duel/ui';
+import { SessionRail } from '@/app/components/session-rail';
 
 export function SessionBoardShell({
     eyebrow,
@@ -12,26 +14,28 @@ export function SessionBoardShell({
     currentFinalStateHash,
     onSelect,
     replayInspector,
-    aiTrace = [],
+    aiTrace = null,
     shellMode = 'default',
     scenarioMeta = null,
     boardNote,
     legacyShellNote,
     extraSidecars = null,
     error = null,
+    locale = 'en',
 }: {
     eyebrow: string;
     viewModel: UiViewModel;
     currentFinalStateHash: string;
     onSelect: (action: UiActionDescriptor) => void;
     replayInspector: ReplayInspectorModel | null;
-    aiTrace?: AiDecisionTrace[];
+    aiTrace?: AiDecisionTrace[] | null;
     shellMode?: 'default' | 'debug';
     scenarioMeta?: BoardSceneScenarioMeta | null;
     boardNote?: ReactNode;
     legacyShellNote?: ReactNode;
     extraSidecars?: ReactNode;
     error?: string | null;
+    locale?: UiLocale;
 }) {
     const sessionSurface =
         shellMode === 'default' ? (
@@ -44,6 +48,17 @@ export function SessionBoardShell({
                 error={error}
                 note={boardNote}
                 extraSidecars={extraSidecars}
+                locale={locale}
+                railLead={
+                    <SessionRail
+                        locale={locale}
+                        surface="play"
+                        sessionStatus={viewModel.sessionStatus}
+                        viewerRole={viewModel.viewerRole}
+                        currentFinalStateHash={currentFinalStateHash}
+                        hashUnavailableLabel="Live hash unavailable"
+                    />
+                }
             />
         ) : (
             <MatchView
@@ -57,8 +72,8 @@ export function SessionBoardShell({
     return (
         <>
             {sessionSurface}
-            {replayInspector ? <ReplayDrawer model={replayInspector} /> : null}
-            {aiTrace.length > 0 ? <AiTraceDrawer traces={aiTrace} /> : null}
+            {replayInspector ? <ReplayDrawer model={replayInspector} locale={locale} /> : null}
+            {aiTrace ? <AiTraceDrawer traces={aiTrace} locale={locale} /> : null}
         </>
     );
 }

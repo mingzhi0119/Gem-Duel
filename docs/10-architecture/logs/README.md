@@ -2,7 +2,7 @@
 
 ## ZH
 
-本目录记录 `docs/10-architecture/full-board-ui-roadmap.md` 的各 Phase 落地日志，以及 Phase 关闭后的 hardening wave 收口日志。
+本目录记录 `docs/10-architecture/full-board-ui-roadmap.md` 的各 Phase 落地日志、Phase 关闭后的 hardening wave 收口日志，以及并行 visual productization 轨道的 `visual-v*` 日志。
 
 - 每次完成一个 roadmap phase，必须补对应日志，并把 roadmap 状态同步改为 `Completed` 或等价完成标记。
 - 日志应记录：日期、范围、落地结果、涉及文件、剩余风险与验证结果。
@@ -32,10 +32,17 @@
 - [`phase-7-replay-boardscene-and-product-finish-completion.md`](./phase-7-replay-boardscene-and-product-finish-completion.md): Phase 7 完成日志，记录 `/replays/[replayId]` 复用 shared `BoardScene`、timeline/hash/keyboard/i18n 收口与 replay desktop/mobile visual baselines
 - [`phase-8-desktop-offline-packaging-validation.md`](./phase-8-desktop-offline-packaging-validation.md): Phase 8 完成日志，记录 Desktop 通过 embedded standalone web runtime、static asset sync、`preload.cjs` bridge 与 `check-phase8` 关闭 offline runtime gate
 - [`hardening-wave-1-standalone-room-visual-a11y.md`](./hardening-wave-1-standalone-room-visual-a11y.md): Hardening Wave 1 收口日志，记录 standalone browser gates、room-status cosmetic fanout、平台无关 visual baseline 与 `check-a11y`
+- [`visual-v1-theme-foundation-and-style-registry.md`](./visual-v1-theme-foundation-and-style-registry.md): Visual V1 日志，记录 dark tactical token 重写、`dark/light/system` shared-shell foundation、style registry stub 与受控 rebaseline
+- [`visual-v2-layout-restructure.md`](./visual-v2-layout-restructure.md): Visual V2 日志，记录 `BoardScene` slot API、顶栏/中台/底区/右 rail 重排、`?shell=debug` 保留与受控 rebaseline
+- [`visual-v3-center-stage-primitives.md`](./visual-v3-center-stage-primitives.md): Visual V3 日志，记录 Market 金字塔、圆形宝石 Board、2×2 Royal Court 与受控 visual rebaseline
+- [`visual-v4-hud-player-zone-action-counter.md`](./visual-v4-hud-player-zone-action-counter.md): Visual V4 日志，记录对称 HUD、玩家区资产槽、保守投影的 `ACTION N / N` 胶囊、spectator/replay 门禁与受控 visual rebaseline
+- [`visual-v5-session-rail-theme-rules-restart.md`](./visual-v5-session-rail-theme-rules-restart.md): Visual V5 日志，记录 session rail 的 Save/Load 决策、只读 style pill、`Dark/Light/System` 主题切换、Rules/Restart 语义与双语/键盘验收
+- [`visual-v6-dark-tactical-drawers.md`](./visual-v6-dark-tactical-drawers.md): Visual V6 日志，记录 collapsed-by-default dark tactical drawers、统一 overlay/focus-trap shell、terminal 浮动入口与受控 visual rebaseline
+- [`visual-v7-release-ready-closure.md`](./visual-v7-release-ready-closure.md): Visual V7 日志，记录 visual baseline 冻结、Desktop parity 证据、顺序跑绿 `check-phase4-8` / `check-a11y` / `check-visual` 与最终收口摘要
 
 ## EN
 
-This directory stores landing logs for phases tracked in `docs/10-architecture/full-board-ui-roadmap.md`, plus post-phase hardening-wave closeout logs.
+This directory stores landing logs for phases tracked in `docs/10-architecture/full-board-ui-roadmap.md`, post-phase hardening-wave closeout logs, and the parallel visual-productization `visual-v*` logs.
 
 - Whenever a roadmap phase is completed, the matching log must be written and the roadmap status must be updated to `Completed` or an equivalent completion marker.
 - Logs should record the date, scope, landed results, touched files, remaining risks, and validation outcomes.
@@ -65,3 +72,10 @@ This directory stores landing logs for phases tracked in `docs/10-architecture/f
 - [`phase-7-replay-boardscene-and-product-finish-completion.md`](./phase-7-replay-boardscene-and-product-finish-completion.md): Phase 7 completion log for moving `/replays/[replayId]` onto the shared `BoardScene`, closing timeline/hash/keyboard/i18n on the replay surface, and adding replay desktop/mobile visual baselines
 - [`phase-8-desktop-offline-packaging-validation.md`](./phase-8-desktop-offline-packaging-validation.md): Phase 8 completion log for closing Desktop offline runtime validation through the embedded standalone web runtime, static-asset sync, the `preload.cjs` bridge, and `check-phase8`
 - [`hardening-wave-1-standalone-room-visual-a11y.md`](./hardening-wave-1-standalone-room-visual-a11y.md): Hardening Wave 1 closeout for standalone browser gates, room-status cosmetic fanout, platform-agnostic visual baselines, and `check-a11y`
+- [`visual-v1-theme-foundation-and-style-registry.md`](./visual-v1-theme-foundation-and-style-registry.md): Visual V1 log for the dark-tactical token rewrite, the shared-shell `dark/light/system` foundation, the style-registry stub, and the controlled rebaseline
+- [`visual-v2-layout-restructure.md`](./visual-v2-layout-restructure.md): Visual V2 log for the `BoardScene` slot API, the top/stage/footer/right-rail restructure, preserved `?shell=debug`, and the controlled rebaseline
+- [`visual-v3-center-stage-primitives.md`](./visual-v3-center-stage-primitives.md): Visual V3 log for the Market pyramid, round-gem Board, 2x2 Royal Court, and the controlled visual rebaseline
+- [`visual-v4-hud-player-zone-action-counter.md`](./visual-v4-hud-player-zone-action-counter.md): Visual V4 log for the symmetric HUD, player-zone asset trays, the conservatively derived `ACTION N / N` capsule, spectator/replay gates, and the controlled visual rebaseline
+- [`visual-v5-session-rail-theme-rules-restart.md`](./visual-v5-session-rail-theme-rules-restart.md): Visual V5 log for the session-rail Save/Load decision, the read-only style pill, `Dark/Light/System` theme switching, Rules/Restart semantics, and bilingual keyboard-accessible acceptance
+- [`visual-v6-dark-tactical-drawers.md`](./visual-v6-dark-tactical-drawers.md): Visual V6 log for the collapsed-by-default dark tactical drawers, the shared overlay/focus-trap shell, the floating terminal trigger, and the controlled visual rebaseline
+- [`visual-v7-release-ready-closure.md`](./visual-v7-release-ready-closure.md): Visual V7 log for the frozen visual baselines, Desktop parity evidence, the sequential green sweep of `check-phase4-8` / `check-a11y` / `check-visual`, and the final closeout summary

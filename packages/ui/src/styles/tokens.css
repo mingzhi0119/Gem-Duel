@@ -1,23 +1,198 @@
 :root {
-    color-scheme: light;
-    --gd-background: #f5f2eb;
-    --gd-surface: #fffdf8;
-    --gd-surface-strong: #1b2430;
-    --gd-surface-soft: rgba(255, 253, 248, 0.88);
-    --gd-text: #1b2430;
-    --gd-muted: #566070;
-    --gd-accent: #006d77;
-    --gd-accent-soft: #d9f3f0;
-    --gd-border: #d8d2c4;
-    --gd-danger: #a11212;
-    --gd-shadow: 0 18px 50px rgba(68, 78, 96, 0.08);
-    --gd-radius-panel: 20px;
+    --gd-font-body: 'Aptos', 'Segoe UI Variable', 'Segoe UI', sans-serif;
+    --gd-font-display: 'Bahnschrift', 'Aptos Display', 'Segoe UI Variable', sans-serif;
+    --gd-font-mono: 'Cascadia Mono', 'Cascadia Code', 'Consolas', monospace;
+
+    --gd-space-2xs: 0.25rem;
+    --gd-space-xs: 0.5rem;
+    --gd-space-sm: 0.75rem;
+    --gd-space-md: 1rem;
+    --gd-space-lg: 1.25rem;
+    --gd-space-xl: 1.5rem;
+    --gd-space-2xl: 2rem;
+
+    --gd-radius-panel: 24px;
+    --gd-radius-card: 20px;
+    --gd-radius-control: 16px;
     --gd-radius-pill: 999px;
-    --gd-gem-blue: #2f74b5;
-    --gd-gem-white: #f7f4e8;
-    --gd-gem-green: #1b7f5b;
-    --gd-gem-black: #2d3748;
-    --gd-gem-red: #b63c3c;
-    --gd-gem-pearl: #ceb9db;
-    --gd-gem-gold: #d6a329;
+
+    --gd-letter-tight: -0.02em;
+    --gd-letter-ui: 0.035em;
+    --gd-letter-label: 0.14em;
+
+    --gd-gem-blue-rgb: 70 147 255;
+    --gd-gem-white-rgb: 245 238 217;
+    --gd-gem-green-rgb: 51 198 138;
+    --gd-gem-black-rgb: 34 52 84;
+    --gd-gem-red-rgb: 255 112 112;
+    --gd-gem-pearl-rgb: 203 174 255;
+    --gd-gem-gold-rgb: 255 204 102;
+
+    --gd-gem-blue: rgb(var(--gd-gem-blue-rgb));
+    --gd-gem-white: rgb(var(--gd-gem-white-rgb));
+    --gd-gem-green: rgb(var(--gd-gem-green-rgb));
+    --gd-gem-black: rgb(var(--gd-gem-black-rgb));
+    --gd-gem-red: rgb(var(--gd-gem-red-rgb));
+    --gd-gem-pearl: rgb(var(--gd-gem-pearl-rgb));
+    --gd-gem-gold: rgb(var(--gd-gem-gold-rgb));
+
+    --gd-shadow-soft: 0 18px 36px rgba(3, 9, 18, 0.18);
+    --gd-shadow: 0 28px 64px rgba(3, 9, 18, 0.28);
+    --gd-shadow-strong: 0 42px 96px rgba(3, 9, 18, 0.36);
+}
+
+:root,
+:root[data-gd-resolved-theme='dark'] {
+    color-scheme: dark;
+
+    --gd-background: #07121f;
+    --gd-background-elevated: #0d1a2c;
+    --gd-surface: rgba(14, 24, 43, 0.94);
+    --gd-surface-strong: #152744;
+    --gd-surface-soft: rgba(18, 31, 53, 0.84);
+    --gd-surface-glass: rgba(9, 18, 34, 0.76);
+    --gd-surface-inset: rgba(255, 255, 255, 0.04);
+
+    --gd-text: #eaf3ff;
+    --gd-text-strong: #fbfdff;
+    --gd-muted: #93a8c8;
+    --gd-accent: #69d7ff;
+    --gd-accent-strong: #b7f0ff;
+    --gd-accent-soft: rgba(105, 215, 255, 0.14);
+    --gd-border: rgba(123, 155, 201, 0.24);
+    --gd-border-strong: rgba(130, 191, 255, 0.38);
+    --gd-danger: #ff8a8a;
+
+    --gd-button-background: linear-gradient(180deg, #173458 0%, #112746 100%);
+    --gd-button-muted-background: linear-gradient(180deg, #2b3f59 0%, #1b2a40 100%);
+    --gd-button-text: #f5fbff;
+    --gd-link-background: linear-gradient(180deg, #0f6c8f 0%, #094f6b 100%);
+    --gd-shell-badge-background: rgba(93, 130, 188, 0.18);
+    --gd-shell-badge-text: #d5e6ff;
+    --gd-chip-button-background: rgba(255, 255, 255, 0.04);
+    --gd-chip-button-border: rgba(111, 191, 255, 0.28);
+    --gd-input-background: rgba(7, 16, 31, 0.84);
+    --gd-input-border: rgba(116, 151, 201, 0.28);
+    --gd-focus-ring: rgba(128, 220, 255, 0.54);
+    --gd-selection-ring: rgba(105, 215, 255, 0.22);
+    --gd-overlay-backdrop: rgba(3, 9, 18, 0.82);
+    --gd-overlay-card-background: linear-gradient(
+        180deg,
+        rgba(18, 31, 52, 0.96),
+        rgba(9, 18, 34, 0.96)
+    );
+    --gd-overlay-card-border: rgba(111, 191, 255, 0.26);
+    --gd-hash-background: rgba(4, 10, 19, 0.88);
+    --gd-token-surface: rgba(255, 255, 255, 0.05);
+    --gd-token-surface-strong: rgba(255, 255, 255, 0.08);
+    --gd-ghost-border: rgba(255, 255, 255, 0.08);
+    --gd-board-socket-background: rgba(3, 9, 18, 0.72);
+    --gd-board-socket-ring: rgba(146, 187, 245, 0.12);
+    --gd-board-socket-glow: 0 18px 30px rgba(0, 0, 0, 0.3);
+    --gd-gem-shadow: 0 16px 28px rgba(0, 0, 0, 0.38);
+    --gd-market-tier-one-rgb: 255 120 120;
+    --gd-market-tier-two-rgb: 105 215 255;
+    --gd-market-tier-three-rgb: 255 204 102;
+    --gd-market-deck-rgb: 168 190 232;
+    --gd-royal-card-background: linear-gradient(
+        180deg,
+        rgba(118, 86, 18, 0.95),
+        rgba(57, 39, 7, 0.96)
+    );
+    --gd-royal-card-border: rgba(255, 214, 122, 0.38);
+    --gd-royal-crest-background: rgba(255, 240, 198, 0.16);
+    --gd-royal-card-text: #fff5d8;
+    --gd-page-background:
+        radial-gradient(circle at top, rgba(90, 132, 255, 0.24) 0%, rgba(90, 132, 255, 0) 28%),
+        radial-gradient(
+            circle at 20% 18%,
+            rgba(105, 215, 255, 0.12) 0%,
+            rgba(105, 215, 255, 0) 34%
+        ),
+        linear-gradient(180deg, #10223b 0%, #08121f 50%, #050c16 100%);
+    --gd-stage-gridline: rgba(144, 178, 228, 0.08);
+}
+
+:root[data-gd-resolved-theme='light'] {
+    color-scheme: light;
+
+    --gd-background: #ebe2d0;
+    --gd-background-elevated: #f3ecdf;
+    --gd-surface: rgba(255, 250, 242, 0.96);
+    --gd-surface-strong: #16304d;
+    --gd-surface-soft: rgba(255, 248, 240, 0.9);
+    --gd-surface-glass: rgba(255, 252, 247, 0.78);
+    --gd-surface-inset: rgba(17, 39, 63, 0.04);
+
+    --gd-text: #18253a;
+    --gd-text-strong: #0d1a29;
+    --gd-muted: #4f627d;
+    --gd-accent: #0f6d8b;
+    --gd-accent-strong: #084d63;
+    --gd-accent-soft: rgba(15, 109, 139, 0.12);
+    --gd-border: rgba(22, 55, 82, 0.14);
+    --gd-border-strong: rgba(19, 79, 107, 0.22);
+    --gd-danger: #b74343;
+
+    --gd-button-background: linear-gradient(180deg, #1c395c 0%, #132b45 100%);
+    --gd-button-muted-background: linear-gradient(180deg, #66778e 0%, #4e5e73 100%);
+    --gd-button-text: #f9fbff;
+    --gd-link-background: linear-gradient(180deg, #1481a6 0%, #0f6d8b 100%);
+    --gd-shell-badge-background: rgba(20, 78, 111, 0.1);
+    --gd-shell-badge-text: #0f5470;
+    --gd-chip-button-background: rgba(255, 255, 255, 0.5);
+    --gd-chip-button-border: rgba(20, 109, 139, 0.26);
+    --gd-input-background: rgba(255, 255, 255, 0.82);
+    --gd-input-border: rgba(30, 66, 96, 0.16);
+    --gd-focus-ring: rgba(15, 109, 139, 0.35);
+    --gd-selection-ring: rgba(15, 109, 139, 0.18);
+    --gd-overlay-backdrop: rgba(11, 20, 35, 0.58);
+    --gd-overlay-card-background: linear-gradient(
+        180deg,
+        rgba(255, 252, 247, 0.97),
+        rgba(242, 233, 218, 0.96)
+    );
+    --gd-overlay-card-border: rgba(20, 109, 139, 0.18);
+    --gd-hash-background: rgba(16, 31, 49, 0.9);
+    --gd-token-surface: rgba(255, 255, 255, 0.76);
+    --gd-token-surface-strong: rgba(255, 255, 255, 0.88);
+    --gd-ghost-border: rgba(13, 26, 41, 0.08);
+    --gd-board-socket-background: rgba(219, 229, 241, 0.92);
+    --gd-board-socket-ring: rgba(20, 78, 111, 0.12);
+    --gd-board-socket-glow: 0 14px 26px rgba(31, 49, 74, 0.14);
+    --gd-gem-shadow: 0 12px 24px rgba(51, 76, 110, 0.18);
+    --gd-market-tier-one-rgb: 199 97 97;
+    --gd-market-tier-two-rgb: 20 129 166;
+    --gd-market-tier-three-rgb: 201 153 38;
+    --gd-market-deck-rgb: 91 112 148;
+    --gd-royal-card-background: linear-gradient(
+        180deg,
+        rgba(255, 235, 179, 0.96),
+        rgba(230, 193, 110, 0.98)
+    );
+    --gd-royal-card-border: rgba(169, 126, 23, 0.24);
+    --gd-royal-crest-background: rgba(255, 255, 255, 0.42);
+    --gd-royal-card-text: #553706;
+    --gd-page-background:
+        radial-gradient(circle at top, rgba(115, 157, 209, 0.18) 0%, rgba(115, 157, 209, 0) 28%),
+        linear-gradient(180deg, #faf6ee 0%, #f1e9da 48%, #e6dac6 100%);
+    --gd-stage-gridline: rgba(17, 39, 63, 0.06);
+}
+
+:root[data-gd-style='default-tactical'] {
+    --gd-style-card-radius: 22px;
+    --gd-style-panel-radius: 28px;
+    --gd-style-density-gap: 1rem;
+    --gd-style-density-gap-wide: 1.5rem;
+    --gd-style-page-shell: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.03),
+        rgba(255, 255, 255, 0)
+    );
+    --gd-style-stage-backdrop:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
+        repeating-linear-gradient(90deg, transparent 0 44px, var(--gd-stage-gridline) 44px 45px),
+        repeating-linear-gradient(180deg, transparent 0 44px, var(--gd-stage-gridline) 44px 45px),
+        radial-gradient(circle at top, rgba(105, 215, 255, 0.12) 0%, rgba(105, 215, 255, 0) 40%);
+    --gd-style-stage-glow: 0 0 0 1px rgba(120, 188, 255, 0.08), 0 28px 65px rgba(0, 0, 0, 0.34);
 }

@@ -22,7 +22,31 @@ export {
 } from './drawer/replay-drawer';
 export { AiTraceDrawer, type AiTraceCandidate, type AiTraceEntry } from './drawer/ai-trace-drawer';
 export { RoomTable } from './tables/room-table';
-export { BoardScene, type BoardSceneScenarioMeta } from './views/board-scene';
+export { BoardScene, type BoardSceneScenarioMeta, type BoardSceneSlots } from './views/board-scene';
 export { MatchView } from './views/match-view';
 export { TerminalOverlay } from './views/terminal-overlay';
 export { PlaygroundSceneFrame } from './playground/scene-frame';
+export {
+    DEFAULT_RESOLVED_SHELL_THEME,
+    DEFAULT_SHELL_THEME_MODE,
+    SHELL_PRESENTATION_SYNC_EVENT,
+    SHELL_STYLE_QUERY_PARAM,
+    SHELL_STYLE_STORAGE_KEY,
+    SHELL_THEME_MODES,
+    SHELL_THEME_QUERY_PARAM,
+    SHELL_THEME_STORAGE_KEY,
+    resolveResolvedShellTheme,
+    resolveShellPresentation,
+    resolveShellThemeMode,
+    type ResolvedShellTheme,
+    type ShellThemeMode,
+} from './styles/shell-presentation';
+export {
+    DEFAULT_SHELL_STYLE_ID,
+    SHELL_STYLE_IDS,
+    SHELL_STYLE_REGISTRY,
+    isShellStyleId,
+    resolveShellStyleId,
+    type ShellStyleDefinition,
+    type ShellStyleId,
+} from './styles/style-registry';

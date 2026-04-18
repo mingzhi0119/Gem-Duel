@@ -1,7 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
+import {
+    DEFAULT_RESOLVED_SHELL_THEME,
+    DEFAULT_SHELL_STYLE_ID,
+    DEFAULT_SHELL_THEME_MODE,
+} from '@gem-duel/ui';
 import '@gem-duel/ui/styles.css';
+import { ShellPresentationSync } from './components/shell-presentation-sync';
 import { RuntimeShellBadge } from './components/runtime-shell-badge';
 import './globals.css';
 
@@ -16,8 +22,17 @@ export default function RootLayout({
     children: ReactNode;
 }>) {
     return (
-        <html lang="en">
-            <body>
+        <html
+            lang="en"
+            suppressHydrationWarning
+            data-gd-theme-mode={DEFAULT_SHELL_THEME_MODE}
+            data-gd-resolved-theme={DEFAULT_RESOLVED_SHELL_THEME}
+            data-gd-style={DEFAULT_SHELL_STYLE_ID}
+        >
+            <body className="gd-app-shell">
+                <Suspense fallback={null}>
+                    <ShellPresentationSync />
+                </Suspense>
                 <main>
                     <header className="gd-shell-header">
                         <div>

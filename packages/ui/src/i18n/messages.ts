@@ -1,6 +1,10 @@
 export type UiLocale = 'en' | 'zh';
 
 export interface UiMessages {
+    drawer: {
+        openLabel: string;
+        closeLabel: string;
+    };
     boardScene: {
         hashLabel: string;
         marketTitle: string;
@@ -21,6 +25,38 @@ export interface UiMessages {
         scenarioLabel: string;
         expectedHashLabel: string;
         replayHashUnavailableLabel: string;
+    };
+    sessionRail: {
+        title: string;
+        summaryTitle: string;
+        statusLabel: string;
+        viewerLabel: string;
+        surfaceLabel: string;
+        hashLabel: string;
+        themeTitle: string;
+        themeDarkLabel: string;
+        themeLightLabel: string;
+        themeSystemLabel: string;
+        styleTitle: string;
+        styleCurrentLabel: string;
+        styleLockedNote: string;
+        rulesLabel: string;
+        rulesNote: string;
+        restartLabel: string;
+        reloadLabel: string;
+        restartNote: string;
+        reloadNote: string;
+        viewerPlayer: string;
+        viewerSpectator: string;
+        surfacePlay: string;
+        surfaceRoom: string;
+        surfaceReplay: string;
+        statusWaitingOpponent: string;
+        statusActive: string;
+        statusCompleted: string;
+        statusReplay: string;
+        statusResyncing: string;
+        statusDisconnected: string;
     };
     replay: {
         eyebrow: string;
@@ -60,6 +96,10 @@ export interface UiMessages {
 
 const messages: Record<UiLocale, UiMessages> = {
     en: {
+        drawer: {
+            openLabel: 'View',
+            closeLabel: 'Close',
+        },
         boardScene: {
             hashLabel: 'hash',
             marketTitle: 'Market',
@@ -82,6 +122,38 @@ const messages: Record<UiLocale, UiMessages> = {
             scenarioLabel: 'Scenario',
             expectedHashLabel: 'Expected finalStateHash',
             replayHashUnavailableLabel: 'Replay hash unavailable',
+        },
+        sessionRail: {
+            title: 'Session Rail',
+            summaryTitle: 'Session Summary',
+            statusLabel: 'Status',
+            viewerLabel: 'Viewer',
+            surfaceLabel: 'Surface',
+            hashLabel: 'Hash',
+            themeTitle: 'Theme',
+            themeDarkLabel: 'Dark',
+            themeLightLabel: 'Light',
+            themeSystemLabel: 'System',
+            styleTitle: 'Style',
+            styleCurrentLabel: 'Default Tactical',
+            styleLockedNote: 'Locked until additional validated style packs ship.',
+            rulesLabel: 'Rules',
+            rulesNote: 'Open the shared rulebook in a dedicated route.',
+            restartLabel: 'Restart',
+            reloadLabel: 'Reload View',
+            restartNote: 'Reload this route to restart the in-memory session.',
+            reloadNote: 'Reload this route to refresh the current observer surface.',
+            viewerPlayer: 'player',
+            viewerSpectator: 'spectator',
+            surfacePlay: 'play',
+            surfaceRoom: 'room',
+            surfaceReplay: 'replay',
+            statusWaitingOpponent: 'waiting-opponent',
+            statusActive: 'active',
+            statusCompleted: 'completed',
+            statusReplay: 'replay',
+            statusResyncing: 'resyncing',
+            statusDisconnected: 'disconnected',
         },
         replay: {
             eyebrow: 'Replay Inspector',
@@ -119,6 +191,10 @@ const messages: Record<UiLocale, UiMessages> = {
         },
     },
     zh: {
+        drawer: {
+            openLabel: '查看',
+            closeLabel: '关闭',
+        },
         boardScene: {
             hashLabel: '哈希',
             marketTitle: '市场',
@@ -140,6 +216,38 @@ const messages: Record<UiLocale, UiMessages> = {
             scenarioLabel: '场景',
             expectedHashLabel: '期望 finalStateHash',
             replayHashUnavailableLabel: '回放哈希暂不可用',
+        },
+        sessionRail: {
+            title: '会话边栏',
+            summaryTitle: '会话摘要',
+            statusLabel: '状态',
+            viewerLabel: '视角',
+            surfaceLabel: '表面',
+            hashLabel: '哈希',
+            themeTitle: '主题',
+            themeDarkLabel: '深色',
+            themeLightLabel: '浅色',
+            themeSystemLabel: '跟随系统',
+            styleTitle: '风格',
+            styleCurrentLabel: '默认战术壳',
+            styleLockedNote: '在更多通过验证的 style pack 落地前，当前风格保持锁定。',
+            rulesLabel: '规则',
+            rulesNote: '在独立路由中打开共享 rulebook。',
+            restartLabel: '重开',
+            reloadLabel: '重载视图',
+            restartNote: '重新加载当前路由，以重置内存态 session。',
+            reloadNote: '重新加载当前路由，以刷新当前观测视图。',
+            viewerPlayer: '玩家',
+            viewerSpectator: '观战',
+            surfacePlay: '对局',
+            surfaceRoom: '房间',
+            surfaceReplay: '回放',
+            statusWaitingOpponent: '等待对手',
+            statusActive: '进行中',
+            statusCompleted: '已完成',
+            statusReplay: '回放',
+            statusResyncing: '重同步中',
+            statusDisconnected: '已断开',
         },
         replay: {
             eyebrow: '回放检查器',

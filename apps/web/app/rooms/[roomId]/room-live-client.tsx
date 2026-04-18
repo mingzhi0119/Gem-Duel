@@ -22,6 +22,7 @@ import {
     type UiViewModel,
 } from '@gem-duel/contracts';
 import { BoardScene, Section } from '@gem-duel/ui';
+import { SessionRail } from '@/app/components/session-rail';
 import { fetchRoomDetail } from '@/lib/browser-room-service';
 
 type BindingState = 'unbound' | 'player' | 'spectator';
@@ -371,6 +372,21 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
                     onSelect={canSubmitActions ? handleAction : undefined}
                     note={boardNote}
                     error={lastError}
+                    surface="room"
+                    railLead={
+                        <SessionRail
+                            locale="en"
+                            surface="room"
+                            sessionStatus={viewModel.sessionStatus}
+                            viewerRole={viewModel.viewerRole}
+                            currentFinalStateHash={null}
+                            hashUnavailableLabel={
+                                room?.status === 'completed'
+                                    ? 'Replay hash in replay view'
+                                    : 'Authoritative live stream'
+                            }
+                        />
+                    }
                 />
             ) : (
                 <Section title="Realtime View">

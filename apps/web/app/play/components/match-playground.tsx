@@ -146,7 +146,7 @@ export function MatchPlayground({
                 }
                 onSelect={handleAction}
                 replayInspector={replayInspector.ok ? replayInspector.value : null}
-                aiTrace={mode === 'ai' ? aiTrace : []}
+                aiTrace={mode === 'ai' ? aiTrace : null}
                 shellMode={shellMode}
                 boardNote={boardNote}
                 legacyShellNote={legacyShellNote}

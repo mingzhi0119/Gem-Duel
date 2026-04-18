@@ -32,6 +32,14 @@ const bindRoomPage = async (
 ) => {
     await page.getByRole('button', { name: actionName }).click();
     await expect(page.getByTestId('board-scene')).toBeVisible();
+    await expect(page.getByTestId('boardscene-header')).toBeVisible();
+    await expect(page.getByTestId('turn-hud')).toBeVisible();
+    await expect(page.getByTestId('turn-hud-action-counter')).toBeVisible();
+    await expect(page.getByTestId('boardscene-stage')).toBeVisible();
+    await expect(page.getByTestId('boardscene-footer')).toBeVisible();
+    await expect(page.getByTestId('player-zone-p1')).toBeVisible();
+    await expect(page.getByTestId('player-zone-p2')).toBeVisible();
+    await expect(page.getByTestId('boardscene-rail')).toBeVisible();
     await expect(page.getByTestId('boardscene-viewer-role')).toHaveText(expectedViewerRole);
 };
 

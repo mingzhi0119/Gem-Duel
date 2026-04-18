@@ -34,6 +34,8 @@ test('a11y: /play/local board scene has no serious violations', async ({ page })
 test('a11y: /play/ai board scene has no serious violations', async ({ page }) => {
     await page.goto('/play/ai');
     await waitForBoard(page);
+    await page.getByTestId('ai-trace-drawer-trigger').click();
+    await expect(page.getByTestId('ai-trace-drawer')).toBeVisible();
     await expectNoSeriousA11yViolations(page, '/play/ai');
 });
 
@@ -42,6 +44,8 @@ test('a11y: /play/run board scene has no serious violations', async ({ page }) =
     await expect(page.getByRole('heading', { name: 'Buff Draft' })).toBeVisible();
     await page.getByRole('button', { name: 'double_agent' }).click();
     await waitForBoard(page);
+    await page.getByTestId('run-sidecar-trigger').click();
+    await expect(page.getByTestId('run-sidecar-drawer')).toBeVisible();
     await expectNoSeriousA11yViolations(page, '/play/run');
 });
 

@@ -1,5 +1,16 @@
 import type { UiRoyalOffer } from '@gem-duel/contracts';
 
+const getRoyalCrest = (label: string) => {
+    const letters = label
+        .split(/\s+/)
+        .filter(Boolean)
+        .filter((word) => word.toLowerCase() !== 'the')
+        .map((word) => word.slice(0, 1).toUpperCase())
+        .join('');
+
+    return letters.slice(0, 2) || label.slice(0, 2).toUpperCase();
+};
+
 export const RoyalCourt = ({
     offers,
     onSelectOffer,
@@ -11,8 +22,24 @@ export const RoyalCourt = ({
 }) =>
     offers.length > 0 ? (
         <div className="gd-royal-grid" aria-label="Royal court">
-            {offers.map((offer) =>
-                onSelectOffer ? (
+            {offers.map((offer) => {
+                const content = (
+                    <>
+                        <div className="gd-royal-offer-topline">
+                            <span className="gd-royal-offer-crest" aria-hidden="true">
+                                {getRoyalCrest(offer.label)}
+                            </span>
+                            <span className="gd-card-slot-status">royal</span>
+                        </div>
+                        <strong className="gd-royal-offer-title">{offer.label}</strong>
+                        <span className="gd-royal-offer-id">{offer.royalId}</span>
+                        {offer.reason ? (
+                            <span className="gd-royal-offer-note">{offer.reason}</span>
+                        ) : null}
+                    </>
+                );
+
+                return onSelectOffer ? (
                     <button
                         key={offer.royalId}
                         type="button"
@@ -23,9 +50,7 @@ export const RoyalCourt = ({
                         disabled={isDisabled?.(offer) ?? !offer.selectable}
                         onClick={() => onSelectOffer(offer)}
                     >
-                        <strong>{offer.label}</strong>
-                        <span>{offer.royalId}</span>
-                        {offer.reason ? <span className="gd-muted">{offer.reason}</span> : null}
+                        {content}
                     </button>
                 ) : (
                     <article
@@ -35,12 +60,10 @@ export const RoyalCourt = ({
                         }
                         data-testid={`royal-offer-${offer.royalId}`}
                     >
-                        <strong>{offer.label}</strong>
-                        <span>{offer.royalId}</span>
-                        {offer.reason ? <span className="gd-muted">{offer.reason}</span> : null}
+                        {content}
                     </article>
-                )
-            )}
+                );
+            })}
         </div>
     ) : (
         <p className="gd-muted">No royal offers in this scene.</p>

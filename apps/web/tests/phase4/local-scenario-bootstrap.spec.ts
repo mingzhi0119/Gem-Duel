@@ -22,7 +22,7 @@ for (const scenario of listLocalPhase4Scenarios()) {
         await expect(page.getByTestId('current-final-state-hash')).toBeVisible();
 
         if (scenario.id === 'terminal-victory') {
-            await expect(page.getByTestId('terminal-overlay')).toBeVisible();
+            await expect(page.getByTestId('terminal-overlay-trigger')).toBeVisible();
         }
 
         if (scenario.id === 'debug-shell-fallback') {
@@ -30,6 +30,14 @@ for (const scenario of listLocalPhase4Scenarios()) {
             await expect(page.getByText('Available Actions')).toBeVisible();
         } else {
             await expect(page.getByTestId('board-scene')).toBeVisible();
+            await expect(page.getByTestId('boardscene-header')).toBeVisible();
+            await expect(page.getByTestId('turn-hud')).toBeVisible();
+            await expect(page.getByTestId('turn-hud-action-counter')).toBeVisible();
+            await expect(page.getByTestId('boardscene-stage')).toBeVisible();
+            await expect(page.getByTestId('boardscene-footer')).toBeVisible();
+            await expect(page.getByTestId('player-zone-p1')).toBeVisible();
+            await expect(page.getByTestId('player-zone-p2')).toBeVisible();
+            await expect(page.getByTestId('boardscene-rail')).toBeVisible();
         }
     });
 }

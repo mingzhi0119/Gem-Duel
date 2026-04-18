@@ -139,7 +139,7 @@ export function RunPlayground({ seed, mode }: { seed: number; mode: 'local' | 'a
             currentFinalStateHash={replay.finalStateHash}
             onSelect={handleAction}
             replayInspector={replayInspector?.ok ? replayInspector.value : null}
-            aiTrace={mode === 'ai' ? aiTrace : []}
+            aiTrace={mode === 'ai' ? aiTrace : null}
             boardNote={
                 <p className="gd-muted">
                     ZH: `/play/run` 现与 classic-local 共用同一主盘面；run 的进度与 Buff draft
@@ -149,9 +149,35 @@ export function RunPlayground({ seed, mode }: { seed: number; mode: 'local' | 'a
             }
             extraSidecars={
                 <>
-                    <SidecarDrawer title="Run Status">{renderRunStatus()}</SidecarDrawer>
+                    <SidecarDrawer
+                        title="Run Status"
+                        mode="drawer"
+                        triggerSummary={`${runState.status} • ${runState.matchIndex}`}
+                        triggerBadge={
+                            <span className="gd-shell-badge">
+                                {runState.wins}W / {runState.losses}L
+                            </span>
+                        }
+                        triggerTestId="run-status-drawer-trigger"
+                        panelTestId="run-status-drawer"
+                    >
+                        {renderRunStatus()}
+                    </SidecarDrawer>
                     {runState.currentOffer ? (
-                        <SidecarDrawer title="Buff Draft">{renderDraftActions()}</SidecarDrawer>
+                        <SidecarDrawer
+                            title="Buff Draft"
+                            mode="drawer"
+                            triggerSummary={`Offer ${runState.currentOffer.offerId}`}
+                            triggerBadge={
+                                <span className="gd-shell-badge">
+                                    {runState.currentOffer.options.length}
+                                </span>
+                            }
+                            triggerTestId="run-draft-drawer-trigger"
+                            panelTestId="run-draft-drawer"
+                        >
+                            {renderDraftActions()}
+                        </SidecarDrawer>
                     ) : null}
                 </>
             }

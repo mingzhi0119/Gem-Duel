@@ -24,6 +24,14 @@ export interface BoardSceneScenarioMeta {
     expectedFinalStateHash: string;
 }
 
+export interface BoardSceneSlots {
+    header: ReactNode;
+    primaryStage: ReactNode;
+    secondaryStage: ReactNode;
+    footer: ReactNode;
+    rail: ReactNode;
+}
+
 const TOOLBAR_COMMANDS = new Set([
     'BEGIN_GEM_SELECTION',
     'BEGIN_RESERVE',
@@ -117,6 +125,8 @@ export const BoardScene = ({
     extraSidecars = null,
     locale = 'en',
     surface = 'play',
+    railLead = null,
+    slots,
 }: {
     eyebrow?: string;
     viewModel: UiViewModel;
@@ -129,9 +139,12 @@ export const BoardScene = ({
     extraSidecars?: ReactNode;
     locale?: UiLocale;
     surface?: 'play' | 'replay' | 'room';
+    railLead?: ReactNode;
+    slots?: Partial<BoardSceneSlots>;
 }) => {
     const headingId = useId();
-    const messages = getUiMessages(locale).boardScene;
+    const uiMessages = getUiMessages(locale);
+    const messages = uiMessages.boardScene;
     const toolbarActions = viewModel.availableActions.filter((action) =>
         TOOLBAR_COMMANDS.has(action.command.type)
     );
@@ -228,95 +241,251 @@ export const BoardScene = ({
         }
     };
 
+    const defaultHeader = (
+        <div className="gd-board-scene-header-layout">
+            <div className="gd-panel gd-board-scene-summary">
+                <div className="gd-board-scene-summary-top">
+                    <div className="gd-board-scene-summary-copy">
+                        <p className="gd-scene-eyebrow">{eyebrow}</p>
+                        <h1 id={headingId}>{viewModel.title}</h1>
+                    </div>
+                    <div className="gd-board-scene-badges">
+                        <span className="gd-shell-badge" data-testid="boardscene-session-status">
+                            {viewModel.sessionStatus}
+                        </span>
+                        <span className="gd-shell-badge" data-testid="boardscene-viewer-role">
+                            {viewModel.viewerRole}
+                        </span>
+                        {currentFinalStateHash ? (
+                            <span className="gd-hash-badge">
+                                {messages.hashLabel}{' '}
+                                <code data-testid="current-final-state-hash">
+                                    {currentFinalStateHash}
+                                </code>
+                            </span>
+                        ) : (
+                            <span
+                                className="gd-shell-badge"
+                                data-testid="current-final-state-hash-unavailable"
+                            >
+                                {hashUnavailableLabel}
+                            </span>
+                        )}
+                    </div>
+                </div>
+                <p className="gd-muted">{viewModel.subtitle}</p>
+                {note}
+                {error ? <p className="gd-error">{error}</p> : null}
+            </div>
+
+            <div className="gd-board-scene-header-stack">
+                <section className="gd-panel gd-turn-hud-panel">
+                    <TurnHud viewModel={viewModel} />
+                    {toolbarActions.length > 0 ? (
+                        <div className="gd-toolbar-actions" data-testid="boardscene-toolbar">
+                            {toolbarActions.map((action) => (
+                                <button
+                                    key={action.id}
+                                    type="button"
+                                    className="gd-button"
+                                    disabled={!onSelect}
+                                    onClick={() => onSelect?.(action)}
+                                >
+                                    {getToolbarLabel(action)}
+                                </button>
+                            ))}
+                        </div>
+                    ) : surface === 'replay' ? (
+                        <p className="gd-muted">{messages.replayReadOnlyNote}</p>
+                    ) : null}
+                </section>
+
+                {scenarioMeta ? (
+                    <SidecarDrawer title={messages.scenarioFixtureTitle}>
+                        <div className="gd-scenario-meta">
+                            <p>
+                                {messages.scenarioLabel}:{' '}
+                                <strong data-testid="phase4-scenario-id">{scenarioMeta.id}</strong>
+                            </p>
+                            <p>{scenarioMeta.startingFixtureSource}</p>
+                            <p>
+                                {messages.expectedHashLabel}:{' '}
+                                <span data-testid="phase4-expected-hash">
+                                    {scenarioMeta.expectedFinalStateHash}
+                                </span>
+                            </p>
+                        </div>
+                    </SidecarDrawer>
+                ) : null}
+            </div>
+        </div>
+    );
+
+    const defaultPrimaryStage = (
+        <div className="gd-board-scene-primary-grid">
+            <section className="gd-panel gd-board-scene-stage-panel">
+                <div className="gd-section-header">
+                    <h2>{messages.marketTitle}</h2>
+                    <span className="gd-muted">
+                        {viewModel.marketSlots.length} {messages.marketSlotsLabel}
+                    </span>
+                </div>
+                <MarketStack
+                    slots={viewModel.marketSlots}
+                    onBuySlot={onSelect ? handleBuy : undefined}
+                    onReserveSlot={onSelect ? handleReserve : undefined}
+                    isBuyDisabled={(slot) => buyActions.get(slot.ref) === null}
+                    isReserveDisabled={(slot) => reserveActions.get(slot.ref) === null}
+                />
+            </section>
+
+            <section className="gd-panel gd-board-scene-stage-panel">
+                <div className="gd-section-header">
+                    <h2>{messages.boardTitle}</h2>
+                    <span className="gd-muted">
+                        {viewModel.boardCells.length} {messages.boardCellsLabel}
+                    </span>
+                </div>
+                <BoardGrid
+                    cells={viewModel.boardCells}
+                    label="Local board"
+                    onSelectCell={
+                        onSelect ? (cell) => handleBoardCellSelect(cell.positionId) : undefined
+                    }
+                    isCellDisabled={(cell) =>
+                        !cell.selectable || boardActions.get(cell.positionId) === null
+                    }
+                />
+            </section>
+        </div>
+    );
+
+    const defaultSecondaryStage = (
+        <section className="gd-panel gd-board-scene-stage-panel gd-board-scene-stage-secondary">
+            <div className="gd-section-header">
+                <h2>{messages.royalCourtTitle}</h2>
+                <span className="gd-muted">{viewModel.royalOffers.length}</span>
+            </div>
+            <RoyalCourt
+                offers={viewModel.royalOffers}
+                onSelectOffer={onSelect ? handleRoyalSelect : undefined}
+                isDisabled={(offer) => royalActions.get(offer.royalId) === null}
+            />
+        </section>
+    );
+
+    const defaultFooter = (
+        <section className="gd-panel gd-board-scene-footer-panel">
+            <div className="gd-section-header">
+                <h2>{messages.playersTitle}</h2>
+                <span className="gd-muted">
+                    {viewModel.playerZones.length} {messages.playerZonesLabel}
+                </span>
+            </div>
+            <div className="gd-player-zone-grid">
+                {viewModel.playerZones.map((player) => (
+                    <PlayerZone key={player.playerId} zone={player} />
+                ))}
+            </div>
+        </section>
+    );
+
+    const defaultRail = (
+        <>
+            {railLead}
+
+            {viewModel.promptStack.length > 0 ? (
+                <SidecarDrawer title={messages.promptsTitle}>
+                    <PromptBanner prompts={viewModel.promptStack} />
+                </SidecarDrawer>
+            ) : null}
+
+            {viewModel.selectionDraft ? (
+                <SidecarDrawer title={messages.selectionDraftTitle}>
+                    <SelectionOverlay selectionDraft={viewModel.selectionDraft} />
+                    <div className="gd-selection-controls">
+                        {confirmAction ? (
+                            <button
+                                type="button"
+                                className="gd-button"
+                                data-testid="selection-confirm"
+                                disabled={!onSelect}
+                                onClick={() => onSelect?.(confirmAction)}
+                            >
+                                {confirmAction.label}
+                            </button>
+                        ) : null}
+                        {cancelAction ? (
+                            <button
+                                type="button"
+                                className="gd-button gd-button-muted"
+                                data-testid="selection-cancel"
+                                disabled={!onSelect}
+                                onClick={() => onSelect?.(cancelAction)}
+                            >
+                                {cancelAction.label}
+                            </button>
+                        ) : null}
+                    </div>
+                </SidecarDrawer>
+            ) : null}
+
+            {viewModel.runPanel ? (
+                <SidecarDrawer
+                    title={messages.runSidecarTitle}
+                    mode="drawer"
+                    triggerSummary={`Run #${viewModel.runPanel.matchIndex}`}
+                    triggerBadge={
+                        <span className="gd-shell-badge">
+                            {viewModel.runPanel.wins}W / {viewModel.runPanel.losses}L
+                        </span>
+                    }
+                    triggerTestId="run-sidecar-trigger"
+                    panelTestId="run-sidecar-drawer"
+                    openLabel={uiMessages.drawer.openLabel}
+                    closeLabel={uiMessages.drawer.closeLabel}
+                >
+                    <RunPanel runPanel={viewModel.runPanel} />
+                </SidecarDrawer>
+            ) : null}
+
+            {extraSidecars}
+
+            {fallbackActions.length > 0 && onSelect ? (
+                <SidecarDrawer title={messages.additionalActionsTitle}>
+                    <p className="gd-muted">{messages.additionalActionsNote}</p>
+                    <ActionList actions={fallbackActions} onSelect={onSelect} />
+                </SidecarDrawer>
+            ) : null}
+        </>
+    );
+
+    const resolvedSlots: BoardSceneSlots = {
+        header: slots?.header ?? defaultHeader,
+        primaryStage: slots?.primaryStage ?? defaultPrimaryStage,
+        secondaryStage: slots?.secondaryStage ?? defaultSecondaryStage,
+        footer: slots?.footer ?? defaultFooter,
+        rail: slots?.rail ?? defaultRail,
+    };
+
     return (
         <section
             className="gd-board-scene"
             data-testid="board-scene"
+            data-gd-surface={surface}
             lang={locale}
-            aria-labelledby={headingId}
+            aria-labelledby={slots?.header ? undefined : headingId}
+            aria-label={slots?.header ? viewModel.title : undefined}
         >
-            <header className="gd-board-scene-header">
-                <div>
-                    <p className="gd-scene-eyebrow">{eyebrow}</p>
-                    <h1 id={headingId}>{viewModel.title}</h1>
-                    <p className="gd-muted">{viewModel.subtitle}</p>
-                    {note}
-                </div>
-                <div className="gd-board-scene-badges">
-                    <span className="gd-shell-badge" data-testid="boardscene-session-status">
-                        {viewModel.sessionStatus}
-                    </span>
-                    <span className="gd-shell-badge" data-testid="boardscene-viewer-role">
-                        {viewModel.viewerRole}
-                    </span>
-                    {currentFinalStateHash ? (
-                        <span className="gd-hash-badge">
-                            {messages.hashLabel}{' '}
-                            <code data-testid="current-final-state-hash">
-                                {currentFinalStateHash}
-                            </code>
-                        </span>
-                    ) : (
-                        <span
-                            className="gd-shell-badge"
-                            data-testid="current-final-state-hash-unavailable"
-                        >
-                            {hashUnavailableLabel}
-                        </span>
-                    )}
-                </div>
-            </header>
+            <div className="gd-board-scene-shell">
+                <header
+                    className="gd-board-scene-slot gd-board-scene-slot-header"
+                    data-testid="boardscene-header"
+                >
+                    {resolvedSlots.header}
+                </header>
 
-            {error ? <p className="gd-error">{error}</p> : null}
-
-            <div className="gd-board-scene-layout">
-                <div className="gd-board-scene-main">
-                    <div className="gd-board-scene-topline">
-                        <SidecarDrawer title={messages.turnHudTitle}>
-                            <TurnHud viewModel={viewModel} />
-                            {toolbarActions.length > 0 ? (
-                                <div
-                                    className="gd-toolbar-actions"
-                                    data-testid="boardscene-toolbar"
-                                >
-                                    {toolbarActions.map((action) => (
-                                        <button
-                                            key={action.id}
-                                            type="button"
-                                            className="gd-button"
-                                            disabled={!onSelect}
-                                            onClick={() => onSelect?.(action)}
-                                        >
-                                            {getToolbarLabel(action)}
-                                        </button>
-                                    ))}
-                                </div>
-                            ) : surface === 'replay' ? (
-                                <p className="gd-muted">{messages.replayReadOnlyNote}</p>
-                            ) : null}
-                        </SidecarDrawer>
-
-                        {scenarioMeta ? (
-                            <SidecarDrawer title={messages.scenarioFixtureTitle}>
-                                <div className="gd-scenario-meta">
-                                    <p>
-                                        {messages.scenarioLabel}:{' '}
-                                        <strong data-testid="phase4-scenario-id">
-                                            {scenarioMeta.id}
-                                        </strong>
-                                    </p>
-                                    <p>{scenarioMeta.startingFixtureSource}</p>
-                                    <p>
-                                        {messages.expectedHashLabel}:{' '}
-                                        <span data-testid="phase4-expected-hash">
-                                            {scenarioMeta.expectedFinalStateHash}
-                                        </span>
-                                    </p>
-                                </div>
-                            </SidecarDrawer>
-                        ) : null}
-                    </div>
-
+                <div className="gd-board-scene-center-layout">
                     <div className="gd-terminal-overlay-host">
                         {showTerminalOverlay ? (
                             <TerminalOverlay
@@ -329,121 +498,36 @@ export const BoardScene = ({
                             />
                         ) : null}
 
-                        <section className="gd-scaffold-region">
-                            <div className="gd-section-header">
-                                <h2>{messages.marketTitle}</h2>
-                                <span className="gd-muted">
-                                    {viewModel.marketSlots.length} {messages.marketSlotsLabel}
-                                </span>
+                        <div className="gd-board-scene-stage" data-testid="boardscene-stage">
+                            <div
+                                className="gd-board-scene-slot gd-board-scene-slot-primary"
+                                data-testid="boardscene-primary-stage"
+                            >
+                                {resolvedSlots.primaryStage}
                             </div>
-                            <MarketStack
-                                slots={viewModel.marketSlots}
-                                onBuySlot={onSelect ? handleBuy : undefined}
-                                onReserveSlot={onSelect ? handleReserve : undefined}
-                                isBuyDisabled={(slot) => buyActions.get(slot.ref) === null}
-                                isReserveDisabled={(slot) => reserveActions.get(slot.ref) === null}
-                            />
-                        </section>
-
-                        <section className="gd-scaffold-region">
-                            <div className="gd-section-header">
-                                <h2>{messages.boardTitle}</h2>
-                                <span className="gd-muted">
-                                    {viewModel.boardCells.length} {messages.boardCellsLabel}
-                                </span>
-                            </div>
-                            <BoardGrid
-                                cells={viewModel.boardCells}
-                                label="Local board"
-                                onSelectCell={
-                                    onSelect
-                                        ? (cell) => handleBoardCellSelect(cell.positionId)
-                                        : undefined
-                                }
-                                isCellDisabled={(cell) =>
-                                    !cell.selectable || boardActions.get(cell.positionId) === null
-                                }
-                            />
-                        </section>
-
-                        <section className="gd-scaffold-region">
-                            <div className="gd-section-header">
-                                <h2>{messages.playersTitle}</h2>
-                                <span className="gd-muted">
-                                    {viewModel.playerZones.length} {messages.playerZonesLabel}
-                                </span>
-                            </div>
-                            <div className="gd-player-zone-grid">
-                                {viewModel.playerZones.map((player) => (
-                                    <PlayerZone key={player.playerId} zone={player} />
-                                ))}
-                            </div>
-                        </section>
+                            <aside
+                                className="gd-board-scene-slot gd-board-scene-slot-secondary"
+                                data-testid="boardscene-secondary-stage"
+                            >
+                                {resolvedSlots.secondaryStage}
+                            </aside>
+                        </div>
                     </div>
+
+                    <aside
+                        className="gd-board-scene-slot gd-board-scene-slot-rail"
+                        data-testid="boardscene-rail"
+                    >
+                        {resolvedSlots.rail}
+                    </aside>
                 </div>
 
-                <div className="gd-board-scene-sidecar">
-                    {viewModel.promptStack.length > 0 ? (
-                        <SidecarDrawer title={messages.promptsTitle}>
-                            <PromptBanner prompts={viewModel.promptStack} />
-                        </SidecarDrawer>
-                    ) : null}
-
-                    {viewModel.royalOffers.length > 0 ? (
-                        <SidecarDrawer title={messages.royalCourtTitle}>
-                            <RoyalCourt
-                                offers={viewModel.royalOffers}
-                                onSelectOffer={onSelect ? handleRoyalSelect : undefined}
-                                isDisabled={(offer) => royalActions.get(offer.royalId) === null}
-                            />
-                        </SidecarDrawer>
-                    ) : null}
-
-                    {viewModel.selectionDraft ? (
-                        <SidecarDrawer title={messages.selectionDraftTitle}>
-                            <SelectionOverlay selectionDraft={viewModel.selectionDraft} />
-                            <div className="gd-selection-controls">
-                                {confirmAction ? (
-                                    <button
-                                        type="button"
-                                        className="gd-button"
-                                        data-testid="selection-confirm"
-                                        disabled={!onSelect}
-                                        onClick={() => onSelect?.(confirmAction)}
-                                    >
-                                        {confirmAction.label}
-                                    </button>
-                                ) : null}
-                                {cancelAction ? (
-                                    <button
-                                        type="button"
-                                        className="gd-button gd-button-muted"
-                                        data-testid="selection-cancel"
-                                        disabled={!onSelect}
-                                        onClick={() => onSelect?.(cancelAction)}
-                                    >
-                                        {cancelAction.label}
-                                    </button>
-                                ) : null}
-                            </div>
-                        </SidecarDrawer>
-                    ) : null}
-
-                    {viewModel.runPanel ? (
-                        <SidecarDrawer title={messages.runSidecarTitle}>
-                            <RunPanel runPanel={viewModel.runPanel} />
-                        </SidecarDrawer>
-                    ) : null}
-
-                    {extraSidecars}
-
-                    {fallbackActions.length > 0 && onSelect ? (
-                        <SidecarDrawer title={messages.additionalActionsTitle}>
-                            <p className="gd-muted">{messages.additionalActionsNote}</p>
-                            <ActionList actions={fallbackActions} onSelect={onSelect} />
-                        </SidecarDrawer>
-                    ) : null}
-                </div>
+                <footer
+                    className="gd-board-scene-slot gd-board-scene-slot-footer"
+                    data-testid="boardscene-footer"
+                >
+                    {resolvedSlots.footer}
+                </footer>
             </div>
         </section>
     );

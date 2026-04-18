@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState, useEffectEvent, type KeyboardEvent } from 'react';
 import { buildUiViewModel, type ReplayInspectorModel } from '@gem-duel/application';
 import { BoardScene, ReplayDrawer, getUiMessages, type UiLocale } from '@gem-duel/ui';
+import { SessionRail } from '@/app/components/session-rail';
 
 const clampStepIndex = (index: number, max: number) => Math.max(0, Math.min(index, max));
 
@@ -120,6 +121,16 @@ export function ReplayClient({
                 hashUnavailableLabel={messages.boardScene.replayHashUnavailableLabel}
                 locale={locale}
                 surface="replay"
+                railLead={
+                    <SessionRail
+                        locale={locale}
+                        surface="replay"
+                        sessionStatus={viewModel.sessionStatus}
+                        viewerRole={viewModel.viewerRole}
+                        currentFinalStateHash={selectedStep.snapshotHash}
+                        hashUnavailableLabel={messages.boardScene.replayHashUnavailableLabel}
+                    />
+                }
                 note={
                     <div className="gd-replay-note">
                         <p className="gd-muted">{messages.replay.note}</p>

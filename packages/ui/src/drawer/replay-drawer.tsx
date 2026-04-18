@@ -34,6 +34,7 @@ export const ReplayDrawer = ({
     onSelectStepIndex?: (index: number) => void;
 }) => {
     const messages = getUiMessages(locale).replay;
+    const drawerMessages = getUiMessages(locale).drawer;
     const [uncontrolledSelectedStepIndex, setUncontrolledSelectedStepIndex] = useState(
         Math.max(model.steps.length - 1, 0)
     );
@@ -56,14 +57,37 @@ export const ReplayDrawer = ({
     const selectedStep = model.steps[selectedStepIndex] ?? model.steps[model.steps.length - 1];
     if (!selectedStep) {
         return (
-            <SidecarDrawer title={messages.timelineTitle}>
+            <SidecarDrawer
+                title={messages.timelineTitle}
+                mode="drawer"
+                triggerSummary={messages.noSteps}
+                triggerTestId="replay-drawer-trigger"
+                panelTestId="replay-drawer"
+                size="wide"
+                openLabel={drawerMessages.openLabel}
+                closeLabel={drawerMessages.closeLabel}
+            >
                 <p className="gd-muted">{messages.noSteps}</p>
             </SidecarDrawer>
         );
     }
 
     return (
-        <>
+        <SidecarDrawer
+            title={messages.timelineTitle}
+            mode="drawer"
+            triggerSummary={`${messages.currentStepLabel} ${selectedStep.index}`}
+            triggerBadge={
+                <span className="gd-shell-badge">
+                    {model.matchesHash ? messages.hashMatch : messages.hashMismatch}
+                </span>
+            }
+            triggerTestId="replay-drawer-trigger"
+            panelTestId="replay-drawer"
+            size="wide"
+            openLabel={drawerMessages.openLabel}
+            closeLabel={drawerMessages.closeLabel}
+        >
             <SidecarDrawer title={messages.timelineTitle}>
                 <div className="gd-grid">
                     <div className="gd-card">
@@ -156,6 +180,6 @@ export const ReplayDrawer = ({
                     </code>
                 </pre>
             </SidecarDrawer>
-        </>
+        </SidecarDrawer>
     );
 };
