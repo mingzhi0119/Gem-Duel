@@ -3,8 +3,7 @@
 import { useMemo, useState } from 'react';
 import { createRunSession } from '@gem-duel/application';
 import type { BuffId, RunState, UiActionDescriptor } from '@gem-duel/contracts';
-import { MatchView, Section } from '@gem-duel/ui';
-import { AiTracePanel, ReplayInspectorPanel } from '../../components/session-panels';
+import { AiTraceDrawer, MatchView, ReplayDrawer, Section } from '@gem-duel/ui';
 
 const describeRunStatus = (runState: RunState) => {
     switch (runState.status) {
@@ -132,8 +131,8 @@ export function RunPlayground({ seed, mode }: { seed: number; mode: 'local' | 'a
                 />
             ) : null}
 
-            {replayInspector?.ok ? <ReplayInspectorPanel model={replayInspector.value} /> : null}
-            {mode === 'ai' ? <AiTracePanel traces={session.aiTrace()} /> : null}
+            {replayInspector?.ok ? <ReplayDrawer model={replayInspector.value} /> : null}
+            {mode === 'ai' ? <AiTraceDrawer traces={session.aiTrace()} /> : null}
         </>
     );
 }

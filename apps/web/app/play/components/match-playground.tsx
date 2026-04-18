@@ -3,8 +3,7 @@
 import { useMemo, useState } from 'react';
 import { createAiMatchSession, createLocalMatchSession } from '@gem-duel/application';
 import type { UiActionDescriptor } from '@gem-duel/contracts';
-import { MatchView, Section } from '@gem-duel/ui';
-import { AiTracePanel, ReplayInspectorPanel } from '../../components/session-panels';
+import { AiTraceDrawer, MatchView, ReplayDrawer, Section } from '@gem-duel/ui';
 
 export function MatchPlayground({
     mode,
@@ -72,8 +71,8 @@ export function MatchPlayground({
                     </p>
                 }
             />
-            {replayInspector.ok ? <ReplayInspectorPanel model={replayInspector.value} /> : null}
-            {mode === 'ai' ? <AiTracePanel traces={aiTrace} /> : null}
+            {replayInspector.ok ? <ReplayDrawer model={replayInspector.value} /> : null}
+            {mode === 'ai' ? <AiTraceDrawer traces={aiTrace} /> : null}
         </>
     );
 }

@@ -1,0 +1,87 @@
+# Phase 3 Log - Shared Board Primitives Completion
+
+## ZH
+
+- 日期：2026-04-17
+- Phase：Phase 3
+- 状态：已完成
+- 完成判断：
+    - `packages/ui` 已具备本阶段 roadmap 承诺的全部 shared board / sidecar primitives：`BoardGrid`、`TokenCell`、`MarketStack`、`CardSlot`、`ReserveTray`、`RoyalCourt`、`PlayerZone`、`TurnHud`、`PromptBanner`、`SelectionOverlay`、`SidecarDrawer`、`ReplayDrawer`、`AiTraceDrawer`、`RunPanel`；
+    - `BoardSceneScaffold` 已组合 shared board primitives，而不是继续依赖内联结构；
+    - replay inspector 与 AI trace 已从 `apps/web` 本地面板抽回 shared `packages/ui` drawers，`/play/local`、`/play/ai`、`/play/run` 与 `/replays/[replayId]` 已直接复用 shared 版本；
+    - `/playground/*` visual harness 已覆盖 board primitives、ReplayDrawer 与 AiTraceDrawer，并更新了 committed screenshot baseline。
+- 本阶段落地结果：
+    - `packages/ui/src/drawer/replay-drawer.tsx`：共享 replay drawer，支持 hash 摘要、step 切换与 command/snapshot inspection；
+    - `packages/ui/src/drawer/ai-trace-drawer.tsx`：共享 AI trace drawer，承载 deterministic 候选评分可视化；
+    - `apps/web/app/play/components/match-playground.tsx`、`run-playground.tsx`、`replays/[replayId]/page.tsx`：已切换为消费 `@gem-duel/ui` 的 shared drawers；
+    - `apps/web/app/playground/scene-fixtures.tsx`：已把 replay / AI trace fixture 纳入 Phase 3 场景宿主；
+    - `apps/web/app/playground/page.tsx` 与 `apps/web/tests/visual/playground.spec.ts`：已把 visual harness 口径收口为 Phase 3。
+- 关键涉及文件：
+    - `packages/ui/src/drawer/*`
+    - `packages/ui/src/board/*`
+    - `packages/ui/src/index.tsx`
+    - `packages/ui/src/styles/shell.css`
+    - `apps/web/app/play/components/*`
+    - `apps/web/app/replays/[replayId]/page.tsx`
+    - `apps/web/app/playground/*`
+    - `apps/web/tests/visual/playground.spec.ts*`
+- 剩余风险 / 非本阶段事项：
+    - Phase 4 仍需把 `/play/local` 真正切到可玩的 full-board 默认入口；
+    - Phase 5/7 仍需继续把 run / replay 的产品级交互与最终视觉打磨做完；
+    - 本阶段完成不等于产品完成，只表示 shared full-board primitive layer 已收口。
+- 验证：
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `pnpm check-visual -- --update-snapshots`
+    - `pnpm check-visual`
+- Acceptance evidence：
+    - visual baseline：`classic-selection` 与 `run-sidecar` 已因 shared drawers 接线而重录；
+    - shell drift：`apps/web/next-env.d.ts` 构建漂移将在提交前恢复；
+    - 提交边界：本阶段完成记录与 commit 边界同步。
+
+## EN
+
+- Date: 2026-04-17
+- Phase: Phase 3
+- Status: Completed
+- Completion judgment:
+    - `packages/ui` now ships every shared board / sidecar primitive promised by the roadmap for this phase: `BoardGrid`, `TokenCell`, `MarketStack`, `CardSlot`, `ReserveTray`, `RoyalCourt`, `PlayerZone`, `TurnHud`, `PromptBanner`, `SelectionOverlay`, `SidecarDrawer`, `ReplayDrawer`, `AiTraceDrawer`, and `RunPanel`;
+    - `BoardSceneScaffold` now composes the shared board primitives instead of keeping inline layout blocks;
+    - the replay inspector and AI trace have been pulled out of `apps/web`-local panels and back into shared `packages/ui` drawers, and `/play/local`, `/play/ai`, `/play/run`, plus `/replays/[replayId]` now consume the shared versions directly;
+    - the `/playground/*` visual harness now covers the board primitives together with `ReplayDrawer` and `AiTraceDrawer`, with refreshed committed screenshot baselines.
+- Landed results:
+    - `packages/ui/src/drawer/replay-drawer.tsx`: shared replay drawer with hash summary, step switching, and command/snapshot inspection;
+    - `packages/ui/src/drawer/ai-trace-drawer.tsx`: shared AI trace drawer for deterministic candidate-scoring inspection;
+    - `apps/web/app/play/components/match-playground.tsx`, `run-playground.tsx`, and `replays/[replayId]/page.tsx`: switched to consume the shared `@gem-duel/ui` drawers;
+    - `apps/web/app/playground/scene-fixtures.tsx`: now includes replay / AI trace fixtures inside the Phase 3 scene host;
+    - `apps/web/app/playground/page.tsx` and `apps/web/tests/visual/playground.spec.ts`: now describe the visual harness as a Phase 3 surface.
+- Touched files:
+    - `packages/ui/src/drawer/*`
+    - `packages/ui/src/board/*`
+    - `packages/ui/src/index.tsx`
+    - `packages/ui/src/styles/shell.css`
+    - `apps/web/app/play/components/*`
+    - `apps/web/app/replays/[replayId]/page.tsx`
+    - `apps/web/app/playground/*`
+    - `apps/web/tests/visual/playground.spec.ts*`
+- Remaining risks / outside this phase:
+    - Phase 4 still has to switch `/play/local` to the genuinely playable default full-board surface;
+    - Phase 5/7 still own the product-grade run / replay interaction polish and final visual refinement;
+    - completing this phase does not mean product completion, only that the shared full-board primitive layer is closed.
+- Validation:
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `pnpm check-visual -- --update-snapshots`
+    - `pnpm check-visual`
+- Acceptance evidence:
+    - visual baseline: `classic-selection` and `run-sidecar` were re-recorded because the shared drawers are now wired in;
+    - shell drift: the generated `apps/web/next-env.d.ts` drift will be restored before commit;
+    - commit boundary: this completion log stays aligned with the commit boundary for the phase.

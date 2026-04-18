@@ -1,10 +1,26 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { AiDecisionTrace, ReplayInspectorModel } from '@gem-duel/application';
-import { Section, SnapshotSummary } from '@gem-duel/ui';
+import type { GameCommand, GameSnapshot, VisibleSnapshot } from '@gem-duel/contracts';
+import { SnapshotSummary } from '../primitives/snapshot-summary';
+import { SidecarDrawer } from './sidecar-drawer';
 
-export function ReplayInspectorPanel({ model }: { model: ReplayInspectorModel }) {
+export interface ReplayDrawerStep {
+    index: number;
+    label: string;
+    command: { command: GameCommand } | null;
+    snapshot: GameSnapshot | VisibleSnapshot;
+}
+
+export interface ReplayDrawerModel {
+    finalStateHash: string;
+    recomputedFinalStateHash: string;
+    matchesHash: boolean;
+    matchesEvents: boolean;
+    steps: ReplayDrawerStep[];
+}
+
+export const ReplayDrawer = ({ model }: { model: ReplayDrawerModel }) => {
     const [selectedStepIndex, setSelectedStepIndex] = useState(Math.max(model.steps.length - 1, 0));
 
     useEffect(() => {
@@ -13,12 +29,16 @@ export function ReplayInspectorPanel({ model }: { model: ReplayInspectorModel })
 
     const selectedStep = model.steps[selectedStepIndex] ?? model.steps[model.steps.length - 1];
     if (!selectedStep) {
-        return null;
+        return (
+            <SidecarDrawer title="Replay Inspector">
+                <p className="gd-muted">No replay steps available.</p>
+            </SidecarDrawer>
+        );
     }
 
     return (
         <>
-            <Section title="Replay Inspector">
+            <SidecarDrawer title="Replay Inspector">
                 <div className="gd-grid">
                     <div className="gd-card">
                         <strong>Stored Hash</strong>
@@ -50,12 +70,12 @@ export function ReplayInspectorPanel({ model }: { model: ReplayInspectorModel })
                         </button>
                     ))}
                 </div>
-            </Section>
+            </SidecarDrawer>
 
-            <Section title={`Replay Step ${selectedStep.index}`}>
+            <SidecarDrawer title={`Replay Step ${selectedStep.index}`}>
                 <p className="gd-muted">{selectedStep.label}</p>
                 <SnapshotSummary snapshot={selectedStep.snapshot} />
-                <pre className="gd-card">
+                <pre className="gd-card gd-code-block">
                     <code>
                         {JSON.stringify(
                             selectedStep.command?.command ?? { type: 'INITIAL_SNAPSHOT' },
@@ -64,38 +84,7 @@ export function ReplayInspectorPanel({ model }: { model: ReplayInspectorModel })
                         )}
                     </code>
                 </pre>
-            </Section>
+            </SidecarDrawer>
         </>
     );
-}
-
-export function AiTracePanel({ traces }: { traces: AiDecisionTrace[] }) {
-    if (traces.length === 0) {
-        return (
-            <Section title="AI Trace">
-                <p className="gd-muted">
-                    The AI has not made a deterministic decision in this session yet.
-                </p>
-            </Section>
-        );
-    }
-
-    return (
-        <Section title="AI Trace">
-            <ol className="gd-log">
-                {traces.map((trace) => (
-                    <li key={`${trace.sequence}-${trace.chosenActionId}`}>
-                        <strong>{trace.chosenCommandType}</strong>
-                        <span>
-                            {' '}
-                            by {trace.player} at seq {trace.sequence} via {trace.chosenActionId}
-                        </span>
-                        <pre className="gd-card">
-                            <code>{JSON.stringify(trace.candidates.slice(0, 5), null, 2)}</code>
-                        </pre>
-                    </li>
-                ))}
-            </ol>
-        </Section>
-    );
-}
+};

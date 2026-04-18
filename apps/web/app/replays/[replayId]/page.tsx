@@ -1,7 +1,6 @@
 import { proxyReplay } from '@/lib/room-service';
 import { buildReplayInspectorModel } from '@gem-duel/application';
-import { Section } from '@gem-duel/ui';
-import { ReplayInspectorPanel } from '../../components/session-panels';
+import { ReplayDrawer, Section } from '@gem-duel/ui';
 
 export default async function ReplayPage({ params }: { params: Promise<{ replayId: string }> }) {
     const { replayId } = await params;
@@ -37,7 +36,7 @@ export default async function ReplayPage({ params }: { params: Promise<{ replayI
             {status < 400 && 'bundle' in body
                 ? (() => {
                       const inspector = buildReplayInspectorModel(body.bundle);
-                      return inspector.ok ? <ReplayInspectorPanel model={inspector.value} /> : null;
+                      return inspector.ok ? <ReplayDrawer model={inspector.value} /> : null;
                   })()
                 : null}
         </>

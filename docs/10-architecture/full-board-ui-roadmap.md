@@ -200,9 +200,10 @@
 
 #### Phase 3 - Shared Board Primitives
 
-状态：`In Progress`（2026-04-17）。日志：
+状态：`Completed`（2026-04-17）。日志：
 
 - [`logs/phase-3-shared-board-primitives-wave-1.md`](./logs/phase-3-shared-board-primitives-wave-1.md)
+- [`logs/phase-3-shared-board-primitives-completion.md`](./logs/phase-3-shared-board-primitives-completion.md)
 
 目标：建立完整盘面 UI 需要的共享 primitives 与 sidecar 组合。
 
@@ -230,6 +231,12 @@
 - 先把 `BoardGrid`、`TokenCell`、`MarketStack`、`CardSlot`、`ReserveTray`、`PlayerZone`、`RoyalCourt`、`PromptBanner`、`SelectionOverlay`、`RunPanel` 从当前 scaffold 中正式抽成 `packages/ui` primitives；
 - 先让 `/playground/*` 与 static scene host 消费这些 primitives，暂不切换 `/play/local` 默认主画面；
 - `ReplayDrawer` / `AiTraceDrawer` 允许在后续波次补齐，不阻塞本 phase 启动。
+
+本阶段现已收口的补充结果：
+
+- `ReplayDrawer` 与 `AiTraceDrawer` 已落入 `packages/ui`，不再停留在 `apps/web` 的本地面板；
+- `/play/local`、`/play/ai`、`/play/run` 与 `/replays/[replayId]` 已开始直接复用 shared drawers；
+- `/playground/*` 的 visual harness 已覆盖 board primitives、ReplayDrawer 与 AiTraceDrawer，并完成新的 committed baseline。
 
 完成标准：
 
@@ -533,9 +540,10 @@ Done criteria:
 
 #### Phase 3 - Shared Board Primitives
 
-Status: `In Progress` (2026-04-17). Logs:
+Status: `Completed` (2026-04-17). Logs:
 
 - [`logs/phase-3-shared-board-primitives-wave-1.md`](./logs/phase-3-shared-board-primitives-wave-1.md)
+- [`logs/phase-3-shared-board-primitives-completion.md`](./logs/phase-3-shared-board-primitives-completion.md)
 
 Goal: build the shared primitives and sidecar surfaces required for the full board UI.
 
@@ -563,6 +571,12 @@ First-wave scope:
 - extract `BoardGrid`, `TokenCell`, `MarketStack`, `CardSlot`, `ReserveTray`, `PlayerZone`, `RoyalCourt`, `PromptBanner`, `SelectionOverlay`, and `RunPanel` into first-class `packages/ui` primitives;
 - make `/playground/*` and the static scene host consume those primitives before switching the `/play/local` default surface;
 - allow `ReplayDrawer` / `AiTraceDrawer` to land in later waves without blocking Phase 3 startup.
+
+Closure results for the phase:
+
+- `ReplayDrawer` and `AiTraceDrawer` now live in `packages/ui` rather than staying as `apps/web`-local panels;
+- `/play/local`, `/play/ai`, `/play/run`, and `/replays/[replayId]` now reuse the shared drawers directly;
+- the `/playground/*` visual harness now covers the board primitives together with `ReplayDrawer` and `AiTraceDrawer`, with refreshed committed baselines.
 
 Done criteria:
 

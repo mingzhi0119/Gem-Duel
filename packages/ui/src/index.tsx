@@ -14,6 +14,12 @@ export { SelectionOverlay } from './board/selection-overlay';
 export { RunPanel } from './board/run-panel';
 export { TurnHud } from './hud/turn-hud';
 export { SidecarDrawer } from './drawer/sidecar-drawer';
+export {
+    ReplayDrawer,
+    type ReplayDrawerModel,
+    type ReplayDrawerStep,
+} from './drawer/replay-drawer';
+export { AiTraceDrawer, type AiTraceCandidate, type AiTraceEntry } from './drawer/ai-trace-drawer';
 export { RoomTable } from './tables/room-table';
 export { MatchView } from './views/match-view';
 export { PlaygroundSceneFrame } from './playground/scene-frame';

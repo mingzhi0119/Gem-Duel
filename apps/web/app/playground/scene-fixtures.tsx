@@ -10,7 +10,13 @@ import type {
     UiViewModel,
 } from '@gem-duel/contracts';
 import { ENGINE_VERSION, SCHEMA_VERSION } from '@gem-duel/contracts';
-import { Section } from '@gem-duel/ui';
+import {
+    AiTraceDrawer,
+    type AiTraceEntry,
+    ReplayDrawer,
+    type ReplayDrawerModel,
+    Section,
+} from '@gem-duel/ui';
 
 type VisibleFixtureSnapshot = PlayerSnapshot | SpectatorSnapshot;
 type GemColor = NonNullable<PlayerSnapshot['board'][number]['token']>;
@@ -528,6 +534,107 @@ const terminalSnapshot = createPlayerSnapshot({
     victoryReason: 'points',
 });
 
+const replayFixtureModel: ReplayDrawerModel = {
+    finalStateHash: 'fixture-hash-20260417',
+    recomputedFinalStateHash: 'fixture-hash-20260417',
+    matchesHash: true,
+    matchesEvents: true,
+    steps: [
+        {
+            index: 0,
+            label: 'Initial Snapshot',
+            command: null,
+            snapshot: createPlayerSnapshot({
+                phase: 'initialization',
+                currentPlayer: 'p1',
+                step: 10,
+            }),
+        },
+        {
+            index: 1,
+            label: 'BEGIN_GEM_SELECTION #1',
+            command: { command: { type: 'BEGIN_GEM_SELECTION' } },
+            snapshot: createPlayerSnapshot({
+                phase: 'gemSelection',
+                currentPlayer: 'p1',
+                step: 11,
+            }),
+        },
+        {
+            index: 2,
+            label: 'TAKE_TOKENS_ADD_POSITION #2',
+            command: {
+                command: {
+                    type: 'TAKE_TOKENS_ADD_POSITION',
+                    positionId: 'r2c2',
+                },
+            },
+            snapshot: selectionSnapshot,
+        },
+        {
+            index: 3,
+            label: 'TAKE_TOKENS_CONFIRM #3',
+            command: { command: { type: 'TAKE_TOKENS_CONFIRM' } },
+            snapshot: createPlayerSnapshot({
+                phase: 'buying',
+                currentPlayer: 'p1',
+                step: 13,
+            }),
+        },
+    ],
+};
+
+const aiTraceFixture: AiTraceEntry[] = [
+    {
+        decisionIndex: 0,
+        player: 'p2',
+        sequence: 31,
+        chosenActionId: 'buy-l1-ruby-merchant',
+        chosenCommandType: 'BUY_CARD',
+        candidates: [
+            {
+                actionId: 'buy-l1-ruby-merchant',
+                label: 'Buy l1-ruby-merchant',
+                commandType: 'BUY_CARD',
+                score: 338.4,
+            },
+            {
+                actionId: 'begin-privilege',
+                label: 'Begin Privilege',
+                commandType: 'BEGIN_PRIVILEGE',
+                score: 221.9,
+            },
+            {
+                actionId: 'take-add-r1c3',
+                label: 'Add green at r1c3',
+                commandType: 'TAKE_TOKENS_ADD_POSITION',
+                score: 205.1,
+            },
+        ],
+    },
+    {
+        decisionIndex: 1,
+        player: 'p2',
+        sequence: 32,
+        chosenActionId: 'select-royal-royal-sapphire-court',
+        chosenCommandType: 'SELECT_ROYAL',
+        candidates: [
+            {
+                actionId: 'select-royal-royal-sapphire-court',
+                label: 'Select Royal royal-sapphire-court',
+                commandType: 'SELECT_ROYAL',
+                score: 320.6,
+            },
+            {
+                actionId: 'select-royal-royal-ivory-audience',
+                label: 'Select Royal royal-ivory-audience',
+                commandType: 'SELECT_ROYAL',
+                score: 281.3,
+            },
+        ],
+    },
+];
+
 export const PLAYGROUND_SCENES: PlaygroundSceneDefinition[] = [
     {
         id: 'classic-selection',
@@ -587,6 +694,7 @@ export const PLAYGROUND_SCENES: PlaygroundSceneDefinition[] = [
                 projected `UiViewModel`, not from page-local interaction state.
             </p>
         ),
+        extraPanels: <ReplayDrawer model={replayFixtureModel} />,
     },
     {
         id: 'spectator-resync',
@@ -683,13 +791,14 @@ export const PLAYGROUND_SCENES: PlaygroundSceneDefinition[] = [
                     Active buffs are fixture data only here, but the shape matches the additive
                     Phase 2 `UiRunPanel` contract.
                 </p>
-                <div className="gd-run-chip">
+                <div className="gd-card">
                     <strong>Buff Focus</strong>
                     <span>deep_pockets</span>
                     <span>double_agent</span>
                 </div>
             </div>
         ),
+        extraPanels: <AiTraceDrawer traces={aiTraceFixture} />,
     },
     {
         id: 'terminal-victory',
@@ -725,7 +834,7 @@ export const PLAYGROUND_SCENES: PlaygroundSceneDefinition[] = [
                     Winner: {terminalSnapshot.context.winner} by{' '}
                     {terminalSnapshot.context.victoryReason}.
                 </p>
-                <div className="gd-selection-chip">
+                <div className="gd-card">
                     <strong>Readonly</strong>
                     <span>No further actions are exposed in the completed fixture.</span>
                 </div>

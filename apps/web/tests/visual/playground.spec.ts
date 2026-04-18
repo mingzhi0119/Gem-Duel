@@ -7,7 +7,7 @@ const SCENES = [
     'terminal-victory',
 ] as const;
 
-test.describe('phase 2.5 playground scenes', () => {
+test.describe('phase 3 playground scenes', () => {
     for (const sceneId of SCENES) {
         test(sceneId, async ({ page }) => {
             await page.goto(`/playground/${sceneId}`);
