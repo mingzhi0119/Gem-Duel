@@ -12,12 +12,14 @@ Step 08 完成后，仓库进入 release-ready 状态：核心契约、域模型
 - `docs/10-architecture/full-board-ui-roadmap.md` 的 Phase 4 local-player gate 已关闭；默认 classic-local 玩家入口现已具备 product-facing `BoardScene` 与 8 条自动化玩家路径。
 - `docs/10-architecture/full-board-ui-roadmap.md` 的 Phase 5 AI/run parity gate 现也已关闭；`/play/ai` 与 active-match `/play/run` 已共享同一 product-facing 主盘面，并具备固定 seed / `finalStateHash` 基线。
 - `docs/10-architecture/full-board-ui-roadmap.md` 的 Phase 6 online-board convergence gate 现已关闭；`/rooms/[roomId]` 已接入 shared `BoardScene`，spectator/out-of-turn 行为具备 browser/integration gate，spectator pending-selection redaction 已成为正式门禁。
+- `docs/10-architecture/full-board-ui-roadmap.md` 的 Phase 7 replay/product-finish gate 现也已关闭；`/replays/[replayId]` 已复用 shared `BoardScene`，timeline/hash/keyboard/i18n 与 replay desktop/mobile visual baselines 已具备正式门禁。
 - `v1.0.0` 及以上产品语义版本不再受 local-player board completeness 单点阻塞，但后续产品口径仍必须明确剩余未闭合的 phase。
 - Desktop artifact 当前只应视作 shared-shell engineering artifact；Desktop offline 可分发能力仍受该路线图的 Phase 8 约束。
 - 若未来需要公开产品发布说明，必须同时满足：
     - 默认 classic-local 玩家入口的声明只覆盖已关闭的 Phase 4 范围；
     - `/play/ai` 与 active-match `/play/run` 的产品表述只覆盖已关闭的 Phase 5 范围；
-    - `/rooms/[roomId]` 的产品表述只覆盖已关闭的 Phase 6 共享主盘面与 spectator/inertness 范围；replay / a11y / i18n / mobile finish 仍受 Phase 7 约束；
+    - `/rooms/[roomId]` 的产品表述只覆盖已关闭的 Phase 6 共享主盘面与 spectator/inertness 范围；
+    - `/replays/[replayId]` 的产品表述只覆盖已关闭的 Phase 7 replay/shared-board/a11y/keyboard/mobile/i18n 表面，不得顺势外推为 Desktop offline 完成；
     - Desktop offline 若未完成，不得被表述为已验证分发面；
     - release note 不再把 engineering closure 表述为“所有表面都已产品完成”。
 
@@ -59,12 +61,14 @@ Here, `release-ready` means the rebuild boundary, build/test surface, and releas
 - The Phase 4 local-player gate in `docs/10-architecture/full-board-ui-roadmap.md` is now closed; the default classic-local player entrypoint now has a product-facing `BoardScene` plus 8 automated player paths.
 - The Phase 5 AI/run parity gate in `docs/10-architecture/full-board-ui-roadmap.md` is now also closed; `/play/ai` and active-match `/play/run` now share the same product-facing main board and fixed-seed / `finalStateHash` baselines.
 - The Phase 6 online-board convergence gate in `docs/10-architecture/full-board-ui-roadmap.md` is now also closed; `/rooms/[roomId]` now uses the shared `BoardScene`, spectator/out-of-turn behavior is browser/integration-gated, and spectator pending-selection redaction is now a formal invariant.
+- The Phase 7 replay/product-finish gate in `docs/10-architecture/full-board-ui-roadmap.md` is now also closed; `/replays/[replayId]` now reuses the shared `BoardScene`, and timeline/hash/keyboard/i18n plus replay desktop/mobile visual baselines are now formally gated.
 - Product-semantic versions `v1.0.0+` are no longer blocked by the local-player board-completeness gate alone, but release wording must still respect the phases that remain open.
 - The current Desktop artifact should be treated only as a shared-shell engineering artifact; Desktop offline distributability remains gated on Phase 8 of that roadmap.
 - Any future public product-release note must also satisfy:
     - any default-entry claim is scoped to the now-closed Phase 4 classic-local surface;
     - `/play/ai` and active-match `/play/run` claims are scoped only to the now-closed Phase 5 surface;
-    - `/rooms/[roomId]` claims are scoped only to the now-closed Phase 6 shared-board and spectator/inertness surface; replay / a11y / i18n / mobile finish still remain Phase 7 work;
+    - `/rooms/[roomId]` claims are scoped only to the now-closed Phase 6 shared-board and spectator/inertness surface;
+    - `/replays/[replayId]` claims are scoped only to the now-closed Phase 7 replay/shared-board/a11y/keyboard/mobile/i18n surface and must not be stretched into Desktop offline completion;
     - Desktop offline is not described as validated distributability if Phase 8 is still open;
     - release notes no longer describe engineering closure as “all surfaces are product-complete.”
 
@@ -91,5 +95,5 @@ Here, `release-ready` means the rebuild boundary, build/test surface, and releas
 - Step 08 only unlocks the future tag-based release flow.
 - Step 08 does not create tags automatically.
 - Before upload, CI must pass the full final acceptance gate and only then publish artifacts.
-- With Phase 4, Phase 5, and Phase 6 closed, the local, AI, active-match run, and online room board entrypoints may now be described as completed shared-board surfaces, but that may not be stretched into replay / accessibility / mobile / Desktop parity.
+- With Phase 4, Phase 5, Phase 6, and Phase 7 closed, the local, AI, active-match run, online room, and replay board entrypoints may now be described as completed shared-board product surfaces, but that may still not be stretched into Desktop offline parity.
 - Before Phase 8, the Desktop artifact may not be restated as a validated offline distribution package.

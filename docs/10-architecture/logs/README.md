@@ -29,6 +29,7 @@
 - [`phase-5-ai-run-parity-wave-2.md`](./phase-5-ai-run-parity-wave-2.md): Phase 5 第二波日志，记录 AI turn resolver 抽离、固定 seed / `finalStateHash` 基线与 application seam 的 deterministic gate
 - [`phase-5-ai-run-parity-completion.md`](./phase-5-ai-run-parity-completion.md): Phase 5 完成日志，记录 AI/run 主盘面 parity 收口、固定 seed/hash 基线冻结与 Phase 4 回归继续通过
 - [`phase-6-room-boardscene-and-spectator-gates-completion.md`](./phase-6-room-boardscene-and-spectator-gates-completion.md): Phase 6 完成日志，记录 `/rooms/[roomId]` 切到 shared `BoardScene`、spectator pending-selection redaction、`check-phase6` 与 resync/越权门禁
+- [`phase-7-replay-boardscene-and-product-finish-completion.md`](./phase-7-replay-boardscene-and-product-finish-completion.md): Phase 7 完成日志，记录 `/replays/[replayId]` 复用 shared `BoardScene`、timeline/hash/keyboard/i18n 收口与 replay desktop/mobile visual baselines
 
 ## EN
 
@@ -59,3 +60,4 @@ This directory stores landing logs for phases tracked in `docs/10-architecture/f
 - [`phase-5-ai-run-parity-wave-2.md`](./phase-5-ai-run-parity-wave-2.md): Phase 5 second-wave log for extracting the AI turn resolver, freezing seed / `finalStateHash` baselines, and adding an application-level deterministic gate
 - [`phase-5-ai-run-parity-completion.md`](./phase-5-ai-run-parity-completion.md): Phase 5 completion log for closing AI/run main-board parity, freezing the seed/hash baselines, and keeping the Phase 4 regression green
 - [`phase-6-room-boardscene-and-spectator-gates-completion.md`](./phase-6-room-boardscene-and-spectator-gates-completion.md): Phase 6 completion log for moving `/rooms/[roomId]` onto the shared `BoardScene`, redacting spectator pending-selection state, and landing the `check-phase6` browser/integration gate
+- [`phase-7-replay-boardscene-and-product-finish-completion.md`](./phase-7-replay-boardscene-and-product-finish-completion.md): Phase 7 completion log for moving `/replays/[replayId]` onto the shared `BoardScene`, closing timeline/hash/keyboard/i18n on the replay surface, and adding replay desktop/mobile visual baselines

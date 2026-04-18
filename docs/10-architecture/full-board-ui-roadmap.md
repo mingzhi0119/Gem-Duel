@@ -14,13 +14,13 @@
 ### 审计结论
 
 - Step 00-08 在工程边界上属于“强达成”：分层、contracts、determinism、room-service authority、replay 与 release gate 已经闭环。
-- 当前产品完成度已从“弱达成”推进到“部分达成”：默认 classic-local 玩家入口已是 product-facing board，但 AI / run / online parity、replay/a11y/mobile 与 Desktop offline 仍未完成。
+- 当前产品完成度已从“弱达成”推进到“近完成”：local / AI / run / online room / replay 现都已收敛到共享主盘面与对应 gate，剩余未闭合项主要收敛为 Desktop offline 验证。
 - 后续整改必须把“工程收口”与“玩家可用产品”分开治理；本路线图就是产品侧和 presentation/projection 侧的正式 backlog。
 
 ### 当前基线
 
 - `packages/ui` 仍同时暴露 `MatchView` 与 `BoardScene` 两类 surface；`MatchView` 继续承担 debug / fallback shell 职责。
-- `/play/local`、`/play/ai` 与 active-match `/play/run` 当前默认都使用 product-facing `BoardScene`；`/rooms/[roomId]` 仍保留在线验证壳。
+- `/play/local`、`/play/ai`、active-match `/play/run`、`/rooms/[roomId]` 与 `/replays/[replayId]` 当前都已复用 shared `BoardScene`；`MatchView` 只保留 debug / fallback 壳职责。
 - 当前壳适合：
     - 校验 command legality；
     - 验证 replay / hash / event sequencing；
@@ -382,21 +382,25 @@ Evidence caveat：
 
 #### Phase 7 - Replay、QA、A11y、Mobile 与 Product Finish
 
+状态：`Completed`（2026-04-18）。日志：[`logs/phase-7-replay-boardscene-and-product-finish-completion.md`](./logs/phase-7-replay-boardscene-and-product-finish-completion.md)
+
 目标：补齐 replay 盘面化、视觉回归、无障碍和小屏策略，完成产品级打磨。
 
 覆盖发现：F9。
 
 本阶段输出：
 
-- replay inspector 复用 full-board scene，支持 timeline、step forward/backward、hash badge。
-- 正式视觉回归基线、a11y 检查、键盘路径与 loading skeleton。
-- 小屏 / mobile 策略定稿。
-- i18n / UI 字符串外化。
+- `/replays/[replayId]` 现已通过 client replay surface 复用 shared `BoardScene`，而不是停留在 summary + drawer-only 结构。
+- replay inspector 现支持 controlled timeline、prev/next、direct-step selection 与 current-step hash badge。
+- `pnpm check-phase7` 已把 replay route、键盘导航、locale-aware labels 与 shared-board reuse 纳入浏览器 gate。
+- `pnpm check-visual` 现覆盖 replay desktop/mobile baselines，并已完成 rebaseline 后的最终回归跑。
+- shared replay/board copy 现通过 package-owned bilingual catalog 外化；小屏 spacing、focus-visible 与 stacked layout 已同步落地。
 
 完成标准：
 
-- full-board UI 可玩、可回放、可验证、可访问。
-- 默认玩家入口不再暴露按钮列表壳。
+- full-board UI 现已覆盖 local / AI / run / online room / replay 的 shared-board surface，并具备 replay-aware、keyboard-aware、visual-gated 产品收口。
+- 默认玩家入口与 replay 入口都不再暴露 detached shell-only 主舞台。
+- app-wide locale routing、platform-agnostic visual policy 与 Desktop offline 仍不在本 phase 的关闭范围内。
 
 #### Phase 8 - Desktop Offline Packaging Validation
 
@@ -424,10 +428,9 @@ Evidence caveat：
 
 ### 立即可执行的高 ROI 顺序
 
-1. Milestone E：推进 `/play/ai` 与 `/play/run` parity，把 AI trace / run panel 收敛到与 `/play/local` 相同的主盘面。
-2. Milestone F：在进入 `/rooms/[roomId]` renderer migration 前，先把 spectator invariants 与 room-status 对账测试补成正式门禁。
-3. Milestone G：在 replay / a11y / mobile 收尾前，继续强化 visual-governance 与 screenshot policy。
-4. Milestone H：Desktop offline packaging 只在 shared-shell startup 路径被显式验证后再升格表述。
+1. Milestone J：收口 `apps/desktop` 的真实 startup/distribution 方案，避免 `next start` / standalone 警告长期挂在 gate 上。
+2. Milestone K：在 Desktop validation 过程中一并硬化 visual-governance 的平台策略，减少 `*-win32.png` 单平台基线风险。
+3. Milestone L：继续把 release-prep 的 public wording 严格限制在已关闭 phase，直到 Phase 8 也收口为止。
 
 ## EN
 
@@ -443,13 +446,13 @@ This document is the authoritative full-board UI remediation plan after the Opus
 ### Audit Summary
 
 - Step 00-08 is a strong success at the engineering-boundary level: layering, contracts, determinism, room-service authority, replay, and release gates are closed.
-- Product completion has moved from weak to partial: the default classic-local player entrypoint is now a product-facing board, but AI / run / online parity, replay/a11y/mobile, and Desktop offline remain open.
+- Product completion has moved from weak to near-complete: local, AI, run, online room, and replay now converge on the shared board surface, and the main remaining open item is Desktop offline validation.
 - Follow-up work must treat engineering closure and player-facing product completion as different tracks. This roadmap is the formal backlog for the product/presentation/projection side.
 
 ### Current Baseline
 
 - `packages/ui` now exposes both `MatchView` and `BoardScene`; `MatchView` remains the debug / fallback shell surface.
-- `/play/local`, `/play/ai`, and active-match `/play/run` now default to the product-facing `BoardScene`, while `/rooms/[roomId]` still keeps the online validation shell.
+- `/play/local`, `/play/ai`, active-match `/play/run`, `/rooms/[roomId]`, and `/replays/[replayId]` now all reuse the shared `BoardScene`; `MatchView` remains only as the debug/fallback shell surface.
 - The shell is good for:
     - command-legality validation;
     - replay / hash / event-sequencing verification;
@@ -796,21 +799,25 @@ Done criteria:
 
 #### Phase 7 - Replay, QA, A11y, Mobile, and Product Finish
 
+Status: `Completed` (2026-04-18). Log: [`logs/phase-7-replay-boardscene-and-product-finish-completion.md`](./logs/phase-7-replay-boardscene-and-product-finish-completion.md)
+
 Goal: complete replay-on-board, visual regression, accessibility, and small-screen polish.
 
 Covers: F9.
 
 Outputs:
 
-- Reuse the full-board scene for replay inspection with timeline, step forward/backward, and hash badge.
-- Formal visual-regression baselines, accessibility checks, keyboard paths, and loading skeletons.
-- A finalized small-screen / mobile strategy.
-- i18n / externalized UI strings.
+- `/replays/[replayId]` now reuses the shared `BoardScene` through a dedicated client replay surface rather than staying on a summary + drawer-only shape.
+- Replay inspection now supports a controlled timeline, prev/next controls, direct step selection, and current-step hash display.
+- `pnpm check-phase7` now browser-gates replay route reuse, keyboard stepping, and locale-aware labels.
+- `pnpm check-visual` now covers replay desktop/mobile baselines and has passed again after the Phase 7 rebaseline.
+- Shared replay/board copy now flows through a package-owned bilingual catalog, and responsive spacing/focus-visible treatment is now part of the landed shared shell.
 
 Done criteria:
 
-- The full-board UI is playable, debuggable, replay-aware, and accessible.
-- The default player entrypoint no longer exposes the text-summary + button-list shell.
+- The full-board UI now covers local / AI / run / online room / replay through the shared board surface and is replay-aware, keyboard-aware, and visual-gated at the product-surface level.
+- The default player and replay entrypoints no longer depend on a detached shell-only main stage.
+- App-wide locale routing, platform-agnostic screenshot policy, and Desktop offline remain outside the closed scope of this phase.
 
 #### Phase 8 - Desktop Offline Packaging Validation
 
@@ -838,7 +845,6 @@ Done criteria:
 
 ### Immediate High-ROI Order
 
-1. Milestone G: move replay onto the shared `BoardScene`, then close timeline/hash navigation and replay-specific visual coverage.
-2. Milestone H: harden A11y, keyboard traversal, and small-screen behavior before calling the product finish pass complete.
-3. Milestone I: externalize UI strings and close the Phase 7 i18n work without reopening board contracts.
-4. Milestone J: do not upgrade Desktop offline wording until the shared-shell startup path is explicitly validated.
+1. Milestone J: close the real `apps/desktop` startup/distribution path and stop carrying the `next start` / standalone warning through the remaining gates.
+2. Milestone K: harden the visual-governance platform policy during Desktop validation so screenshot baselines stop depending on `*-win32.png` alone.
+3. Milestone L: keep release wording scoped to the already-closed phases until Phase 8 also closes.
