@@ -1,22 +1,20 @@
 import path from 'node:path';
-import {
-    _electron as electron,
-    expect,
-    test,
-    type ElectronApplication,
-    type Page,
-} from '@playwright/test';
+import { _electron as electron, expect, test, type ElectronApplication } from '@playwright/test';
 
 const PHASE8_SMOKE_SCENARIO = 'take-three-linked-gems';
 const PHASE8_SMOKE_HASH = 'fnv1a-32b1c890';
 const DESKTOP_APP_PATH = path.join(process.cwd(), 'apps', 'desktop');
+const DESKTOP_APP_ENV = Object.fromEntries(
+    Object.entries(process.env).filter((entry): entry is [string, string] => entry[1] !== undefined)
+);
 
-const launchDesktopShell = async () =>
+const launchDesktopShell = async (extraEnv: Record<string, string> = {}) =>
     await electron.launch({
         args: [DESKTOP_APP_PATH],
         cwd: process.cwd(),
         env: {
-            ...process.env,
+            ...DESKTOP_APP_ENV,
+            ...extraEnv,
         },
     });
 
@@ -72,15 +70,11 @@ test.describe('Phase 8 desktop shell assembly', () => {
         let electronApp: ElectronApplication | null = null;
 
         try {
-            electronApp = await launchDesktopShell();
+            electronApp = await launchDesktopShell({
+                GEM_DUEL_DESKTOP_START_PATH: `/play/local?scenario=${PHASE8_SMOKE_SCENARIO}`,
+            });
             const page = await waitForDesktopWindow(electronApp);
-            const origin = new URL(page.url()).origin;
-            const scenarioUrl = `${origin}/play/local?scenario=${PHASE8_SMOKE_SCENARIO}`;
-
-            await page.evaluate((nextUrl) => {
-                globalThis.location.assign(nextUrl);
-            }, scenarioUrl);
-            await page.waitForURL(scenarioUrl);
+            await page.waitForURL(new RegExp(`/play/local\\?scenario=${PHASE8_SMOKE_SCENARIO}$`));
             await expect(page.getByTestId('phase4-interactive-ready')).toHaveCount(1);
             await expect(page.getByTestId('board-scene')).toBeVisible();
 

@@ -20,10 +20,20 @@ const resolveConfiguredUrl = () => {
     return value ? value : null;
 };
 
+const resolveStartPath = () => {
+    const value = process.env.GEM_DUEL_DESKTOP_START_PATH?.trim();
+    return value ? value : null;
+};
+
 export const resolveStandaloneServerScript = (desktopRuntimeDir: string) =>
     path.resolve(desktopRuntimeDir, '../../web/.next/standalone/apps/web/server.js');
 
 export const resolveDesktopBaseUrl = (port: number) => `http://${HOST}:${String(port)}`;
+
+export const resolveDesktopTargetUrl = (baseUrl: string) => {
+    const startPath = resolveStartPath();
+    return startPath ? new URL(startPath, `${baseUrl}/`).toString() : baseUrl;
+};
 
 const resolveStandaloneAppDir = (desktopRuntimeDir: string) =>
     path.dirname(resolveStandaloneServerScript(desktopRuntimeDir));
@@ -158,7 +168,8 @@ const createBundledRuntime = async (desktopRuntimeDir: string): Promise<DesktopW
     await ensureStandaloneAssets(desktopRuntimeDir);
 
     const port = await resolvePort();
-    const targetUrl = resolveDesktopBaseUrl(port);
+    const baseUrl = resolveDesktopBaseUrl(port);
+    const targetUrl = resolveDesktopTargetUrl(baseUrl);
     const child = spawn(process.execPath, [serverScript], {
         cwd: path.dirname(serverScript),
         env: {
@@ -174,7 +185,7 @@ const createBundledRuntime = async (desktopRuntimeDir: string): Promise<DesktopW
     forwardProcessLogs(child, child.stderr, 'error');
 
     try {
-        await waitForServer(`${targetUrl}/play/local`);
+        await waitForServer(`${baseUrl}/play/local`);
     } catch (error) {
         stopChildProcess(child);
         throw error;
@@ -192,7 +203,7 @@ export const createDesktopWebRuntime = async (
     const configuredUrl = resolveConfiguredUrl();
     if (configuredUrl) {
         return {
-            targetUrl: configuredUrl,
+            targetUrl: resolveDesktopTargetUrl(configuredUrl),
             stop: () => {},
         };
     }
