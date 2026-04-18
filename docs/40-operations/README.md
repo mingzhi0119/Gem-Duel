@@ -6,6 +6,7 @@
 - CI/CD 默认采用 `pnpm + turbo`。
 - 日志、指标、trace、告警点位应优先落在 room-service 与关键 BFF 路由。
 - 发布前检查、产物范围、engineering release 与产品 GA 的区分、Step 08 的 tag 约束、`pnpm check-a11y`，以及当前 Desktop shared-shell artifact 形态请参考 [`release-prep.md`](./release-prep.md)。
+- 最新一次按 `release-prep.md` 执行的发布前收尾与 artifact/hash 证据请参考 [`release-preflight-2026-04-18.md`](./release-preflight-2026-04-18.md)。
 - Step 05 的 room-service 权威语义、连接绑定、广播、resync 与 replay 存储触发请参考 [`room-service-authority-semantics.md`](./room-service-authority-semantics.md)。
 - Agent 护栏工具、pre-commit/commit gate 与 `.codex`/MCP 规划请参考 [`agent-tooling-rollout.md`](./agent-tooling-rollout.md)。
 - 项目本地 Skills 的质量标准、步骤映射与目录约束请参考 [`skills-governance.md`](./skills-governance.md)。
@@ -16,6 +17,7 @@
 - CI/CD defaults to `pnpm + turbo`.
 - Logs, metrics, traces, and alert points should be introduced first in room-service and critical BFF routes.
 - See [`release-prep.md`](./release-prep.md) for release-prep checks, artifact scope, the Step 08 tag constraint, `pnpm check-a11y`, the current Desktop shared-shell artifact shape, and the distinction between engineering release and product GA.
+- See [`release-preflight-2026-04-18.md`](./release-preflight-2026-04-18.md) for the latest release-preflight closeout, artifact review, and hash evidence captured against `release-prep.md`.
 - See [`room-service-authority-semantics.md`](./room-service-authority-semantics.md) for the Step 05 room-service authority semantics, connection binding flow, broadcast/resync rules, and replay persistence trigger.
 - See [`agent-tooling-rollout.md`](./agent-tooling-rollout.md) for agent guardrail tooling, pre-commit/commit gates, and `.codex`/MCP planning.
 - See [`skills-governance.md`](./skills-governance.md) for the quality bar, step mapping, and directory rules for project-local skills.

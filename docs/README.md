@@ -35,6 +35,7 @@
 - [`30-contracts/phase-2-uiviewmodel-2.0-migration-note.md`](./30-contracts/phase-2-uiviewmodel-2.0-migration-note.md): Phase 2 的 `UiViewModel` 2.0 additive contract change 迁移说明
 - [`40-operations/README.md`](./40-operations/README.md): 部署、观测、CI/CD 与运行策略
 - [`40-operations/release-prep.md`](./40-operations/release-prep.md): Step 08 release-ready 定义、engineering release 与产品 GA 的边界、Phase 4-8 关闭后的最终验收门禁、`pnpm check-a11y` 与当前 Desktop artifact 形态
+- [`40-operations/release-preflight-2026-04-18.md`](./40-operations/release-preflight-2026-04-18.md): 按 `release-prep.md` 执行的一次发布前最终收尾、artifact 审阅与 hash evidence
 - [`40-operations/room-service-authority-semantics.md`](./40-operations/room-service-authority-semantics.md): Step 05 room-service 权威语义、连接绑定、广播与 replay 存储触发
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent 工具、CI 护栏与 `.codex`/MCP 规划
 - [`40-operations/skills-governance.md`](./40-operations/skills-governance.md): 项目本地 Skills 的质量标准、步骤映射与目录治理
@@ -81,6 +82,7 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`30-contracts/phase-2-uiviewmodel-2.0-migration-note.md`](./30-contracts/phase-2-uiviewmodel-2.0-migration-note.md): Migration note for the landed additive Phase 2 `UiViewModel` 2.0 contract change
 - [`40-operations/README.md`](./40-operations/README.md): Deployment, observability, CI/CD, and runtime strategy
 - [`40-operations/release-prep.md`](./40-operations/release-prep.md): Step 08 release-ready definition, the engineering-release vs product-GA boundary, the post-Phase-8 final acceptance gates, `pnpm check-a11y`, and the current Desktop artifact shape
+- [`40-operations/release-preflight-2026-04-18.md`](./40-operations/release-preflight-2026-04-18.md): A release-preflight closeout run executed against `release-prep.md`, including artifact review and hash evidence
 - [`40-operations/room-service-authority-semantics.md`](./40-operations/room-service-authority-semantics.md): Step 05 room-service authority semantics, connection binding, broadcast rules, and replay persistence
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent tooling, CI guardrails, and `.codex`/MCP planning
 - [`40-operations/skills-governance.md`](./40-operations/skills-governance.md): Quality bar, step mapping, and directory governance for project-local skills
