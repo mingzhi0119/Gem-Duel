@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createAiMatchSession, createLocalMatchSession } from '@gem-duel/application';
 import type { UiActionDescriptor } from '@gem-duel/contracts';
 import { AiTraceDrawer, BoardScene, MatchView, ReplayDrawer, Section } from '@gem-duel/ui';
@@ -43,9 +43,14 @@ export function MatchPlayground({
             : createLocalMatchSession({ seed, flags });
     }, [aiEnabled, mode, roguelike, scenarioId, seed]);
     const [, setRefreshKey] = useState(0);
+    const [interactiveReady, setInteractiveReady] = useState(false);
     const [error, setError] = useState<string | null>(
         sessionResult.ok ? null : sessionResult.error.message
     );
+
+    useEffect(() => {
+        setInteractiveReady(true);
+    }, []);
 
     if (!sessionResult.ok) {
         return (
@@ -87,6 +92,7 @@ export function MatchPlayground({
     if (mode === 'local' && shellMode === 'default') {
         return (
             <>
+                {interactiveReady ? <span hidden data-testid="phase4-interactive-ready" /> : null}
                 <BoardScene
                     viewModel={viewModel}
                     currentFinalStateHash={currentFinalStateHash}
@@ -110,6 +116,7 @@ export function MatchPlayground({
 
     return (
         <>
+            {interactiveReady ? <span hidden data-testid="phase4-interactive-ready" /> : null}
             <MatchView
                 viewModel={viewModel}
                 onSelect={handleAction}

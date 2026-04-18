@@ -78,15 +78,28 @@ const waitForServer = async (url, timeoutMs = 60000) => {
 };
 
 const startServer = (port) =>
-    spawn(process.execPath, ['apps/web/.next/standalone/apps/web/server.js'], {
-        cwd: process.cwd(),
-        stdio: 'inherit',
-        env: {
-            ...process.env,
-            HOSTNAME: HOST,
-            PORT: String(port),
-        },
-    });
+    spawn(
+        commandFor('pnpm'),
+        [
+            '--filter',
+            '@gem-duel/web',
+            'exec',
+            'next',
+            'start',
+            '--hostname',
+            HOST,
+            '--port',
+            String(port),
+        ],
+        {
+            cwd: process.cwd(),
+            stdio: 'inherit',
+            env: {
+                ...process.env,
+            },
+            shell: isWindows,
+        }
+    );
 
 const stopServer = (server) => {
     if (!server || server.killed || server.pid == null) {
@@ -121,13 +134,7 @@ const main = async () => {
         await waitForServer(`${baseUrl}/playground`);
         await runCommand(
             commandFor('pnpm'),
-            [
-                'exec',
-                'playwright',
-                'test',
-                'apps/web/tests/visual/playground.spec.ts',
-                ...forwardArgs,
-            ],
+            ['exec', 'playwright', 'test', 'apps/web/tests/visual', ...forwardArgs],
             {
                 GEM_DUEL_VISUAL_BASE_URL: baseUrl,
             }
