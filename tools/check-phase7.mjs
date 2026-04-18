@@ -32,7 +32,7 @@ const runCommand = (command, args, extraEnv = {}) =>
         });
     });
 
-const startServer = (port, replayBaseUrl) =>
+const startWebServer = (port, replayBaseUrl) =>
     spawn(
         commandFor('pnpm'),
         [
@@ -49,11 +49,11 @@ const startServer = (port, replayBaseUrl) =>
         {
             cwd: process.cwd(),
             stdio: 'inherit',
+            shell: isWindows,
             env: {
                 ...process.env,
                 ROOM_SERVICE_URL: replayBaseUrl,
             },
-            shell: isWindows,
         }
     );
 
@@ -75,28 +75,32 @@ const stopServer = (server) => {
 const forwardArgs = process.argv.slice(2);
 
 const main = async () => {
-    const port = await resolvePort('GEM_DUEL_VISUAL_PORT', 'check-visual');
-    const fixturePort = await resolvePort('GEM_DUEL_VISUAL_REPLAY_PORT', 'check-visual fixture');
-    const baseUrl = `http://${HOST}:${port}`;
+    const webPort = await resolvePort('GEM_DUEL_PHASE7_PORT', 'check-phase7');
+    const fixturePort = await resolvePort('GEM_DUEL_PHASE7_REPLAY_PORT', 'check-phase7 fixture');
+    const baseUrl = `http://${HOST}:${webPort}`;
     const fixtureServer = await startReplayFixtureServer(fixturePort);
 
     await runCommand(commandFor('pnpm'), ['build:web']);
 
-    const server = startServer(port, fixtureServer.baseUrl);
+    const webServer = startWebServer(webPort, fixtureServer.baseUrl);
     const cleanup = async () => {
-        stopServer(server);
+        stopServer(webServer);
         await fixtureServer.stop();
     };
 
-    process.on('SIGINT', cleanup);
-    process.on('SIGTERM', cleanup);
+    process.on('SIGINT', () => {
+        void cleanup();
+    });
+    process.on('SIGTERM', () => {
+        void cleanup();
+    });
 
     try {
         await waitForServer(`${fixtureServer.baseUrl}/health`);
-        await waitForServer(`${baseUrl}/playground`);
+        await waitForServer(`${baseUrl}/replays/phase7-royal-milestone`);
         await runCommand(
             commandFor('pnpm'),
-            ['exec', 'playwright', 'test', 'apps/web/tests/visual', ...forwardArgs],
+            ['exec', 'playwright', 'test', 'apps/web/tests/phase7', ...forwardArgs],
             {
                 GEM_DUEL_VISUAL_BASE_URL: baseUrl,
             }
@@ -107,7 +111,7 @@ const main = async () => {
 };
 
 main().catch((error) => {
-    console.error('[check-visual] failed');
+    console.error('[check-phase7] failed');
     if (error instanceof Error) {
         console.error(error.message);
     } else {

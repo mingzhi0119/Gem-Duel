@@ -46,8 +46,12 @@ export const ReplayDrawer = ({
     };
 
     useEffect(() => {
-        setSelectedStepIndex(Math.max(model.steps.length - 1, 0));
-    }, [model.finalStateHash, model.steps.length]);
+        const nextIndex = Math.max(model.steps.length - 1, 0);
+        onSelectStepIndex?.(nextIndex);
+        if (controlledSelectedStepIndex === undefined) {
+            setUncontrolledSelectedStepIndex(nextIndex);
+        }
+    }, [controlledSelectedStepIndex, model.finalStateHash, model.steps.length, onSelectStepIndex]);
 
     const selectedStep = model.steps[selectedStepIndex] ?? model.steps[model.steps.length - 1];
     if (!selectedStep) {

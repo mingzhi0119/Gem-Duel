@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState, useEffectEvent, type KeyboardEvent } from 'react';
+import { useEffect, useMemo, useState, useEffectEvent, type KeyboardEvent } from 'react';
 import { buildUiViewModel, type ReplayInspectorModel } from '@gem-duel/application';
 import { BoardScene, ReplayDrawer, getUiMessages, type UiLocale } from '@gem-duel/ui';
 
@@ -21,10 +21,7 @@ export function ReplayClient({
         Math.max(inspector.steps.length - 1, 0)
     );
     const selectedStep =
-        inspector.steps[selectedStepIndex] ?? inspector.steps[inspector.steps.length - 1];
-    if (!selectedStep) {
-        return null;
-    }
+        inspector.steps[selectedStepIndex] ?? inspector.steps[inspector.steps.length - 1]!;
 
     const viewModel = useMemo(
         () => buildUiViewModel(selectedStep.snapshot, 'spectator'),
@@ -61,6 +58,53 @@ export function ReplayClient({
                 break;
         }
     });
+
+    const handleWindowKeyDown = useEffectEvent(
+        (event: KeyboardEvent | globalThis.KeyboardEvent) => {
+            if (inspector.steps.length === 0 || event.altKey || event.ctrlKey || event.metaKey) {
+                return;
+            }
+
+            const target = event.target;
+            if (
+                target instanceof HTMLElement &&
+                ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)
+            ) {
+                return;
+            }
+
+            switch (event.key) {
+                case 'ArrowLeft':
+                    event.preventDefault();
+                    setSelectedStepIndex((current) =>
+                        clampStepIndex(current - 1, inspector.steps.length - 1)
+                    );
+                    break;
+                case 'ArrowRight':
+                    event.preventDefault();
+                    setSelectedStepIndex((current) =>
+                        clampStepIndex(current + 1, inspector.steps.length - 1)
+                    );
+                    break;
+                case 'Home':
+                    event.preventDefault();
+                    setSelectedStepIndex(0);
+                    break;
+                case 'End':
+                    event.preventDefault();
+                    setSelectedStepIndex(inspector.steps.length - 1);
+                    break;
+                default:
+                    break;
+            }
+        }
+    );
+
+    useEffect(() => {
+        const listener = (event: globalThis.KeyboardEvent) => handleWindowKeyDown(event);
+        window.addEventListener('keydown', listener);
+        return () => window.removeEventListener('keydown', listener);
+    }, [handleWindowKeyDown]);
 
     return (
         <div
