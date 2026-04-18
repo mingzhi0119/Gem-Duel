@@ -16,6 +16,7 @@
         "check-phase5": "node ./tools/check-phase5.mjs",
         "check-phase6": "node ./tools/check-phase6.mjs",
         "check-phase7": "node ./tools/check-phase7.mjs",
+        "check-phase8": "node ./tools/check-phase8.mjs",
         "check-visual": "node ./tools/check-visual.mjs",
         "contracts:generate": "corepack pnpm --filter @gem-duel/contracts generate",
         "contracts:verify": "corepack pnpm --filter @gem-duel/contracts verify:generated",

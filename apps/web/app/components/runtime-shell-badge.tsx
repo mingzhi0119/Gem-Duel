@@ -31,5 +31,9 @@ export function RuntimeShellBadge() {
             });
     }, []);
 
-    return <span className="gd-shell-badge">{label}</span>;
+    return (
+        <span className="gd-shell-badge" data-testid="runtime-shell-badge">
+            {label}
+        </span>
+    );
 }
