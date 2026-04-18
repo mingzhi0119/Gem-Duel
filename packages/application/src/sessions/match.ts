@@ -1,4 +1,4 @@
-import type { GameCommand, GameSnapshot, ReplayCommand, TypedResult } from '@gem-duel/contracts';
+import type { GameCommand, ReplayCommand, TypedResult } from '@gem-duel/contracts';
 import { createEnginePorts } from '@gem-duel/adapters';
 import {
     buildReplayBundle,
@@ -9,7 +9,7 @@ import {
     type EnginePorts,
 } from '@gem-duel/core-engine';
 
-import { chooseAiAction } from '../ai/heuristic';
+import { resolveAiTurns } from '../ai/turn-resolver';
 import { buildReplayInspectorModel, createReplayCommand } from '../replay/inspector';
 import type {
     AiDecisionTrace,
@@ -45,43 +45,14 @@ const bindMatchSession = ({
         return result;
     };
 
-    const resolveAiTurns = (): TypedResult<GameSnapshot> => {
-        if (mode !== 'ai') {
-            return {
-                ok: true,
-                value: readSnapshot(actor),
-            };
-        }
-
-        while (readSnapshot(actor).context.phase !== 'terminal') {
-            const currentSnapshot = readSnapshot(actor);
-            if (currentSnapshot.context.currentPlayer !== 'p2') {
-                break;
-            }
-
-            const aiView = buildUiViewModel(currentSnapshot, 'p2');
-            const decision = chooseAiAction(
-                currentSnapshot,
-                aiView.availableActions,
-                seed,
-                aiDecisionLog.length
-            );
-            if (!decision) {
-                break;
-            }
-
-            aiDecisionLog.push(decision.trace);
-            const result = recordedDispatch(decision.chosen.command);
-            if (!result.ok) {
-                return result;
-            }
-        }
-
-        return {
-            ok: true,
-            value: readSnapshot(actor),
-        };
-    };
+    const resolvePendingAiTurns = () =>
+        resolveAiTurns({
+            mode,
+            seed,
+            getSnapshot: () => readSnapshot(actor),
+            dispatch: recordedDispatch,
+            aiDecisionLog,
+        });
 
     for (const command of preludeCommands) {
         const result = recordedDispatch(command);
@@ -90,7 +61,7 @@ const bindMatchSession = ({
         }
     }
 
-    const aiBootstrap = resolveAiTurns();
+    const aiBootstrap = resolvePendingAiTurns();
     if (!aiBootstrap.ok) {
         return aiBootstrap;
     }
@@ -103,7 +74,7 @@ const bindMatchSession = ({
                 if (!result.ok) {
                     return result;
                 }
-                const aiResult = resolveAiTurns();
+                const aiResult = resolvePendingAiTurns();
                 if (!aiResult.ok) {
                     return aiResult;
                 }

@@ -1,0 +1,91 @@
+# Phase 5 Log - AI Turn Resolver and Frozen Seed Baselines
+
+## ZH
+
+- 日期：2026-04-18
+- Phase：Phase 5
+- 状态：In Progress
+- 范围：
+    - 将 AI turn loop 从 `packages/application/src/sessions/match.ts` 抽成独立可测模块；
+    - 为 `/play/ai` 与 `/play/run` 路径冻结固定 seed 的 `finalStateHash` 基线；
+    - 让 Phase 5 的 deterministic parity 不只停留在 UI 面，而是补到 application seam。
+- 本轮已落地结果：
+    - 新增 `packages/application/src/ai/turn-resolver.ts`，把以下职责从 session glue 中抽离：
+        - AI seat 判定；
+        - `buildUiViewModel(..., 'p2')`；
+        - `chooseAiAction(...)`；
+        - trace 记录与重复 dispatch 直到控制权回到 `p1`；
+    - `packages/application/src/sessions/match.ts` 现仅注入 `getSnapshot` / `dispatch` / `aiDecisionLog`，不再内嵌完整 AI loop；
+    - 新增 `packages/application/src/ai/turn-resolver.test.ts`，覆盖：
+        - non-AI session 立即返回；
+        - AI session 在 `p2 -> p2 -> p1` 的序列中稳定 dispatch 两次并记录 trace；
+    - `packages/application/src/ai/heuristic.test.ts` 现冻结 `/play/ai` 对应 seed：
+        - seed：`20260416`
+        - expected `finalStateHash`：`fnv1a-4b6da5bc`
+        - expected AI trace length：`101`
+    - `packages/application/src/sessions/run.test.ts` 现冻结 `/play/run` 对应 seed：
+        - seed：`20260417`
+        - starter Buff：`down_payment`
+        - first-match `finalStateHash`：`fnv1a-5bc41868`
+        - expected AI trace length：`115`
+- 关键涉及文件：
+    - `packages/application/src/ai/turn-resolver.ts`
+    - `packages/application/src/ai/turn-resolver.test.ts`
+    - `packages/application/src/sessions/match.ts`
+    - `packages/application/src/ai/heuristic.test.ts`
+    - `packages/application/src/sessions/run.test.ts`
+- 尚未完成项：
+    - Phase 5 completion log 与 roadmap `Completed` 标记仍待最终收口；
+    - `release-prep.md` 仍需把“Phase 4 关闭后不得外推为 AI / run parity”更新为“Phase 5 关闭后仍不得外推为 online / Desktop parity”。
+- Validation：
+    - 待本轮代码稳定后统一执行：
+        - `pnpm lint`
+        - `pnpm typecheck`
+        - `pnpm test`
+        - `pnpm build`
+        - `pnpm check-phase5`
+
+## EN
+
+- Date: 2026-04-18
+- Phase: Phase 5
+- Status: In Progress
+- Scope:
+    - extract the AI turn loop out of `packages/application/src/sessions/match.ts` into a standalone testable module;
+    - freeze fixed-seed `finalStateHash` baselines for `/play/ai` and `/play/run`;
+    - make Phase 5 deterministic parity reach the application seam rather than stopping at the UI surface.
+- Landed in this wave:
+    - added `packages/application/src/ai/turn-resolver.ts`, moving the following responsibilities out of session glue:
+        - AI-seat detection;
+        - `buildUiViewModel(..., 'p2')`;
+        - `chooseAiAction(...)`;
+        - trace recording plus repeated dispatch until control returns to `p1`;
+    - `packages/application/src/sessions/match.ts` now injects `getSnapshot` / `dispatch` / `aiDecisionLog` only, rather than embedding the full AI loop;
+    - added `packages/application/src/ai/turn-resolver.test.ts`, covering:
+        - immediate return for non-AI sessions;
+        - stable double-dispatch plus trace capture across a `p2 -> p2 -> p1` sequence;
+    - `packages/application/src/ai/heuristic.test.ts` now freezes the `/play/ai` seed baseline:
+        - seed: `20260416`
+        - expected `finalStateHash`: `fnv1a-4b6da5bc`
+        - expected AI trace length: `101`
+    - `packages/application/src/sessions/run.test.ts` now freezes the `/play/run` seed baseline:
+        - seed: `20260417`
+        - starter Buff: `down_payment`
+        - first-match `finalStateHash`: `fnv1a-5bc41868`
+        - expected AI trace length: `115`
+- Key touched files:
+    - `packages/application/src/ai/turn-resolver.ts`
+    - `packages/application/src/ai/turn-resolver.test.ts`
+    - `packages/application/src/sessions/match.ts`
+    - `packages/application/src/ai/heuristic.test.ts`
+    - `packages/application/src/sessions/run.test.ts`
+- Still unfinished:
+    - the Phase 5 completion log and the roadmap `Completed` marker still need the final closeout;
+    - `release-prep.md` still has to move from “Phase 4 is closed but do not stretch it into AI / run parity” to “Phase 5 is closed but do not stretch it into online / Desktop parity.”
+- Validation:
+    - to be run after this wave is stable:
+        - `pnpm lint`
+        - `pnpm typecheck`
+        - `pnpm test`
+        - `pnpm build`
+        - `pnpm check-phase5`

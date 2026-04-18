@@ -332,6 +332,7 @@ Evidence Caveat：
 状态：`In Progress`（2026-04-18）。日志：
 
 - [`logs/phase-5-ai-run-parity-wave-1.md`](./logs/phase-5-ai-run-parity-wave-1.md)
+- [`logs/phase-5-ai-run-parity-wave-2.md`](./logs/phase-5-ai-run-parity-wave-2.md)
 
 目标：让 AI 与 run 路径共享主盘面，只把辅助信息放进 sidecar。
 
@@ -734,6 +735,7 @@ Done criteria:
 Status: `In Progress` (2026-04-18). Logs:
 
 - [`logs/phase-5-ai-run-parity-wave-1.md`](./logs/phase-5-ai-run-parity-wave-1.md)
+- [`logs/phase-5-ai-run-parity-wave-2.md`](./logs/phase-5-ai-run-parity-wave-2.md)
 
 Goal: move AI and run flows onto the same main board, with auxiliary state in sidecars only.
 
