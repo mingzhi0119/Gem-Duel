@@ -27,6 +27,7 @@
 - [`phase-4-local-board-and-player-path-automation-completion.md`](./phase-4-local-board-and-player-path-automation-completion.md): Phase 4 完成日志，记录 8 条玩家路径自动化闭环、local board baseline 与 final regression evidence
 - [`phase-5-ai-run-parity-wave-1.md`](./phase-5-ai-run-parity-wave-1.md): Phase 5 第一波日志，记录 `/play/ai` 与 `/play/run` 收敛到 shared `BoardScene` 主盘面，以及 `pnpm check-phase5` parity gate
 - [`phase-5-ai-run-parity-wave-2.md`](./phase-5-ai-run-parity-wave-2.md): Phase 5 第二波日志，记录 AI turn resolver 抽离、固定 seed / `finalStateHash` 基线与 application seam 的 deterministic gate
+- [`phase-5-ai-run-parity-completion.md`](./phase-5-ai-run-parity-completion.md): Phase 5 完成日志，记录 AI/run 主盘面 parity 收口、固定 seed/hash 基线冻结与 Phase 4 回归继续通过
 
 ## EN
 
@@ -55,3 +56,4 @@ This directory stores landing logs for phases tracked in `docs/10-architecture/f
 - [`phase-4-local-board-and-player-path-automation-completion.md`](./phase-4-local-board-and-player-path-automation-completion.md): Phase 4 completion log for the 8 automated player paths, the local-board baseline, and final regression evidence
 - [`phase-5-ai-run-parity-wave-1.md`](./phase-5-ai-run-parity-wave-1.md): Phase 5 first-wave log for converging `/play/ai` and `/play/run` onto the shared `BoardScene` surface and for introducing the `pnpm check-phase5` parity gate
 - [`phase-5-ai-run-parity-wave-2.md`](./phase-5-ai-run-parity-wave-2.md): Phase 5 second-wave log for extracting the AI turn resolver, freezing seed / `finalStateHash` baselines, and adding an application-level deterministic gate
+- [`phase-5-ai-run-parity-completion.md`](./phase-5-ai-run-parity-completion.md): Phase 5 completion log for closing AI/run main-board parity, freezing the seed/hash baselines, and keeping the Phase 4 regression green

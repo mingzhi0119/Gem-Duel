@@ -1,0 +1,125 @@
+# Phase 5 Log - AI/Run Main-Board Parity Closure
+
+## ZH
+
+- 日期：2026-04-18
+- Phase：Phase 5
+- 状态：Completed
+- 范围：
+    - 关闭 `/play/ai` 与 `/play/run` 的主盘面 parity；
+    - 让 AI 与 run 活跃对局共享 product-facing `BoardScene`，仅保留 sidecar 差异；
+    - 把 AI turn loop 从 session glue 抽成独立可测模块，并冻结固定 seed 的 `finalStateHash` 基线。
+- 本阶段已落地结果：
+    - `/play/ai` 默认入口现已复用与 `/play/local` 相同的 `SessionBoardShell -> BoardScene` 主盘面，AI trace 仅保留为附加 drawer；
+    - `/play/run` 在存在 active run match 时现走同一 `BoardScene` 主盘面，run 状态与 Buff draft 收口到 sidecar；starter Buff draft 仍保留为 run-only prelude，而不再引入第二套 active-match 主布局；
+    - `packages/ui/src/views/board-scene.tsx` 现支持可配置 `eyebrow` 与 `extraSidecars`，并清除了 “Phase 4 is still in progress” 的遗留文案；
+    - `packages/application/src/ai/turn-resolver.ts` 现承接 AI loop 的 snapshot / view-model / chooseAction / trace / repeat-dispatch 职责，`packages/application/src/sessions/match.ts` 只做 actor 绑定与 orchestration；
+    - `pnpm check-phase5` 现作为 `/play/ai` 与 `/play/run` parity 的自动化门禁；
+    - application seam 已冻结两条固定 seed 基线：
+        - `/play/ai` seed `20260416` -> `finalStateHash = fnv1a-4b6da5bc`
+        - `/play/run` seed `20260417` + starter Buff `down_payment` -> first-match `finalStateHash = fnv1a-5bc41868`
+- 关键涉及文件：
+    - `apps/web/app/play/components/session-board-shell.tsx`
+    - `apps/web/app/play/components/match-playground.tsx`
+    - `apps/web/app/play/components/run-playground.tsx`
+    - `apps/web/tests/phase5/ai-run-parity.spec.ts`
+    - `tools/check-phase5.mjs`
+    - `packages/ui/src/views/board-scene.tsx`
+    - `packages/application/src/ai/turn-resolver.ts`
+    - `packages/application/src/ai/turn-resolver.test.ts`
+    - `packages/application/src/ai/heuristic.test.ts`
+    - `packages/application/src/sessions/match.ts`
+    - `packages/application/src/sessions/run.test.ts`
+    - `docs/10-architecture/full-board-ui-roadmap.md`
+    - `docs/40-operations/release-prep.md`
+- 剩余风险与后续 Phase：
+    - `/rooms/[roomId]`、spectator invariants、resync / seq-gap gates 仍归 Phase 6；
+    - replay board 化、a11y、mobile 与 i18n 仍归 Phase 7；
+    - Desktop offline distributability 仍归 Phase 8；
+    - `check-phase4` / `check-phase5` / `check-visual` 目前仍通过 `next start` 启动 built web app，并继续打印 standalone warning；这是后续 tooling hardening 项，不阻塞 Phase 5 关闭。
+- Rebaseline reason and reviewed diffs：
+    - 本轮 visual rebaseline 仅刷新 `apps/web/tests/visual/local-board.spec.ts-snapshots/local-board-take-three-linked-gems-win32.png`；
+    - 直接原因是 `/play/local` 在 Phase 5 收口后已不再使用“正在迁移到 BoardScene”的过渡文案，而改为稳定的 completed-entry wording；
+    - 未观察到 board layout、affordance 或 terminal overlay 的结构性变化。
+- Final regression run (without snapshot updates)：
+    - `pnpm check-phase4`
+    - `pnpm check-phase5`
+    - `pnpm check-visual`
+- Validation：
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `pnpm check-phase4`
+    - `pnpm check-phase5`
+    - `pnpm check-visual`
+- Acceptance evidence：
+    - `/play/local`、`/play/ai` 与 active-match `/play/run` 现共享同一 product-facing 主盘面结构；
+    - `AiTraceDrawer`、run status / Buff draft 等差异已收敛到 sidecar；
+    - AI loop 不再 buried in session glue，而是拥有独立可测模块与 unit tests；
+    - 两条 fixed-seed `finalStateHash` baseline 已冻结到 application tests；
+    - Phase 4 local-player gate 继续通过，说明 shared board surface 的 Phase 5 变更没有回归 classic-local 闭环。
+
+## EN
+
+- Date: 2026-04-18
+- Phase: Phase 5
+- Status: Completed
+- Scope:
+    - close main-board parity for `/play/ai` and `/play/run`;
+    - make AI and active run matches share the same product-facing `BoardScene`, leaving differences in sidecars only;
+    - extract the AI turn loop out of session glue into a standalone testable module and freeze fixed-seed `finalStateHash` baselines.
+- Landed results:
+    - `/play/ai` now defaults to the same `SessionBoardShell -> BoardScene` main surface as `/play/local`, with AI trace kept as an auxiliary drawer only;
+    - `/play/run` now uses that same `BoardScene` main surface whenever an active run match exists, with run status and Buff draft collapsed into sidecars; the starter Buff draft remains a run-only prelude rather than a second active-match main layout;
+    - `packages/ui/src/views/board-scene.tsx` now supports a configurable `eyebrow` and `extraSidecars`, and no longer carries the leftover “Phase 4 is still in progress” copy;
+    - `packages/application/src/ai/turn-resolver.ts` now owns the AI loop responsibilities for snapshot reads, view-model construction, action choice, trace capture, and repeat dispatch, while `packages/application/src/sessions/match.ts` now stays at actor binding plus orchestration;
+    - `pnpm check-phase5` now acts as the automated parity gate for `/play/ai` and `/play/run`;
+    - the application seam now freezes two fixed-seed baselines:
+        - `/play/ai` seed `20260416` -> `finalStateHash = fnv1a-4b6da5bc`
+        - `/play/run` seed `20260417` + starter Buff `down_payment` -> first-match `finalStateHash = fnv1a-5bc41868`
+- Key touched files:
+    - `apps/web/app/play/components/session-board-shell.tsx`
+    - `apps/web/app/play/components/match-playground.tsx`
+    - `apps/web/app/play/components/run-playground.tsx`
+    - `apps/web/tests/phase5/ai-run-parity.spec.ts`
+    - `tools/check-phase5.mjs`
+    - `packages/ui/src/views/board-scene.tsx`
+    - `packages/application/src/ai/turn-resolver.ts`
+    - `packages/application/src/ai/turn-resolver.test.ts`
+    - `packages/application/src/ai/heuristic.test.ts`
+    - `packages/application/src/sessions/match.ts`
+    - `packages/application/src/sessions/run.test.ts`
+    - `docs/10-architecture/full-board-ui-roadmap.md`
+    - `docs/40-operations/release-prep.md`
+- Remaining risks / later phases:
+    - `/rooms/[roomId]`, spectator invariants, and resync / seq-gap gates still belong to Phase 6;
+    - replay-on-board, accessibility, mobile, and i18n still belong to Phase 7;
+    - Desktop offline distributability still belongs to Phase 8;
+    - `check-phase4` / `check-phase5` / `check-visual` still boot the built web app through `next start` and therefore continue to print the standalone warning; this is a later tooling-hardening item and does not block Phase 5 closure.
+- Rebaseline reason and reviewed diffs:
+    - this visual rebaseline refreshes only `apps/web/tests/visual/local-board.spec.ts-snapshots/local-board-take-three-linked-gems-win32.png`;
+    - the direct reason is that `/play/local` no longer shows the transitional “moving to BoardScene” copy and now uses stable completed-entry wording after the Phase 5 closeout;
+    - no structural board-layout, affordance, or terminal-overlay change was observed.
+- Final regression run (without snapshot updates):
+    - `pnpm check-phase4`
+    - `pnpm check-phase5`
+    - `pnpm check-visual`
+- Validation:
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `pnpm check-phase4`
+    - `pnpm check-phase5`
+    - `pnpm check-visual`
+- Acceptance evidence:
+    - `/play/local`, `/play/ai`, and active-match `/play/run` now share the same product-facing main board structure;
+    - `AiTraceDrawer`, run status, and Buff draft are now isolated to sidecars;
+    - the AI loop is no longer buried in session glue and now has a dedicated testable module plus unit coverage;
+    - both fixed-seed `finalStateHash` baselines are now frozen in application tests;
+    - the Phase 4 local-player gate still passes, showing that the shared-board Phase 5 changes did not regress the classic-local closure.

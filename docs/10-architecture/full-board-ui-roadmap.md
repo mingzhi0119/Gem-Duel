@@ -20,7 +20,7 @@
 ### 当前基线
 
 - `packages/ui` 仍同时暴露 `MatchView` 与 `BoardScene` 两类 surface；`MatchView` 继续承担 debug / fallback shell 职责。
-- `/play/local` 当前默认使用 product-facing `BoardScene`，而 `/play/ai`、`/play/run`、`/rooms/[roomId]` 仍保留验证壳。
+- `/play/local`、`/play/ai` 与 active-match `/play/run` 当前默认都使用 product-facing `BoardScene`；`/rooms/[roomId]` 仍保留在线验证壳。
 - 当前壳适合：
     - 校验 command legality；
     - 验证 replay / hash / event sequencing；
@@ -329,10 +329,11 @@ Evidence Caveat：
 
 #### Phase 5 - `/play/ai` 与 `/play/run` Parity
 
-状态：`In Progress`（2026-04-18）。日志：
+状态：`Completed`（2026-04-18）。日志：
 
 - [`logs/phase-5-ai-run-parity-wave-1.md`](./logs/phase-5-ai-run-parity-wave-1.md)
 - [`logs/phase-5-ai-run-parity-wave-2.md`](./logs/phase-5-ai-run-parity-wave-2.md)
+- [`logs/phase-5-ai-run-parity-completion.md`](./logs/phase-5-ai-run-parity-completion.md)
 
 目标：让 AI 与 run 路径共享主盘面，只把辅助信息放进 sidecar。
 
@@ -344,11 +345,13 @@ Evidence Caveat：
 - AI 策略从 session glue 中拆出，形成可测试的 `ai/` surface。
 - 固定 seed 的 AI replay / finalStateHash 基线。
 - `pnpm check-phase5` 自动化验证 `/play/ai` 与 `/play/run` 的主盘面 parity。
+- `/play/ai` seed `20260416` 与 `/play/run` seed `20260417` + starter Buff `down_payment` 的 `finalStateHash` 基线已冻结到 application tests。
 
 完成标准：
 
 - local / AI / run 三条本地入口共享主盘面结构。
 - AI / run 的差异只体现在 sidecar，而不是第二套主布局。
+- Phase 5 AI/run parity gate 已关闭；后续产品完成度继续由 Phase 6 / 7 / 8 决定。
 
 #### Phase 6 - `/rooms/[roomId]`、Spectator 与 Online 一致性门禁
 
@@ -438,7 +441,7 @@ This document is the authoritative full-board UI remediation plan after the Opus
 ### Current Baseline
 
 - `packages/ui` now exposes both `MatchView` and `BoardScene`; `MatchView` remains the debug / fallback shell surface.
-- `/play/local` now defaults to the product-facing `BoardScene`, while `/play/ai`, `/play/run`, and `/rooms/[roomId]` still keep the validation shell.
+- `/play/local`, `/play/ai`, and active-match `/play/run` now default to the product-facing `BoardScene`, while `/rooms/[roomId]` still keeps the online validation shell.
 - The shell is good for:
     - command-legality validation;
     - replay / hash / event-sequencing verification;
@@ -732,10 +735,11 @@ Done criteria:
 
 #### Phase 5 - `/play/ai` and `/play/run` Parity
 
-Status: `In Progress` (2026-04-18). Logs:
+Status: `Completed` (2026-04-18). Logs:
 
 - [`logs/phase-5-ai-run-parity-wave-1.md`](./logs/phase-5-ai-run-parity-wave-1.md)
 - [`logs/phase-5-ai-run-parity-wave-2.md`](./logs/phase-5-ai-run-parity-wave-2.md)
+- [`logs/phase-5-ai-run-parity-completion.md`](./logs/phase-5-ai-run-parity-completion.md)
 
 Goal: move AI and run flows onto the same main board, with auxiliary state in sidecars only.
 
@@ -747,11 +751,13 @@ Outputs:
 - Split AI strategy into a more testable `ai/` surface rather than burying it inside session glue.
 - Add fixed-seed AI replay / `finalStateHash` baselines.
 - Add `pnpm check-phase5` as the automated parity gate for `/play/ai` and `/play/run`.
+- Freeze the `/play/ai` seed `20260416` and `/play/run` seed `20260417` + starter Buff `down_payment` `finalStateHash` baselines in application tests.
 
 Done criteria:
 
 - Local / AI / run all share the same main board structure.
 - AI / run differences are isolated to sidecars, not separate main layouts.
+- The Phase 5 AI/run parity gate is now closed; later product scope is now governed by Phase 6 / 7 / 8.
 
 #### Phase 6 - `/rooms/[roomId]`, Spectator, and Online Consistency Gates
 

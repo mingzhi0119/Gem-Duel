@@ -10,11 +10,12 @@ Step 08 完成后，仓库进入 release-ready 状态：核心契约、域模型
 
 - Step 08 放行的是 engineering release/tag flow，不是产品 GA 结论。
 - `docs/10-architecture/full-board-ui-roadmap.md` 的 Phase 4 local-player gate 已关闭；默认 classic-local 玩家入口现已具备 product-facing `BoardScene` 与 8 条自动化玩家路径。
+- `docs/10-architecture/full-board-ui-roadmap.md` 的 Phase 5 AI/run parity gate 现也已关闭；`/play/ai` 与 active-match `/play/run` 已共享同一 product-facing 主盘面，并具备固定 seed / `finalStateHash` 基线。
 - `v1.0.0` 及以上产品语义版本不再受 local-player board completeness 单点阻塞，但后续产品口径仍必须明确剩余未闭合的 phase。
 - Desktop artifact 当前只应视作 shared-shell engineering artifact；Desktop offline 可分发能力仍受该路线图的 Phase 8 约束。
 - 若未来需要公开产品发布说明，必须同时满足：
     - 默认 classic-local 玩家入口的声明只覆盖已关闭的 Phase 4 范围；
-    - `/play/ai`、`/play/run` parity 若未完成，不得被表述为同等产品完成面；
+    - `/play/ai` 与 active-match `/play/run` 的产品表述只覆盖已关闭的 Phase 5 范围；
     - `/rooms/[roomId]`、spectator / resync 一致性若未完成，不得被表述为 online 产品完成面；
     - Desktop offline 若未完成，不得被表述为已验证分发面；
     - release note 不再把 engineering closure 表述为“所有表面都已产品完成”。
@@ -55,11 +56,12 @@ Here, `release-ready` means the rebuild boundary, build/test surface, and releas
 
 - Step 08 reopens the engineering release/tag flow; it is not a product-GA conclusion.
 - The Phase 4 local-player gate in `docs/10-architecture/full-board-ui-roadmap.md` is now closed; the default classic-local player entrypoint now has a product-facing `BoardScene` plus 8 automated player paths.
+- The Phase 5 AI/run parity gate in `docs/10-architecture/full-board-ui-roadmap.md` is now also closed; `/play/ai` and active-match `/play/run` now share the same product-facing main board and fixed-seed / `finalStateHash` baselines.
 - Product-semantic versions `v1.0.0+` are no longer blocked by the local-player board-completeness gate alone, but release wording must still respect the phases that remain open.
 - The current Desktop artifact should be treated only as a shared-shell engineering artifact; Desktop offline distributability remains gated on Phase 8 of that roadmap.
 - Any future public product-release note must also satisfy:
     - any default-entry claim is scoped to the now-closed Phase 4 classic-local surface;
-    - `/play/ai` and `/play/run` are not described as parity-complete if Phase 5 is still open;
+    - `/play/ai` and active-match `/play/run` claims are scoped only to the now-closed Phase 5 surface;
     - `/rooms/[roomId]`, spectator, and resync are not described as online-product complete if Phase 6 is still open;
     - Desktop offline is not described as validated distributability if Phase 8 is still open;
     - release notes no longer describe engineering closure as “all surfaces are product-complete.”
@@ -87,5 +89,5 @@ Here, `release-ready` means the rebuild boundary, build/test surface, and releas
 - Step 08 only unlocks the future tag-based release flow.
 - Step 08 does not create tags automatically.
 - Before upload, CI must pass the full final acceptance gate and only then publish artifacts.
-- With Phase 4 closed, the default classic-local player entrypoint may now be described as a completed product-default surface, but that may not be stretched into AI / run / online / Desktop parity.
+- With Phase 4 and Phase 5 closed, the local, AI, and active-match run entrypoints may now be described as completed offline player surfaces, but that may not be stretched into online / spectator / Desktop parity.
 - Before Phase 8, the Desktop artifact may not be restated as a validated offline distribution package.
