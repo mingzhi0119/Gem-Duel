@@ -30,6 +30,7 @@
 - [`phase-5-ai-run-parity-completion.md`](./phase-5-ai-run-parity-completion.md): Phase 5 完成日志，记录 AI/run 主盘面 parity 收口、固定 seed/hash 基线冻结与 Phase 4 回归继续通过
 - [`phase-6-room-boardscene-and-spectator-gates-completion.md`](./phase-6-room-boardscene-and-spectator-gates-completion.md): Phase 6 完成日志，记录 `/rooms/[roomId]` 切到 shared `BoardScene`、spectator pending-selection redaction、`check-phase6` 与 resync/越权门禁
 - [`phase-7-replay-boardscene-and-product-finish-completion.md`](./phase-7-replay-boardscene-and-product-finish-completion.md): Phase 7 完成日志，记录 `/replays/[replayId]` 复用 shared `BoardScene`、timeline/hash/keyboard/i18n 收口与 replay desktop/mobile visual baselines
+- [`phase-8-desktop-offline-packaging-validation.md`](./phase-8-desktop-offline-packaging-validation.md): Phase 8 完成日志，记录 Desktop 通过 embedded standalone web runtime、static asset sync、`preload.cjs` bridge 与 `check-phase8` 关闭 offline runtime gate
 
 ## EN
 
@@ -61,3 +62,4 @@ This directory stores landing logs for phases tracked in `docs/10-architecture/f
 - [`phase-5-ai-run-parity-completion.md`](./phase-5-ai-run-parity-completion.md): Phase 5 completion log for closing AI/run main-board parity, freezing the seed/hash baselines, and keeping the Phase 4 regression green
 - [`phase-6-room-boardscene-and-spectator-gates-completion.md`](./phase-6-room-boardscene-and-spectator-gates-completion.md): Phase 6 completion log for moving `/rooms/[roomId]` onto the shared `BoardScene`, redacting spectator pending-selection state, and landing the `check-phase6` browser/integration gate
 - [`phase-7-replay-boardscene-and-product-finish-completion.md`](./phase-7-replay-boardscene-and-product-finish-completion.md): Phase 7 completion log for moving `/replays/[replayId]` onto the shared `BoardScene`, closing timeline/hash/keyboard/i18n on the replay surface, and adding replay desktop/mobile visual baselines
+- [`phase-8-desktop-offline-packaging-validation.md`](./phase-8-desktop-offline-packaging-validation.md): Phase 8 completion log for closing Desktop offline runtime validation through the embedded standalone web runtime, static-asset sync, the `preload.cjs` bridge, and `check-phase8`

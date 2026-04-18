@@ -14,21 +14,20 @@
 ### 审计结论
 
 - Step 00-08 在工程边界上属于“强达成”：分层、contracts、determinism、room-service authority、replay 与 release gate 已经闭环。
-- 当前产品完成度已从“弱达成”推进到“近完成”：local / AI / run / online room / replay 现都已收敛到共享主盘面与对应 gate，剩余未闭合项主要收敛为 Desktop offline 验证。
+- 当前产品完成度已从“近完成”推进到“路线图闭环”：local / AI / run / online room / replay / desktop offline 现都已收敛到共享主盘面与对应 gate，roadmap Phase 0-8 已全部关闭。
 - 后续整改必须把“工程收口”与“玩家可用产品”分开治理；本路线图就是产品侧和 presentation/projection 侧的正式 backlog。
 
 ### 当前基线
 
-- `packages/ui` 仍同时暴露 `MatchView` 与 `BoardScene` 两类 surface；`MatchView` 继续承担 debug / fallback shell 职责。
-- `/play/local`、`/play/ai`、active-match `/play/run`、`/rooms/[roomId]` 与 `/replays/[replayId]` 当前都已复用 shared `BoardScene`；`MatchView` 只保留 debug / fallback 壳职责。
+- `packages/ui` 仍同时暴露 `MatchView` 与 `BoardScene` 两类 surface；`BoardScene` 现已覆盖产品默认面，`MatchView` 继续承担 debug / fallback shell 职责。
+- `/play/local`、`/play/ai`、active-match `/play/run`、`/rooms/[roomId]`、`/replays/[replayId]` 与 Desktop shared shell 当前都已复用同一套 shared board/runtime 边界。
 - 当前壳适合：
     - 校验 command legality；
     - 验证 replay / hash / event sequencing；
-    - 调试 local / AI / run / room session 的状态推进。
-- 当前壳不适合：
-    - 让未读规则书的玩家独立完成一局；
-    - 作为 full-board product UI 的默认发布面；
-    - 作为 Desktop offline 分发已验证的依据。
+    - 调试 local / AI / run / room / desktop session 的状态推进。
+- 当前仍需持续 hardening 的点：
+    - `*-win32.png` 单平台 visual baseline 策略；
+    - 若未来需要独立安装器、签名或商店分发，仍需在当前已验证 artifact 之外单列 packaging 工作。
 
 ### 不变约束
 
@@ -71,7 +70,7 @@
     - Step 00-08 = engineering closure；
     - full-board product completion 另行追踪；
     - Desktop offline 分发尚未验收；
-    - 当时 `v1.0.0+` 语义版本需等待 Phase 4；截至当前状态，local-player gate 已关闭，Desktop offline 仍需等待 Phase 8。
+    - 当时 `v1.0.0+` 语义版本需等待 Phase 4；截至当前状态，local-player gate 与 Desktop offline gate 均已 separately closed。
 - 在 step-log 规范中新增 acceptance evidence 要求：commit SHA、CI run id、golden replay hash 摘要或 validation-output 摘要。
 - 已将 `apps/web/app/page.tsx` 的 hero / marketing copy 降级为“deterministic validation shell + roadmap link”口径，并把 CTA 从产品完成话术收口为 validation surface 话术。
 
@@ -404,20 +403,24 @@ Evidence caveat：
 
 #### Phase 8 - Desktop Offline Packaging Validation
 
-目标：最后单列验证 Desktop 是否真的能消费 shared shell 并独立分发。
+状态：`Completed`（2026-04-18）。日志：[`logs/phase-8-desktop-offline-packaging-validation.md`](./logs/phase-8-desktop-offline-packaging-validation.md)
+
+目标：验证 Desktop 是否真的能消费 shared shell 并以已验证的 offline runtime 形态分发。
 
 覆盖发现：F2。
 
 本阶段输出：
 
-- Desktop runtime 与 Web shell 的真实装配方案定稿：`next start` child process、受限 export、或其他明确方案。
-- Desktop 构建、启动、资源加载与主盘面 smoke/e2e。
-- 对 release-prep 的 Desktop artifact 口径重新收口。
+- `apps/desktop` 现已在无 `GEM_DUEL_WEB_URL` 时自动拉起 co-located Next standalone server，并通过 `ELECTRON_RUN_AS_NODE` 运行 `apps/web/.next/standalone/apps/web/server.js`。
+- Desktop runtime 启动前会把 `apps/web/.next/static/**` 镜像到 standalone 目标位，修复 SSR-only 启动与 `/_next/static/*` 资源缺失。
+- preload bridge 已定稿为 `preload.cjs` + `sandbox: false` 装配，`desktopShell.getVersion()` 现可稳定暴露到 shared web shell。
+- `pnpm check-phase8` 已成为正式 gate：它会构建 web/desktop，并以 Electron + Playwright 验证 loopback HTTP startup、bridge、资源加载与 classic-local 主盘面 smoke path。
+- `release-prep.md` 的 Desktop artifact 口径已回写为“已验证的 shared-shell offline runtime artifact”，而不是理论共享面。
 
 完成标准：
 
 - Desktop 不再仅靠“理论上共享 Web routes”被视作完成。
-- `apps/desktop` 在构建与启动层面具备可验证的 full-board runtime。
+- `apps/desktop` 在构建、启动、资源加载与主盘面 smoke/e2e 层面都具备可验证的 full-board runtime。
 
 ### 默认决策
 
@@ -426,11 +429,11 @@ Evidence caveat：
 - 默认先做 classic local board，再追 AI / run / online parity。
 - 默认保留 debug / replay / trace，但把它们放到 sidecar / drawer，而不是主舞台。
 
-### 立即可执行的高 ROI 顺序
+### 后续 Hardening Follow-Ups
 
-1. Milestone J：收口 `apps/desktop` 的真实 startup/distribution 方案，避免 `next start` / standalone 警告长期挂在 gate 上。
-2. Milestone K：在 Desktop validation 过程中一并硬化 visual-governance 的平台策略，减少 `*-win32.png` 单平台基线风险。
-3. Milestone L：继续把 release-prep 的 public wording 严格限制在已关闭 phase，直到 Phase 8 也收口为止。
+1. Milestone J：已关闭。`apps/desktop` 的 shared-web-shell startup/distribution 方案现已通过 `pnpm check-phase8` 验证。
+2. Milestone K：继续硬化 visual-governance 的平台策略，减少 `*-win32.png` 单平台基线风险。
+3. Milestone L：已关闭。release-prep wording 现已只描述已验证 artifact 与已关闭 phases。
 
 ## EN
 
@@ -446,21 +449,20 @@ This document is the authoritative full-board UI remediation plan after the Opus
 ### Audit Summary
 
 - Step 00-08 is a strong success at the engineering-boundary level: layering, contracts, determinism, room-service authority, replay, and release gates are closed.
-- Product completion has moved from weak to near-complete: local, AI, run, online room, and replay now converge on the shared board surface, and the main remaining open item is Desktop offline validation.
+- Product completion has moved from near-complete to roadmap closure: local, AI, run, online room, replay, and Desktop offline now converge on the shared board surface, and roadmap Phase 0-8 is fully closed.
 - Follow-up work must treat engineering closure and player-facing product completion as different tracks. This roadmap is the formal backlog for the product/presentation/projection side.
 
 ### Current Baseline
 
-- `packages/ui` now exposes both `MatchView` and `BoardScene`; `MatchView` remains the debug / fallback shell surface.
-- `/play/local`, `/play/ai`, active-match `/play/run`, `/rooms/[roomId]`, and `/replays/[replayId]` now all reuse the shared `BoardScene`; `MatchView` remains only as the debug/fallback shell surface.
+- `packages/ui` still exposes both `MatchView` and `BoardScene`; `BoardScene` now covers the product-default surface, while `MatchView` remains the debug / fallback shell surface.
+- `/play/local`, `/play/ai`, active-match `/play/run`, `/rooms/[roomId]`, `/replays/[replayId]`, and the Desktop shared shell now all reuse the same shared board/runtime boundary.
 - The shell is good for:
     - command-legality validation;
     - replay / hash / event-sequencing verification;
-    - debugging local / AI / run / room session progression.
-- The shell is not good for:
-    - allowing a new player to finish a match without a rulebook;
-    - acting as the default full-board product surface;
-    - serving as proof that Desktop offline distribution is validated.
+    - debugging local / AI / run / room / desktop session progression.
+- The remaining hardening topics are:
+    - platform-agnostic visual-baseline policy beyond `*-win32.png`;
+    - any future installer/signing/store-distribution work beyond the currently validated artifact shape.
 
 ### Invariants
 
@@ -503,7 +505,7 @@ Outputs:
     - Step 00-08 = engineering closure;
     - full-board product completion is tracked separately;
     - Desktop offline distribution is still unaccepted;
-    - at that point `v1.0.0+` required Phase 4; in the current state the local-player gate is closed, while Desktop offline release still requires Phase 8.
+    - at that point `v1.0.0+` required Phase 4; in the current state both the local-player gate and the Desktop offline gate are separately closed.
 - Add an acceptance-evidence rule to the step-log guide: commit SHA, CI run id, golden replay hash summary, or validation-output summary.
 - `apps/web/app/page.tsx` now uses downgraded hero/marketing wording centered on a deterministic validation shell plus a roadmap link, and its CTA labels no longer imply a player-complete product.
 
@@ -821,20 +823,24 @@ Done criteria:
 
 #### Phase 8 - Desktop Offline Packaging Validation
 
-Goal: validate Desktop as an actual shared-shell distribution target instead of a theoretical one.
+Status: `Completed` (2026-04-18). Log: [`logs/phase-8-desktop-offline-packaging-validation.md`](./logs/phase-8-desktop-offline-packaging-validation.md)
+
+Goal: validate Desktop as an actual shared-shell distribution target with a verified offline runtime shape instead of a theoretical one.
 
 Covers: F2.
 
 Outputs:
 
-- Finalize a real Desktop runtime assembly plan with the Web shell: `next start` child process, constrained export, or another explicit supported strategy.
-- Desktop build, launch, asset-loading, and full-board smoke/e2e coverage.
-- Re-close the Desktop artifact wording in release-prep once validated.
+- `apps/desktop` now auto-starts the co-located Next standalone server whenever `GEM_DUEL_WEB_URL` is absent, using `ELECTRON_RUN_AS_NODE` to run `apps/web/.next/standalone/apps/web/server.js`.
+- Before Desktop launch, the runtime now mirrors `apps/web/.next/static/**` into the standalone target, fixing SSR-only startup and missing `/_next/static/*` assets.
+- The preload bridge is now finalized as `preload.cjs` plus `sandbox: false`, making `desktopShell.getVersion()` reliably available inside the shared web shell.
+- `pnpm check-phase8` is now the formal gate: it builds web/desktop, launches Electron, and validates loopback HTTP startup, the desktop bridge, resource loading, and the deterministic classic-local board smoke path.
+- `release-prep.md` now describes the Desktop artifact as a validated shared-shell offline runtime artifact instead of a theoretical engineering-only surface.
 
 Done criteria:
 
 - Desktop is no longer treated as complete merely because it theoretically reuses Web routes.
-- `apps/desktop` has a verifiable full-board runtime at the build/startup layer.
+- `apps/desktop` now has a verifiable full-board runtime across build, startup, asset loading, and main-board smoke/e2e.
 
 ### Default Decisions
 
@@ -843,8 +849,8 @@ Done criteria:
 - Deliver classic local board first, then AI / run / online parity.
 - Keep debug / replay / trace tooling, but move it into sidecar / drawer surfaces instead of the main stage.
 
-### Immediate High-ROI Order
+### Follow-Up Hardening
 
-1. Milestone J: close the real `apps/desktop` startup/distribution path and stop carrying the `next start` / standalone warning through the remaining gates.
-2. Milestone K: harden the visual-governance platform policy during Desktop validation so screenshot baselines stop depending on `*-win32.png` alone.
-3. Milestone L: keep release wording scoped to the already-closed phases until Phase 8 also closes.
+1. Milestone J: closed. The real `apps/desktop` startup/distribution path is now validated by `pnpm check-phase8`.
+2. Milestone K: continue hardening the visual-governance platform policy so screenshot baselines stop depending on `*-win32.png` alone.
+3. Milestone L: closed. Release wording is now scoped to the validated artifact shape and the phases that are already closed.

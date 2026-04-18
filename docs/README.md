@@ -12,9 +12,9 @@
 - [`10-architecture/README.md`](./10-architecture/README.md): 分层与目录标准
 - [`10-architecture/engineering-standards.md`](./10-architecture/engineering-standards.md): 工程规范与 Git 策略
 - [`10-architecture/agent-guardrails-matrix.md`](./10-architecture/agent-guardrails-matrix.md): Agent 边界、机械化护栏与分层 AGENTS 设计
-- [`10-architecture/logs/README.md`](./10-architecture/logs/README.md): full-board roadmap 各 Phase 的落地日志入口，现含 Phase 1 delayed addendum、Phase 2 closure、Phase 3 evidence caveat、Phase 4 completion evidence、Phase 5 parity closure、Phase 6 room-board convergence closure 与 Phase 7 replay/product-finish closure 索引
+- [`10-architecture/logs/README.md`](./10-architecture/logs/README.md): full-board roadmap 各 Phase 的落地日志入口，现含 Phase 1 delayed addendum、Phase 2 closure、Phase 3 evidence caveat、Phase 4 completion evidence、Phase 5 parity closure、Phase 6 room-board convergence closure、Phase 7 replay/product-finish closure 与 Phase 8 desktop-offline closure 索引
 - [`10-architecture/web-desktop-application-integration.md`](./10-architecture/web-desktop-application-integration.md): Step 06 Web/Desktop 通过 application/ui 共享视图模型与交互边界
-- [`10-architecture/full-board-ui-roadmap.md`](./10-architecture/full-board-ui-roadmap.md): Opus 4.7 审计后的 full-board UI 发现清单、整改归属与按 Phase 排序路线图，现已同步重排 Phase 1/2/3 状态与 Phase 1a 前置门
+- [`10-architecture/full-board-ui-roadmap.md`](./10-architecture/full-board-ui-roadmap.md): Opus 4.7 审计后的 full-board UI 发现清单、整改归属与按 Phase 排序路线图，现已同步记录从 Phase 1a 到 Phase 8 的关闭结果
 - [`10-architecture/full-board-ui-roadmap-phase-0-3-independent-audit.md`](./10-architecture/full-board-ui-roadmap-phase-0-3-independent-audit.md): Phase 0-3 独立审计的 repo-verified disposition、状态重排依据与治理 backlog
 - [`10-architecture/phase-1-application-ui-structure-plan.md`](./10-architecture/phase-1-application-ui-structure-plan.md): Phase 1 的 `application/ui` 结构清理目标目录、write-scope、迁移顺序与非目标
 - [`10-architecture/phase-2-interaction-and-uiviewmodel-plan.md`](./10-architecture/phase-2-interaction-and-uiviewmodel-plan.md): Phase 2 的交互范式决策门、迁移顺序、write-scope 与非目标
@@ -34,7 +34,7 @@
 - [`30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md`](./30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md): Phase 2 的 `UiViewModel` 2.0 字段清单、受影响 payload 与 contract PR checklist
 - [`30-contracts/phase-2-uiviewmodel-2.0-migration-note.md`](./30-contracts/phase-2-uiviewmodel-2.0-migration-note.md): Phase 2 的 `UiViewModel` 2.0 additive contract change 迁移说明
 - [`40-operations/README.md`](./40-operations/README.md): 部署、观测、CI/CD 与运行策略
-- [`40-operations/release-prep.md`](./40-operations/release-prep.md): Step 08 release-ready 定义、engineering release 与产品 GA 的边界、最终验收门禁与当前产物范围
+- [`40-operations/release-prep.md`](./40-operations/release-prep.md): Step 08 release-ready 定义、engineering release 与产品 GA 的边界、Phase 4-8 关闭后的最终验收门禁与当前 Desktop artifact 形态
 - [`40-operations/room-service-authority-semantics.md`](./40-operations/room-service-authority-semantics.md): Step 05 room-service 权威语义、连接绑定、广播与 replay 存储触发
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent 工具、CI 护栏与 `.codex`/MCP 规划
 - [`40-operations/skills-governance.md`](./40-operations/skills-governance.md): 项目本地 Skills 的质量标准、步骤映射与目录治理
@@ -58,9 +58,9 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`10-architecture/README.md`](./10-architecture/README.md): Layering and directory standards
 - [`10-architecture/engineering-standards.md`](./10-architecture/engineering-standards.md): Engineering standards and Git policy
 - [`10-architecture/agent-guardrails-matrix.md`](./10-architecture/agent-guardrails-matrix.md): Agent boundaries, mechanical guardrails, and layered AGENTS design
-- [`10-architecture/logs/README.md`](./10-architecture/logs/README.md): Entry point for landing logs tied to full-board roadmap phases, now including the Phase 1 delayed addendum, Phase 2 closure, the Phase 3 evidence caveat, the Phase 4 completion evidence, the Phase 5 parity closure, the Phase 6 room-board convergence closure, and the Phase 7 replay/product-finish closure
+- [`10-architecture/logs/README.md`](./10-architecture/logs/README.md): Entry point for landing logs tied to full-board roadmap phases, now including the Phase 1 delayed addendum, Phase 2 closure, the Phase 3 evidence caveat, the Phase 4 completion evidence, the Phase 5 parity closure, the Phase 6 room-board convergence closure, the Phase 7 replay/product-finish closure, and the Phase 8 desktop-offline closure
 - [`10-architecture/web-desktop-application-integration.md`](./10-architecture/web-desktop-application-integration.md): Step 06 Web/Desktop composition through shared application/ui boundaries
-- [`10-architecture/full-board-ui-roadmap.md`](./10-architecture/full-board-ui-roadmap.md): Opus 4.7 audit findings, remediation ownership, and the phase-sorted roadmap from the current validation shell to a full playable board UI, now rephased to reflect the current Phase 1/2/3 repository reality
+- [`10-architecture/full-board-ui-roadmap.md`](./10-architecture/full-board-ui-roadmap.md): Opus 4.7 audit findings, remediation ownership, and the phase-sorted roadmap from the current validation shell to a full playable board UI, now recording the closure path from Phase 1a through Phase 8
 - [`10-architecture/full-board-ui-roadmap-phase-0-3-independent-audit.md`](./10-architecture/full-board-ui-roadmap-phase-0-3-independent-audit.md): Repo-verified disposition, status-rephase basis, and governance backlog for the independent Phase 0-3 audit
 - [`10-architecture/phase-1-application-ui-structure-plan.md`](./10-architecture/phase-1-application-ui-structure-plan.md): Target layout, write scopes, migration order, and non-goals for the Phase 1 `application/ui` cleanup
 - [`10-architecture/phase-2-interaction-and-uiviewmodel-plan.md`](./10-architecture/phase-2-interaction-and-uiviewmodel-plan.md): Interaction-model decision gate, migration order, write scopes, and non-goals for Phase 2
@@ -80,7 +80,7 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md`](./30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md): Phase 2 `UiViewModel` 2.0 field inventory, affected payloads, and the contract-PR checklist
 - [`30-contracts/phase-2-uiviewmodel-2.0-migration-note.md`](./30-contracts/phase-2-uiviewmodel-2.0-migration-note.md): Migration note for the landed additive Phase 2 `UiViewModel` 2.0 contract change
 - [`40-operations/README.md`](./40-operations/README.md): Deployment, observability, CI/CD, and runtime strategy
-- [`40-operations/release-prep.md`](./40-operations/release-prep.md): Step 08 release-ready definition, the engineering-release vs product-GA boundary, final acceptance gates, and current artifact scope
+- [`40-operations/release-prep.md`](./40-operations/release-prep.md): Step 08 release-ready definition, the engineering-release vs product-GA boundary, the post-Phase-8 final acceptance gates, and the current Desktop artifact shape
 - [`40-operations/room-service-authority-semantics.md`](./40-operations/room-service-authority-semantics.md): Step 05 room-service authority semantics, connection binding, broadcast rules, and replay persistence
 - [`40-operations/agent-tooling-rollout.md`](./40-operations/agent-tooling-rollout.md): Agent tooling, CI guardrails, and `.codex`/MCP planning
 - [`40-operations/skills-governance.md`](./40-operations/skills-governance.md): Quality bar, step mapping, and directory governance for project-local skills
