@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-    testDir: './apps/web/tests/visual',
+    testDir: './apps/web/tests',
     fullyParallel: false,
     outputDir: './tmp/playwright/test-results',
     reporter: 'line',

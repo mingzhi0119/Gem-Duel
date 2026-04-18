@@ -3,6 +3,7 @@ import { createEnginePorts } from '@gem-duel/adapters';
 import {
     buildReplayBundle,
     createMatchActor,
+    createMatchActorFromSnapshot,
     dispatchCommand,
     readSnapshot,
     type EnginePorts,
@@ -14,15 +15,22 @@ import type {
     AiDecisionTrace,
     MatchSession,
     MatchSessionInput,
+    PreparedShellMatchSessionInput,
     ShellMatchSessionInput,
 } from '../shared/types';
 import { buildUiViewModel } from '../view-model';
 
-export const createMatchSession = (
-    input: MatchSessionInput,
-    ports: EnginePorts
-): TypedResult<MatchSession> => {
-    const actor = createMatchActor(input, ports);
+const bindMatchSession = ({
+    actor,
+    seed,
+    mode,
+    preludeCommands = [],
+}: {
+    actor: ReturnType<typeof createMatchActor>;
+    seed: number;
+    mode: MatchSessionInput['mode'];
+    preludeCommands?: GameCommand[];
+}): TypedResult<MatchSession> => {
     const initialSnapshot = readSnapshot(actor);
     const commandLog: ReplayCommand[] = [];
     const aiDecisionLog: AiDecisionTrace[] = [];
@@ -38,7 +46,7 @@ export const createMatchSession = (
     };
 
     const resolveAiTurns = (): TypedResult<GameSnapshot> => {
-        if (input.mode !== 'ai') {
+        if (mode !== 'ai') {
             return {
                 ok: true,
                 value: readSnapshot(actor),
@@ -55,7 +63,7 @@ export const createMatchSession = (
             const decision = chooseAiAction(
                 currentSnapshot,
                 aiView.availableActions,
-                input.seed,
+                seed,
                 aiDecisionLog.length
             );
             if (!decision) {
@@ -75,18 +83,11 @@ export const createMatchSession = (
         };
     };
 
-    const selectMode = recordedDispatch({
-        type: 'SELECT_MODE',
-        mode: input.mode,
-        flags: input.flags,
-    });
-    if (!selectMode.ok) {
-        return selectMode;
-    }
-
-    const startMatch = recordedDispatch({ type: 'START_MATCH' });
-    if (!startMatch.ok) {
-        return startMatch;
+    for (const command of preludeCommands) {
+        const result = recordedDispatch(command);
+        if (!result.ok) {
+            return result;
+        }
     }
 
     const aiBootstrap = resolveAiTurns();
@@ -132,6 +133,24 @@ export const createMatchSession = (
     };
 };
 
+export const createMatchSession = (
+    input: MatchSessionInput,
+    ports: EnginePorts
+): TypedResult<MatchSession> =>
+    bindMatchSession({
+        actor: createMatchActor(input, ports),
+        seed: input.seed,
+        mode: input.mode,
+        preludeCommands: [
+            {
+                type: 'SELECT_MODE',
+                mode: input.mode,
+                flags: input.flags,
+            },
+            { type: 'START_MATCH' },
+        ],
+    });
+
 export const createLocalMatchSession = (input: ShellMatchSessionInput): TypedResult<MatchSession> =>
     createMatchSession(
         {
@@ -142,6 +161,40 @@ export const createLocalMatchSession = (input: ShellMatchSessionInput): TypedRes
         },
         createEnginePorts(input.seed)
     );
+
+export const createPreparedLocalMatchSession = (
+    input: PreparedShellMatchSessionInput
+): TypedResult<MatchSession> => {
+    const ports = createEnginePorts(input.seed);
+    const actor = input.snapshot
+        ? createMatchActorFromSnapshot(input.snapshot, ports)
+        : createMatchActor(
+              {
+                  seed: input.seed,
+                  mode: 'local',
+                  flags: input.flags,
+                  runContext: input.runContext ?? null,
+              },
+              ports
+          );
+
+    return bindMatchSession({
+        actor,
+        seed: input.seed,
+        mode: 'local',
+        preludeCommands: input.snapshot
+            ? (input.bootstrapCommands ?? [])
+            : [
+                  {
+                      type: 'SELECT_MODE',
+                      mode: 'local',
+                      flags: input.flags,
+                  },
+                  { type: 'START_MATCH' },
+                  ...(input.bootstrapCommands ?? []),
+              ],
+    });
+};
 
 export const createAiMatchSession = (input: ShellMatchSessionInput): TypedResult<MatchSession> =>
     createMatchSession(

@@ -39,6 +39,11 @@ export interface ShellMatchSessionInput {
     runContext?: RunContext | null;
 }
 
+export interface PreparedShellMatchSessionInput extends ShellMatchSessionInput {
+    snapshot?: GameSnapshot | null;
+    bootstrapCommands?: GameCommand[];
+}
+
 export interface ReplayInspectorStep {
     index: number;
     label: string;

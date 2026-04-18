@@ -286,12 +286,20 @@ Evidence Caveat：
 
 #### Phase 4 - `/play/local` Full Board + Player Path Acceptance
 
+状态：`In Progress / Gate 2 preflight landed`（2026-04-18）。治理文档：[`phase-4-player-path-acceptance-matrix.md`](./phase-4-player-path-acceptance-matrix.md)。日志：[`logs/phase-4-preflight-acceptance-matrix-and-scenario-harness.md`](./logs/phase-4-preflight-acceptance-matrix-and-scenario-harness.md)
+
 目标：先把 classic local board 做成真正可玩的默认入口。
 
 覆盖发现：F1、F3、F9、F11。
 
 本阶段输出：
 
+- Gate 2 preflight 已落：
+    - `/play/local` 明确收口为 classic-local 默认入口；
+    - `/play/local?shell=debug` 保留 legacy `MatchView` fallback；
+    - `/play/local?scenario=<row-id>` 已支持 deterministic scenario bootstrap；
+    - `pnpm check-phase4` 已接线为 repo-level automation entrypoint，当前先验证 bootstrap-level deterministic startup；
+    - Player Path Acceptance Matrix 已冻结 8 条路径的 `seed + starting fixture + expected finalStateHash` 三元组。
 - `/play/local` 切到 full-board scene，旧调试壳只保留为 debug fallback。
 - 依据 Phase 2 的 ADR 接入多选/串联交互。
 - 把 hero / marketing copy 与默认入口行为一起降级到真实口径。
@@ -311,6 +319,7 @@ Evidence Caveat：
 - 玩家不读按钮列表也能完成 classic 核心流程。
 - Phase 4 完成前，不得把产品语义版本升级到 `v1.0.0+`。
 - Player Path Acceptance Matrix 具备 E2E 或明确人工验收脚本。
+- Gate 2 只意味着 acceptance matrix 与 scenario harness 已冻结；只有默认 `BoardScene` 落地并通过 8 条玩家路径自动化后，Phase 4 才能标记为 `Completed`。
 
 #### Phase 5 - `/play/ai` 与 `/play/run` Parity
 
@@ -394,7 +403,7 @@ Evidence Caveat：
 
 1. Milestone A：锁定事实状态与 phase 口径。
 2. Milestone B：完成 `Phase 1a - Application Emergency Split`。
-3. Milestone C：在 Phase 4 前冻结 player-path matrix 的 `seed / fixture / finalStateHash` 三元组。
+3. Milestone C：在 Phase 4 前冻结 player-path matrix 的 `seed / fixture / finalStateHash` 三元组，并落 `/play/local?scenario=` 与 `pnpm check-phase4` preflight harness。
 4. Milestone D：在 Phase 6 前补齐 spectator invariants，并把泄漏字段清单写成正式门禁契约。
 
 ## EN
@@ -668,12 +677,20 @@ Done criteria:
 
 #### Phase 4 - `/play/local` Full Board + Player Path Acceptance
 
+Status: `In Progress / Gate 2 preflight landed` (2026-04-18). Governance doc: [`phase-4-player-path-acceptance-matrix.md`](./phase-4-player-path-acceptance-matrix.md). Log: [`logs/phase-4-preflight-acceptance-matrix-and-scenario-harness.md`](./logs/phase-4-preflight-acceptance-matrix-and-scenario-harness.md)
+
 Goal: make classic local board the first genuinely playable default entrypoint.
 
 Covers: F1, F3, F9, F11.
 
 Outputs:
 
+- Gate 2 preflight is already landed:
+    - `/play/local` is now explicitly the classic-local default route;
+    - `/play/local?shell=debug` preserves the legacy `MatchView` fallback;
+    - `/play/local?scenario=<row-id>` already supports deterministic scenario bootstrap;
+    - `pnpm check-phase4` is now wired as the repo-level automation entrypoint and currently validates bootstrap-level deterministic startup;
+    - the Player Path Acceptance Matrix now freezes the `seed + starting fixture + expected finalStateHash` triad for all 8 rows.
 - Switch `/play/local` to a full-board scene and keep the old debug shell as fallback only.
 - Drive multi-step interaction according to the Phase 2 ADR.
 - Downgrade hero/marketing language and default-entry behavior to match the real product state.
@@ -693,6 +710,7 @@ Done criteria:
 - Players can finish the classic core flow without reading raw action buttons.
 - Product-semantic versions `v1.0.0+` remain blocked until this phase is complete.
 - The Player Path Acceptance Matrix has either E2E coverage or explicit manual acceptance scripts.
+- Gate 2 alone only freezes the acceptance matrix and scenario harness; Phase 4 can be marked `Completed` only after the default `BoardScene` lands and all 8 player paths pass interaction automation.
 
 #### Phase 5 - `/play/ai` and `/play/run` Parity
 
@@ -776,5 +794,5 @@ Done criteria:
 
 1. Milestone A: lock the factual state and phase wording.
 2. Milestone B: `Phase 1a - Application Emergency Split` closed.
-3. Milestone C: freeze the Phase 4 player-path `seed / fixture / finalStateHash` triads.
+3. Milestone C: freeze the Phase 4 player-path `seed / fixture / finalStateHash` triads and land the `/play/local?scenario=` + `pnpm check-phase4` preflight harness.
 4. Milestone D: define spectator invariants as a formal gate before Phase 6.

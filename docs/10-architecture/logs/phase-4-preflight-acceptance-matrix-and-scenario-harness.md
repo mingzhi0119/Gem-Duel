@@ -1,0 +1,97 @@
+# Phase 4 Log - Preflight Acceptance Matrix and Scenario Harness
+
+## ZH
+
+- 日期：2026-04-18
+- Phase：Phase 4
+- 状态：In Progress / Gate 2 preflight landed
+- 范围：
+    - 冻结 classic-local 玩家路径验收矩阵；
+    - 为 `/play/local` 落 deterministic scenario bootstrap；
+    - 引入 repo-level `check-phase4` automation entrypoint；
+    - 保持默认 renderer 仍为 legacy shell，暂不提前宣称 BoardScene 已切主入口。
+- 本阶段已落地结果：
+    - 新增 [`../phase-4-player-path-acceptance-matrix.md`](../phase-4-player-path-acceptance-matrix.md)，冻结 8 条 Phase 4 玩家路径的 `seed + starting fixture + expected finalStateHash` 三元组；
+    - `/play/local` 现支持：
+        - 默认 classic-local 入口；
+        - `?shell=debug` legacy shell fallback；
+        - `?scenario=<row-id>` deterministic scenario bootstrap；
+    - `packages/application` 新增 prepared local session bootstrap，允许从 authoritative snapshot 启动 classic-local session，而不改 contract surface；
+    - 新增 `pnpm check-phase4`，当前先跑 bootstrap-level Playwright 验证，而不是完整玩家交互闭环。
+- 关键涉及文件：
+    - `packages/application/src/shared/types.ts`
+    - `packages/application/src/sessions/match.ts`
+    - `packages/application/src/index.ts`
+    - `apps/web/app/play/local/page.tsx`
+    - `apps/web/app/play/local/scenarios.ts`
+    - `apps/web/app/play/components/match-playground.tsx`
+    - `apps/web/tests/phase4/local-scenario-bootstrap.spec.ts`
+    - `tools/check-phase4.mjs`
+    - `playwright.config.ts`
+    - `package.json`
+    - `docs/10-architecture/phase-4-player-path-acceptance-matrix.md`
+- 当前仍未完成的 Phase 4 输出：
+    - 默认 `/play/local` 仍未切到 product-facing `BoardScene`；
+    - `BoardSceneScaffold` 仍是 playground/debug asset，不是产品入口；
+    - 8 条玩家路径目前只有 bootstrap 级别断言，尚未形成真实 UI 交互自动化；
+    - `TerminalOverlay`、market buy/reserve affordances、board click intent mapping 仍属于 Gate 3 / Gate 4 范围。
+- 风险与约束：
+    - 当前 `check-phase4` 证明的是 scenario bootstrap 和 frozen-hash exposure，不等于 Phase 4 已完成；
+    - 若后续 BoardScene productization 发现 contract 缺口，不得在页面层补推导，必须暂停并回到 Phase 2 governance；
+    - `/play/ai`、`/play/run`、`/rooms/[roomId]` 仍明确不在本轮范围内。
+- Validation：
+    - `pnpm --filter @gem-duel/application typecheck`
+    - `pnpm --filter @gem-duel/web typecheck`
+    - `pnpm check-phase4`
+- Acceptance evidence：
+    - 所有 8 条 scenario 已验证可 deterministic bootstrap，并暴露冻结的 `expectedFinalStateHash`；
+    - `debug-shell-fallback` 与 `terminal-victory` 的分支行为已由 Playwright bootstrap spec 区分；
+    - `apps/web/next-env.d.ts` 构建漂移需在提交前恢复，不纳入 commit boundary。
+
+## EN
+
+- Date: 2026-04-18
+- Phase: Phase 4
+- Status: In Progress / Gate 2 preflight landed
+- Scope:
+    - freeze the classic-local player-path acceptance matrix;
+    - land deterministic scenario bootstrap for `/play/local`;
+    - introduce a repo-level `check-phase4` automation entrypoint;
+    - keep the default renderer on the legacy shell for now instead of claiming that BoardScene already owns the route.
+- Landed results:
+    - Added [`../phase-4-player-path-acceptance-matrix.md`](../phase-4-player-path-acceptance-matrix.md), freezing the `seed + starting fixture + expected finalStateHash` triad for the 8 Phase 4 player paths;
+    - `/play/local` now supports:
+        - the default classic-local route;
+        - the `?shell=debug` legacy-shell fallback;
+        - the `?scenario=<row-id>` deterministic scenario bootstrap;
+    - `packages/application` now includes prepared local-session bootstrap so a classic-local session can start from an authoritative snapshot without expanding the contract surface;
+    - `pnpm check-phase4` now exists and currently runs bootstrap-level Playwright verification rather than full player-driven interaction closure.
+- Key touched files:
+    - `packages/application/src/shared/types.ts`
+    - `packages/application/src/sessions/match.ts`
+    - `packages/application/src/index.ts`
+    - `apps/web/app/play/local/page.tsx`
+    - `apps/web/app/play/local/scenarios.ts`
+    - `apps/web/app/play/components/match-playground.tsx`
+    - `apps/web/tests/phase4/local-scenario-bootstrap.spec.ts`
+    - `tools/check-phase4.mjs`
+    - `playwright.config.ts`
+    - `package.json`
+    - `docs/10-architecture/phase-4-player-path-acceptance-matrix.md`
+- Still unfinished inside Phase 4:
+    - the default `/play/local` route has not yet switched to the product-facing `BoardScene`;
+    - `BoardSceneScaffold` remains a playground/debug asset rather than the product entry;
+    - the 8 player paths currently have bootstrap-level assertions only and are not yet real UI interaction automation;
+    - `TerminalOverlay`, market buy/reserve affordances, and board-click intent mapping still belong to Gate 3 / Gate 4.
+- Risks and constraints:
+    - the current `check-phase4` proves scenario bootstrap plus frozen-hash exposure only; it does not mean Phase 4 is complete;
+    - if BoardScene productization reveals a contract gap later, the work must stop and return to Phase 2 governance instead of adding page-local inference;
+    - `/play/ai`, `/play/run`, and `/rooms/[roomId]` remain explicitly out of scope for this campaign.
+- Validation:
+    - `pnpm --filter @gem-duel/application typecheck`
+    - `pnpm --filter @gem-duel/web typecheck`
+    - `pnpm check-phase4`
+- Acceptance evidence:
+    - all 8 scenarios were verified to bootstrap deterministically and expose the frozen `expectedFinalStateHash`;
+    - the `debug-shell-fallback` and `terminal-victory` branches are already distinguished by the Playwright bootstrap spec;
+    - generated `apps/web/next-env.d.ts` drift must be restored before commit and is not part of the commit boundary.

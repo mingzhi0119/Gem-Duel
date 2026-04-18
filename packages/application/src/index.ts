@@ -3,6 +3,7 @@ export type {
     AiDecisionTrace,
     MatchSession,
     MatchSessionInput,
+    PreparedShellMatchSessionInput,
     ReplayInspectorModel,
     ReplayInspectorStep,
     RunSession,
@@ -19,6 +20,7 @@ export {
     createAiMatchSession,
     createLocalMatchSession,
     createMatchSession,
+    createPreparedLocalMatchSession,
 } from './sessions/match';
 
 export { createRunSession } from './sessions/run';
