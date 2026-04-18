@@ -13,8 +13,8 @@
 - Phase 1 的 `application/ui` 结构清理目标目录、write-scope 与迁移顺序请参考 [`phase-1-application-ui-structure-plan.md`](./phase-1-application-ui-structure-plan.md)。
 - Phase 2 的交互范式决策门、`UiViewModel` 2.0 迁移顺序与 write-scope 请参考 [`phase-2-interaction-and-uiviewmodel-plan.md`](./phase-2-interaction-and-uiviewmodel-plan.md)。
 - Phase 2.5 的 `packages/ui` layout、design tokens 与 visual harness 顺序请参考 [`phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md)。
-- Phase 4 的 classic-local 玩家路径冻结矩阵、scenario harness 与 `check-phase4` preflight 入口请参考 [`phase-4-player-path-acceptance-matrix.md`](./phase-4-player-path-acceptance-matrix.md)。
-- full-board roadmap 的 phase 落地日志请参考 [`logs/README.md`](./logs/README.md)，其中已包含 Phase 1 delayed addendum、Phase 2 closure、Phase 3 evidence caveat 与 Phase 4 preflight 入口。
+- Phase 4 的 classic-local 玩家路径冻结矩阵、8 条路径自动化状态与 `check-phase4` 入口请参考 [`phase-4-player-path-acceptance-matrix.md`](./phase-4-player-path-acceptance-matrix.md)。
+- full-board roadmap 的 phase 落地日志请参考 [`logs/README.md`](./logs/README.md)，其中已包含 Phase 1 delayed addendum、Phase 2 closure、Phase 3 evidence caveat 与 Phase 4 completion evidence。
 
 ## EN
 
@@ -29,5 +29,5 @@
 - See [`phase-1-application-ui-structure-plan.md`](./phase-1-application-ui-structure-plan.md) for the target layout, write scopes, and migration order that govern the Phase 1 `application/ui` cleanup.
 - See [`phase-2-interaction-and-uiviewmodel-plan.md`](./phase-2-interaction-and-uiviewmodel-plan.md) for the interaction-model decision gate, migration order, and write scopes that govern the Phase 2 contract expansion.
 - See [`phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md) for the layout, token, and visual-harness plan that governs Phase 2.5.
-- See [`phase-4-player-path-acceptance-matrix.md`](./phase-4-player-path-acceptance-matrix.md) for the frozen Phase 4 classic-local player-path triads and the Gate 2 scenario-harness baseline.
-- See [`logs/README.md`](./logs/README.md) for landing logs attached to roadmap phases, including the Phase 1 delayed addendum, Phase 2 closure, Phase 3 evidence caveat, and the Phase 4 preflight log.
+- See [`phase-4-player-path-acceptance-matrix.md`](./phase-4-player-path-acceptance-matrix.md) for the frozen Phase 4 classic-local player-path triads, the 8 automated rows, and the `check-phase4` evidence surface.
+- See [`logs/README.md`](./logs/README.md) for landing logs attached to roadmap phases, including the Phase 1 delayed addendum, Phase 2 closure, Phase 3 evidence caveat, and the Phase 4 completion evidence.

@@ -14,13 +14,13 @@
 ### 审计结论
 
 - Step 00-08 在工程边界上属于“强达成”：分层、contracts、determinism、room-service authority、replay 与 release gate 已经闭环。
-- 当前产品完成度仍属“弱达成”：默认玩家入口仍是 deterministic validation shell，不是完整盘面 UI。
+- 当前产品完成度已从“弱达成”推进到“部分达成”：默认 classic-local 玩家入口已是 product-facing board，但 AI / run / online parity、replay/a11y/mobile 与 Desktop offline 仍未完成。
 - 后续整改必须把“工程收口”与“玩家可用产品”分开治理；本路线图就是产品侧和 presentation/projection 侧的正式 backlog。
 
 ### 当前基线
 
-- `packages/ui` 当前默认 `MatchView` 仍以 snapshot 摘要、action list、event log、replay inspector 为主。
-- `/play/local`、`/play/ai`、`/play/run`、`/rooms/[roomId]` 当前共享的是验证壳，不是完整产品盘面。
+- `packages/ui` 仍同时暴露 `MatchView` 与 `BoardScene` 两类 surface；`MatchView` 继续承担 debug / fallback shell 职责。
+- `/play/local` 当前默认使用 product-facing `BoardScene`，而 `/play/ai`、`/play/run`、`/rooms/[roomId]` 仍保留验证壳。
 - 当前壳适合：
     - 校验 command legality；
     - 验证 replay / hash / event sequencing；
@@ -71,7 +71,7 @@
     - Step 00-08 = engineering closure；
     - full-board product completion 另行追踪；
     - Desktop offline 分发尚未验收；
-    - `v1.0.0+` 语义版本需等待 Phase 4，Desktop offline 需等待 Phase 8。
+    - 当时 `v1.0.0+` 语义版本需等待 Phase 4；截至当前状态，local-player gate 已关闭，Desktop offline 仍需等待 Phase 8。
 - 在 step-log 规范中新增 acceptance evidence 要求：commit SHA、CI run id、golden replay hash 摘要或 validation-output 摘要。
 - 已将 `apps/web/app/page.tsx` 的 hero / marketing copy 降级为“deterministic validation shell + roadmap link”口径，并把 CTA 从产品完成话术收口为 validation surface 话术。
 
@@ -286,7 +286,11 @@ Evidence Caveat：
 
 #### Phase 4 - `/play/local` Full Board + Player Path Acceptance
 
-状态：`In Progress / Gate 2 preflight landed`（2026-04-18）。治理文档：[`phase-4-player-path-acceptance-matrix.md`](./phase-4-player-path-acceptance-matrix.md)。日志：[`logs/phase-4-preflight-acceptance-matrix-and-scenario-harness.md`](./logs/phase-4-preflight-acceptance-matrix-and-scenario-harness.md)
+状态：`Completed`（2026-04-18）。治理文档：[`phase-4-player-path-acceptance-matrix.md`](./phase-4-player-path-acceptance-matrix.md)。日志：
+
+- [`logs/phase-4-preflight-acceptance-matrix-and-scenario-harness.md`](./logs/phase-4-preflight-acceptance-matrix-and-scenario-harness.md)
+- [`logs/phase-4-boardscene-local-default-wave-1.md`](./logs/phase-4-boardscene-local-default-wave-1.md)
+- [`logs/phase-4-local-board-and-player-path-automation-completion.md`](./logs/phase-4-local-board-and-player-path-automation-completion.md)
 
 目标：先把 classic local board 做成真正可玩的默认入口。
 
@@ -298,34 +302,30 @@ Evidence Caveat：
     - `/play/local` 明确收口为 classic-local 默认入口；
     - `/play/local?shell=debug` 保留 legacy `MatchView` fallback；
     - `/play/local?scenario=<row-id>` 已支持 deterministic scenario bootstrap；
-    - `pnpm check-phase4` 已接线为 repo-level automation entrypoint，当前先验证 bootstrap-level deterministic startup；
     - Player Path Acceptance Matrix 已冻结 8 条路径的 `seed + starting fixture + expected finalStateHash` 三元组。
-- Gate 3 当前已落第一波产品化结果，详见 [`logs/phase-4-boardscene-local-default-wave-1.md`](./logs/phase-4-boardscene-local-default-wave-1.md)：
-    - `/play/local` 默认 renderer 已切到 shared `BoardScene`；
+- Gate 3 已落默认入口产品化第一波：
+    - `/play/local` 默认 renderer 切到 shared `BoardScene`；
     - `?shell=debug` 继续保留 legacy `MatchView + ReplayDrawer` fallback；
     - `BoardSceneScaffold` 保持 playground/debug-only，不回流到产品入口；
     - board / market / royal affordance 只在 unique payload match 成立时才可交互；
-    - unmapped legal actions 仍暂存于 Additional Actions sidecar，等待 Gate 4 全量自动化收口。
-- `/play/local` 切到 full-board scene，旧调试壳只保留为 debug fallback。
-- 依据 Phase 2 的 ADR 接入多选/串联交互。
-- 把 hero / marketing copy 与默认入口行为一起降级到真实口径。
-- 在进入 E2E / 人工验收前，先冻结每条路径的 `seed`、`starting snapshot / fixture` 与 `expected finalStateHash` 三元组。
-- 新增 **Player Path Acceptance Matrix**，至少覆盖：
-    - 首回合取 3 枚连线宝石；
-    - 购买第一张 pyramid 卡；
-    - 使用 privilege 取 2 格；
-    - 保留第三层盲卡并拿 gold；
-    - 购买触发 take bonus token；
-    - 触发 gain royal；
-    - 胜利条件满足后 terminal overlay；
-    - debug fallback 可切回按钮壳。
+    - `TerminalOverlay`、market buy/reserve affordance 与 stable `data-testid` hooks 已补齐。
+- Gate 4 已收口：
+    - `pnpm check-phase4` 现默认运行整个 `apps/web/tests/phase4/` 目录；
+    - 8 条玩家路径均已由 `local-player-paths.spec.ts` 自动化覆盖；
+    - 每条路径都断言真实 UI affordance 可见、可用且唯一；
+    - 每条路径都断言完成后的 `current-final-state-hash` 与冻结值一致；
+    - `/play/local?shell=debug` 保留 legacy shell 且仍可完成 deterministic 路径。
+- `MatchPlayground` 已补 `phase4-interactive-ready` client marker，使 Gate 4 Playwright 等待 hydration 完成后再交互。
+- `tools/check-phase4.mjs` 与 `tools/check-visual.mjs` 已改为使用能正确服务 client assets 的 web start 路径，避免 previous standalone startup 只渲染 SSR HTML 而不完成 hydration。
+- `check-visual` 已新增 productized local-board scene 基线，并在 rebaseline 后通过不带 snapshot update 的最终回归运行。
 
 完成标准：
 
 - 玩家不读按钮列表也能完成 classic 核心流程。
-- Phase 4 完成前，不得把产品语义版本升级到 `v1.0.0+`。
-- Player Path Acceptance Matrix 具备 E2E 或明确人工验收脚本。
-- Gate 2 只意味着 acceptance matrix 与 scenario harness 已冻结；只有默认 `BoardScene` 落地并通过 8 条玩家路径自动化后，Phase 4 才能标记为 `Completed`。
+- Player Path Acceptance Matrix 现已具备 Playwright 自动化闭环，而不再只是 bootstrap harness。
+- `/play/local` 默认入口现已由 product-facing `BoardScene` 驱动。
+- `/play/local?shell=debug` 仍保留 legacy shell fallback。
+- Phase 4 local-player gate 已关闭；后续产品完成度仍继续由 Phase 5 / 6 / 7 / 8 决定。
 
 #### Phase 5 - `/play/ai` 与 `/play/run` Parity
 
@@ -407,10 +407,10 @@ Evidence Caveat：
 
 ### 立即可执行的高 ROI 顺序
 
-1. Milestone A：锁定事实状态与 phase 口径。
-2. Milestone B：完成 `Phase 1a - Application Emergency Split`。
-3. Milestone C：在 Phase 4 前冻结 player-path matrix 的 `seed / fixture / finalStateHash` 三元组，并落 `/play/local?scenario=` 与 `pnpm check-phase4` preflight harness。
-4. Milestone D：在 Phase 6 前补齐 spectator invariants，并把泄漏字段清单写成正式门禁契约。
+1. Milestone E：推进 `/play/ai` 与 `/play/run` parity，把 AI trace / run panel 收敛到与 `/play/local` 相同的主盘面。
+2. Milestone F：在进入 `/rooms/[roomId]` renderer migration 前，先把 spectator invariants 与 room-status 对账测试补成正式门禁。
+3. Milestone G：在 replay / a11y / mobile 收尾前，继续强化 visual-governance 与 screenshot policy。
+4. Milestone H：Desktop offline packaging 只在 shared-shell startup 路径被显式验证后再升格表述。
 
 ## EN
 
@@ -426,13 +426,13 @@ This document is the authoritative full-board UI remediation plan after the Opus
 ### Audit Summary
 
 - Step 00-08 is a strong success at the engineering-boundary level: layering, contracts, determinism, room-service authority, replay, and release gates are closed.
-- Product completion remains weak: the default player entrypoint is still a deterministic validation shell rather than a full board UI.
+- Product completion has moved from weak to partial: the default classic-local player entrypoint is now a product-facing board, but AI / run / online parity, replay/a11y/mobile, and Desktop offline remain open.
 - Follow-up work must treat engineering closure and player-facing product completion as different tracks. This roadmap is the formal backlog for the product/presentation/projection side.
 
 ### Current Baseline
 
-- `packages/ui` still exposes `MatchView` primarily as snapshot summary, action list, event log, and replay inspector.
-- `/play/local`, `/play/ai`, `/play/run`, and `/rooms/[roomId]` currently share a validation shell, not a product-grade board surface.
+- `packages/ui` now exposes both `MatchView` and `BoardScene`; `MatchView` remains the debug / fallback shell surface.
+- `/play/local` now defaults to the product-facing `BoardScene`, while `/play/ai`, `/play/run`, and `/rooms/[roomId]` still keep the validation shell.
 - The shell is good for:
     - command-legality validation;
     - replay / hash / event-sequencing verification;
@@ -483,7 +483,7 @@ Outputs:
     - Step 00-08 = engineering closure;
     - full-board product completion is tracked separately;
     - Desktop offline distribution is still unaccepted;
-    - `v1.0.0+` requires Phase 4, and Desktop offline release requires Phase 8.
+    - at that point `v1.0.0+` required Phase 4; in the current state the local-player gate is closed, while Desktop offline release still requires Phase 8.
 - Add an acceptance-evidence rule to the step-log guide: commit SHA, CI run id, golden replay hash summary, or validation-output summary.
 - `apps/web/app/page.tsx` now uses downgraded hero/marketing wording centered on a deterministic validation shell plus a roadmap link, and its CTA labels no longer imply a player-complete product.
 
@@ -683,7 +683,11 @@ Done criteria:
 
 #### Phase 4 - `/play/local` Full Board + Player Path Acceptance
 
-Status: `In Progress / Gate 2 preflight landed` (2026-04-18). Governance doc: [`phase-4-player-path-acceptance-matrix.md`](./phase-4-player-path-acceptance-matrix.md). Log: [`logs/phase-4-preflight-acceptance-matrix-and-scenario-harness.md`](./logs/phase-4-preflight-acceptance-matrix-and-scenario-harness.md)
+Status: `Completed` (2026-04-18). Governance doc: [`phase-4-player-path-acceptance-matrix.md`](./phase-4-player-path-acceptance-matrix.md). Logs:
+
+- [`logs/phase-4-preflight-acceptance-matrix-and-scenario-harness.md`](./logs/phase-4-preflight-acceptance-matrix-and-scenario-harness.md)
+- [`logs/phase-4-boardscene-local-default-wave-1.md`](./logs/phase-4-boardscene-local-default-wave-1.md)
+- [`logs/phase-4-local-board-and-player-path-automation-completion.md`](./logs/phase-4-local-board-and-player-path-automation-completion.md)
 
 Goal: make classic local board the first genuinely playable default entrypoint.
 
@@ -691,38 +695,34 @@ Covers: F1, F3, F9, F11.
 
 Outputs:
 
-- Gate 2 preflight is already landed:
-    - `/play/local` is now explicitly the classic-local default route;
+- Gate 2 preflight is landed:
+    - `/play/local` is explicitly the classic-local default route;
     - `/play/local?shell=debug` preserves the legacy `MatchView` fallback;
-    - `/play/local?scenario=<row-id>` already supports deterministic scenario bootstrap;
-    - `pnpm check-phase4` is now wired as the repo-level automation entrypoint and currently validates bootstrap-level deterministic startup;
-    - the Player Path Acceptance Matrix now freezes the `seed + starting fixture + expected finalStateHash` triad for all 8 rows.
-- The first Gate 3 productization wave is now landed; see [`logs/phase-4-boardscene-local-default-wave-1.md`](./logs/phase-4-boardscene-local-default-wave-1.md):
+    - `/play/local?scenario=<row-id>` supports deterministic scenario bootstrap;
+    - the Player Path Acceptance Matrix freezes the `seed + starting fixture + expected finalStateHash` triad for all 8 rows.
+- Gate 3 productization is landed:
     - the default `/play/local` renderer now uses the shared `BoardScene`;
     - `?shell=debug` still preserves the legacy `MatchView + ReplayDrawer` fallback;
     - `BoardSceneScaffold` remains playground/debug-only and does not flow back into the product entrypoint;
     - board / market / royal affordances become interactive only when a unique payload match exists;
-    - unmapped legal actions still remain in an Additional Actions sidecar until Gate 4 closes the full automation surface.
-- Switch `/play/local` to a full-board scene and keep the old debug shell as fallback only.
-- Drive multi-step interaction according to the Phase 2 ADR.
-- Downgrade hero/marketing language and default-entry behavior to match the real product state.
-- Before E2E/manual acceptance begins, freeze the `seed`, `starting snapshot / fixture`, and `expected finalStateHash` triad for each path.
-- Add a **Player Path Acceptance Matrix** covering at least:
-    - first turn taking 3 linked gems;
-    - buying the first pyramid card;
-    - using privilege for 2 cells;
-    - reserving a blind tier-3 card and taking gold;
-    - resolving take-bonus-token;
-    - resolving gain-royal;
-    - showing the terminal overlay on victory;
-    - keeping a debug fallback route/switch.
+    - `TerminalOverlay`, market buy/reserve affordances, and stable `data-testid` hooks are now in place.
+- Gate 4 is now closed:
+    - `pnpm check-phase4` now runs the full `apps/web/tests/phase4/` directory;
+    - all 8 player paths are automated by `local-player-paths.spec.ts`;
+    - every row asserts visible, usable, unique UI affordances;
+    - every row asserts the frozen `current-final-state-hash`;
+    - `/play/local?shell=debug` still preserves the legacy shell while completing the deterministic path.
+- `MatchPlayground` now exposes a `phase4-interactive-ready` client marker so Gate 4 Playwright runs wait for hydration before interacting.
+- `tools/check-phase4.mjs` and `tools/check-visual.mjs` now use a web-start path that correctly serves client assets, avoiding the earlier standalone startup path that rendered SSR HTML without completing hydration.
+- `check-visual` now includes a productized local-board scene baseline and passes a final regression run after rebaseline.
 
 Done criteria:
 
 - Players can finish the classic core flow without reading raw action buttons.
-- Product-semantic versions `v1.0.0+` remain blocked until this phase is complete.
-- The Player Path Acceptance Matrix has either E2E coverage or explicit manual acceptance scripts.
-- Gate 2 alone only freezes the acceptance matrix and scenario harness; Phase 4 can be marked `Completed` only after the default `BoardScene` lands and all 8 player paths pass interaction automation.
+- The Player Path Acceptance Matrix now has Playwright interaction closure rather than bootstrap-only coverage.
+- `/play/local` is now driven by the product-facing `BoardScene`.
+- `/play/local?shell=debug` still preserves the legacy shell fallback.
+- The Phase 4 local-player gate is now closed; later product scope is still governed by Phase 5 / 6 / 7 / 8.
 
 #### Phase 5 - `/play/ai` and `/play/run` Parity
 
@@ -804,7 +804,7 @@ Done criteria:
 
 ### Immediate High-ROI Order
 
-1. Milestone A: lock the factual state and phase wording.
-2. Milestone B: `Phase 1a - Application Emergency Split` closed.
-3. Milestone C: freeze the Phase 4 player-path `seed / fixture / finalStateHash` triads and land the `/play/local?scenario=` + `pnpm check-phase4` preflight harness.
-4. Milestone D: define spectator invariants as a formal gate before Phase 6.
+1. Milestone E: move `/play/ai` and `/play/run` toward parity so AI trace and run sidecars live on the same main board as `/play/local`.
+2. Milestone F: formalize spectator invariants and room-status reconciliation tests before `/rooms/[roomId]` renderer migration begins.
+3. Milestone G: continue hardening visual governance and screenshot policy before replay / a11y / mobile finish work.
+4. Milestone H: do not upgrade Desktop offline wording until the shared-shell startup path is explicitly validated.

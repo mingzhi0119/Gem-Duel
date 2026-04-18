@@ -12,14 +12,14 @@
 - [`10-architecture/README.md`](./10-architecture/README.md): 分层与目录标准
 - [`10-architecture/engineering-standards.md`](./10-architecture/engineering-standards.md): 工程规范与 Git 策略
 - [`10-architecture/agent-guardrails-matrix.md`](./10-architecture/agent-guardrails-matrix.md): Agent 边界、机械化护栏与分层 AGENTS 设计
-- [`10-architecture/logs/README.md`](./10-architecture/logs/README.md): full-board roadmap 各 Phase 的落地日志入口，现含 Phase 1 delayed addendum、Phase 2 closure 与 Phase 3 evidence caveat 索引
+- [`10-architecture/logs/README.md`](./10-architecture/logs/README.md): full-board roadmap 各 Phase 的落地日志入口，现含 Phase 1 delayed addendum、Phase 2 closure、Phase 3 evidence caveat 与 Phase 4 completion evidence 索引
 - [`10-architecture/web-desktop-application-integration.md`](./10-architecture/web-desktop-application-integration.md): Step 06 Web/Desktop 通过 application/ui 共享视图模型与交互边界
 - [`10-architecture/full-board-ui-roadmap.md`](./10-architecture/full-board-ui-roadmap.md): Opus 4.7 审计后的 full-board UI 发现清单、整改归属与按 Phase 排序路线图，现已同步重排 Phase 1/2/3 状态与 Phase 1a 前置门
 - [`10-architecture/full-board-ui-roadmap-phase-0-3-independent-audit.md`](./10-architecture/full-board-ui-roadmap-phase-0-3-independent-audit.md): Phase 0-3 独立审计的 repo-verified disposition、状态重排依据与治理 backlog
 - [`10-architecture/phase-1-application-ui-structure-plan.md`](./10-architecture/phase-1-application-ui-structure-plan.md): Phase 1 的 `application/ui` 结构清理目标目录、write-scope、迁移顺序与非目标
 - [`10-architecture/phase-2-interaction-and-uiviewmodel-plan.md`](./10-architecture/phase-2-interaction-and-uiviewmodel-plan.md): Phase 2 的交互范式决策门、迁移顺序、write-scope 与非目标
 - [`10-architecture/phase-2.5-ui-layout-and-visual-harness-plan.md`](./10-architecture/phase-2.5-ui-layout-and-visual-harness-plan.md): Phase 2.5 的 `packages/ui` 布局、design tokens 与 visual harness 治理主文档
-- [`10-architecture/phase-4-player-path-acceptance-matrix.md`](./10-architecture/phase-4-player-path-acceptance-matrix.md): Phase 4 classic-local 玩家路径冻结矩阵、scenario route 与 `check-phase4` preflight 入口
+- [`10-architecture/phase-4-player-path-acceptance-matrix.md`](./10-architecture/phase-4-player-path-acceptance-matrix.md): Phase 4 classic-local 玩家路径冻结矩阵、8 条路径自动化状态与 `check-phase4` evidence 入口
 - [`20-domain/README.md`](./20-domain/README.md): 领域模型、状态机与规则版本
 - [`20-domain/determinism-and-replay-discipline.md`](./20-domain/determinism-and-replay-discipline.md): 确定性、回放与性质测试纪律
 - [`20-domain/buff-hook-system.md`](./20-domain/buff-hook-system.md): Buff/Roguelike hook 原语、顺序与组合规则
@@ -58,14 +58,14 @@ This directory is the single source of truth for the Gem Duel rebuild. All archi
 - [`10-architecture/README.md`](./10-architecture/README.md): Layering and directory standards
 - [`10-architecture/engineering-standards.md`](./10-architecture/engineering-standards.md): Engineering standards and Git policy
 - [`10-architecture/agent-guardrails-matrix.md`](./10-architecture/agent-guardrails-matrix.md): Agent boundaries, mechanical guardrails, and layered AGENTS design
-- [`10-architecture/logs/README.md`](./10-architecture/logs/README.md): Entry point for landing logs tied to full-board roadmap phases, now including the Phase 1 delayed addendum, Phase 2 closure, and Phase 3 evidence caveat
+- [`10-architecture/logs/README.md`](./10-architecture/logs/README.md): Entry point for landing logs tied to full-board roadmap phases, now including the Phase 1 delayed addendum, Phase 2 closure, the Phase 3 evidence caveat, and the Phase 4 completion evidence
 - [`10-architecture/web-desktop-application-integration.md`](./10-architecture/web-desktop-application-integration.md): Step 06 Web/Desktop composition through shared application/ui boundaries
 - [`10-architecture/full-board-ui-roadmap.md`](./10-architecture/full-board-ui-roadmap.md): Opus 4.7 audit findings, remediation ownership, and the phase-sorted roadmap from the current validation shell to a full playable board UI, now rephased to reflect the current Phase 1/2/3 repository reality
 - [`10-architecture/full-board-ui-roadmap-phase-0-3-independent-audit.md`](./10-architecture/full-board-ui-roadmap-phase-0-3-independent-audit.md): Repo-verified disposition, status-rephase basis, and governance backlog for the independent Phase 0-3 audit
 - [`10-architecture/phase-1-application-ui-structure-plan.md`](./10-architecture/phase-1-application-ui-structure-plan.md): Target layout, write scopes, migration order, and non-goals for the Phase 1 `application/ui` cleanup
 - [`10-architecture/phase-2-interaction-and-uiviewmodel-plan.md`](./10-architecture/phase-2-interaction-and-uiviewmodel-plan.md): Interaction-model decision gate, migration order, write scopes, and non-goals for Phase 2
 - [`10-architecture/phase-2.5-ui-layout-and-visual-harness-plan.md`](./10-architecture/phase-2.5-ui-layout-and-visual-harness-plan.md): Governance plan for `packages/ui` layout, design tokens, and the visual harness in Phase 2.5
-- [`10-architecture/phase-4-player-path-acceptance-matrix.md`](./10-architecture/phase-4-player-path-acceptance-matrix.md): Frozen classic-local player-path matrix, scenario route, and `check-phase4` preflight entrypoint for Phase 4
+- [`10-architecture/phase-4-player-path-acceptance-matrix.md`](./10-architecture/phase-4-player-path-acceptance-matrix.md): Frozen classic-local player-path matrix, the 8 automated rows, and the `check-phase4` evidence surface for Phase 4
 - [`20-domain/README.md`](./20-domain/README.md): Domain model, state machine, and ruleset versioning
 - [`20-domain/determinism-and-replay-discipline.md`](./20-domain/determinism-and-replay-discipline.md): Determinism, replay, and property-testing discipline
 - [`20-domain/buff-hook-system.md`](./20-domain/buff-hook-system.md): Buff/Roguelike hook primitives, ordering, and composition rules

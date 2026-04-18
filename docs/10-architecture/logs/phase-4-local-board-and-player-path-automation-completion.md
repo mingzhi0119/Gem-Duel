@@ -1,0 +1,131 @@
+# Phase 4 Log - Local Board Closure and Player-Path Automation
+
+## ZH
+
+- 日期：2026-04-18
+- Phase：Phase 4
+- 状态：Completed
+- 范围：
+    - 关闭 `/play/local` 的 product-facing `BoardScene` 默认入口；
+    - 保留 `?shell=debug` legacy shell fallback；
+    - 把 8 条 classic-local 玩家路径从 frozen triad / bootstrap harness 升级为真实 UI 交互自动化；
+    - 为 visual baseline 增补 productized local-board scene，并补齐最终回归证据。
+- 本阶段已落地结果：
+    - `/play/local` 默认 renderer 现为 shared `BoardScene`，保留 `BoardSceneScaffold` 仅作 playground/debug asset；
+    - `BoardScene` 已收口：
+        - board cell click -> unique payload match；
+        - market primary -> buy；
+        - market secondary affordance -> reserve；
+        - royal offer -> `SELECT_ROYAL`；
+        - pending-selection confirm/cancel -> shared sidecar controls；
+    - `MatchPlayground` 现暴露 `phase4-interactive-ready` client marker，供 Gate 4 Playwright 在 hydration 完成后再执行交互；
+    - `pnpm check-phase4` 现运行整个 `apps/web/tests/phase4/` 目录，而不再只跑 bootstrap spec；
+    - 新增 `apps/web/tests/phase4/local-player-paths.spec.ts`，8 条玩家路径全部断言真实 UI 交互链与冻结 `finalStateHash`；
+    - 新增 `apps/web/tests/visual/local-board.spec.ts`，把 productized `/play/local` board scene 纳入 screenshot baseline；
+    - `tools/check-phase4.mjs` 与 `tools/check-visual.mjs` 现使用能够正确服务 `/_next/static/*` 资源的 web start 路径，避免 standalone server 在当前输出布局下只渲染 SSR HTML 而不完成 hydration。
+- 关键涉及文件：
+    - `apps/web/app/play/components/match-playground.tsx`
+    - `apps/web/tests/phase4/local-player-paths.spec.ts`
+    - `apps/web/tests/visual/local-board.spec.ts`
+    - `tools/check-phase4.mjs`
+    - `tools/check-visual.mjs`
+    - `apps/web/tests/visual/local-board.spec.ts-snapshots/local-board-take-three-linked-gems-win32.png`
+    - `apps/web/tests/visual/playground.spec.ts-snapshots/*`
+    - `docs/10-architecture/phase-4-player-path-acceptance-matrix.md`
+    - `docs/10-architecture/full-board-ui-roadmap.md`
+    - `docs/40-operations/release-prep.md`
+- 剩余风险与后续 Phase：
+    - `/play/ai` 与 `/play/run` parity 仍归 Phase 5；
+    - `/rooms/[roomId]`、spectator invariants 与 resync gates 仍归 Phase 6；
+    - replay board 化、a11y、mobile 与 i18n 仍归 Phase 7；
+    - Desktop offline distributability 仍归 Phase 8；
+    - `check-phase4` / `check-visual` 当前通过 `next start` 启动已构建 web app，能正确提供 client assets，但仍会打印 Next 对 standalone 配置的警告；这是后续 tooling hardening 项，不阻塞 Phase 4 完成。
+- Rebaseline reason and reviewed diffs：
+    - 本轮 visual rebaseline 的直接原因不是视觉设计重画，而是 Playwright tooling 改为走真正可提供 `/_next/static/*` 的启动路径，截图不再基于“只有 SSR HTML、缺失 client assets”的退化运行态；
+    - 因此除新增的 local-board baseline 外，既有 `/playground/*` committed snapshots 也随之重录为 hydrated runtime 下的真实画面。
+- Final regression run (without snapshot updates)：
+    - `pnpm check-phase4`
+    - `pnpm check-visual`
+- Validation：
+    - `pnpm contracts:generate`
+    - `pnpm contracts:verify`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `pnpm check-phase4`
+    - `pnpm check-visual -- --update-snapshots`
+    - `pnpm check-visual`
+- Acceptance evidence：
+    - 8 条 Phase 4 玩家路径现已由 Playwright 自动化覆盖；
+    - 每条路径都通过真实 UI affordance 完成交互，并断言冻结的 `current-final-state-hash`；
+    - `/play/local` 默认入口已切到 `BoardScene`，`/play/local?shell=debug` 仍保留 legacy shell；
+    - productized local-board scene 现已纳入 committed screenshot baseline，且最终回归运行在不带 snapshot update 的模式下通过。
+
+## EN
+
+- Date: 2026-04-18
+- Phase: Phase 4
+- Status: Completed
+- Scope:
+    - close the product-facing `BoardScene` default entry for `/play/local`;
+    - preserve the `?shell=debug` legacy-shell fallback;
+    - upgrade the 8 classic-local player paths from frozen triads / bootstrap harness into real UI interaction automation;
+    - add the productized local-board scene to the visual baseline and record final regression evidence.
+- Landed results:
+    - `/play/local` now defaults to the shared `BoardScene`, while `BoardSceneScaffold` remains playground/debug-only;
+    - `BoardScene` now closes the intended interaction surface:
+        - board cell click -> unique payload match;
+        - market primary -> buy;
+        - market secondary affordance -> reserve;
+        - royal offer -> `SELECT_ROYAL`;
+        - pending-selection confirm/cancel -> shared sidecar controls;
+    - `MatchPlayground` now exposes a `phase4-interactive-ready` client marker so Gate 4 Playwright runs wait for hydration before interacting;
+    - `pnpm check-phase4` now runs the full `apps/web/tests/phase4/` directory instead of only the bootstrap spec;
+    - `apps/web/tests/phase4/local-player-paths.spec.ts` now covers all 8 player paths and asserts both real UI interaction and the frozen `finalStateHash`;
+    - `apps/web/tests/visual/local-board.spec.ts` now adds the productized `/play/local` board scene to the screenshot baseline;
+    - `tools/check-phase4.mjs` and `tools/check-visual.mjs` now start the web app through a path that correctly serves `/_next/static/*` assets, preventing the previous standalone-server behavior where only SSR HTML rendered and hydration never completed.
+- Key touched files:
+    - `apps/web/app/play/components/match-playground.tsx`
+    - `apps/web/tests/phase4/local-player-paths.spec.ts`
+    - `apps/web/tests/visual/local-board.spec.ts`
+    - `tools/check-phase4.mjs`
+    - `tools/check-visual.mjs`
+    - `apps/web/tests/visual/local-board.spec.ts-snapshots/local-board-take-three-linked-gems-win32.png`
+    - `apps/web/tests/visual/playground.spec.ts-snapshots/*`
+    - `docs/10-architecture/phase-4-player-path-acceptance-matrix.md`
+    - `docs/10-architecture/full-board-ui-roadmap.md`
+    - `docs/40-operations/release-prep.md`
+- Remaining risks / later phases:
+    - `/play/ai` and `/play/run` parity still belongs to Phase 5;
+    - `/rooms/[roomId]`, spectator invariants, and resync gates still belong to Phase 6;
+    - replay-on-board, accessibility, mobile, and i18n still belong to Phase 7;
+    - Desktop offline distributability still belongs to Phase 8;
+    - `check-phase4` / `check-visual` currently boot the built web app through `next start`, which correctly serves client assets but still prints Next's standalone warning; that is a later tooling-hardening item and does not block Phase 4 closure.
+- Rebaseline reason and reviewed diffs:
+    - the visual rebaseline in this wave was driven primarily by the Playwright tooling switch to a startup path that actually serves `/_next/static/*`, not by a fresh visual redesign;
+    - in addition to the new local-board baseline, the existing `/playground/*` committed snapshots had to be refreshed so they reflect the hydrated runtime rather than the earlier degraded SSR-only state.
+- Final regression run (without snapshot updates):
+    - `pnpm check-phase4`
+    - `pnpm check-visual`
+- Validation:
+    - `pnpm contracts:generate`
+    - `pnpm contracts:verify`
+    - `pnpm check-deps`
+    - `pnpm check-boundaries`
+    - `pnpm check-contracts`
+    - `pnpm lint`
+    - `pnpm typecheck`
+    - `pnpm test`
+    - `pnpm build`
+    - `pnpm check-phase4`
+    - `pnpm check-visual -- --update-snapshots`
+    - `pnpm check-visual`
+- Acceptance evidence:
+    - all 8 Phase 4 player paths are now covered by Playwright automation;
+    - every row completes through real UI affordances and asserts the frozen `current-final-state-hash`;
+    - `/play/local` now defaults to `BoardScene` while `/play/local?shell=debug` still preserves the legacy shell;
+    - the productized local-board scene is now part of the committed screenshot baseline, and the final regression run passed without snapshot updates.

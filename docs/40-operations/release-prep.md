@@ -9,12 +9,15 @@ Step 08 完成后，仓库进入 release-ready 状态：核心契约、域模型
 ### 审计后发布边界
 
 - Step 08 放行的是 engineering release/tag flow，不是产品 GA 结论。
-- `v1.0.0` 及以上产品语义版本仍受 `docs/10-architecture/full-board-ui-roadmap.md` 的 Phase 4 约束。
+- `docs/10-architecture/full-board-ui-roadmap.md` 的 Phase 4 local-player gate 已关闭；默认 classic-local 玩家入口现已具备 product-facing `BoardScene` 与 8 条自动化玩家路径。
+- `v1.0.0` 及以上产品语义版本不再受 local-player board completeness 单点阻塞，但后续产品口径仍必须明确剩余未闭合的 phase。
 - Desktop artifact 当前只应视作 shared-shell engineering artifact；Desktop offline 可分发能力仍受该路线图的 Phase 8 约束。
 - 若未来需要公开产品发布说明，必须同时满足：
-    - full-board roadmap Phase 4 已完成；
-    - 默认玩家入口不再是按钮列表验证壳；
-    - release note 不再把 engineering closure 表述为产品完成。
+    - 默认 classic-local 玩家入口的声明只覆盖已关闭的 Phase 4 范围；
+    - `/play/ai`、`/play/run` parity 若未完成，不得被表述为同等产品完成面；
+    - `/rooms/[roomId]`、spectator / resync 一致性若未完成，不得被表述为 online 产品完成面；
+    - Desktop offline 若未完成，不得被表述为已验证分发面；
+    - release note 不再把 engineering closure 表述为“所有表面都已产品完成”。
 
 ### 当前产物
 
@@ -39,7 +42,7 @@ Step 08 完成后，仓库进入 release-ready 状态：核心契约、域模型
 - Step 08 只会放行未来的 tag-based release flow。
 - Step 08 不会自动创建 tag。
 - 进入 release 前，CI 必须先通过完整最终验收门禁，再执行 artifact upload。
-- 在 Phase 4 完成前，不得把 Step 08 的通过转述为“产品 v1 已可发布”。
+- Phase 4 已关闭后，默认 classic-local 玩家入口可以被表述为已完成的产品默认面，但不得顺势外推为 AI / run / online / Desktop parity。
 - 在 Phase 8 完成前，不得把 Desktop artifact 转述为“已验证的 offline 分发包”。
 
 ## EN
@@ -51,12 +54,15 @@ Here, `release-ready` means the rebuild boundary, build/test surface, and releas
 ### Post-Audit Release Scope
 
 - Step 08 reopens the engineering release/tag flow; it is not a product-GA conclusion.
-- Product-semantic versions `v1.0.0+` remain gated on Phase 4 of `docs/10-architecture/full-board-ui-roadmap.md`.
+- The Phase 4 local-player gate in `docs/10-architecture/full-board-ui-roadmap.md` is now closed; the default classic-local player entrypoint now has a product-facing `BoardScene` plus 8 automated player paths.
+- Product-semantic versions `v1.0.0+` are no longer blocked by the local-player board-completeness gate alone, but release wording must still respect the phases that remain open.
 - The current Desktop artifact should be treated only as a shared-shell engineering artifact; Desktop offline distributability remains gated on Phase 8 of that roadmap.
 - Any future public product-release note must also satisfy:
-    - full-board roadmap Phase 4 is complete;
-    - the default player entrypoint is no longer the button-list validation shell;
-    - release notes no longer describe engineering closure as product completion.
+    - any default-entry claim is scoped to the now-closed Phase 4 classic-local surface;
+    - `/play/ai` and `/play/run` are not described as parity-complete if Phase 5 is still open;
+    - `/rooms/[roomId]`, spectator, and resync are not described as online-product complete if Phase 6 is still open;
+    - Desktop offline is not described as validated distributability if Phase 8 is still open;
+    - release notes no longer describe engineering closure as “all surfaces are product-complete.”
 
 ### Current Artifacts
 
@@ -81,5 +87,5 @@ Here, `release-ready` means the rebuild boundary, build/test surface, and releas
 - Step 08 only unlocks the future tag-based release flow.
 - Step 08 does not create tags automatically.
 - Before upload, CI must pass the full final acceptance gate and only then publish artifacts.
-- Before Phase 4, Step 08 passing may not be restated as "product v1 is ready to ship."
+- With Phase 4 closed, the default classic-local player entrypoint may now be described as a completed product-default surface, but that may not be stretched into AI / run / online / Desktop parity.
 - Before Phase 8, the Desktop artifact may not be restated as a validated offline distribution package.
