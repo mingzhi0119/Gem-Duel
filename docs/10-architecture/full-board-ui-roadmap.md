@@ -355,16 +355,24 @@ Evidence Caveat：
 
 #### Phase 6 - `/rooms/[roomId]`、Spectator 与 Online 一致性门禁
 
+状态：`Completed`（2026-04-18）。日志：[`logs/phase-6-room-boardscene-and-spectator-gates-completion.md`](./logs/phase-6-room-boardscene-and-spectator-gates-completion.md)
+
 目标：把 online player / spectator / resync / disconnected / waiting 状态收拢到同一盘面体系，并补齐泄漏防线。
 
 覆盖发现：F4、F8。
 
 本阶段输出：
 
-- `room-live-client` 切换到 shared `BoardScene`。
-- `viewerRole='spectator'` 自动禁用交互。
-- property test：spectator DOM / serialized view model 不得泄漏 `hiddenState`、`deckOrder`、他方 reserve 牌面或对手 `pendingSelection` 草稿等信息。
-- resync / seq-gap / out-of-turn seat 的 Playwright 或等价集成测试。
+- `room-live-client` 已切换到 shared `BoardScene`，不再停留在 `MatchView` 验证壳。
+- `viewerRole='spectator'` 现在会自动落成 read-only surface：board cell 渲染回退为静态 article，toolbar / confirm / cancel / royal affordance 不再接可点击 handler。
+- `SpectatorSnapshot.pendingSelection` 已在 contract/runtime helper 层被强制收口为 `null`；`packages/application` 的 spectator `selectionDraft` 也已归零，`boardCells.selected` 不再暴露对手 pending-command 草稿。
+- `packages/application/src/view-model/spectator-visibility.test.ts` 现在把 spectator serialized view-model 的泄漏性质测试机械化，覆盖 `hiddenState`、`deckOrder`、`viewerReserveSlots` 与 opponent pending-selection draft。
+- `apps/room-service/src/app.test.ts` 现补了“spectator pending-selection redaction + player resync preserved”集成测试，确保 server fanout 在 resync 与 observe 路径上都符合 shared board 语义。
+- `apps/web/tests/phase6/room-boardscene.spec.ts` + `pnpm check-phase6` 现把 `/rooms/[roomId]` 的 shared `BoardScene` 接入、spectator inertness 与 out-of-turn read-only 行为纳入浏览器 gate。
+
+Evidence caveat：
+
+- 当前 room-status fanout 仍未把“第二位玩家加入后，已绑定第一位玩家的 waiting badge 立即切到 active”收紧为强一致广播；Phase 6 关闭的是 shared board convergence、spectator leakage gates 与 browser-level inertness，而不是把所有 room-status cosmetics 伪装成已彻底收齐。
 
 完成标准：
 
@@ -761,16 +769,24 @@ Done criteria:
 
 #### Phase 6 - `/rooms/[roomId]`, Spectator, and Online Consistency Gates
 
+Status: `Completed` (2026-04-18). Log: [`logs/phase-6-room-boardscene-and-spectator-gates-completion.md`](./logs/phase-6-room-boardscene-and-spectator-gates-completion.md)
+
 Goal: converge online player / spectator / resync / disconnected / waiting states into one board system and add leak-prevention gates.
 
 Covers: F4, F8.
 
 Outputs:
 
-- Move `room-live-client` onto the shared `BoardScene`.
-- Make `viewerRole='spectator'` disable interaction automatically.
-- Add property tests ensuring spectator DOM / serialized view models do not leak `hiddenState`, `deckOrder`, opponent reserve-card faces, or opponent `pendingSelection` drafts.
-- Add Playwright or equivalent integration tests for resync, seq-gap, and out-of-turn seats.
+- `room-live-client` is now on the shared `BoardScene` instead of the legacy `MatchView` shell.
+- `viewerRole='spectator'` now collapses automatically into a read-only surface: board cells render as static articles, and toolbar / confirm / cancel / royal affordances no longer receive live click handlers.
+- `SpectatorSnapshot.pendingSelection` is now forcibly redacted to `null` at the contract/runtime helper layer; `packages/application` also zeros spectator `selectionDraft`, and `boardCells.selected` no longer mirrors opponent pending-command drafts.
+- `packages/application/src/view-model/spectator-visibility.test.ts` now mechanizes the spectator serialized-view-model leakage property against `hiddenState`, `deckOrder`, `viewerReserveSlots`, and opponent pending-selection draft data.
+- `apps/room-service/src/app.test.ts` now adds a “spectator pending-selection redaction + player resync preserved” integration test so observe/resync fanout remains aligned with the shared board semantics.
+- `apps/web/tests/phase6/room-boardscene.spec.ts` plus `pnpm check-phase6` now gate the `/rooms/[roomId]` shared `BoardScene`, spectator inertness, and out-of-turn read-only behavior at the browser level.
+
+Evidence caveat:
+
+- Room-status fanout still does not tighten the “second player joined, first bound player immediately flips from waiting to active” badge into a strongly synchronized broadcast on every live client; Phase 6 is closed for shared board convergence, spectator leakage gates, and browser-level inertness, not for every remaining room-status cosmetic.
 
 Done criteria:
 
@@ -822,7 +838,7 @@ Done criteria:
 
 ### Immediate High-ROI Order
 
-1. Milestone E: move `/play/ai` and `/play/run` toward parity so AI trace and run sidecars live on the same main board as `/play/local`.
-2. Milestone F: formalize spectator invariants and room-status reconciliation tests before `/rooms/[roomId]` renderer migration begins.
-3. Milestone G: continue hardening visual governance and screenshot policy before replay / a11y / mobile finish work.
-4. Milestone H: do not upgrade Desktop offline wording until the shared-shell startup path is explicitly validated.
+1. Milestone G: move replay onto the shared `BoardScene`, then close timeline/hash navigation and replay-specific visual coverage.
+2. Milestone H: harden A11y, keyboard traversal, and small-screen behavior before calling the product finish pass complete.
+3. Milestone I: externalize UI strings and close the Phase 7 i18n work without reopening board contracts.
+4. Milestone J: do not upgrade Desktop offline wording until the shared-shell startup path is explicitly validated.

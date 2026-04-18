@@ -14,7 +14,7 @@
 - Phase 2 的交互范式决策门、`UiViewModel` 2.0 迁移顺序与 write-scope 请参考 [`phase-2-interaction-and-uiviewmodel-plan.md`](./phase-2-interaction-and-uiviewmodel-plan.md)。
 - Phase 2.5 的 `packages/ui` layout、design tokens 与 visual harness 顺序请参考 [`phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md)。
 - Phase 4 的 classic-local 玩家路径冻结矩阵、8 条路径自动化状态与 `check-phase4` 入口请参考 [`phase-4-player-path-acceptance-matrix.md`](./phase-4-player-path-acceptance-matrix.md)。
-- full-board roadmap 的 phase 落地日志请参考 [`logs/README.md`](./logs/README.md)，其中已包含 Phase 1 delayed addendum、Phase 2 closure、Phase 3 evidence caveat、Phase 4 completion evidence 与 Phase 5 parity closure。
+- full-board roadmap 的 phase 落地日志请参考 [`logs/README.md`](./logs/README.md)，其中已包含 Phase 1 delayed addendum、Phase 2 closure、Phase 3 evidence caveat、Phase 4 completion evidence、Phase 5 parity closure 与 Phase 6 room-board convergence closure。
 
 ## EN
 
@@ -30,4 +30,4 @@
 - See [`phase-2-interaction-and-uiviewmodel-plan.md`](./phase-2-interaction-and-uiviewmodel-plan.md) for the interaction-model decision gate, migration order, and write scopes that govern the Phase 2 contract expansion.
 - See [`phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md) for the layout, token, and visual-harness plan that governs Phase 2.5.
 - See [`phase-4-player-path-acceptance-matrix.md`](./phase-4-player-path-acceptance-matrix.md) for the frozen Phase 4 classic-local player-path triads, the 8 automated rows, and the `check-phase4` evidence surface.
-- See [`logs/README.md`](./logs/README.md) for landing logs attached to roadmap phases, including the Phase 1 delayed addendum, Phase 2 closure, the Phase 3 evidence caveat, the Phase 4 completion evidence, and the Phase 5 parity closure.
+- See [`logs/README.md`](./logs/README.md) for landing logs attached to roadmap phases, including the Phase 1 delayed addendum, Phase 2 closure, the Phase 3 evidence caveat, the Phase 4 completion evidence, the Phase 5 parity closure, and the Phase 6 room-board convergence closure.

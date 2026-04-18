@@ -35,6 +35,7 @@
 - Replay/version impact:
     - 本次不修改 replay bundle、snapshot tier 或 `SCHEMA_VERSION`；
     - `roomStatus` 作为 additive realtime field 进入房间协议；
+    - Phase 6 已在不变更 schema 的前提下收紧 spectator 语义：`SpectatorSnapshot.pendingSelection` 必须为 `null`，消费者不得再把 spectator payload 当作对手 pending-command draft 的来源；
     - 后续若进入 pending-selection 命令/phase surface，再单独评估 replay/hash 影响。
 - ADR link:
     - [`ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md)
@@ -74,6 +75,7 @@
 - Replay/version impact:
     - this wave does not change the replay bundle, snapshot tiers, or `SCHEMA_VERSION`;
     - `roomStatus` lands as an additive realtime-room field;
+    - Phase 6 tightens spectator semantics without a schema bump: `SpectatorSnapshot.pendingSelection` must now be `null`, and consumers may no longer treat spectator payloads as a source of opponent pending-command draft state;
     - later pending-selection command/phase work should evaluate replay/hash impact separately.
 - ADR link:
     - [`ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md)
