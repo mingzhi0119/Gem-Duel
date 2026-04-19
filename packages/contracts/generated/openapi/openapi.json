@@ -354,8 +354,6 @@
                   "modeSelection",
                   "turnIdle",
                   "gemSelection",
-                  "reserving",
-                  "buying",
                   "privilege",
                   "replay",
                   "terminal"
@@ -653,7 +651,7 @@
           },
           "engineVersion": {
             "enum": [
-              "2026.04-step7"
+              "2026.04-step8"
             ],
             "type": "string"
           },
@@ -735,8 +733,6 @@
                         "modeSelection",
                         "turnIdle",
                         "gemSelection",
-                        "reserving",
-                        "buying",
                         "privilege",
                         "replay",
                         "terminal"
@@ -3445,7 +3441,7 @@
           },
           "schemaVersion": {
             "enum": [
-              "6.0.0"
+              "7.0.0"
             ],
             "type": "string"
           },
@@ -3806,20 +3802,6 @@
           },
           {
             "properties": {
-              "type": {
-                "enum": [
-                  "BEGIN_GEM_SELECTION"
-                ],
-                "type": "string"
-              }
-            },
-            "required": [
-              "type"
-            ],
-            "type": "object"
-          },
-          {
-            "properties": {
               "positionId": {
                 "enum": [
                   "r2c2",
@@ -3938,20 +3920,6 @@
             "required": [
               "type",
               "positions"
-            ],
-            "type": "object"
-          },
-          {
-            "properties": {
-              "type": {
-                "enum": [
-                  "BEGIN_RESERVE"
-                ],
-                "type": "string"
-              }
-            },
-            "required": [
-              "type"
             ],
             "type": "object"
           },
@@ -4087,20 +4055,6 @@
           },
           {
             "properties": {
-              "type": {
-                "enum": [
-                  "BEGIN_BUY"
-                ],
-                "type": "string"
-              }
-            },
-            "required": [
-              "type"
-            ],
-            "type": "object"
-          },
-          {
-            "properties": {
               "source": {
                 "oneOf": [
                   {
@@ -4181,20 +4135,6 @@
             "required": [
               "type",
               "source"
-            ],
-            "type": "object"
-          },
-          {
-            "properties": {
-              "type": {
-                "enum": [
-                  "BEGIN_PRIVILEGE"
-                ],
-                "type": "string"
-              }
-            },
-            "required": [
-              "type"
             ],
             "type": "object"
           },
@@ -4599,8 +4539,6 @@
                   "modeSelection",
                   "turnIdle",
                   "gemSelection",
-                  "reserving",
-                  "buying",
                   "privilege",
                   "replay",
                   "terminal"
@@ -6025,8 +5963,6 @@
                   "modeSelection",
                   "turnIdle",
                   "gemSelection",
-                  "reserving",
-                  "buying",
                   "privilege",
                   "replay",
                   "terminal"
@@ -6324,7 +6260,7 @@
           },
           "engineVersion": {
             "enum": [
-              "2026.04-step7"
+              "2026.04-step8"
             ],
             "type": "string"
           },
@@ -6406,8 +6342,6 @@
                         "modeSelection",
                         "turnIdle",
                         "gemSelection",
-                        "reserving",
-                        "buying",
                         "privilege",
                         "replay",
                         "terminal"
@@ -9116,7 +9050,7 @@
           },
           "schemaVersion": {
             "enum": [
-              "6.0.0"
+              "7.0.0"
             ],
             "type": "string"
           },
@@ -9384,20 +9318,6 @@
               },
               {
                 "properties": {
-                  "type": {
-                    "enum": [
-                      "BEGIN_GEM_SELECTION"
-                    ],
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "type"
-                ],
-                "type": "object"
-              },
-              {
-                "properties": {
                   "positionId": {
                     "enum": [
                       "r2c2",
@@ -9516,20 +9436,6 @@
                 "required": [
                   "type",
                   "positions"
-                ],
-                "type": "object"
-              },
-              {
-                "properties": {
-                  "type": {
-                    "enum": [
-                      "BEGIN_RESERVE"
-                    ],
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "type"
                 ],
                 "type": "object"
               },
@@ -9665,20 +9571,6 @@
               },
               {
                 "properties": {
-                  "type": {
-                    "enum": [
-                      "BEGIN_BUY"
-                    ],
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "type"
-                ],
-                "type": "object"
-              },
-              {
-                "properties": {
                   "source": {
                     "oneOf": [
                       {
@@ -9759,20 +9651,6 @@
                 "required": [
                   "type",
                   "source"
-                ],
-                "type": "object"
-              },
-              {
-                "properties": {
-                  "type": {
-                    "enum": [
-                      "BEGIN_PRIVILEGE"
-                    ],
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "type"
                 ],
                 "type": "object"
               },
@@ -10188,20 +10066,6 @@
                   },
                   {
                     "properties": {
-                      "type": {
-                        "enum": [
-                          "BEGIN_GEM_SELECTION"
-                        ],
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ],
-                    "type": "object"
-                  },
-                  {
-                    "properties": {
                       "positionId": {
                         "enum": [
                           "r2c2",
@@ -10320,20 +10184,6 @@
                     "required": [
                       "type",
                       "positions"
-                    ],
-                    "type": "object"
-                  },
-                  {
-                    "properties": {
-                      "type": {
-                        "enum": [
-                          "BEGIN_RESERVE"
-                        ],
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "type"
                     ],
                     "type": "object"
                   },
@@ -10469,20 +10319,6 @@
                   },
                   {
                     "properties": {
-                      "type": {
-                        "enum": [
-                          "BEGIN_BUY"
-                        ],
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "type"
-                    ],
-                    "type": "object"
-                  },
-                  {
-                    "properties": {
                       "source": {
                         "oneOf": [
                           {
@@ -10563,20 +10399,6 @@
                     "required": [
                       "type",
                       "source"
-                    ],
-                    "type": "object"
-                  },
-                  {
-                    "properties": {
-                      "type": {
-                        "enum": [
-                          "BEGIN_PRIVILEGE"
-                        ],
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "type"
                     ],
                     "type": "object"
                   },
@@ -10982,8 +10804,6 @@
               "modeSelection",
               "turnIdle",
               "gemSelection",
-              "reserving",
-              "buying",
               "privilege",
               "replay",
               "terminal"
@@ -11170,20 +10990,6 @@
                     },
                     {
                       "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_GEM_SELECTION"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
                         "positionId": {
                           "enum": [
                             "r2c2",
@@ -11302,20 +11108,6 @@
                       "required": [
                         "type",
                         "positions"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_RESERVE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -11451,20 +11243,6 @@
                     },
                     {
                       "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_BUY"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
                         "source": {
                           "oneOf": [
                             {
@@ -11545,20 +11323,6 @@
                       "required": [
                         "type",
                         "source"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_PRIVILEGE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -12155,8 +11919,6 @@
                       "modeSelection",
                       "turnIdle",
                       "gemSelection",
-                      "reserving",
-                      "buying",
                       "privilege",
                       "replay",
                       "terminal"
@@ -12454,7 +12216,7 @@
               },
               "engineVersion": {
                 "enum": [
-                  "2026.04-step7"
+                  "2026.04-step8"
                 ],
                 "type": "string"
               },
@@ -12536,8 +12298,6 @@
                             "modeSelection",
                             "turnIdle",
                             "gemSelection",
-                            "reserving",
-                            "buying",
                             "privilege",
                             "replay",
                             "terminal"
@@ -14831,7 +14591,7 @@
               },
               "schemaVersion": {
                 "enum": [
-                  "6.0.0"
+                  "7.0.0"
                 ],
                 "type": "string"
               },
@@ -14937,20 +14697,6 @@
                         "type": {
                           "enum": [
                             "START_MATCH"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_GEM_SELECTION"
                           ],
                           "type": "string"
                         }
@@ -15080,20 +14826,6 @@
                       "required": [
                         "type",
                         "positions"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_RESERVE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -15229,20 +14961,6 @@
                     },
                     {
                       "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_BUY"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
                         "source": {
                           "oneOf": [
                             {
@@ -15323,20 +15041,6 @@
                       "required": [
                         "type",
                         "source"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_PRIVILEGE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -15935,8 +15639,6 @@
                           "modeSelection",
                           "turnIdle",
                           "gemSelection",
-                          "reserving",
-                          "buying",
                           "privilege",
                           "replay",
                           "terminal"
@@ -16234,7 +15936,7 @@
                   },
                   "engineVersion": {
                     "enum": [
-                      "2026.04-step7"
+                      "2026.04-step8"
                     ],
                     "type": "string"
                   },
@@ -16316,8 +16018,6 @@
                                 "modeSelection",
                                 "turnIdle",
                                 "gemSelection",
-                                "reserving",
-                                "buying",
                                 "privilege",
                                 "replay",
                                 "terminal"
@@ -18611,7 +18311,7 @@
                   },
                   "schemaVersion": {
                     "enum": [
-                      "6.0.0"
+                      "7.0.0"
                     ],
                     "type": "string"
                   },
@@ -19086,8 +18786,6 @@
                           "modeSelection",
                           "turnIdle",
                           "gemSelection",
-                          "reserving",
-                          "buying",
                           "privilege",
                           "replay",
                           "terminal"
@@ -19385,7 +19083,7 @@
                   },
                   "engineVersion": {
                     "enum": [
-                      "2026.04-step7"
+                      "2026.04-step8"
                     ],
                     "type": "string"
                   },
@@ -19467,8 +19165,6 @@
                                 "modeSelection",
                                 "turnIdle",
                                 "gemSelection",
-                                "reserving",
-                                "buying",
                                 "privilege",
                                 "replay",
                                 "terminal"
@@ -21762,7 +21458,7 @@
                   },
                   "schemaVersion": {
                     "enum": [
-                      "6.0.0"
+                      "7.0.0"
                     ],
                     "type": "string"
                   },
@@ -21870,20 +21566,6 @@
                         "type": {
                           "enum": [
                             "START_MATCH"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_GEM_SELECTION"
                           ],
                           "type": "string"
                         }
@@ -22013,20 +21695,6 @@
                       "required": [
                         "type",
                         "positions"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_RESERVE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -22162,20 +21830,6 @@
                     },
                     {
                       "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_BUY"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
                         "source": {
                           "oneOf": [
                             {
@@ -22256,20 +21910,6 @@
                       "required": [
                         "type",
                         "source"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_PRIVILEGE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -22868,8 +22508,6 @@
                           "modeSelection",
                           "turnIdle",
                           "gemSelection",
-                          "reserving",
-                          "buying",
                           "privilege",
                           "replay",
                           "terminal"
@@ -23167,7 +22805,7 @@
                   },
                   "engineVersion": {
                     "enum": [
-                      "2026.04-step7"
+                      "2026.04-step8"
                     ],
                     "type": "string"
                   },
@@ -23249,8 +22887,6 @@
                                 "modeSelection",
                                 "turnIdle",
                                 "gemSelection",
-                                "reserving",
-                                "buying",
                                 "privilege",
                                 "replay",
                                 "terminal"
@@ -25544,7 +25180,7 @@
                   },
                   "schemaVersion": {
                     "enum": [
-                      "6.0.0"
+                      "7.0.0"
                     ],
                     "type": "string"
                   },
@@ -26019,8 +25655,6 @@
                           "modeSelection",
                           "turnIdle",
                           "gemSelection",
-                          "reserving",
-                          "buying",
                           "privilege",
                           "replay",
                           "terminal"
@@ -26318,7 +25952,7 @@
                   },
                   "engineVersion": {
                     "enum": [
-                      "2026.04-step7"
+                      "2026.04-step8"
                     ],
                     "type": "string"
                   },
@@ -26400,8 +26034,6 @@
                                 "modeSelection",
                                 "turnIdle",
                                 "gemSelection",
-                                "reserving",
-                                "buying",
                                 "privilege",
                                 "replay",
                                 "terminal"
@@ -28695,7 +28327,7 @@
                   },
                   "schemaVersion": {
                     "enum": [
-                      "6.0.0"
+                      "7.0.0"
                     ],
                     "type": "string"
                   },
@@ -29968,8 +29600,6 @@
                   "modeSelection",
                   "turnIdle",
                   "gemSelection",
-                  "reserving",
-                  "buying",
                   "privilege",
                   "replay",
                   "terminal"
@@ -30267,7 +29897,7 @@
           },
           "engineVersion": {
             "enum": [
-              "2026.04-step7"
+              "2026.04-step8"
             ],
             "type": "string"
           },
@@ -30349,8 +29979,6 @@
                         "modeSelection",
                         "turnIdle",
                         "gemSelection",
-                        "reserving",
-                        "buying",
                         "privilege",
                         "replay",
                         "terminal"
@@ -32644,7 +32272,7 @@
           },
           "schemaVersion": {
             "enum": [
-              "6.0.0"
+              "7.0.0"
             ],
             "type": "string"
           },
@@ -33413,20 +33041,6 @@
                     },
                     {
                       "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_GEM_SELECTION"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
                         "positionId": {
                           "enum": [
                             "r2c2",
@@ -33545,20 +33159,6 @@
                       "required": [
                         "type",
                         "positions"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_RESERVE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -33694,20 +33294,6 @@
                     },
                     {
                       "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_BUY"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
                         "source": {
                           "oneOf": [
                             {
@@ -33788,20 +33374,6 @@
                       "required": [
                         "type",
                         "source"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_PRIVILEGE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -34156,7 +33728,7 @@
           },
           "engineVersion": {
             "enum": [
-              "2026.04-step7"
+              "2026.04-step8"
             ],
             "type": "string"
           },
@@ -34238,8 +33810,6 @@
                         "modeSelection",
                         "turnIdle",
                         "gemSelection",
-                        "reserving",
-                        "buying",
                         "privilege",
                         "replay",
                         "terminal"
@@ -35670,8 +35240,6 @@
                       "modeSelection",
                       "turnIdle",
                       "gemSelection",
-                      "reserving",
-                      "buying",
                       "privilege",
                       "replay",
                       "terminal"
@@ -35969,7 +35537,7 @@
               },
               "engineVersion": {
                 "enum": [
-                  "2026.04-step7"
+                  "2026.04-step8"
                 ],
                 "type": "string"
               },
@@ -36051,8 +35619,6 @@
                             "modeSelection",
                             "turnIdle",
                             "gemSelection",
-                            "reserving",
-                            "buying",
                             "privilege",
                             "replay",
                             "terminal"
@@ -38761,7 +38327,7 @@
               },
               "schemaVersion": {
                 "enum": [
-                  "6.0.0"
+                  "7.0.0"
                 ],
                 "type": "string"
               },
@@ -38846,7 +38412,7 @@
           },
           "schemaVersion": {
             "enum": [
-              "6.0.0"
+              "7.0.0"
             ],
             "type": "string"
           },
@@ -38924,20 +38490,6 @@
                   "type": {
                     "enum": [
                       "START_MATCH"
-                    ],
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "type"
-                ],
-                "type": "object"
-              },
-              {
-                "properties": {
-                  "type": {
-                    "enum": [
-                      "BEGIN_GEM_SELECTION"
                     ],
                     "type": "string"
                   }
@@ -39067,20 +38619,6 @@
                 "required": [
                   "type",
                   "positions"
-                ],
-                "type": "object"
-              },
-              {
-                "properties": {
-                  "type": {
-                    "enum": [
-                      "BEGIN_RESERVE"
-                    ],
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "type"
                 ],
                 "type": "object"
               },
@@ -39216,20 +38754,6 @@
               },
               {
                 "properties": {
-                  "type": {
-                    "enum": [
-                      "BEGIN_BUY"
-                    ],
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "type"
-                ],
-                "type": "object"
-              },
-              {
-                "properties": {
                   "source": {
                     "oneOf": [
                       {
@@ -39310,20 +38834,6 @@
                 "required": [
                   "type",
                   "source"
-                ],
-                "type": "object"
-              },
-              {
-                "properties": {
-                  "type": {
-                    "enum": [
-                      "BEGIN_PRIVILEGE"
-                    ],
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "type"
                 ],
                 "type": "object"
               },
@@ -39746,20 +39256,6 @@
                         },
                         {
                           "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_GEM_SELECTION"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
                             "positionId": {
                               "enum": [
                                 "r2c2",
@@ -39878,20 +39374,6 @@
                           "required": [
                             "type",
                             "positions"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_RESERVE"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
                           ],
                           "type": "object"
                         },
@@ -40027,20 +39509,6 @@
                         },
                         {
                           "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_BUY"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
                             "source": {
                               "oneOf": [
                                 {
@@ -40121,20 +39589,6 @@
                           "required": [
                             "type",
                             "source"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_PRIVILEGE"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
                           ],
                           "type": "object"
                         },
@@ -40489,7 +39943,7 @@
               },
               "engineVersion": {
                 "enum": [
-                  "2026.04-step7"
+                  "2026.04-step8"
                 ],
                 "type": "string"
               },
@@ -40571,8 +40025,6 @@
                             "modeSelection",
                             "turnIdle",
                             "gemSelection",
-                            "reserving",
-                            "buying",
                             "privilege",
                             "replay",
                             "terminal"
@@ -42003,8 +41455,6 @@
                           "modeSelection",
                           "turnIdle",
                           "gemSelection",
-                          "reserving",
-                          "buying",
                           "privilege",
                           "replay",
                           "terminal"
@@ -42302,7 +41752,7 @@
                   },
                   "engineVersion": {
                     "enum": [
-                      "2026.04-step7"
+                      "2026.04-step8"
                     ],
                     "type": "string"
                   },
@@ -42384,8 +41834,6 @@
                                 "modeSelection",
                                 "turnIdle",
                                 "gemSelection",
-                                "reserving",
-                                "buying",
                                 "privilege",
                                 "replay",
                                 "terminal"
@@ -45094,7 +44542,7 @@
                   },
                   "schemaVersion": {
                     "enum": [
-                      "6.0.0"
+                      "7.0.0"
                     ],
                     "type": "string"
                   },
@@ -45179,7 +44627,7 @@
               },
               "schemaVersion": {
                 "enum": [
-                  "6.0.0"
+                  "7.0.0"
                 ],
                 "type": "string"
               },
@@ -45267,20 +44715,6 @@
                         "type": {
                           "enum": [
                             "START_MATCH"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_GEM_SELECTION"
                           ],
                           "type": "string"
                         }
@@ -45410,20 +44844,6 @@
                       "required": [
                         "type",
                         "positions"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_RESERVE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -45559,20 +44979,6 @@
                     },
                     {
                       "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_BUY"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
                         "source": {
                           "oneOf": [
                             {
@@ -45653,20 +45059,6 @@
                       "required": [
                         "type",
                         "source"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_PRIVILEGE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -46284,8 +45676,6 @@
                           "modeSelection",
                           "turnIdle",
                           "gemSelection",
-                          "reserving",
-                          "buying",
                           "privilege",
                           "replay",
                           "terminal"
@@ -46583,7 +45973,7 @@
                   },
                   "engineVersion": {
                     "enum": [
-                      "2026.04-step7"
+                      "2026.04-step8"
                     ],
                     "type": "string"
                   },
@@ -46665,8 +46055,6 @@
                                 "modeSelection",
                                 "turnIdle",
                                 "gemSelection",
-                                "reserving",
-                                "buying",
                                 "privilege",
                                 "replay",
                                 "terminal"
@@ -48960,7 +48348,7 @@
                   },
                   "schemaVersion": {
                     "enum": [
-                      "6.0.0"
+                      "7.0.0"
                     ],
                     "type": "string"
                   },
@@ -49435,8 +48823,6 @@
                           "modeSelection",
                           "turnIdle",
                           "gemSelection",
-                          "reserving",
-                          "buying",
                           "privilege",
                           "replay",
                           "terminal"
@@ -49734,7 +49120,7 @@
                   },
                   "engineVersion": {
                     "enum": [
-                      "2026.04-step7"
+                      "2026.04-step8"
                     ],
                     "type": "string"
                   },
@@ -49816,8 +49202,6 @@
                                 "modeSelection",
                                 "turnIdle",
                                 "gemSelection",
-                                "reserving",
-                                "buying",
                                 "privilege",
                                 "replay",
                                 "terminal"
@@ -52111,7 +51495,7 @@
                   },
                   "schemaVersion": {
                     "enum": [
-                      "6.0.0"
+                      "7.0.0"
                     ],
                     "type": "string"
                   },
@@ -52353,20 +51737,6 @@
                         },
                         {
                           "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_GEM_SELECTION"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
                             "positionId": {
                               "enum": [
                                 "r2c2",
@@ -52485,20 +51855,6 @@
                           "required": [
                             "type",
                             "positions"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_RESERVE"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
                           ],
                           "type": "object"
                         },
@@ -52634,20 +51990,6 @@
                         },
                         {
                           "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_BUY"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
                             "source": {
                               "oneOf": [
                                 {
@@ -52728,20 +52070,6 @@
                           "required": [
                             "type",
                             "source"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_PRIVILEGE"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
                           ],
                           "type": "object"
                         },
@@ -53359,8 +52687,6 @@
                               "modeSelection",
                               "turnIdle",
                               "gemSelection",
-                              "reserving",
-                              "buying",
                               "privilege",
                               "replay",
                               "terminal"
@@ -53658,7 +52984,7 @@
                       },
                       "engineVersion": {
                         "enum": [
-                          "2026.04-step7"
+                          "2026.04-step8"
                         ],
                         "type": "string"
                       },
@@ -53740,8 +53066,6 @@
                                     "modeSelection",
                                     "turnIdle",
                                     "gemSelection",
-                                    "reserving",
-                                    "buying",
                                     "privilege",
                                     "replay",
                                     "terminal"
@@ -56035,7 +55359,7 @@
                       },
                       "schemaVersion": {
                         "enum": [
-                          "6.0.0"
+                          "7.0.0"
                         ],
                         "type": "string"
                       },
@@ -56510,8 +55834,6 @@
                               "modeSelection",
                               "turnIdle",
                               "gemSelection",
-                              "reserving",
-                              "buying",
                               "privilege",
                               "replay",
                               "terminal"
@@ -56809,7 +56131,7 @@
                       },
                       "engineVersion": {
                         "enum": [
-                          "2026.04-step7"
+                          "2026.04-step8"
                         ],
                         "type": "string"
                       },
@@ -56891,8 +56213,6 @@
                                     "modeSelection",
                                     "turnIdle",
                                     "gemSelection",
-                                    "reserving",
-                                    "buying",
                                     "privilege",
                                     "replay",
                                     "terminal"
@@ -59186,7 +58506,7 @@
                       },
                       "schemaVersion": {
                         "enum": [
-                          "6.0.0"
+                          "7.0.0"
                         ],
                         "type": "string"
                       },
@@ -59336,20 +58656,6 @@
                     },
                     {
                       "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_GEM_SELECTION"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
                         "positionId": {
                           "enum": [
                             "r2c2",
@@ -59468,20 +58774,6 @@
                       "required": [
                         "type",
                         "positions"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_RESERVE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -59617,20 +58909,6 @@
                     },
                     {
                       "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_BUY"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
                         "source": {
                           "oneOf": [
                             {
@@ -59711,20 +58989,6 @@
                       "required": [
                         "type",
                         "source"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_PRIVILEGE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -60268,20 +59532,6 @@
                             },
                             {
                               "properties": {
-                                "type": {
-                                  "enum": [
-                                    "BEGIN_GEM_SELECTION"
-                                  ],
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "type"
-                              ],
-                              "type": "object"
-                            },
-                            {
-                              "properties": {
                                 "positionId": {
                                   "enum": [
                                     "r2c2",
@@ -60400,20 +59650,6 @@
                               "required": [
                                 "type",
                                 "positions"
-                              ],
-                              "type": "object"
-                            },
-                            {
-                              "properties": {
-                                "type": {
-                                  "enum": [
-                                    "BEGIN_RESERVE"
-                                  ],
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "type"
                               ],
                               "type": "object"
                             },
@@ -60549,20 +59785,6 @@
                             },
                             {
                               "properties": {
-                                "type": {
-                                  "enum": [
-                                    "BEGIN_BUY"
-                                  ],
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "type"
-                              ],
-                              "type": "object"
-                            },
-                            {
-                              "properties": {
                                 "source": {
                                   "oneOf": [
                                     {
@@ -60643,20 +59865,6 @@
                               "required": [
                                 "type",
                                 "source"
-                              ],
-                              "type": "object"
-                            },
-                            {
-                              "properties": {
-                                "type": {
-                                  "enum": [
-                                    "BEGIN_PRIVILEGE"
-                                  ],
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "type"
                               ],
                               "type": "object"
                             },
@@ -61274,8 +60482,6 @@
                                   "modeSelection",
                                   "turnIdle",
                                   "gemSelection",
-                                  "reserving",
-                                  "buying",
                                   "privilege",
                                   "replay",
                                   "terminal"
@@ -61573,7 +60779,7 @@
                           },
                           "engineVersion": {
                             "enum": [
-                              "2026.04-step7"
+                              "2026.04-step8"
                             ],
                             "type": "string"
                           },
@@ -61655,8 +60861,6 @@
                                         "modeSelection",
                                         "turnIdle",
                                         "gemSelection",
-                                        "reserving",
-                                        "buying",
                                         "privilege",
                                         "replay",
                                         "terminal"
@@ -63950,7 +63154,7 @@
                           },
                           "schemaVersion": {
                             "enum": [
-                              "6.0.0"
+                              "7.0.0"
                             ],
                             "type": "string"
                           },
@@ -64425,8 +63629,6 @@
                                   "modeSelection",
                                   "turnIdle",
                                   "gemSelection",
-                                  "reserving",
-                                  "buying",
                                   "privilege",
                                   "replay",
                                   "terminal"
@@ -64724,7 +63926,7 @@
                           },
                           "engineVersion": {
                             "enum": [
-                              "2026.04-step7"
+                              "2026.04-step8"
                             ],
                             "type": "string"
                           },
@@ -64806,8 +64008,6 @@
                                         "modeSelection",
                                         "turnIdle",
                                         "gemSelection",
-                                        "reserving",
-                                        "buying",
                                         "privilege",
                                         "replay",
                                         "terminal"
@@ -67101,7 +66301,7 @@
                           },
                           "schemaVersion": {
                             "enum": [
-                              "6.0.0"
+                              "7.0.0"
                             ],
                             "type": "string"
                           },
@@ -67254,20 +66454,6 @@
                       },
                       {
                         "properties": {
-                          "type": {
-                            "enum": [
-                              "BEGIN_GEM_SELECTION"
-                            ],
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "type"
-                        ],
-                        "type": "object"
-                      },
-                      {
-                        "properties": {
                           "positionId": {
                             "enum": [
                               "r2c2",
@@ -67386,20 +66572,6 @@
                         "required": [
                           "type",
                           "positions"
-                        ],
-                        "type": "object"
-                      },
-                      {
-                        "properties": {
-                          "type": {
-                            "enum": [
-                              "BEGIN_RESERVE"
-                            ],
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "type"
                         ],
                         "type": "object"
                       },
@@ -67535,20 +66707,6 @@
                       },
                       {
                         "properties": {
-                          "type": {
-                            "enum": [
-                              "BEGIN_BUY"
-                            ],
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "type"
-                        ],
-                        "type": "object"
-                      },
-                      {
-                        "properties": {
                           "source": {
                             "oneOf": [
                               {
@@ -67629,20 +66787,6 @@
                         "required": [
                           "type",
                           "source"
-                        ],
-                        "type": "object"
-                      },
-                      {
-                        "properties": {
-                          "type": {
-                            "enum": [
-                              "BEGIN_PRIVILEGE"
-                            ],
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "type"
                         ],
                         "type": "object"
                       },
@@ -68068,20 +67212,6 @@
                         },
                         {
                           "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_GEM_SELECTION"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
                             "positionId": {
                               "enum": [
                                 "r2c2",
@@ -68200,20 +67330,6 @@
                           "required": [
                             "type",
                             "positions"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_RESERVE"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
                           ],
                           "type": "object"
                         },
@@ -68349,20 +67465,6 @@
                         },
                         {
                           "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_BUY"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
                             "source": {
                               "oneOf": [
                                 {
@@ -68443,20 +67545,6 @@
                           "required": [
                             "type",
                             "source"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_PRIVILEGE"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
                           ],
                           "type": "object"
                         },
@@ -69055,8 +68143,6 @@
                               "modeSelection",
                               "turnIdle",
                               "gemSelection",
-                              "reserving",
-                              "buying",
                               "privilege",
                               "replay",
                               "terminal"
@@ -69354,7 +68440,7 @@
                       },
                       "engineVersion": {
                         "enum": [
-                          "2026.04-step7"
+                          "2026.04-step8"
                         ],
                         "type": "string"
                       },
@@ -69436,8 +68522,6 @@
                                     "modeSelection",
                                     "turnIdle",
                                     "gemSelection",
-                                    "reserving",
-                                    "buying",
                                     "privilege",
                                     "replay",
                                     "terminal"
@@ -71731,7 +70815,7 @@
                       },
                       "schemaVersion": {
                         "enum": [
-                          "6.0.0"
+                          "7.0.0"
                         ],
                         "type": "string"
                       },
@@ -72206,8 +71290,6 @@
                               "modeSelection",
                               "turnIdle",
                               "gemSelection",
-                              "reserving",
-                              "buying",
                               "privilege",
                               "replay",
                               "terminal"
@@ -72505,7 +71587,7 @@
                       },
                       "engineVersion": {
                         "enum": [
-                          "2026.04-step7"
+                          "2026.04-step8"
                         ],
                         "type": "string"
                       },
@@ -72587,8 +71669,6 @@
                                     "modeSelection",
                                     "turnIdle",
                                     "gemSelection",
-                                    "reserving",
-                                    "buying",
                                     "privilege",
                                     "replay",
                                     "terminal"
@@ -74882,7 +73962,7 @@
                       },
                       "schemaVersion": {
                         "enum": [
-                          "6.0.0"
+                          "7.0.0"
                         ],
                         "type": "string"
                       },
@@ -74990,20 +74070,6 @@
                             "type": {
                               "enum": [
                                 "START_MATCH"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_GEM_SELECTION"
                               ],
                               "type": "string"
                             }
@@ -75133,20 +74199,6 @@
                           "required": [
                             "type",
                             "positions"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_RESERVE"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
                           ],
                           "type": "object"
                         },
@@ -75282,20 +74334,6 @@
                         },
                         {
                           "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_BUY"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
                             "source": {
                               "oneOf": [
                                 {
@@ -75376,20 +74414,6 @@
                           "required": [
                             "type",
                             "source"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_PRIVILEGE"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
                           ],
                           "type": "object"
                         },
@@ -75988,8 +75012,6 @@
                               "modeSelection",
                               "turnIdle",
                               "gemSelection",
-                              "reserving",
-                              "buying",
                               "privilege",
                               "replay",
                               "terminal"
@@ -76287,7 +75309,7 @@
                       },
                       "engineVersion": {
                         "enum": [
-                          "2026.04-step7"
+                          "2026.04-step8"
                         ],
                         "type": "string"
                       },
@@ -76369,8 +75391,6 @@
                                     "modeSelection",
                                     "turnIdle",
                                     "gemSelection",
-                                    "reserving",
-                                    "buying",
                                     "privilege",
                                     "replay",
                                     "terminal"
@@ -78664,7 +77684,7 @@
                       },
                       "schemaVersion": {
                         "enum": [
-                          "6.0.0"
+                          "7.0.0"
                         ],
                         "type": "string"
                       },
@@ -79139,8 +78159,6 @@
                               "modeSelection",
                               "turnIdle",
                               "gemSelection",
-                              "reserving",
-                              "buying",
                               "privilege",
                               "replay",
                               "terminal"
@@ -79438,7 +78456,7 @@
                       },
                       "engineVersion": {
                         "enum": [
-                          "2026.04-step7"
+                          "2026.04-step8"
                         ],
                         "type": "string"
                       },
@@ -79520,8 +78538,6 @@
                                     "modeSelection",
                                     "turnIdle",
                                     "gemSelection",
-                                    "reserving",
-                                    "buying",
                                     "privilege",
                                     "replay",
                                     "terminal"
@@ -81815,7 +80831,7 @@
                       },
                       "schemaVersion": {
                         "enum": [
-                          "6.0.0"
+                          "7.0.0"
                         ],
                         "type": "string"
                       },
@@ -81923,20 +80939,6 @@
                             "type": {
                               "enum": [
                                 "START_MATCH"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_GEM_SELECTION"
                               ],
                               "type": "string"
                             }
@@ -82066,20 +81068,6 @@
                           "required": [
                             "type",
                             "positions"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_RESERVE"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
                           ],
                           "type": "object"
                         },
@@ -82215,20 +81203,6 @@
                         },
                         {
                           "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_BUY"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
                             "source": {
                               "oneOf": [
                                 {
@@ -82309,20 +81283,6 @@
                           "required": [
                             "type",
                             "source"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "type": {
-                              "enum": [
-                                "BEGIN_PRIVILEGE"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type"
                           ],
                           "type": "object"
                         },
@@ -82919,8 +81879,6 @@
                           "modeSelection",
                           "turnIdle",
                           "gemSelection",
-                          "reserving",
-                          "buying",
                           "privilege",
                           "replay",
                           "terminal"
@@ -83218,7 +82176,7 @@
                   },
                   "engineVersion": {
                     "enum": [
-                      "2026.04-step7"
+                      "2026.04-step8"
                     ],
                     "type": "string"
                   },
@@ -83300,8 +82258,6 @@
                                 "modeSelection",
                                 "turnIdle",
                                 "gemSelection",
-                                "reserving",
-                                "buying",
                                 "privilege",
                                 "replay",
                                 "terminal"
@@ -85595,7 +84551,7 @@
                   },
                   "schemaVersion": {
                     "enum": [
-                      "6.0.0"
+                      "7.0.0"
                     ],
                     "type": "string"
                   },
@@ -86257,8 +85213,6 @@
                   "modeSelection",
                   "turnIdle",
                   "gemSelection",
-                  "reserving",
-                  "buying",
                   "privilege",
                   "replay",
                   "terminal"
@@ -86556,7 +85510,7 @@
           },
           "engineVersion": {
             "enum": [
-              "2026.04-step7"
+              "2026.04-step8"
             ],
             "type": "string"
           },
@@ -86638,8 +85592,6 @@
                         "modeSelection",
                         "turnIdle",
                         "gemSelection",
-                        "reserving",
-                        "buying",
                         "privilege",
                         "replay",
                         "terminal"
@@ -88933,7 +87885,7 @@
           },
           "schemaVersion": {
             "enum": [
-              "6.0.0"
+              "7.0.0"
             ],
             "type": "string"
           },
@@ -89021,20 +87973,6 @@
                   "type": {
                     "enum": [
                       "START_MATCH"
-                    ],
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "type"
-                ],
-                "type": "object"
-              },
-              {
-                "properties": {
-                  "type": {
-                    "enum": [
-                      "BEGIN_GEM_SELECTION"
                     ],
                     "type": "string"
                   }
@@ -89164,20 +88102,6 @@
                 "required": [
                   "type",
                   "positions"
-                ],
-                "type": "object"
-              },
-              {
-                "properties": {
-                  "type": {
-                    "enum": [
-                      "BEGIN_RESERVE"
-                    ],
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "type"
                 ],
                 "type": "object"
               },
@@ -89313,20 +88237,6 @@
               },
               {
                 "properties": {
-                  "type": {
-                    "enum": [
-                      "BEGIN_BUY"
-                    ],
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "type"
-                ],
-                "type": "object"
-              },
-              {
-                "properties": {
                   "source": {
                     "oneOf": [
                       {
@@ -89407,20 +88317,6 @@
                 "required": [
                   "type",
                   "source"
-                ],
-                "type": "object"
-              },
-              {
-                "properties": {
-                  "type": {
-                    "enum": [
-                      "BEGIN_PRIVILEGE"
-                    ],
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "type"
                 ],
                 "type": "object"
               },
@@ -89833,20 +88729,6 @@
                     },
                     {
                       "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_GEM_SELECTION"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
                         "positionId": {
                           "enum": [
                             "r2c2",
@@ -89965,20 +88847,6 @@
                       "required": [
                         "type",
                         "positions"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_RESERVE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -90114,20 +88982,6 @@
                     },
                     {
                       "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_BUY"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
                         "source": {
                           "oneOf": [
                             {
@@ -90208,20 +89062,6 @@
                       "required": [
                         "type",
                         "source"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "properties": {
-                        "type": {
-                          "enum": [
-                            "BEGIN_PRIVILEGE"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "type"
                       ],
                       "type": "object"
                     },
@@ -90671,10 +89511,110 @@
           "marketSlots": {
             "items": {
               "properties": {
+                "accentColor": {
+                  "enum": [
+                    "blue",
+                    "white",
+                    "green",
+                    "black",
+                    "red",
+                    "pearl",
+                    "gold"
+                  ],
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "bonusCount": {
+                  "minimum": 0,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "bonusGem": {
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "blue",
+                        "white",
+                        "green",
+                        "black",
+                        "red"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "enum": [
+                        "gold"
+                      ],
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
                 "cardId": {
                   "minLength": 1,
                   "type": [
                     "string",
+                    "null"
+                  ]
+                },
+                "cost": {
+                  "properties": {
+                    "black": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "blue": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "gold": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "green": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "pearl": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "red": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "white": {
+                      "minimum": 0,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "blue",
+                    "white",
+                    "green",
+                    "black",
+                    "red",
+                    "pearl",
+                    "gold"
+                  ],
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "crowns": {
+                  "minimum": 0,
+                  "type": [
+                    "integer",
                     "null"
                   ]
                 },
@@ -90716,6 +89656,13 @@
                     "null"
                   ]
                 },
+                "patternKey": {
+                  "minLength": 1,
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
                 "reason": {
                   "minLength": 1,
                   "type": [
@@ -90726,6 +89673,13 @@
                 "ref": {
                   "minLength": 1,
                   "type": "string"
+                },
+                "score": {
+                  "minimum": 0,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "selectableAsBuy": {
                   "type": "boolean"
@@ -90772,7 +89726,14 @@
                 "cardId",
                 "selectableAsBuy",
                 "selectableAsReserve",
-                "reason"
+                "reason",
+                "score",
+                "crowns",
+                "bonusGem",
+                "bonusCount",
+                "cost",
+                "accentColor",
+                "patternKey"
               ],
               "type": "object"
             },
@@ -91014,9 +89975,27 @@
           "royalOffers": {
             "items": {
               "properties": {
+                "accentKey": {
+                  "minLength": 1,
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "crowns": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
                 "label": {
                   "minLength": 1,
                   "type": "string"
+                },
+                "patternKey": {
+                  "minLength": 1,
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "reason": {
                   "minLength": 1,
@@ -91029,15 +90008,31 @@
                   "minLength": 1,
                   "type": "string"
                 },
+                "score": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
                 "selectable": {
                   "type": "boolean"
+                },
+                "tagLabel": {
+                  "minLength": 1,
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "required": [
                 "royalId",
                 "label",
                 "selectable",
-                "reason"
+                "reason",
+                "score",
+                "crowns",
+                "accentKey",
+                "patternKey",
+                "tagLabel"
               ],
               "type": "object"
             },
@@ -91462,8 +90457,6 @@
                           "modeSelection",
                           "turnIdle",
                           "gemSelection",
-                          "reserving",
-                          "buying",
                           "privilege",
                           "replay",
                           "terminal"
@@ -91761,7 +90754,7 @@
                   },
                   "engineVersion": {
                     "enum": [
-                      "2026.04-step7"
+                      "2026.04-step8"
                     ],
                     "type": "string"
                   },
@@ -91843,8 +90836,6 @@
                                 "modeSelection",
                                 "turnIdle",
                                 "gemSelection",
-                                "reserving",
-                                "buying",
                                 "privilege",
                                 "replay",
                                 "terminal"
@@ -94138,7 +93129,7 @@
                   },
                   "schemaVersion": {
                     "enum": [
-                      "6.0.0"
+                      "7.0.0"
                     ],
                     "type": "string"
                   },
@@ -94613,8 +93604,6 @@
                           "modeSelection",
                           "turnIdle",
                           "gemSelection",
-                          "reserving",
-                          "buying",
                           "privilege",
                           "replay",
                           "terminal"
@@ -94912,7 +93901,7 @@
                   },
                   "engineVersion": {
                     "enum": [
-                      "2026.04-step7"
+                      "2026.04-step8"
                     ],
                     "type": "string"
                   },
@@ -94994,8 +93983,6 @@
                                 "modeSelection",
                                 "turnIdle",
                                 "gemSelection",
-                                "reserving",
-                                "buying",
                                 "privilege",
                                 "replay",
                                 "terminal"
@@ -97289,7 +96276,7 @@
                   },
                   "schemaVersion": {
                     "enum": [
-                      "6.0.0"
+                      "7.0.0"
                     ],
                     "type": "string"
                   },
@@ -97599,8 +96586,6 @@
                       "modeSelection",
                       "turnIdle",
                       "gemSelection",
-                      "reserving",
-                      "buying",
                       "privilege",
                       "replay",
                       "terminal"
@@ -97898,7 +96883,7 @@
               },
               "engineVersion": {
                 "enum": [
-                  "2026.04-step7"
+                  "2026.04-step8"
                 ],
                 "type": "string"
               },
@@ -97980,8 +96965,6 @@
                             "modeSelection",
                             "turnIdle",
                             "gemSelection",
-                            "reserving",
-                            "buying",
                             "privilege",
                             "replay",
                             "terminal"
@@ -100275,7 +99258,7 @@
               },
               "schemaVersion": {
                 "enum": [
-                  "6.0.0"
+                  "7.0.0"
                 ],
                 "type": "string"
               },
@@ -100750,8 +99733,6 @@
                       "modeSelection",
                       "turnIdle",
                       "gemSelection",
-                      "reserving",
-                      "buying",
                       "privilege",
                       "replay",
                       "terminal"
@@ -101049,7 +100030,7 @@
               },
               "engineVersion": {
                 "enum": [
-                  "2026.04-step7"
+                  "2026.04-step8"
                 ],
                 "type": "string"
               },
@@ -101131,8 +100112,6 @@
                             "modeSelection",
                             "turnIdle",
                             "gemSelection",
-                            "reserving",
-                            "buying",
                             "privilege",
                             "replay",
                             "terminal"
@@ -103426,7 +102405,7 @@
               },
               "schemaVersion": {
                 "enum": [
-                  "6.0.0"
+                  "7.0.0"
                 ],
                 "type": "string"
               },
@@ -103469,7 +102448,7 @@
   "info": {
     "description": "Deterministic HTTP and contract surface for Gem Duel Step 02.5 effect and hook freeze.",
     "title": "Gem Duel Contracts",
-    "version": "6.0.0"
+    "version": "7.0.0"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -103609,20 +102588,6 @@
                                   },
                                   {
                                     "properties": {
-                                      "type": {
-                                        "enum": [
-                                          "BEGIN_GEM_SELECTION"
-                                        ],
-                                        "type": "string"
-                                      }
-                                    },
-                                    "required": [
-                                      "type"
-                                    ],
-                                    "type": "object"
-                                  },
-                                  {
-                                    "properties": {
                                       "positionId": {
                                         "enum": [
                                           "r2c2",
@@ -103741,20 +102706,6 @@
                                     "required": [
                                       "type",
                                       "positions"
-                                    ],
-                                    "type": "object"
-                                  },
-                                  {
-                                    "properties": {
-                                      "type": {
-                                        "enum": [
-                                          "BEGIN_RESERVE"
-                                        ],
-                                        "type": "string"
-                                      }
-                                    },
-                                    "required": [
-                                      "type"
                                     ],
                                     "type": "object"
                                   },
@@ -103890,20 +102841,6 @@
                                   },
                                   {
                                     "properties": {
-                                      "type": {
-                                        "enum": [
-                                          "BEGIN_BUY"
-                                        ],
-                                        "type": "string"
-                                      }
-                                    },
-                                    "required": [
-                                      "type"
-                                    ],
-                                    "type": "object"
-                                  },
-                                  {
-                                    "properties": {
                                       "source": {
                                         "oneOf": [
                                           {
@@ -103984,20 +102921,6 @@
                                     "required": [
                                       "type",
                                       "source"
-                                    ],
-                                    "type": "object"
-                                  },
-                                  {
-                                    "properties": {
-                                      "type": {
-                                        "enum": [
-                                          "BEGIN_PRIVILEGE"
-                                        ],
-                                        "type": "string"
-                                      }
-                                    },
-                                    "required": [
-                                      "type"
                                     ],
                                     "type": "object"
                                   },
@@ -104352,7 +103275,7 @@
                         },
                         "engineVersion": {
                           "enum": [
-                            "2026.04-step7"
+                            "2026.04-step8"
                           ],
                           "type": "string"
                         },
@@ -104434,8 +103357,6 @@
                                       "modeSelection",
                                       "turnIdle",
                                       "gemSelection",
-                                      "reserving",
-                                      "buying",
                                       "privilege",
                                       "replay",
                                       "terminal"
@@ -105866,8 +104787,6 @@
                                     "modeSelection",
                                     "turnIdle",
                                     "gemSelection",
-                                    "reserving",
-                                    "buying",
                                     "privilege",
                                     "replay",
                                     "terminal"
@@ -106165,7 +105084,7 @@
                             },
                             "engineVersion": {
                               "enum": [
-                                "2026.04-step7"
+                                "2026.04-step8"
                               ],
                               "type": "string"
                             },
@@ -106247,8 +105166,6 @@
                                           "modeSelection",
                                           "turnIdle",
                                           "gemSelection",
-                                          "reserving",
-                                          "buying",
                                           "privilege",
                                           "replay",
                                           "terminal"
@@ -108957,7 +107874,7 @@
                             },
                             "schemaVersion": {
                               "enum": [
-                                "6.0.0"
+                                "7.0.0"
                               ],
                               "type": "string"
                             },
@@ -109042,7 +107959,7 @@
                         },
                         "schemaVersion": {
                           "enum": [
-                            "6.0.0"
+                            "7.0.0"
                           ],
                           "type": "string"
                         },
@@ -109247,20 +108164,6 @@
                               },
                               {
                                 "properties": {
-                                  "type": {
-                                    "enum": [
-                                      "BEGIN_GEM_SELECTION"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "type"
-                                ],
-                                "type": "object"
-                              },
-                              {
-                                "properties": {
                                   "positionId": {
                                     "enum": [
                                       "r2c2",
@@ -109379,20 +108282,6 @@
                                 "required": [
                                   "type",
                                   "positions"
-                                ],
-                                "type": "object"
-                              },
-                              {
-                                "properties": {
-                                  "type": {
-                                    "enum": [
-                                      "BEGIN_RESERVE"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "type"
                                 ],
                                 "type": "object"
                               },
@@ -109528,20 +108417,6 @@
                               },
                               {
                                 "properties": {
-                                  "type": {
-                                    "enum": [
-                                      "BEGIN_BUY"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "type"
-                                ],
-                                "type": "object"
-                              },
-                              {
-                                "properties": {
                                   "source": {
                                     "oneOf": [
                                       {
@@ -109622,20 +108497,6 @@
                                 "required": [
                                   "type",
                                   "source"
-                                ],
-                                "type": "object"
-                              },
-                              {
-                                "properties": {
-                                  "type": {
-                                    "enum": [
-                                      "BEGIN_PRIVILEGE"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "type"
                                 ],
                                 "type": "object"
                               },
@@ -110253,8 +109114,6 @@
                                     "modeSelection",
                                     "turnIdle",
                                     "gemSelection",
-                                    "reserving",
-                                    "buying",
                                     "privilege",
                                     "replay",
                                     "terminal"
@@ -110552,7 +109411,7 @@
                             },
                             "engineVersion": {
                               "enum": [
-                                "2026.04-step7"
+                                "2026.04-step8"
                               ],
                               "type": "string"
                             },
@@ -110634,8 +109493,6 @@
                                           "modeSelection",
                                           "turnIdle",
                                           "gemSelection",
-                                          "reserving",
-                                          "buying",
                                           "privilege",
                                           "replay",
                                           "terminal"
@@ -112929,7 +111786,7 @@
                             },
                             "schemaVersion": {
                               "enum": [
-                                "6.0.0"
+                                "7.0.0"
                               ],
                               "type": "string"
                             },
@@ -113404,8 +112261,6 @@
                                     "modeSelection",
                                     "turnIdle",
                                     "gemSelection",
-                                    "reserving",
-                                    "buying",
                                     "privilege",
                                     "replay",
                                     "terminal"
@@ -113703,7 +112558,7 @@
                             },
                             "engineVersion": {
                               "enum": [
-                                "2026.04-step7"
+                                "2026.04-step8"
                               ],
                               "type": "string"
                             },
@@ -113785,8 +112640,6 @@
                                           "modeSelection",
                                           "turnIdle",
                                           "gemSelection",
-                                          "reserving",
-                                          "buying",
                                           "privilege",
                                           "replay",
                                           "terminal"
@@ -116080,7 +114933,7 @@
                             },
                             "schemaVersion": {
                               "enum": [
-                                "6.0.0"
+                                "7.0.0"
                               ],
                               "type": "string"
                             },
@@ -116285,20 +115138,6 @@
                               },
                               {
                                 "properties": {
-                                  "type": {
-                                    "enum": [
-                                      "BEGIN_GEM_SELECTION"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "type"
-                                ],
-                                "type": "object"
-                              },
-                              {
-                                "properties": {
                                   "positionId": {
                                     "enum": [
                                       "r2c2",
@@ -116417,20 +115256,6 @@
                                 "required": [
                                   "type",
                                   "positions"
-                                ],
-                                "type": "object"
-                              },
-                              {
-                                "properties": {
-                                  "type": {
-                                    "enum": [
-                                      "BEGIN_RESERVE"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "type"
                                 ],
                                 "type": "object"
                               },
@@ -116566,20 +115391,6 @@
                               },
                               {
                                 "properties": {
-                                  "type": {
-                                    "enum": [
-                                      "BEGIN_BUY"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "type"
-                                ],
-                                "type": "object"
-                              },
-                              {
-                                "properties": {
                                   "source": {
                                     "oneOf": [
                                       {
@@ -116660,20 +115471,6 @@
                                 "required": [
                                   "type",
                                   "source"
-                                ],
-                                "type": "object"
-                              },
-                              {
-                                "properties": {
-                                  "type": {
-                                    "enum": [
-                                      "BEGIN_PRIVILEGE"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "type"
                                 ],
                                 "type": "object"
                               },
@@ -117291,8 +116088,6 @@
                                     "modeSelection",
                                     "turnIdle",
                                     "gemSelection",
-                                    "reserving",
-                                    "buying",
                                     "privilege",
                                     "replay",
                                     "terminal"
@@ -117590,7 +116385,7 @@
                             },
                             "engineVersion": {
                               "enum": [
-                                "2026.04-step7"
+                                "2026.04-step8"
                               ],
                               "type": "string"
                             },
@@ -117672,8 +116467,6 @@
                                           "modeSelection",
                                           "turnIdle",
                                           "gemSelection",
-                                          "reserving",
-                                          "buying",
                                           "privilege",
                                           "replay",
                                           "terminal"
@@ -119967,7 +118760,7 @@
                             },
                             "schemaVersion": {
                               "enum": [
-                                "6.0.0"
+                                "7.0.0"
                               ],
                               "type": "string"
                             },
@@ -120442,8 +119235,6 @@
                                     "modeSelection",
                                     "turnIdle",
                                     "gemSelection",
-                                    "reserving",
-                                    "buying",
                                     "privilege",
                                     "replay",
                                     "terminal"
@@ -120741,7 +119532,7 @@
                             },
                             "engineVersion": {
                               "enum": [
-                                "2026.04-step7"
+                                "2026.04-step8"
                               ],
                               "type": "string"
                             },
@@ -120823,8 +119614,6 @@
                                           "modeSelection",
                                           "turnIdle",
                                           "gemSelection",
-                                          "reserving",
-                                          "buying",
                                           "privilege",
                                           "replay",
                                           "terminal"
@@ -123118,7 +121907,7 @@
                             },
                             "schemaVersion": {
                               "enum": [
-                                "6.0.0"
+                                "7.0.0"
                               ],
                               "type": "string"
                             },
@@ -123349,20 +122138,6 @@
                               },
                               {
                                 "properties": {
-                                  "type": {
-                                    "enum": [
-                                      "BEGIN_GEM_SELECTION"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "type"
-                                ],
-                                "type": "object"
-                              },
-                              {
-                                "properties": {
                                   "positionId": {
                                     "enum": [
                                       "r2c2",
@@ -123481,20 +122256,6 @@
                                 "required": [
                                   "type",
                                   "positions"
-                                ],
-                                "type": "object"
-                              },
-                              {
-                                "properties": {
-                                  "type": {
-                                    "enum": [
-                                      "BEGIN_RESERVE"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "type"
                                 ],
                                 "type": "object"
                               },
@@ -123630,20 +122391,6 @@
                               },
                               {
                                 "properties": {
-                                  "type": {
-                                    "enum": [
-                                      "BEGIN_BUY"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "type"
-                                ],
-                                "type": "object"
-                              },
-                              {
-                                "properties": {
                                   "source": {
                                     "oneOf": [
                                       {
@@ -123724,20 +122471,6 @@
                                 "required": [
                                   "type",
                                   "source"
-                                ],
-                                "type": "object"
-                              },
-                              {
-                                "properties": {
-                                  "type": {
-                                    "enum": [
-                                      "BEGIN_PRIVILEGE"
-                                    ],
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "type"
                                 ],
                                 "type": "object"
                               },
@@ -124355,8 +123088,6 @@
                                     "modeSelection",
                                     "turnIdle",
                                     "gemSelection",
-                                    "reserving",
-                                    "buying",
                                     "privilege",
                                     "replay",
                                     "terminal"
@@ -124654,7 +123385,7 @@
                             },
                             "engineVersion": {
                               "enum": [
-                                "2026.04-step7"
+                                "2026.04-step8"
                               ],
                               "type": "string"
                             },
@@ -124736,8 +123467,6 @@
                                           "modeSelection",
                                           "turnIdle",
                                           "gemSelection",
-                                          "reserving",
-                                          "buying",
                                           "privilege",
                                           "replay",
                                           "terminal"
@@ -127031,7 +125760,7 @@
                             },
                             "schemaVersion": {
                               "enum": [
-                                "6.0.0"
+                                "7.0.0"
                               ],
                               "type": "string"
                             },
@@ -127506,8 +126235,6 @@
                                     "modeSelection",
                                     "turnIdle",
                                     "gemSelection",
-                                    "reserving",
-                                    "buying",
                                     "privilege",
                                     "replay",
                                     "terminal"
@@ -127805,7 +126532,7 @@
                             },
                             "engineVersion": {
                               "enum": [
-                                "2026.04-step7"
+                                "2026.04-step8"
                               ],
                               "type": "string"
                             },
@@ -127887,8 +126614,6 @@
                                           "modeSelection",
                                           "turnIdle",
                                           "gemSelection",
-                                          "reserving",
-                                          "buying",
                                           "privilege",
                                           "replay",
                                           "terminal"
@@ -130182,7 +128907,7 @@
                             },
                             "schemaVersion": {
                               "enum": [
-                                "6.0.0"
+                                "7.0.0"
                               ],
                               "type": "string"
                             },

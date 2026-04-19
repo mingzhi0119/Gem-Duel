@@ -17,18 +17,22 @@ export default async function ReplayPage({
 
     if (status >= 400 || 'bundle' in body === false) {
         return (
-            <Section title={`${locale === 'zh' ? '回放' : 'Replay'} ${replayId}`}>
-                <p>{'message' in body ? body.message : 'Replay is currently unavailable.'}</p>
-            </Section>
+            <div className="gd-utility-route">
+                <Section title={`${locale === 'zh' ? '回放' : 'Replay'} ${replayId}`}>
+                    <p>{'message' in body ? body.message : 'Replay is currently unavailable.'}</p>
+                </Section>
+            </div>
         );
     }
 
     const inspector = buildReplayInspectorModel(body.bundle);
     if (!inspector.ok) {
         return (
-            <Section title={`${locale === 'zh' ? '回放' : 'Replay'} ${replayId}`}>
-                <p>{inspector.error.message}</p>
-            </Section>
+            <div className="gd-utility-route">
+                <Section title={`${locale === 'zh' ? '回放' : 'Replay'} ${replayId}`}>
+                    <p>{inspector.error.message}</p>
+                </Section>
+            </div>
         );
     }
 

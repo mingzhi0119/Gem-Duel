@@ -6,6 +6,8 @@
 
 本文是功能性收口完成（Step 00-08 + full-board roadmap Phase 0-8 + Hardening Wave 1 全部关闭，`v1.0.2` 已 tag）之后，为"视觉产品化壳层"建立的独立治理文档。
 
+> V1–V7 已全部落地；独立审计结论与 Visual Hardening Wave 1 步骤见 [`./visual-productization-independent-audit.md`](./visual-productization-independent-audit.md)。本 plan 对 V1–V7 视为冻结。后续 2026-04-19 的 target-first landscape/direct-trigger active-match 波次已转入 [`./play-interface-target-first-plan.md`](./play-interface-target-first-plan.md) 独立治理。
+
 它只解决一件事：把 `packages/ui` 的 shared `BoardScene` 与其承载的产品入口（`/play/local`、`/play/ai`、`/play/run`、`/rooms/[roomId]`、`/replays/[replayId]`、Desktop shared shell）从当前的 **白底 validation / debug 排版** 升级为 **dark tactical dashboard 产品壳层**。
 
 本文与 [`full-board-ui-roadmap.md`](./full-board-ui-roadmap.md) 是同级平行文档，不回填 roadmap 的 phase 编号。
@@ -28,18 +30,20 @@
 
 ### 3. 参照物
 
-| 来源                                                                                                                                               | 作用                                                      |
-| -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| [gem-duel-dev.vercel.app](https://gem-duel-dev.vercel.app/)                                                                                        | 交互完成度、micro-interaction、动效节奏的权威参考站       |
-| 用户提供的 "现状" 截图                                                                                                                             | 当前白底 debug 排版的起点 baseline                        |
-| 用户提供的 "目标" 截图                                                                                                                             | 最小视觉完成度；任何 sub-phase 不得低于其呈现的版式与密度 |
-| [`./phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md)                                             | `packages/ui` 布局、tokens 与 visual harness 既有规则     |
-| [`../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md) | `UiViewModel v2` 字段与 pending-selection 投影决策        |
+| 来源                                                                                                                                               | 作用                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [gem-duel-dev.vercel.app](https://gem-duel-dev.vercel.app/)                                                                                        | 交互完成度、micro-interaction、动效节奏的权威参考站                       |
+| `GemDuel-Dev/`（本地 gitignored 目录）                                                                                                             | 只读预览参考；可浏览、截图、对照实现方式，但不允许修改、import 或逐字搬运 |
+| 用户提供的 "现状" 截图                                                                                                                             | 当前白底 debug 排版的起点 baseline                                        |
+| 用户提供的 "目标" 截图                                                                                                                             | 最小视觉完成度；任何 sub-phase 不得低于其呈现的版式与密度                 |
+| [`./phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md)                                             | `packages/ui` 布局、tokens 与 visual harness 既有规则                     |
+| [`../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md) | `UiViewModel v2` 字段与 pending-selection 投影决策                        |
 
 ### 4. 不变约束（硬边界）
 
 - `packages/ui` 仍只做展示 + 回调，不承载规则 / 计分 / Buff / authority 逻辑。
 - 不扩 contract、不扩 `UiViewModel`、不扩 `pendingSelection`、不扩 room-service 协议。**缺字段一律先回到契约层讨论，再做渲染。**
+- `GemDuel-Dev/` 是本地 gitignored 的只读 preview reference；可以浏览、截图、总结实现方式，但**不允许**修改、import 或逐字搬运到现行架构。任何从它获得的想法都必须重新以当前 contracts / shared-shell seams 重写。
 - 所有产品入口继续从 shared `BoardScene` 渲染；不允许再造页面级 rule-aware renderer。
 - `apps/desktop` 不引入 desktop-specific gameplay renderer；新视觉必须同时在 Web 与 Desktop shared shell 下成立。
 - 不回流 legacy code；旧版视觉仅作为 `docs/99-legacy/` 与 git-history 的参考。
@@ -202,15 +206,17 @@
 
 ### 9. 风险与缓解
 
-| 风险                                                                | 缓解                                                                                                      |
-| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| 视觉 churn 导致 `check-visual` 频繁 rebaseline，混入非视觉回归      | 每个 sub-phase 只在其限定的目录下允许 `--update-snapshots`，并要求 log 文件显式列出 baseline 变更面与证据 |
-| dark theme 压缩对比度，`check-a11y` 漂红                            | V1 的 tokens 先与 axe-core 对拍；对比度 < 4.5:1 的 token 组合不得进入 trunk                               |
-| 目标图里存在当前 contract 未覆盖的 affordance（Save / Load / 语言） | V5 决策门硬卡：未决策前，UI 上不得出现这些按钮                                                            |
-| `Theme` / `Style` 状态在 Web 与 Desktop shared shell 下不一致       | theme/style truth 必须收敛到 shared shell 层；V5 与 V7 都要在 Web + Desktop smoke 中验证                  |
-| Style 预留能力过早变成多套半成品皮肤，拖垮 baseline                 | V1 只落 registry，V5 只落入口/placeholder；新增第二套 style 必须另开 visual log，不得夹带上线             |
-| Desktop shared shell 在新视觉下资源加载漂移                         | V7 的 Desktop parity check 必须覆盖 `check-phase8` 的 classic-local smoke path + frozen hash              |
-| 本文与 `full-board-ui-roadmap.md` 并行造成"phase 编号再开"错觉      | 本文明确标注"平行文档 + 非 roadmap phase"，所有 log 使用 `visual-v{N}-*` 前缀                             |
+| 风险                                                                             | 缓解                                                                                                      |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| 视觉 churn 导致 `check-visual` 频繁 rebaseline，混入非视觉回归                   | 每个 sub-phase 只在其限定的目录下允许 `--update-snapshots`，并要求 log 文件显式列出 baseline 变更面与证据 |
+| dark theme 压缩对比度，`check-a11y` 漂红                                         | V1 的 tokens 先与 axe-core 对拍；对比度 < 4.5:1 的 token 组合不得进入 trunk                               |
+| 目标图里存在当前 contract 未覆盖的 affordance（Save / Load / 语言）              | V5 决策门硬卡：未决策前，UI 上不得出现这些按钮                                                            |
+| `Theme` / `Style` 状态在 Web 与 Desktop shared shell 下不一致                    | theme/style truth 必须收敛到 shared shell 层；V5 与 V7 都要在 Web + Desktop smoke 中验证                  |
+| Style 预留能力过早变成多套半成品皮肤，拖垮 baseline                              | V1 只落 registry，V5 只落入口/placeholder；新增第二套 style 必须另开 visual log，不得夹带上线             |
+| Desktop shared shell 在新视觉下资源加载漂移                                      | V7 的 Desktop parity check 必须覆盖 `check-phase8` 的 classic-local smoke path + frozen hash              |
+| 本地 `GemDuel-Dev/` 误被当成活动源码                                             | 根 `.gitignore`、`AGENTS.md` 与 `eslint.config.mjs` 的 import ban 共同阻断；docs 只能引用其预览思路       |
+| 未来新增 shell（如 mobile/native）时，rail / presentation-sync 只活在 web app 层 | 当前放置是刻意选择，因为两者依赖 Next/browser APIs；一旦新增 shell，必须先重抽这两条 seam，再共享视觉语义 |
+| 本文与 `full-board-ui-roadmap.md` 并行造成"phase 编号再开"错觉                   | 本文明确标注"平行文档 + 非 roadmap phase"，所有 log 使用 `visual-v{N}-*` 前缀                             |
 
 ### 10. 证据与 gate 策略
 
@@ -229,10 +235,13 @@ V7 关闭时，向 `docs/40-operations/release-prep.md` §3 acceptance gate 之�
 
 - [`./full-board-ui-roadmap.md`](./full-board-ui-roadmap.md)
 - [`./full-board-ui-roadmap-phase-0-3-independent-audit.md`](./full-board-ui-roadmap-phase-0-3-independent-audit.md)
+- [`./visual-productization-independent-audit.md`](./visual-productization-independent-audit.md)
 - [`./phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md)
 - [`../30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md`](../30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md)
 - [`../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md)
 - [`../40-operations/release-prep.md`](../40-operations/release-prep.md)
+- [`./preview-ui-productization-plan.md`](./preview-ui-productization-plan.md)
+- `GemDuel-Dev/`（本地 gitignored preview reference）
 - [gem-duel-dev.vercel.app](https://gem-duel-dev.vercel.app/)
 
 ## EN
@@ -240,6 +249,8 @@ V7 关闭时，向 `docs/40-operations/release-prep.md` §3 acceptance gate 之�
 ### 1. Document Role
 
 This is the standalone governance doc for the **visual productization shell**, launched after functional closure completed (Step 00-08 + full-board roadmap Phase 0-8 + Hardening Wave 1 all closed, `v1.0.2` tagged).
+
+> V1–V7 have all landed. The independent-audit verdict and the Visual Hardening Wave 1 follow-up steps are captured in [`./visual-productization-independent-audit.md`](./visual-productization-independent-audit.md). This plan stays frozen for V1–V7. The later 2026-04-19 target-first landscape/direct-trigger active-match wave is now governed separately in [`./play-interface-target-first-plan.md`](./play-interface-target-first-plan.md).
 
 It only addresses one goal: upgrade the shared `BoardScene` in `packages/ui` and the product entrypoints it feeds (`/play/local`, `/play/ai`, `/play/run`, `/rooms/[roomId]`, `/replays/[replayId]`, Desktop shared shell) from the current **light-theme validation / debug layout** to a **dark tactical dashboard product shell**.
 
@@ -263,18 +274,20 @@ Work described here **must not** bypass these gates. If visual changes break `ch
 
 ### 3. Reference Material
 
-| Source                                                                                                                                             | Role                                                                              |
-| -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| [gem-duel-dev.vercel.app](https://gem-duel-dev.vercel.app/)                                                                                        | Authoritative site for interaction finish, micro-interactions, and motion cadence |
-| User-provided "current state" screenshot                                                                                                           | Starting baseline for the light debug layout                                      |
-| User-provided "target" screenshot                                                                                                                  | Minimum visual bar; no sub-phase may ship below this density                      |
-| [`./phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md)                                             | Existing rules for `packages/ui` layout, tokens, and visual harness               |
-| [`../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md) | `UiViewModel v2` field and pending-selection projection decisions                 |
+| Source                                                                                                                                             | Role                                                                                                                                                     |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [gem-duel-dev.vercel.app](https://gem-duel-dev.vercel.app/)                                                                                        | Authoritative site for interaction finish, micro-interactions, and motion cadence                                                                        |
+| `GemDuel-Dev/` (local gitignored directory)                                                                                                        | Read-only preview reference; may be browsed, screenshotted, and studied for implementation shape, but must not be modified, imported, or copied verbatim |
+| User-provided "current state" screenshot                                                                                                           | Starting baseline for the light debug layout                                                                                                             |
+| User-provided "target" screenshot                                                                                                                  | Minimum visual bar; no sub-phase may ship below this density                                                                                             |
+| [`./phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md)                                             | Existing rules for `packages/ui` layout, tokens, and visual harness                                                                                      |
+| [`../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md) | `UiViewModel v2` field and pending-selection projection decisions                                                                                        |
 
 ### 4. Invariants (hard boundary)
 
 - `packages/ui` remains presentation plus callbacks only; it may not own rules, scoring, Buff, or authority logic.
 - Do not expand contracts, `UiViewModel`, `pendingSelection`, or the room-service protocol. **Missing fields go to the contract layer first, not the renderer.**
+- `GemDuel-Dev/` is a gitignored, read-only local preview reference. It may be browsed, screenshotted, and mined for interaction / layout / motion ideas, but it must never be edited, imported, or copied verbatim into the active architecture. Any borrowed idea must be re-authored against the current contracts and shared-shell seams.
 - All product entrypoints keep rendering through the shared `BoardScene`; page-local rule-aware renderers are forbidden.
 - `apps/desktop` does not get a desktop-specific gameplay renderer; the new visuals must hold for both Web and Desktop shared shells.
 - No legacy code is imported back; the legacy visual only exists as a reference in `docs/99-legacy/` and git history.
@@ -437,15 +450,17 @@ The visual productization track may close when:
 
 ### 9. Risks and Mitigations
 
-| Risk                                                                                            | Mitigation                                                                                                                                  |
-| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Visual churn triggers frequent `check-visual` rebaselines that hide non-visual regressions      | Each sub-phase may only run `--update-snapshots` on a scoped directory, and its log must list every baseline it changed and why             |
-| Dark theme compresses contrast and trips `check-a11y`                                           | V1 token set is validated against axe-core ahead of merge; any token pair below 4.5:1 is rejected                                           |
-| The target image contains affordances not backed by the current contract (Save / Load / locale) | V5 is a hard decision gate; without a decision, the rail must not show those buttons                                                        |
-| `Theme` / `Style` state drifts between Web and Desktop shared shells                            | Theme/style truth must collapse to the shared shell layer; both V5 and V7 validate Web + Desktop smoke                                      |
-| The reserved Style surface mutates into multiple half-finished skins too early                  | V1 only lands the registry; V5 only lands the selector/placeholder; any second style requires its own visual log and may not be smuggled in |
-| Desktop shared shell drifts on asset loading after the restyle                                  | V7 Desktop-parity check is mandatory via `check-phase8`'s classic-local smoke path + frozen hash                                            |
-| This doc running alongside `full-board-ui-roadmap.md` could be misread as a "new phase"         | The doc explicitly declares itself as a peer track with `visual-v{N}-*` log prefixes                                                        |
+| Risk                                                                                                    | Mitigation                                                                                                                                             |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Visual churn triggers frequent `check-visual` rebaselines that hide non-visual regressions              | Each sub-phase may only run `--update-snapshots` on a scoped directory, and its log must list every baseline it changed and why                        |
+| Dark theme compresses contrast and trips `check-a11y`                                                   | V1 token set is validated against axe-core ahead of merge; any token pair below 4.5:1 is rejected                                                      |
+| The target image contains affordances not backed by the current contract (Save / Load / locale)         | V5 is a hard decision gate; without a decision, the rail must not show those buttons                                                                   |
+| `Theme` / `Style` state drifts between Web and Desktop shared shells                                    | Theme/style truth must collapse to the shared shell layer; both V5 and V7 validate Web + Desktop smoke                                                 |
+| The reserved Style surface mutates into multiple half-finished skins too early                          | V1 only lands the registry; V5 only lands the selector/placeholder; any second style requires its own visual log and may not be smuggled in            |
+| Desktop shared shell drifts on asset loading after the restyle                                          | V7 Desktop-parity check is mandatory via `check-phase8`'s classic-local smoke path + frozen hash                                                       |
+| Local `GemDuel-Dev/` is mistaken for active source                                                      | The root `.gitignore`, `AGENTS.md`, and `eslint.config.mjs` import ban jointly block it; docs may only cite its preview ideas                          |
+| A future shell (for example mobile/native) leaves rail / presentation-sync trapped in the web app layer | The current placement is intentional because both seams depend on Next/browser APIs; any new shell must re-extract them before sharing shell semantics |
+| This doc running alongside `full-board-ui-roadmap.md` could be misread as a "new phase"                 | The doc explicitly declares itself as a peer track with `visual-v{N}-*` log prefixes                                                                   |
 
 ### 10. Evidence and Gate Strategy
 
@@ -464,8 +479,11 @@ When V7 closes, no new command is added to `docs/40-operations/release-prep.md` 
 
 - [`./full-board-ui-roadmap.md`](./full-board-ui-roadmap.md)
 - [`./full-board-ui-roadmap-phase-0-3-independent-audit.md`](./full-board-ui-roadmap-phase-0-3-independent-audit.md)
+- [`./visual-productization-independent-audit.md`](./visual-productization-independent-audit.md)
 - [`./phase-2.5-ui-layout-and-visual-harness-plan.md`](./phase-2.5-ui-layout-and-visual-harness-plan.md)
 - [`../30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md`](../30-contracts/phase-2-uiviewmodel-2.0-contract-prep.md)
 - [`../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md`](../90-adr/ADR-0006-board-selection-model-and-uiviewmodel-projection.md)
 - [`../40-operations/release-prep.md`](../40-operations/release-prep.md)
+- [`./preview-ui-productization-plan.md`](./preview-ui-productization-plan.md)
+- `GemDuel-Dev/` (local gitignored preview reference)
 - [gem-duel-dev.vercel.app](https://gem-duel-dev.vercel.app/)

@@ -1,13 +1,15 @@
-import { Section } from '@gem-duel/ui';
+import { resolveUiLocale } from '@gem-duel/ui';
+import { RulebookClient } from './rulebook-client';
+import type { RulebookLocale } from './rulebook-content';
 
-export default function RulebookPage() {
-    return (
-        <Section title="Rulebook Strategy">
-            <p>
-                ZH: 经典规则需要严格兼容；Buff、AI 和联机边缘规则允许在新引擎中版本化整理。 EN:
-                Classic rules must remain behavior-compatible, while buffs, AI behavior, and online
-                edge rules may be normalized and versioned in the new engine.
-            </p>
-        </Section>
-    );
+export default async function RulebookPage({
+    searchParams,
+}: {
+    searchParams?: Promise<{ lang?: string | string[] }>;
+}) {
+    const params = searchParams ? await searchParams : undefined;
+    const rawLang = Array.isArray(params?.lang) ? params?.lang[0] : params?.lang;
+    const locale = resolveUiLocale(rawLang) as RulebookLocale;
+
+    return <RulebookClient initialLocale={locale} />;
 }

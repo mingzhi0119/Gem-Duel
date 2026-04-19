@@ -1,16 +1,16 @@
 {
-    "schemaVersion": "6.0.0",
+    "schemaVersion": "7.0.0",
     "rulesetVersion": "2026.1",
-    "engineVersion": "2026.04-step7",
+    "engineVersion": "2026.04-step8",
     "seed": 34,
     "initialSnapshot": {
-        "schemaVersion": "6.0.0",
+        "schemaVersion": "7.0.0",
         "rulesetVersion": "2026.1",
-        "engineVersion": "2026.04-step7",
+        "engineVersion": "2026.04-step8",
         "visibility": "authoritative",
         "context": {
             "matchId": "match-1",
-            "schemaVersion": "6.0.0",
+            "schemaVersion": "7.0.0",
             "rulesetVersion": "2026.1",
             "seed": 34,
             "mode": "local",
@@ -619,6 +619,7 @@
         },
         "activeEffects": [],
         "effectPrompts": [],
+        "pendingSelection": null,
         "hiddenState": {
             "bag": [],
             "deckOrder": {
@@ -696,16 +697,25 @@
             "expectedSeq": 5,
             "issuedBy": "p1",
             "command": {
-                "type": "BEGIN_PRIVILEGE"
+                "type": "USE_PRIVILEGE_ADD_POSITION",
+                "positionId": "r2c2"
             }
         },
         {
             "clientCommandId": "golden-command-2",
-            "expectedSeq": 6,
+            "expectedSeq": 7,
             "issuedBy": "p1",
             "command": {
-                "type": "USE_PRIVILEGE",
-                "positions": ["r2c2", "r2c3"]
+                "type": "USE_PRIVILEGE_ADD_POSITION",
+                "positionId": "r2c3"
+            }
+        },
+        {
+            "clientCommandId": "golden-command-3",
+            "expectedSeq": 8,
+            "issuedBy": "p1",
+            "command": {
+                "type": "USE_PRIVILEGE_CONFIRM"
             }
         }
     ],
@@ -735,6 +745,20 @@
             "phase": "privilege"
         },
         {
+            "type": "selection.positionAdded",
+            "action": "USE_PRIVILEGE",
+            "player": "p1",
+            "positionId": "r2c2",
+            "positions": ["r2c2"]
+        },
+        {
+            "type": "selection.positionAdded",
+            "action": "USE_PRIVILEGE",
+            "player": "p1",
+            "positionId": "r2c3",
+            "positions": ["r2c2", "r2c3"]
+        },
+        {
             "type": "privilege.used",
             "player": "p1",
             "positions": ["r2c2", "r2c3"],
@@ -758,11 +782,11 @@
             "pendingDiscardCount": 0
         }
     ],
-    "finalStateHash": "fnv1a-567452d8",
+    "finalStateHash": "fnv1a-ad270d62",
     "resultSummary": {
         "winner": null,
         "reason": null,
-        "turns": 10,
-        "finalSeq": 10
+        "turns": 12,
+        "finalSeq": 12
     }
 }

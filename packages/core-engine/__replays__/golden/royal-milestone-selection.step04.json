@@ -1,18 +1,18 @@
 {
-    "schemaVersion": "5.0.0",
+    "schemaVersion": "7.0.0",
     "rulesetVersion": "2026.1",
-    "engineVersion": "2026.04-step4",
-    "seed": 26,
+    "engineVersion": "2026.04-step8",
+    "seed": 13,
     "initialSnapshot": {
-        "schemaVersion": "5.0.0",
+        "schemaVersion": "7.0.0",
         "rulesetVersion": "2026.1",
-        "engineVersion": "2026.04-step4",
+        "engineVersion": "2026.04-step8",
         "visibility": "authoritative",
         "context": {
             "matchId": "match-1",
-            "schemaVersion": "5.0.0",
+            "schemaVersion": "7.0.0",
             "rulesetVersion": "2026.1",
-            "seed": 26,
+            "seed": 13,
             "mode": "local",
             "phase": "turnIdle",
             "step": 5,
@@ -37,49 +37,49 @@
                 "positionId": "r2c2",
                 "row": 2,
                 "col": 2,
-                "token": "pearl"
+                "token": "green"
             },
             {
                 "positionId": "r2c3",
                 "row": 2,
                 "col": 3,
-                "token": "blue"
+                "token": "black"
             },
             {
                 "positionId": "r3c3",
                 "row": 3,
                 "col": 3,
-                "token": "black"
+                "token": "gold"
             },
             {
                 "positionId": "r3c2",
                 "row": 3,
                 "col": 2,
-                "token": "red"
+                "token": "pearl"
             },
             {
                 "positionId": "r3c1",
                 "row": 3,
                 "col": 1,
-                "token": "blue"
+                "token": "black"
             },
             {
                 "positionId": "r2c1",
                 "row": 2,
                 "col": 1,
-                "token": "blue"
+                "token": "green"
             },
             {
                 "positionId": "r1c1",
                 "row": 1,
                 "col": 1,
-                "token": "red"
+                "token": "black"
             },
             {
                 "positionId": "r1c2",
                 "row": 1,
                 "col": 2,
-                "token": "blue"
+                "token": "black"
             },
             {
                 "positionId": "r1c3",
@@ -91,37 +91,37 @@
                 "positionId": "r1c4",
                 "row": 1,
                 "col": 4,
-                "token": "pearl"
+                "token": "red"
             },
             {
                 "positionId": "r2c4",
                 "row": 2,
                 "col": 4,
-                "token": "gold"
+                "token": "blue"
             },
             {
                 "positionId": "r3c4",
                 "row": 3,
                 "col": 4,
-                "token": "green"
+                "token": "gold"
             },
             {
                 "positionId": "r4c4",
                 "row": 4,
                 "col": 4,
-                "token": "white"
+                "token": "blue"
             },
             {
                 "positionId": "r4c3",
                 "row": 4,
                 "col": 3,
-                "token": "white"
+                "token": "red"
             },
             {
                 "positionId": "r4c2",
                 "row": 4,
                 "col": 2,
-                "token": "black"
+                "token": "white"
             },
             {
                 "positionId": "r4c1",
@@ -133,19 +133,19 @@
                 "positionId": "r4c0",
                 "row": 4,
                 "col": 0,
-                "token": "red"
+                "token": "blue"
             },
             {
                 "positionId": "r3c0",
                 "row": 3,
                 "col": 0,
-                "token": "white"
+                "token": "gold"
             },
             {
                 "positionId": "r2c0",
                 "row": 2,
                 "col": 0,
-                "token": "green"
+                "token": "blue"
             },
             {
                 "positionId": "r1c0",
@@ -157,31 +157,31 @@
                 "positionId": "r0c0",
                 "row": 0,
                 "col": 0,
-                "token": "white"
+                "token": "pearl"
             },
             {
                 "positionId": "r0c1",
                 "row": 0,
                 "col": 1,
-                "token": "gold"
+                "token": "white"
             },
             {
                 "positionId": "r0c2",
                 "row": 0,
                 "col": 2,
-                "token": "gold"
+                "token": "white"
             },
             {
                 "positionId": "r0c3",
                 "row": 0,
                 "col": 3,
-                "token": "black"
+                "token": "red"
             },
             {
                 "positionId": "r0c4",
                 "row": 0,
                 "col": 4,
-                "token": "black"
+                "token": "white"
             }
         ],
         "pyramid": [
@@ -192,7 +192,7 @@
                         "level": 1,
                         "slot": 1,
                         "card": {
-                            "cardId": "royal-threshold-card",
+                            "cardId": "test-crown-card",
                             "level": 1,
                             "points": 0,
                             "crowns": 3,
@@ -215,6 +215,52 @@
                         "level": 1,
                         "slot": 2,
                         "card": {
+                            "cardId": "l1-wh-21",
+                            "level": 1,
+                            "points": 0,
+                            "crowns": 0,
+                            "printedBonusColor": "white",
+                            "bonusColor": "white",
+                            "bonusCount": 1,
+                            "cost": {
+                                "blue": 2,
+                                "white": 0,
+                                "green": 2,
+                                "black": 0,
+                                "red": 0,
+                                "pearl": 1,
+                                "gold": 0
+                            },
+                            "ability": "again"
+                        }
+                    },
+                    {
+                        "level": 1,
+                        "slot": 3,
+                        "card": {
+                            "cardId": "l1-gr-10",
+                            "level": 1,
+                            "points": 0,
+                            "crowns": 0,
+                            "printedBonusColor": "green",
+                            "bonusColor": "green",
+                            "bonusCount": 1,
+                            "cost": {
+                                "blue": 1,
+                                "white": 1,
+                                "green": 0,
+                                "black": 1,
+                                "red": 1,
+                                "pearl": 0,
+                                "gold": 0
+                            },
+                            "ability": "none"
+                        }
+                    },
+                    {
+                        "level": 1,
+                        "slot": 4,
+                        "card": {
                             "cardId": "l1-wh-24",
                             "level": 1,
                             "points": 0,
@@ -229,52 +275,6 @@
                                 "black": 0,
                                 "red": 0,
                                 "pearl": 0,
-                                "gold": 0
-                            },
-                            "ability": "none"
-                        }
-                    },
-                    {
-                        "level": 1,
-                        "slot": 3,
-                        "card": {
-                            "cardId": "l1-bl-15",
-                            "level": 1,
-                            "points": 0,
-                            "crowns": 0,
-                            "printedBonusColor": "blue",
-                            "bonusColor": "blue",
-                            "bonusCount": 1,
-                            "cost": {
-                                "blue": 0,
-                                "white": 1,
-                                "green": 1,
-                                "black": 1,
-                                "red": 1,
-                                "pearl": 0,
-                                "gold": 0
-                            },
-                            "ability": "none"
-                        }
-                    },
-                    {
-                        "level": 1,
-                        "slot": 4,
-                        "card": {
-                            "cardId": "l1-jo-27",
-                            "level": 1,
-                            "points": 0,
-                            "crowns": 1,
-                            "printedBonusColor": "gold",
-                            "bonusColor": null,
-                            "bonusCount": 1,
-                            "cost": {
-                                "blue": 0,
-                                "white": 4,
-                                "green": 0,
-                                "black": 0,
-                                "red": 0,
-                                "pearl": 1,
                                 "gold": 0
                             },
                             "ability": "none"
@@ -312,20 +312,20 @@
                         "level": 2,
                         "slot": 1,
                         "card": {
-                            "cardId": "l2-gr-41",
+                            "cardId": "l2-bl-34",
                             "level": 2,
-                            "points": 1,
-                            "crowns": 0,
-                            "printedBonusColor": "green",
-                            "bonusColor": "green",
-                            "bonusCount": 2,
+                            "points": 2,
+                            "crowns": 1,
+                            "printedBonusColor": "black",
+                            "bonusColor": "black",
+                            "bonusCount": 1,
                             "cost": {
-                                "blue": 0,
+                                "blue": 2,
                                 "white": 0,
-                                "green": 0,
-                                "black": 2,
-                                "red": 5,
-                                "pearl": 0,
+                                "green": 2,
+                                "black": 0,
+                                "red": 2,
+                                "pearl": 1,
                                 "gold": 0
                             },
                             "ability": "none"
@@ -335,17 +335,17 @@
                         "level": 2,
                         "slot": 2,
                         "card": {
-                            "cardId": "l2-bl-33",
+                            "cardId": "l2-wh-49",
                             "level": 2,
                             "points": 1,
                             "crowns": 0,
-                            "printedBonusColor": "black",
-                            "bonusColor": "black",
+                            "printedBonusColor": "white",
+                            "bonusColor": "white",
                             "bonusCount": 2,
                             "cost": {
-                                "blue": 2,
-                                "white": 5,
-                                "green": 0,
+                                "blue": 5,
+                                "white": 0,
+                                "green": 2,
                                 "black": 0,
                                 "red": 0,
                                 "pearl": 0,
@@ -358,41 +358,41 @@
                         "level": 2,
                         "slot": 3,
                         "card": {
-                            "cardId": "l2-wh-50",
+                            "cardId": "l2-bl-35",
                             "level": 2,
                             "points": 2,
-                            "crowns": 1,
-                            "printedBonusColor": "white",
-                            "bonusColor": "white",
+                            "crowns": 0,
+                            "printedBonusColor": "black",
+                            "bonusColor": "black",
                             "bonusCount": 1,
                             "cost": {
                                 "blue": 0,
                                 "white": 0,
-                                "green": 2,
-                                "black": 2,
+                                "green": 0,
+                                "black": 4,
                                 "red": 2,
                                 "pearl": 1,
                                 "gold": 0
                             },
-                            "ability": "none"
+                            "ability": "scroll"
                         }
                     },
                     {
                         "level": 2,
                         "slot": 4,
                         "card": {
-                            "cardId": "l2-gr-42",
+                            "cardId": "l2-jo-55",
                             "level": 2,
-                            "points": 2,
-                            "crowns": 1,
-                            "printedBonusColor": "green",
-                            "bonusColor": "green",
+                            "points": 0,
+                            "crowns": 2,
+                            "printedBonusColor": "gold",
+                            "bonusColor": null,
                             "bonusCount": 1,
                             "cost": {
-                                "blue": 2,
-                                "white": 2,
-                                "green": 0,
-                                "black": 2,
+                                "blue": 0,
+                                "white": 0,
+                                "green": 6,
+                                "black": 0,
                                 "red": 0,
                                 "pearl": 1,
                                 "gold": 0
@@ -409,43 +409,43 @@
                         "level": 3,
                         "slot": 1,
                         "card": {
-                            "cardId": "l3-jo-70",
+                            "cardId": "l3-wh-66",
                             "level": 3,
                             "points": 3,
-                            "crowns": 0,
-                            "printedBonusColor": "gold",
-                            "bonusColor": null,
+                            "crowns": 2,
+                            "printedBonusColor": "white",
+                            "bonusColor": "white",
                             "bonusCount": 1,
                             "cost": {
-                                "blue": 0,
+                                "blue": 3,
                                 "white": 0,
-                                "green": 0,
-                                "black": 0,
-                                "red": 8,
-                                "pearl": 0,
+                                "green": 5,
+                                "black": 3,
+                                "red": 0,
+                                "pearl": 1,
                                 "gold": 0
                             },
-                            "ability": "again"
+                            "ability": "none"
                         }
                     },
                     {
                         "level": 3,
                         "slot": 2,
                         "card": {
-                            "cardId": "l3-gr-63",
+                            "cardId": "l3-bl-58",
                             "level": 3,
-                            "points": 4,
-                            "crowns": 0,
-                            "printedBonusColor": "green",
-                            "bonusColor": "green",
+                            "points": 3,
+                            "crowns": 2,
+                            "printedBonusColor": "black",
+                            "bonusColor": "black",
                             "bonusCount": 1,
                             "cost": {
-                                "blue": 2,
-                                "white": 0,
-                                "green": 6,
+                                "blue": 0,
+                                "white": 3,
+                                "green": 5,
                                 "black": 0,
-                                "red": 2,
-                                "pearl": 0,
+                                "red": 3,
+                                "pearl": 1,
                                 "gold": 0
                             },
                             "ability": "none"
@@ -455,19 +455,19 @@
                         "level": 3,
                         "slot": 3,
                         "card": {
-                            "cardId": "l3-re-61",
+                            "cardId": "l3-jo-69",
                             "level": 3,
-                            "points": 4,
-                            "crowns": 0,
-                            "printedBonusColor": "red",
-                            "bonusColor": "red",
+                            "points": 0,
+                            "crowns": 3,
+                            "printedBonusColor": "gold",
+                            "bonusColor": null,
                             "bonusCount": 1,
                             "cost": {
                                 "blue": 0,
                                 "white": 0,
-                                "green": 2,
-                                "black": 2,
-                                "red": 6,
+                                "green": 0,
+                                "black": 8,
+                                "red": 0,
                                 "pearl": 0,
                                 "gold": 0
                             },
@@ -588,70 +588,72 @@
         ],
         "replayCursor": null,
         "sequence": 5,
+        "runContext": null,
         "activeEffects": [],
         "effectPrompts": [],
+        "pendingSelection": null,
         "hiddenState": {
             "bag": [],
             "deckOrder": {
                 "level1": [
-                    "l1-jo-29",
-                    "l1-bl-2",
-                    "l1-bl-0",
-                    "l1-gr-12",
                     "l1-wh-22",
-                    "l1-gr-14",
-                    "l1-re-7",
-                    "l1-gr-10",
-                    "l1-gr-13",
-                    "l1-re-6",
-                    "l1-bl-18",
-                    "l1-re-9",
-                    "l1-wh-21",
-                    "l1-bl-17",
-                    "l1-jo-26",
-                    "l1-po-25",
-                    "l1-jo-28",
-                    "l1-re-8",
-                    "l1-bl-1",
-                    "l1-bl-16",
+                    "l1-wh-20",
+                    "l1-bl-0",
                     "l1-bl-19",
-                    "l1-bl-4",
+                    "l1-jo-29",
+                    "l1-bl-18",
+                    "l1-bl-1",
+                    "l1-bl-2",
+                    "l1-bl-16",
                     "l1-re-5",
+                    "l1-bl-15",
+                    "l1-re-8",
                     "l1-wh-23",
-                    "l1-gr-11"
+                    "l1-re-7",
+                    "l1-jo-26",
+                    "l1-gr-11",
+                    "l1-re-9",
+                    "l1-po-25",
+                    "l1-bl-17",
+                    "l1-gr-12",
+                    "l1-jo-27",
+                    "l1-gr-13",
+                    "l1-bl-4",
+                    "l1-gr-14",
+                    "l1-re-6"
                 ],
                 "level2": [
-                    "l2-jo-55",
-                    "l2-bl-45",
-                    "l2-re-36",
-                    "l2-gr-43",
-                    "l2-jo-56",
-                    "l2-bl-44",
                     "l2-gr-40",
-                    "l2-re-39",
+                    "l2-re-36",
+                    "l2-bl-44",
+                    "l2-jo-56",
+                    "l2-wh-50",
                     "l2-bl-46",
-                    "l2-wh-51",
-                    "l2-bl-34",
-                    "l2-jo-54",
-                    "l2-wh-49",
-                    "l2-bl-35",
-                    "l2-bl-47",
+                    "l2-bl-32",
                     "l2-re-37",
+                    "l2-gr-43",
                     "l2-po-53",
-                    "l2-wh-48",
+                    "l2-bl-45",
+                    "l2-wh-51",
+                    "l2-re-39",
+                    "l2-bl-47",
                     "l2-re-38",
-                    "l2-bl-32"
+                    "l2-gr-42",
+                    "l2-gr-41",
+                    "l2-bl-33",
+                    "l2-jo-54",
+                    "l2-wh-48"
                 ],
                 "level3": [
-                    "l3-jo-69",
-                    "l3-wh-67",
-                    "l3-bl-58",
-                    "l3-gr-62",
-                    "l3-bl-59",
                     "l3-po-68",
+                    "l3-gr-63",
+                    "l3-re-61",
+                    "l3-jo-70",
+                    "l3-bl-59",
+                    "l3-wh-67",
                     "l3-bl-65",
                     "l3-re-60",
-                    "l3-wh-66",
+                    "l3-gr-62",
                     "l3-bl-64"
                 ]
             },
@@ -663,16 +665,8 @@
     },
     "commands": [
         {
-            "clientCommandId": "golden-command-1",
+            "clientCommandId": "phase7-command-1",
             "expectedSeq": 5,
-            "issuedBy": "p1",
-            "command": {
-                "type": "BEGIN_BUY"
-            }
-        },
-        {
-            "clientCommandId": "golden-command-2",
-            "expectedSeq": 7,
             "issuedBy": "p1",
             "command": {
                 "type": "BUY_CARD",
@@ -684,8 +678,8 @@
             }
         },
         {
-            "clientCommandId": "golden-command-3",
-            "expectedSeq": 14,
+            "clientCommandId": "phase7-command-2",
+            "expectedSeq": 11,
             "issuedBy": "p1",
             "command": {
                 "type": "SELECT_ROYAL",
@@ -715,16 +709,6 @@
             "privilegeRecipient": "p2"
         },
         {
-            "type": "turn.segmentChanged",
-            "segment": "mandatory",
-            "optionalStep": "done",
-            "pendingDiscardCount": 0
-        },
-        {
-            "type": "phase.changed",
-            "phase": "buying"
-        },
-        {
             "type": "card.bought",
             "player": "p1",
             "source": {
@@ -732,7 +716,7 @@
                 "level": 1,
                 "slot": 1
             },
-            "cardId": "royal-threshold-card",
+            "cardId": "test-crown-card",
             "bonusColor": "blue",
             "goldSpent": 0
         },
@@ -740,11 +724,7 @@
             "type": "pyramid.refilled",
             "level": 1,
             "slot": 1,
-            "cardId": "l1-jo-29"
-        },
-        {
-            "type": "phase.changed",
-            "phase": "turnIdle"
+            "cardId": "l1-wh-22"
         },
         {
             "type": "turn.segmentChanged",
@@ -754,22 +734,22 @@
         },
         {
             "type": "effect.spawned",
-            "effectId": "match-1-gain_royal-12",
+            "effectId": "match-1-gain_royal-9",
             "parentEffectId": null,
             "atom": "gain_royal",
             "hookPoint": "BEFORE_GAIN_ROYAL",
             "source": "royal_reward",
             "scope": "active_player",
             "owner": "p1",
-            "sequence": 12,
+            "sequence": 9,
             "stage": "scheduled",
-            "rngNamespace": "match/match-1/effects/gain_royal/12/match-1-gain_royal-12"
+            "rngNamespace": "match/match-1/effects/gain_royal/9/match-1-gain_royal-9"
         },
         {
             "type": "effect.started",
-            "effectId": "match-1-gain_royal-12",
+            "effectId": "match-1-gain_royal-9",
             "atom": "gain_royal",
-            "sequence": 12,
+            "sequence": 9,
             "stage": "running"
         },
         {
@@ -784,18 +764,18 @@
         },
         {
             "type": "effect.completed",
-            "effectId": "match-1-gain_royal-12",
+            "effectId": "match-1-gain_royal-9",
             "atom": "gain_royal",
-            "sequence": 12,
+            "sequence": 9,
             "stage": "completed",
             "outcome": "resolved"
         }
     ],
-    "finalStateHash": "fnv1a-5e5c5d7b",
+    "finalStateHash": "fnv1a-567f46e2",
     "resultSummary": {
         "winner": null,
         "reason": null,
-        "turns": 16,
-        "finalSeq": 16
+        "turns": 13,
+        "finalSeq": 13
     }
 }

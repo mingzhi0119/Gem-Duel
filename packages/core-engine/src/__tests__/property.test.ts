@@ -59,10 +59,6 @@ const materializeCommand = (snapshot: GameSnapshot, choice: number): GameCommand
 
     const commandType = allowedCommands[choice % allowedCommands.length];
     switch (commandType) {
-        case 'BEGIN_GEM_SELECTION':
-        case 'BEGIN_RESERVE':
-        case 'BEGIN_BUY':
-        case 'BEGIN_PRIVILEGE':
         case 'REPLENISH_BOARD':
         case 'ENTER_REPLAY':
         case 'EXIT_REPLAY':

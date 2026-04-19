@@ -16,6 +16,21 @@ const restrictedLegacyImports = [
     '../../../old/**',
 ];
 
+const restrictedPreviewImports = [
+    'GemDuel-Dev',
+    'GemDuel-Dev/*',
+    'GemDuel-Dev/**',
+    '**/GemDuel-Dev',
+    '**/GemDuel-Dev/*',
+    '**/GemDuel-Dev/**',
+    '../GemDuel-Dev/*',
+    '../GemDuel-Dev/**',
+    '../../GemDuel-Dev/*',
+    '../../GemDuel-Dev/**',
+    '../../../GemDuel-Dev/*',
+    '../../../GemDuel-Dev/**',
+];
+
 const restrictedRandomImports = [
     'lodash.shuffle',
     'lodash.sample',
@@ -66,6 +81,7 @@ export default tseslint.config(
             '**/.turbo/**',
             '**/coverage/**',
             'old/**',
+            'GemDuel-Dev/**',
         ],
     },
     js.configs.recommended,
@@ -80,6 +96,14 @@ export default tseslint.config(
                 ...globals.browser,
                 ...globals.node,
             },
+        },
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [...restrictedLegacyImports, ...restrictedPreviewImports],
+                },
+            ],
         },
     },
     {
@@ -110,7 +134,7 @@ export default tseslint.config(
             'no-restricted-imports': [
                 'error',
                 {
-                    patterns: restrictedLegacyImports,
+                    patterns: [...restrictedLegacyImports, ...restrictedPreviewImports],
                 },
             ],
             'boundaries/dependencies': [

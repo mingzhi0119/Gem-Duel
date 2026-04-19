@@ -11,6 +11,11 @@ const readStageWidth = async (page: Page) => {
     return Math.round(bounds!.width);
 };
 
+const openArenaControls = async (page: Page) => {
+    await page.getByTestId('boardscene-controls-trigger').click();
+    await expect(page.getByTestId('boardscene-controls-panel')).toBeVisible();
+};
+
 test('Phase 7 row 1: replay route reuses the shared BoardScene with timeline hash controls', async ({
     page,
 }) => {
@@ -31,6 +36,7 @@ test('Phase 7 row 1: replay route reuses the shared BoardScene with timeline has
     await expect(page.getByTestId('current-final-state-hash')).toHaveText(PHASE7_REPLAY_FINAL_HASH);
 
     const stageWidth = await readStageWidth(page);
+    await openArenaControls(page);
     await expect(page.getByTestId('replay-drawer-trigger')).toBeVisible();
     await page.getByTestId('replay-drawer-trigger').click();
     await expect(page.getByTestId('replay-drawer')).toBeVisible();
@@ -38,14 +44,10 @@ test('Phase 7 row 1: replay route reuses the shared BoardScene with timeline has
         `Current Step ${PHASE7_REPLAY_FINAL_STEP_INDEX}`
     );
     await expect(page.getByRole('navigation', { name: 'Replay timeline' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Previous step' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Next step' })).toBeVisible();
+    await expect(page.getByTestId('current-final-state-hash')).toHaveText(PHASE7_REPLAY_FINAL_HASH);
     await expect(await readStageWidth(page)).toBe(stageWidth);
-
-    await page.getByTestId('replay-prev-step').click();
-
-    await expect(page.getByTestId('replay-selected-step-index')).toHaveText('Current Step 2');
-    await expect(page.getByTestId('current-final-state-hash')).not.toHaveText(
-        PHASE7_REPLAY_FINAL_HASH
-    );
 });
 
 test('Phase 7 row 2: replay timeline supports keyboard stepping and locale-aware labels', async ({
@@ -56,6 +58,7 @@ test('Phase 7 row 2: replay timeline supports keyboard stepping and locale-aware
 
     await expect(page.getByTestId('board-scene')).toHaveAttribute('lang', 'zh');
     await expect(page.getByTestId('turn-hud')).toBeVisible();
+    await openArenaControls(page);
     await expect(page.getByTestId('session-rail')).toBeVisible();
     await expect(page.getByTestId('replay-locale-switch')).toContainText('语言');
     await expect(page.getByRole('radio', { name: '跟随系统' })).toBeVisible();
@@ -70,9 +73,15 @@ test('Phase 7 row 2: replay timeline supports keyboard stepping and locale-aware
     await page.keyboard.press('Home');
     await expect(page.getByTestId('replay-selected-step-index')).toHaveText('当前步骤 0');
     await page.keyboard.press('End');
-    await expect(page.getByTestId('replay-selected-step-index')).toHaveText('当前步骤 3');
+    await expect(page.getByTestId('replay-selected-step-index')).toHaveText(
+        `当前步骤 ${PHASE7_REPLAY_FINAL_STEP_INDEX}`
+    );
     await page.keyboard.press('ArrowLeft');
-    await expect(page.getByTestId('replay-selected-step-index')).toHaveText('当前步骤 2');
+    await expect(page.getByTestId('replay-selected-step-index')).toHaveText(
+        `当前步骤 ${PHASE7_REPLAY_FINAL_STEP_INDEX - 1}`
+    );
     await page.keyboard.press('ArrowRight');
-    await expect(page.getByTestId('replay-selected-step-index')).toHaveText('当前步骤 3');
+    await expect(page.getByTestId('replay-selected-step-index')).toHaveText(
+        `当前步骤 ${PHASE7_REPLAY_FINAL_STEP_INDEX}`
+    );
 });

@@ -3,8 +3,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createAiMatchSession, createLocalMatchSession } from '@gem-duel/application';
 import type { UiActionDescriptor } from '@gem-duel/contracts';
-import { Section } from '@gem-duel/ui';
+import { Section, getUiMessages, type UiLocale } from '@gem-duel/ui';
 
+import { ProductBackLink } from '@/app/components/product-back-link';
 import {
     createLocalPhase4ScenarioSession,
     getLocalPhase4Scenario,
@@ -19,6 +20,7 @@ export function MatchPlayground({
     roguelike = true,
     shellMode = 'default',
     scenarioId = null,
+    locale = 'en',
 }: {
     mode: 'local' | 'ai';
     seed: number;
@@ -26,7 +28,9 @@ export function MatchPlayground({
     roguelike?: boolean;
     shellMode?: 'default' | 'debug';
     scenarioId?: LocalPhase4ScenarioId | null;
+    locale?: UiLocale;
 }) {
+    const messages = getUiMessages(locale);
     const scenario = scenarioId ? getLocalPhase4Scenario(scenarioId) : null;
     const sessionResult = useMemo(() => {
         const flags = {
@@ -85,14 +89,13 @@ export function MatchPlayground({
     const boardNote =
         mode === 'ai' ? (
             <p className="gd-muted">
-                ZH: `/play/ai` 现已复用与 classic-local 相同的 product-facing BoardScene；AI trace
-                仅保留为附加 sidecar。 EN: `/play/ai` now reuses the same product-facing BoardScene
-                as classic local, with AI trace kept as an auxiliary sidecar only.
+                ZH: 在同一张战术主盘面上挑战 Gem Bot，AI trace 仅作为可选侧栏保留。 EN: Challenge
+                the Gem Bot on the shared tactical board, with AI trace kept as an optional sidecar.
             </p>
         ) : (
             <p className="gd-muted">
-                ZH: 默认 classic-local 入口现已稳定使用 product-facing BoardScene。 EN: The default
-                classic-local entry now stably uses the product-facing BoardScene.
+                ZH: 拿取宝石、预购卡牌并扩展你的牌组，沿经典胜利竞速推进。 EN: Claim gems, reserve
+                cards, and grow your tableau through the classic victory race.
             </p>
         );
 
@@ -150,7 +153,15 @@ export function MatchPlayground({
                 shellMode={shellMode}
                 boardNote={boardNote}
                 legacyShellNote={legacyShellNote}
+                routeTopbar={
+                    <ProductBackLink
+                        href={locale === 'zh' ? '/play/classic?lang=zh' : '/play/classic'}
+                    >
+                        {messages.playerEntry.backHomeLabel}
+                    </ProductBackLink>
+                }
                 error={error}
+                locale={locale}
             />
         </>
     );

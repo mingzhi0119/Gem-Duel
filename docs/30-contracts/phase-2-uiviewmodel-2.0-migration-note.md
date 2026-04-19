@@ -5,6 +5,7 @@
 - Change summary:
     - 通过 additive contract change 扩展 `UiViewModel`，加入 viewer / session / board / market / player-zone / prompt / sidecar 字段族。
     - realtime room payload 额外携带 `roomStatus`，让房间页不再依据 snapshot terminal 状态本地回推房间状态。
+    - 2026-04-18 的 single-screen arena wave 再次以 additive 方式扩展了 `UiMarketSlot` 与 `UiRoyalOffer` 的展示字段，让共享 `BoardScene` 可以渲染 score / bonus / cost / pattern / accent richer shell，而不改变 action 事件、房间 authority 或 replay wire shape。
 - Affected schemas or message types:
     - `packages/contracts/src/ui.ts`
     - `packages/contracts/src/websocket.ts`
@@ -28,13 +29,29 @@
         - `selectionDraft`
         - `runPanel`
     - realtime patch/resync/observe 新增可选 `roomStatus`
+    - `UiMarketSlot` 新增只读展示字段：
+        - `score`
+        - `crowns`
+        - `bonusGem`
+        - `bonusCount`
+        - `cost`
+        - `accentColor`
+        - `patternKey`
+    - `UiRoyalOffer` 新增只读展示字段：
+        - `score`
+        - `crowns`
+        - `accentKey`
+        - `patternKey`
+        - `tagLabel`
 - Required consumer updates:
     - `packages/application` 需要统一构建新增 projection 字段；
     - `apps/room-service` 需要在 patch/resync/observe 中发送 `roomStatus`；
     - `apps/web` 需要停止基于 snapshot terminal 本地回推房间状态。
+    - `packages/ui` / `apps/web` 必须消费这些新展示字段来渲染 single-screen arena 的 market / royal faces，而不是在页面层伪造数据。
 - Replay/version impact:
     - 本次不修改 replay bundle、snapshot tier 或 `SCHEMA_VERSION`；
     - `roomStatus` 作为 additive realtime field 进入房间协议；
+    - 新增的 market / royal display fields 只存在于 `UiViewModel` 投影层，不进入 replay bundle、snapshot tier、room authority 或 command/event wire shape，因此无需 `schemaVersion` bump；
     - Phase 6 已在不变更 schema 的前提下收紧 spectator 语义：`SpectatorSnapshot.pendingSelection` 必须为 `null`，消费者不得再把 spectator payload 当作对手 pending-command draft 的来源；
     - 后续若进入 pending-selection 命令/phase surface，再单独评估 replay/hash 影响。
 - ADR link:
@@ -45,6 +62,7 @@
 - Change summary:
     - Expand `UiViewModel` through an additive contract change so it carries viewer/session/board/market/player-zone/prompt/sidecar field families.
     - Add `roomStatus` to realtime room payloads so the room page stops deriving room completion from terminal snapshot state locally.
+    - The 2026-04-18 single-screen arena wave adds display-only fields to `UiMarketSlot` and `UiRoyalOffer` so the shared `BoardScene` can render richer score / bonus / cost / accent / pattern card faces without changing action events, room authority, or replay wire shape.
 - Affected schemas or message types:
     - `packages/contracts/src/ui.ts`
     - `packages/contracts/src/websocket.ts`
@@ -68,13 +86,29 @@
         - `selectionDraft`
         - `runPanel`
     - realtime patch/resync/observe add optional `roomStatus`
+    - `UiMarketSlot` now also carries additive display-only fields:
+        - `score`
+        - `crowns`
+        - `bonusGem`
+        - `bonusCount`
+        - `cost`
+        - `accentColor`
+        - `patternKey`
+    - `UiRoyalOffer` now also carries additive display-only fields:
+        - `score`
+        - `crowns`
+        - `accentKey`
+        - `patternKey`
+        - `tagLabel`
 - Required consumer updates:
     - `packages/application` must project the new fields centrally;
     - `apps/room-service` must emit `roomStatus` in patch/resync/observe messages;
     - `apps/web` must stop deriving room status from terminal snapshot state.
+    - `packages/ui` / `apps/web` must consume the new display fields for the single-screen arena market and royal-card faces rather than fabricating page-local values.
 - Replay/version impact:
     - this wave does not change the replay bundle, snapshot tiers, or `SCHEMA_VERSION`;
     - `roomStatus` lands as an additive realtime-room field;
+    - the market / royal display fields exist only on the `UiViewModel` projection layer and do not alter replay bundles, snapshot tiers, room authority, or command/event wire shapes, so no `schemaVersion` bump is required;
     - Phase 6 tightens spectator semantics without a schema bump: `SpectatorSnapshot.pendingSelection` must now be `null`, and consumers may no longer treat spectator payloads as a source of opponent pending-command draft state;
     - later pending-selection command/phase work should evaluate replay/hash impact separately.
 - ADR link:

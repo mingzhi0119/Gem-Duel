@@ -13,6 +13,11 @@ const readShellPresentation = async (page: Page) =>
         };
     });
 
+const openArenaControls = async (page: Page) => {
+    await page.getByTestId('boardscene-controls-trigger').click();
+    await expect(page.getByTestId('boardscene-controls-panel')).toBeVisible();
+};
+
 test('visual theme foundation defaults to dark tactical on playground', async ({ page }) => {
     await page.goto('/playground/classic-selection');
     await page.waitForLoadState('networkidle');
@@ -106,6 +111,7 @@ test('session rail theme controls persist a selected light theme across product 
 }) => {
     await page.goto('/play/local?scenario=take-three-linked-gems');
     await page.waitForLoadState('networkidle');
+    await openArenaControls(page);
     await expect(page.getByTestId('session-rail')).toBeVisible();
 
     await page.getByRole('radio', { name: 'Light' }).check();
@@ -120,6 +126,7 @@ test('session rail theme controls persist a selected light theme across product 
 
     await page.goto('/play/ai');
     await page.waitForLoadState('networkidle');
+    await openArenaControls(page);
     await expect(page.getByTestId('session-rail')).toBeVisible();
     await expect(page.getByRole('radio', { name: 'Light' })).toBeChecked();
 
@@ -131,4 +138,21 @@ test('session rail theme controls persist a selected light theme across product 
             style: 'default-tactical',
             background: '#ebe2d0',
         });
+});
+
+test('visual theme foundation keeps a light-mode sampling baseline on classic selection', async ({
+    page,
+}) => {
+    await page.setViewportSize({ width: 1600, height: 900 });
+    await page.goto('/playground/classic-selection?theme=light');
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByTestId('playground-scene')).toBeVisible();
+
+    await expect(page.getByTestId('playground-scene')).toHaveScreenshot(
+        'classic-selection-light.png',
+        {
+            animations: 'disabled',
+            caret: 'hide',
+        }
+    );
 });

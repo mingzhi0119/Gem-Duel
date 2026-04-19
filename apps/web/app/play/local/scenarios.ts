@@ -107,13 +107,8 @@ const clearGoldExcept = (snapshot: GameSnapshot, keepPositionId: string) => {
 
 const createTakeThreeSnapshot = () => {
     const snapshot = createBaseSnapshot(2101);
-    snapshot.context.phase = 'gemSelection';
+    snapshot.context.phase = 'turnIdle';
     snapshot.players.p1.privileges = 0;
-    snapshot.pendingSelection = {
-        action: 'TAKE_TOKENS',
-        selectedPositions: [],
-        maxSelections: 3,
-    };
     setBoardToken(snapshot, 'r2c1', 'red');
     setBoardToken(snapshot, 'r2c2', 'green');
     setBoardToken(snapshot, 'r2c3', 'white');
@@ -122,7 +117,7 @@ const createTakeThreeSnapshot = () => {
 
 const createBuyFirstCardSnapshot = () => {
     const snapshot = createBaseSnapshot(2102);
-    snapshot.context.phase = 'buying';
+    snapshot.context.phase = 'turnIdle';
     const targetCard = snapshot.pyramid[0]?.slots[0]?.card;
     if (targetCard) {
         targetCard.cardId = 'phase4-buy-card';
@@ -139,15 +134,10 @@ const createBuyFirstCardSnapshot = () => {
 
 const createPrivilegeSnapshot = () => {
     const snapshot = createBaseSnapshot(2103);
-    snapshot.context.phase = 'privilege';
+    snapshot.context.phase = 'turnIdle';
     snapshot.context.turn.segment = 'optional';
     snapshot.context.turn.optionalStep = 'privilege';
     snapshot.players.p1.privileges = 2;
-    snapshot.pendingSelection = {
-        action: 'USE_PRIVILEGE',
-        selectedPositions: [],
-        maxSelections: 2,
-    };
     setBoardToken(snapshot, 'r2c2', 'blue');
     setBoardToken(snapshot, 'r2c3', 'white');
     setBoardToken(snapshot, 'r3c3', 'green');
@@ -156,7 +146,7 @@ const createPrivilegeSnapshot = () => {
 
 const createReserveBlindSnapshot = () => {
     const snapshot = createBaseSnapshot(2104);
-    snapshot.context.phase = 'reserving';
+    snapshot.context.phase = 'turnIdle';
     clearGoldExcept(snapshot, 'r2c2');
     if (snapshot.hiddenState.deckOrder.level3.length === 0) {
         snapshot.hiddenState.deckOrder.level3.push('phase4-deck-l3');
@@ -253,8 +243,9 @@ const PHASE4_SCENARIOS: Record<LocalPhase4ScenarioId, LocalPhase4ScenarioDefinit
         id: 'take-three-linked-gems',
         title: 'Take Three Linked Gems',
         seed: 2101,
-        startingFixtureSource: 'Phase 4 local scenario fixture: classic local gem-selection start',
-        expectedFinalStateHash: 'fnv1a-32b1c890',
+        startingFixtureSource:
+            'Phase 4 local scenario fixture: classic local direct token-take start',
+        expectedFinalStateHash: 'fnv1a-4901e416',
         expectedUiAssertions: [
             'board cell clicks add three linked positions and expose confirm',
             'selection draft tracks the chosen positions',
@@ -272,8 +263,8 @@ const PHASE4_SCENARIOS: Record<LocalPhase4ScenarioId, LocalPhase4ScenarioDefinit
         title: 'Buy First Pyramid Card',
         seed: 2102,
         startingFixtureSource:
-            'Phase 4 local scenario fixture: buying-phase zero-cost pyramid slot',
-        expectedFinalStateHash: 'fnv1a-b9ab87ac',
+            'Phase 4 local scenario fixture: turn-idle zero-cost pyramid slot ready for direct buy',
+        expectedFinalStateHash: 'fnv1a-5e7898ca',
         expectedUiAssertions: [
             'market primary affordance buys the card in the first pyramid slot',
             'the bought card leaves the market and advances the turn',
@@ -291,8 +282,8 @@ const PHASE4_SCENARIOS: Record<LocalPhase4ScenarioId, LocalPhase4ScenarioDefinit
         title: 'Use Privilege on Two Cells',
         seed: 2103,
         startingFixtureSource:
-            'Phase 4 local scenario fixture: privilege phase with one privilege available',
-        expectedFinalStateHash: 'fnv1a-7399f1e6',
+            'Phase 4 local scenario fixture: optional privilege window with direct board triggers',
+        expectedFinalStateHash: 'fnv1a-7f397724',
         expectedUiAssertions: [
             'board clicks stage two privilege positions',
             'confirm completes the privilege action and returns to idle play',
@@ -309,8 +300,8 @@ const PHASE4_SCENARIOS: Record<LocalPhase4ScenarioId, LocalPhase4ScenarioDefinit
         title: 'Reserve Blind Tier-3 Card',
         seed: 2104,
         startingFixtureSource:
-            'Phase 4 local scenario fixture: reserving phase with a unique gold cell and live level-3 deck',
-        expectedFinalStateHash: 'fnv1a-7944f696',
+            'Phase 4 local scenario fixture: turn-idle reserve target with a unique gold cell and live level-3 deck',
+        expectedFinalStateHash: 'fnv1a-1d060022',
         expectedUiAssertions: [
             'the reserve affordance targets the level-3 blind deck',
             'the reserved card occupies reserve-1 and consumes the unique gold cell',
@@ -330,7 +321,7 @@ const PHASE4_SCENARIOS: Record<LocalPhase4ScenarioId, LocalPhase4ScenarioDefinit
         seed: 2105,
         startingFixtureSource:
             'Phase 4 local scenario fixture: running take_board_token effect prompt',
-        expectedFinalStateHash: 'fnv1a-8a7ecb89',
+        expectedFinalStateHash: 'fnv1a-29d626fa',
         expectedUiAssertions: [
             'prompt banner exposes the bonus-token effect',
             'highlighted board cells resolve the effect and clear the prompt',
@@ -349,7 +340,7 @@ const PHASE4_SCENARIOS: Record<LocalPhase4ScenarioId, LocalPhase4ScenarioDefinit
         title: 'Resolve Gain Royal Prompt',
         seed: 2106,
         startingFixtureSource: 'Phase 4 local scenario fixture: running gain_royal effect prompt',
-        expectedFinalStateHash: 'fnv1a-7abbfb1c',
+        expectedFinalStateHash: 'fnv1a-8a85199f',
         expectedUiAssertions: [
             'royal court exposes exactly the selectable royal offers',
             'clicking a royal resolves the effect and stores it on the player',
@@ -368,7 +359,7 @@ const PHASE4_SCENARIOS: Record<LocalPhase4ScenarioId, LocalPhase4ScenarioDefinit
         seed: 2107,
         startingFixtureSource:
             'Phase 4 local scenario fixture: completed classic-local terminal snapshot',
-        expectedFinalStateHash: 'fnv1a-ffa5d769',
+        expectedFinalStateHash: 'fnv1a-bb5a3bf2',
         expectedUiAssertions: [
             'the terminal overlay appears for the completed local match',
             'no further actions are exposed to the player',
@@ -382,7 +373,7 @@ const PHASE4_SCENARIOS: Record<LocalPhase4ScenarioId, LocalPhase4ScenarioDefinit
         seed: 2101,
         startingFixtureSource:
             'Phase 4 local scenario fixture: debug-shell copy of take-three-linked-gems',
-        expectedFinalStateHash: 'fnv1a-32b1c890',
+        expectedFinalStateHash: 'fnv1a-4901e416',
         expectedUiAssertions: [
             'shell=debug renders the legacy MatchView shell',
             'the fallback path can still complete a deterministic local scenario',

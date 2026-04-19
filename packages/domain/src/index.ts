@@ -7,8 +7,6 @@ export const GAME_PHASES = [
     'modeSelection',
     'turnIdle',
     'gemSelection',
-    'reserving',
-    'buying',
     'privilege',
     'replay',
     'terminal',

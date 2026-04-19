@@ -40,6 +40,7 @@ export const SidecarDrawer = ({
     size = 'narrow',
     openLabel = 'View',
     closeLabel = 'Close',
+    triggerVariant = 'default',
 }: {
     title: string;
     children: ReactNode;
@@ -53,6 +54,7 @@ export const SidecarDrawer = ({
     size?: 'narrow' | 'wide';
     openLabel?: string;
     closeLabel?: string;
+    triggerVariant?: 'default' | 'icon';
 }) => {
     const dialogId = useId();
     const [open, setOpen] = useState(false);
@@ -160,9 +162,11 @@ export const SidecarDrawer = ({
                 ref={triggerRef}
                 type="button"
                 className={
-                    placement === 'floating'
-                        ? 'gd-sidecar-drawer-trigger is-floating'
-                        : 'gd-sidecar-drawer-trigger'
+                    triggerVariant === 'icon'
+                        ? 'gd-sidecar-drawer-trigger is-icon'
+                        : placement === 'floating'
+                          ? 'gd-sidecar-drawer-trigger is-floating'
+                          : 'gd-sidecar-drawer-trigger'
                 }
                 data-testid={triggerTestId}
                 aria-haspopup="dialog"
@@ -170,13 +174,24 @@ export const SidecarDrawer = ({
                 aria-controls={dialogId}
                 onClick={() => setOpen(true)}
             >
-                <span className="gd-sidecar-drawer-trigger-copy">
-                    <strong>{triggerLabel ?? title}</strong>
-                    {triggerSummary ? (
-                        <span className="gd-sidecar-drawer-trigger-summary">{triggerSummary}</span>
-                    ) : null}
-                </span>
-                {triggerBadge ?? <span className="gd-shell-badge">{openLabel}</span>}
+                {triggerVariant === 'icon' ? (
+                    <>
+                        <span className="gd-visually-hidden">{triggerLabel ?? title}</span>
+                        {triggerBadge ?? <span className="gd-shell-badge">{openLabel}</span>}
+                    </>
+                ) : (
+                    <>
+                        <span className="gd-sidecar-drawer-trigger-copy">
+                            <strong>{triggerLabel ?? title}</strong>
+                            {triggerSummary ? (
+                                <span className="gd-sidecar-drawer-trigger-summary">
+                                    {triggerSummary}
+                                </span>
+                            ) : null}
+                        </span>
+                        {triggerBadge ?? <span className="gd-shell-badge">{openLabel}</span>}
+                    </>
+                )}
             </button>
 
             {open ? (

@@ -1,3 +1,5 @@
+@import 'tailwindcss';
+
 * {
     box-sizing: border-box;
 }
@@ -7,6 +9,9 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100%;
+    --gd-font-body: var(--font-inter), 'Inter', 'Segoe UI Variable', 'Segoe UI', sans-serif;
+    --gd-font-display: var(--font-inter), 'Inter', 'Segoe UI Variable', 'Segoe UI', sans-serif;
+    --gd-font-mono: var(--font-roboto-mono), 'Roboto Mono', 'Cascadia Mono', 'Consolas', monospace;
     font-family: var(--gd-font-body);
     background: var(--gd-page-background);
     color: var(--gd-text);
@@ -19,6 +24,7 @@ a {
 
 body {
     position: relative;
+    min-height: 100dvh;
 }
 
 body::before {
@@ -37,9 +43,45 @@ kbd {
 }
 
 main {
-    width: min(1180px, calc(100vw - 2rem));
+    --gd-main-shell-padding: clamp(0.85rem, 1vw + 0.5rem, 1.5rem);
+    width: 100%;
+    min-height: 100dvh;
+    margin: 0;
+    padding: var(--gd-main-shell-padding);
+    display: grid;
+    gap: 1.5rem;
+}
+
+.gd-route-stack {
+    width: min(1180px, 100%);
     margin: 0 auto;
-    padding: 2rem 0 4rem;
+    display: grid;
+    gap: 1.5rem;
+}
+
+.gd-route-stack.gd-route-stack-match {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    min-height: calc(100dvh - (var(--gd-main-shell-padding) * 2));
+    height: calc(100dvh - (var(--gd-main-shell-padding) * 2));
+    gap: 0;
+    justify-self: stretch;
+}
+
+.gd-route-stack.gd-route-stack-match > .gd-player-entry-topbar {
+    width: 100%;
+    max-width: none;
+}
+
+.gd-route-stack.gd-route-stack-match > * {
+    min-height: 0;
+}
+
+.gd-utility-route {
+    width: min(1180px, 100%);
+    margin: 0 auto;
+    padding-block: clamp(0.75rem, 0.8vw + 0.5rem, 1.2rem) 3rem;
     display: grid;
     gap: 1.5rem;
 }

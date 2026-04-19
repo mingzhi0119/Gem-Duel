@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Inter, Roboto_Mono } from 'next/font/google';
 import { Suspense, type ReactNode } from 'react';
 import {
     DEFAULT_RESOLVED_SHELL_THEME,
@@ -8,12 +8,21 @@ import {
 } from '@gem-duel/ui';
 import '@gem-duel/ui/styles.css';
 import { ShellPresentationSync } from './components/shell-presentation-sync';
-import { RuntimeShellBadge } from './components/runtime-shell-badge';
 import './globals.css';
 
+const inter = Inter({
+    subsets: ['latin'],
+    variable: '--font-inter',
+});
+
+const robotoMono = Roboto_Mono({
+    subsets: ['latin'],
+    variable: '--font-roboto-mono',
+});
+
 export const metadata: Metadata = {
-    title: 'Gem Duel Rebuild',
-    description: 'Next.js shell for the Gem Duel greenfield rebuild.',
+    title: 'Gem Duel Preview',
+    description: 'Player-facing Gem Duel preview shell on the rebuilt shared Web/Desktop stack.',
 };
 
 export default function RootLayout({
@@ -29,37 +38,11 @@ export default function RootLayout({
             data-gd-resolved-theme={DEFAULT_RESOLVED_SHELL_THEME}
             data-gd-style={DEFAULT_SHELL_STYLE_ID}
         >
-            <body className="gd-app-shell">
+            <body className={`${inter.variable} ${robotoMono.variable} gd-app-shell`}>
                 <Suspense fallback={null}>
                     <ShellPresentationSync />
                 </Suspense>
-                <main>
-                    <header className="gd-shell-header">
-                        <div>
-                            <p className="gd-muted">Gem Duel Greenfield Rebuild</p>
-                            <h1>Deterministic Core, Shared Web/Desktop Shells</h1>
-                            <RuntimeShellBadge />
-                        </div>
-                        <nav className="gd-action-list">
-                            <Link href="/" className="gd-link">
-                                Home
-                            </Link>
-                            <Link href="/play/local" className="gd-link">
-                                Local
-                            </Link>
-                            <Link href="/play/ai" className="gd-link">
-                                AI
-                            </Link>
-                            <Link href="/play/run" className="gd-link">
-                                Run
-                            </Link>
-                            <Link href="/rooms" className="gd-link">
-                                Rooms
-                            </Link>
-                        </nav>
-                    </header>
-                    {children}
-                </main>
+                <main>{children}</main>
             </body>
         </html>
     );

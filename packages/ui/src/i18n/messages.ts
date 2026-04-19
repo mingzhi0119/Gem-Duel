@@ -1,6 +1,74 @@
 export type UiLocale = 'en' | 'zh';
 
 export interface UiMessages {
+    playerEntry: {
+        homeEyebrow: string;
+        homeTitle: string;
+        homeSubtitle: string;
+        homeFooterHint: string;
+        classicTitle: string;
+        classicSummary: string;
+        roguelikeTitle: string;
+        roguelikeSummary: string;
+        roguelikeBadge: string;
+        onlineTitle: string;
+        onlineSummary: string;
+        onlineKicker: string;
+        backHomeLabel: string;
+        classicHubTitle: string;
+        classicHubSubtitle: string;
+        roguelikeHubTitle: string;
+        roguelikeHubSubtitle: string;
+        localTitle: string;
+        localSummary: string;
+        aiTitle: string;
+        aiSummary: string;
+        runLocalTitle: string;
+        runLocalSummary: string;
+        runAiTitle: string;
+        runAiSummary: string;
+    };
+    onlineArena: {
+        eyebrow: string;
+        title: string;
+        subtitle: string;
+        backHomeLabel: string;
+        backArenaLabel: string;
+        hostTitle: string;
+        hostSummary: string;
+        hostIdLabel: string;
+        hostCreateLabel: string;
+        hostCreatingLabel: string;
+        hostOpenLabel: string;
+        hostIdleHint: string;
+        hostReadyHint: string;
+        joinTitle: string;
+        joinSummary: string;
+        joinInputLabel: string;
+        joinPlaceholder: string;
+        joinOpenLabel: string;
+        joinDisabledHint: string;
+        footerPrefix: string;
+        footerIdle: string;
+        footerReady: string;
+    };
+    runDraft: {
+        eyebrow: string;
+        starterTitle: string;
+        rewardTitle: string;
+        draftPhaseLabel: string;
+        rewardPhaseLabel: string;
+        recordLabel: string;
+        matchLabel: string;
+        winsLabel: string;
+        lossesLabel: string;
+        modeLabel: string;
+        modeLocal: string;
+        modeAi: string;
+        selectHint: string;
+        starterNote: string;
+        rewardNote: string;
+    };
     drawer: {
         openLabel: string;
         closeLabel: string;
@@ -11,6 +79,7 @@ export interface UiMessages {
         marketSlotsLabel: string;
         boardTitle: string;
         boardCellsLabel: string;
+        boardStatsTitle: string;
         playersTitle: string;
         playerZonesLabel: string;
         promptsTitle: string;
@@ -18,6 +87,13 @@ export interface UiMessages {
         selectionDraftTitle: string;
         runSidecarTitle: string;
         turnHudTitle: string;
+        controlsTitle: string;
+        notesTitle: string;
+        errorTitle: string;
+        refreshLabel: string;
+        actionCounterLabel: string;
+        actionCancelLabel: string;
+        actionConfirmLabel: string;
         replayReadOnlyNote: string;
         additionalActionsTitle: string;
         additionalActionsNote: string;
@@ -25,6 +101,13 @@ export interface UiMessages {
         scenarioLabel: string;
         expectedHashLabel: string;
         replayHashUnavailableLabel: string;
+        toolbar: {
+            takeGems: string;
+            reserve: string;
+            buy: string;
+            privilege: string;
+            replenishBoard: string;
+        };
     };
     sessionRail: {
         title: string;
@@ -33,13 +116,14 @@ export interface UiMessages {
         viewerLabel: string;
         surfaceLabel: string;
         hashLabel: string;
+        hashUnavailableLabel: string;
         themeTitle: string;
         themeDarkLabel: string;
         themeLightLabel: string;
         themeSystemLabel: string;
         styleTitle: string;
+        styleStatusLabel: string;
         styleCurrentLabel: string;
-        styleLockedNote: string;
         rulesLabel: string;
         rulesNote: string;
         restartLabel: string;
@@ -96,6 +180,76 @@ export interface UiMessages {
 
 const messages: Record<UiLocale, UiMessages> = {
     en: {
+        playerEntry: {
+            homeEyebrow: 'Tactical Reimagined',
+            homeTitle: 'Gem Duel',
+            homeSubtitle:
+                'Choose a player path and enter the shared tactical shell without leaving the rebuilt Web/Desktop architecture.',
+            homeFooterHint: 'Select a mode to begin.',
+            classicTitle: 'Classic',
+            classicSummary: 'Standard rules. Pure strategy.',
+            roguelikeTitle: 'Roguelike',
+            roguelikeSummary: 'Random starter buffs and distinct playstyles.',
+            roguelikeBadge: 'New',
+            onlineTitle: 'Online Duel',
+            onlineSummary: 'Remote multiplayer through the authoritative room shell.',
+            onlineKicker: 'Remote Multiplayer',
+            backHomeLabel: 'Return to Title',
+            classicHubTitle: 'Select Opponent',
+            classicHubSubtitle: 'Classic Mode',
+            roguelikeHubTitle: 'Select Opponent',
+            roguelikeHubSubtitle: 'Roguelike Mode',
+            localTitle: 'Local PvP',
+            localSummary: 'Play with a friend locally.',
+            aiTitle: 'vs AI (Solo)',
+            aiSummary: 'Challenge the Gem Bot.',
+            runLocalTitle: 'Local Run',
+            runLocalSummary: 'Draft buffs and play each roguelike match locally.',
+            runAiTitle: 'AI Run',
+            runAiSummary: 'Draft buffs and duel the bot through the same run shell.',
+        },
+        onlineArena: {
+            eyebrow: 'Global Matchmaking',
+            title: 'Online Arena',
+            subtitle:
+                'Host an authoritative room or open an existing room ID to continue inside the live shared board.',
+            backHomeLabel: 'Return to Title',
+            backArenaLabel: 'Return to Arena',
+            hostTitle: 'Host Game',
+            hostSummary: 'Create a room and wait for a challenger.',
+            hostIdLabel: 'Your Match ID',
+            hostCreateLabel: 'Create Room',
+            hostCreatingLabel: 'Creating…',
+            hostOpenLabel: 'Open Room',
+            hostIdleHint: 'Create a room to generate an authoritative match ID.',
+            hostReadyHint: 'Room created. Share the ID, then enter the room when ready.',
+            joinTitle: 'Join Game',
+            joinSummary: 'Enter an existing room ID to duel.',
+            joinInputLabel: 'Opponent Match ID',
+            joinPlaceholder: 'Paste room ID here',
+            joinOpenLabel: 'Open Room',
+            joinDisabledHint: 'Enter a room ID to continue.',
+            footerPrefix: 'Status',
+            footerIdle: 'Awaiting room selection',
+            footerReady: 'Room ready',
+        },
+        runDraft: {
+            eyebrow: 'Roguelike Draft',
+            starterTitle: 'Choose a Starter Buff',
+            rewardTitle: 'Choose the Next Reward',
+            draftPhaseLabel: 'Starter Draft',
+            rewardPhaseLabel: 'Reward Draft',
+            recordLabel: 'Record',
+            matchLabel: 'Match',
+            winsLabel: 'Wins',
+            lossesLabel: 'Losses',
+            modeLabel: 'Mode',
+            modeLocal: 'Local',
+            modeAi: 'AI',
+            selectHint: 'Select one option to continue.',
+            starterNote: 'Pick one starter buff to begin the run.',
+            rewardNote: 'Pick one reward buff to launch the next match.',
+        },
         drawer: {
             openLabel: 'View',
             closeLabel: 'Close',
@@ -106,6 +260,7 @@ const messages: Record<UiLocale, UiMessages> = {
             marketSlotsLabel: 'slots',
             boardTitle: 'Board',
             boardCellsLabel: 'cells',
+            boardStatsTitle: 'Board Stock',
             playersTitle: 'Players',
             playerZonesLabel: 'zones',
             promptsTitle: 'Prompts',
@@ -113,6 +268,13 @@ const messages: Record<UiLocale, UiMessages> = {
             selectionDraftTitle: 'Selection Draft',
             runSidecarTitle: 'Run Sidecar',
             turnHudTitle: 'Turn HUD',
+            controlsTitle: 'Controls',
+            notesTitle: 'Session Notes',
+            errorTitle: 'Session Error',
+            refreshLabel: 'Refresh',
+            actionCounterLabel: 'Action',
+            actionCancelLabel: 'Cancel selection',
+            actionConfirmLabel: 'Confirm selection',
             replayReadOnlyNote:
                 'Replay timeline is read-only and follows the authoritative bundle.',
             additionalActionsTitle: 'Additional Actions',
@@ -122,6 +284,13 @@ const messages: Record<UiLocale, UiMessages> = {
             scenarioLabel: 'Scenario',
             expectedHashLabel: 'Expected finalStateHash',
             replayHashUnavailableLabel: 'Replay hash unavailable',
+            toolbar: {
+                takeGems: 'Take gems',
+                reserve: 'Reserve',
+                buy: 'Buy',
+                privilege: 'Privilege',
+                replenishBoard: 'Replenish board',
+            },
         },
         sessionRail: {
             title: 'Session Rail',
@@ -130,13 +299,14 @@ const messages: Record<UiLocale, UiMessages> = {
             viewerLabel: 'Viewer',
             surfaceLabel: 'Surface',
             hashLabel: 'Hash',
+            hashUnavailableLabel: 'Live hash unavailable',
             themeTitle: 'Theme',
             themeDarkLabel: 'Dark',
             themeLightLabel: 'Light',
             themeSystemLabel: 'System',
             styleTitle: 'Style',
+            styleStatusLabel: 'Current',
             styleCurrentLabel: 'Default Tactical',
-            styleLockedNote: 'Locked until additional validated style packs ship.',
             rulesLabel: 'Rules',
             rulesNote: 'Open the shared rulebook in a dedicated route.',
             restartLabel: 'Restart',
@@ -191,6 +361,74 @@ const messages: Record<UiLocale, UiMessages> = {
         },
     },
     zh: {
+        playerEntry: {
+            homeEyebrow: '战术重构版',
+            homeTitle: 'Gem Duel',
+            homeSubtitle: '选择玩家路径，进入共享的战术壳层；Web 与 Desktop 仍沿用同一套重构架构。',
+            homeFooterHint: '选择一个模式开始。',
+            classicTitle: '经典模式',
+            classicSummary: '标准规则，纯策略对局。',
+            roguelikeTitle: 'Roguelike',
+            roguelikeSummary: '随机起始 Buff 与不同玩法风格。',
+            roguelikeBadge: '新',
+            onlineTitle: '在线对决',
+            onlineSummary: '通过权威房间壳层进行远程多人对局。',
+            onlineKicker: '远程多人',
+            backHomeLabel: '返回标题页',
+            classicHubTitle: '选择对手',
+            classicHubSubtitle: '经典模式',
+            roguelikeHubTitle: '选择对手',
+            roguelikeHubSubtitle: 'Roguelike 模式',
+            localTitle: '本地双人',
+            localSummary: '与身边的玩家进行本地对局。',
+            aiTitle: '对战 AI',
+            aiSummary: '挑战 Gem Bot。',
+            runLocalTitle: '本地 Run',
+            runLocalSummary: '先选 Buff，再以本地方式推进 Roguelike Run。',
+            runAiTitle: 'AI Run',
+            runAiSummary: '先选 Buff，再通过同一套 Run 壳层挑战 AI。',
+        },
+        onlineArena: {
+            eyebrow: '全局匹配',
+            title: '在线竞技场',
+            subtitle: '创建一个权威房间，或输入现有房间 ID，然后继续进入实时共享主盘面。',
+            backHomeLabel: '返回标题页',
+            backArenaLabel: '返回竞技场',
+            hostTitle: '主持房间',
+            hostSummary: '创建房间并等待挑战者加入。',
+            hostIdLabel: '你的房间 ID',
+            hostCreateLabel: '创建房间',
+            hostCreatingLabel: '创建中…',
+            hostOpenLabel: '进入房间',
+            hostIdleHint: '先创建房间，生成一个权威房间 ID。',
+            hostReadyHint: '房间已创建。分享 ID，并在准备好后进入房间。',
+            joinTitle: '加入房间',
+            joinSummary: '输入现有房间 ID 并继续对决。',
+            joinInputLabel: '对手房间 ID',
+            joinPlaceholder: '在这里粘贴房间 ID',
+            joinOpenLabel: '打开房间',
+            joinDisabledHint: '请输入房间 ID 后继续。',
+            footerPrefix: '状态',
+            footerIdle: '等待选择房间',
+            footerReady: '房间已就绪',
+        },
+        runDraft: {
+            eyebrow: 'Roguelike 草稿',
+            starterTitle: '选择起始 Buff',
+            rewardTitle: '选择下一项奖励',
+            draftPhaseLabel: '起始草稿',
+            rewardPhaseLabel: '奖励草稿',
+            recordLabel: '战绩',
+            matchLabel: '对局',
+            winsLabel: '胜场',
+            lossesLabel: '负场',
+            modeLabel: '模式',
+            modeLocal: '本地',
+            modeAi: 'AI',
+            selectHint: '选择一个选项后继续。',
+            starterNote: '选择一个起始 Buff 来开启这局 Run。',
+            rewardNote: '选择一个奖励 Buff，然后进入下一场对局。',
+        },
         drawer: {
             openLabel: '查看',
             closeLabel: '关闭',
@@ -201,6 +439,7 @@ const messages: Record<UiLocale, UiMessages> = {
             marketSlotsLabel: '槽位',
             boardTitle: '棋盘',
             boardCellsLabel: '格子',
+            boardStatsTitle: '棋盘库存',
             playersTitle: '玩家区',
             playerZonesLabel: '区域',
             promptsTitle: '提示栈',
@@ -208,6 +447,13 @@ const messages: Record<UiLocale, UiMessages> = {
             selectionDraftTitle: '草稿选择',
             runSidecarTitle: 'Run 侧栏',
             turnHudTitle: '回合 HUD',
+            controlsTitle: '控制面板',
+            notesTitle: '会话说明',
+            errorTitle: '会话错误',
+            refreshLabel: '刷新',
+            actionCounterLabel: '行动',
+            actionCancelLabel: '取消选择',
+            actionConfirmLabel: '确认选择',
             replayReadOnlyNote: '回放时间轴为只读视图，严格跟随权威 ReplayBundle。',
             additionalActionsTitle: '附加动作',
             additionalActionsNote:
@@ -216,6 +462,13 @@ const messages: Record<UiLocale, UiMessages> = {
             scenarioLabel: '场景',
             expectedHashLabel: '期望 finalStateHash',
             replayHashUnavailableLabel: '回放哈希暂不可用',
+            toolbar: {
+                takeGems: '拿取宝石',
+                reserve: '预购',
+                buy: '购买',
+                privilege: '使用特权',
+                replenishBoard: '补充棋盘',
+            },
         },
         sessionRail: {
             title: '会话边栏',
@@ -224,13 +477,14 @@ const messages: Record<UiLocale, UiMessages> = {
             viewerLabel: '视角',
             surfaceLabel: '表面',
             hashLabel: '哈希',
+            hashUnavailableLabel: '实时哈希暂不可用',
             themeTitle: '主题',
             themeDarkLabel: '深色',
             themeLightLabel: '浅色',
             themeSystemLabel: '跟随系统',
             styleTitle: '风格',
+            styleStatusLabel: '当前',
             styleCurrentLabel: '默认战术壳',
-            styleLockedNote: '在更多通过验证的 style pack 落地前，当前风格保持锁定。',
             rulesLabel: '规则',
             rulesNote: '在独立路由中打开共享 rulebook。',
             restartLabel: '重开',

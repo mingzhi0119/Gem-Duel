@@ -13,24 +13,20 @@ const sortBySlotOrder = (left: UiMarketSlot, right: UiMarketSlot) => {
     return left.ref.localeCompare(right.ref);
 };
 
-const sortReserveSlots = (left: UiMarketSlot, right: UiMarketSlot) => {
-    const ownerOrder = `${left.owner ?? 'z'}-${left.slotId ?? left.ref}`;
-    const nextOwnerOrder = `${right.owner ?? 'z'}-${right.slotId ?? right.ref}`;
-    return ownerOrder.localeCompare(nextOwnerOrder);
-};
-
 export const MarketStack = ({
     slots,
     onBuySlot,
     onReserveSlot,
     isBuyDisabled,
     isReserveDisabled,
+    locale = 'en',
 }: {
     slots: UiMarketSlot[];
     onBuySlot?: (slot: UiMarketSlot) => void;
     onReserveSlot?: (slot: UiMarketSlot) => void;
     isBuyDisabled?: (slot: UiMarketSlot) => boolean;
     isReserveDisabled?: (slot: UiMarketSlot) => boolean;
+    locale?: 'en' | 'zh';
 }) => {
     if (slots.length === 0) {
         return <p className="gd-muted">No market fixture slots in this scene.</p>;
@@ -38,8 +34,6 @@ export const MarketStack = ({
 
     const pyramidSlots = slots.filter((slot) => slot.zone === 'pyramid');
     const deckSlots = slots.filter((slot) => slot.zone === 'deck');
-    const reserveSlots = slots.filter((slot) => slot.zone === 'reserve').sort(sortReserveSlots);
-    const reserveOwners = Array.from(new Set(reserveSlots.map((slot) => slot.owner ?? 'reserve')));
 
     return (
         <div className="gd-market-stack">
@@ -59,15 +53,16 @@ export const MarketStack = ({
                             className={`gd-market-tier is-level-${level}`}
                             data-gd-market-level={level}
                         >
-                            <div className="gd-market-tier-heading">
-                                <strong>Tier {level}</strong>
-                                <span className="gd-muted">{tierSlots.length} cards</span>
+                            <div className="gd-market-tier-header">
+                                <span className="gd-market-tier-label">L{level}</span>
+                                <span className="gd-market-tier-count">{tierSlots.length}</span>
                             </div>
                             <div className="gd-market-tier-row">
                                 <div className="gd-market-tier-deck">
                                     {deckSlot ? (
                                         <CardSlot
                                             slot={deckSlot}
+                                            locale={locale}
                                             onReserve={
                                                 onReserveSlot && deckSlot.selectableAsReserve
                                                     ? onReserveSlot
@@ -75,19 +70,7 @@ export const MarketStack = ({
                                             }
                                             reserveDisabled={isReserveDisabled?.(deckSlot) ?? false}
                                         />
-                                    ) : (
-                                        <div
-                                            className={`gd-market-deck-placeholder is-level-${level}`}
-                                            aria-hidden="true"
-                                        >
-                                            <span className="gd-market-deck-placeholder-label">
-                                                Deck
-                                            </span>
-                                            <span className="gd-market-deck-placeholder-level">
-                                                L{level}
-                                            </span>
-                                        </div>
-                                    )}
+                                    ) : null}
                                 </div>
                                 <div
                                     className={`gd-market-tier-grid is-level-${level}`}
@@ -97,6 +80,7 @@ export const MarketStack = ({
                                         <CardSlot
                                             key={slot.ref}
                                             slot={slot}
+                                            locale={locale}
                                             onBuy={
                                                 onBuySlot && slot.selectableAsBuy
                                                     ? onBuySlot
@@ -117,54 +101,6 @@ export const MarketStack = ({
                     );
                 })}
             </div>
-
-            {reserveSlots.length > 0 ? (
-                <section className="gd-market-reserve-bank">
-                    <div className="gd-market-lane-header">
-                        <strong>Reserve Bank</strong>
-                        <span className="gd-muted">{reserveSlots.length} slots</span>
-                    </div>
-                    <div className="gd-market-reserve-layout">
-                        {reserveOwners.map((ownerKey) => {
-                            const ownerSlots = reserveSlots.filter(
-                                (slot) => (slot.owner ?? 'reserve') === ownerKey
-                            );
-                            return (
-                                <section key={ownerKey} className="gd-market-reserve-section">
-                                    <div className="gd-market-reserve-section-header">
-                                        <strong>
-                                            {ownerKey === 'reserve'
-                                                ? 'Shared reserve'
-                                                : `${ownerKey.toUpperCase()} reserve`}
-                                        </strong>
-                                        <span className="gd-muted">{ownerSlots.length} slots</span>
-                                    </div>
-                                    <div className="gd-market-reserve-grid">
-                                        {ownerSlots.map((slot) => (
-                                            <CardSlot
-                                                key={slot.ref}
-                                                slot={slot}
-                                                onBuy={
-                                                    onBuySlot && slot.selectableAsBuy
-                                                        ? onBuySlot
-                                                        : undefined
-                                                }
-                                                onReserve={
-                                                    onReserveSlot && slot.selectableAsReserve
-                                                        ? onReserveSlot
-                                                        : undefined
-                                                }
-                                                buyDisabled={isBuyDisabled?.(slot) ?? false}
-                                                reserveDisabled={isReserveDisabled?.(slot) ?? false}
-                                            />
-                                        ))}
-                                    </div>
-                                </section>
-                            );
-                        })}
-                    </div>
-                </section>
-            ) : null}
         </div>
     );
 };

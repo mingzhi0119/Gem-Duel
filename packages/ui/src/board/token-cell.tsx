@@ -28,7 +28,6 @@ export const TokenCell = ({
           ? 'gd-board-cell is-selectable'
           : 'gd-board-cell';
     const tokenLabel = cell.token ?? 'empty';
-    const footerLabel = cell.selectionKind ?? (cell.selectable ? 'ready' : tokenLabel);
     const cellTitle = [cell.positionId, tokenLabel, cell.selectionKind, cell.reason]
         .filter((value): value is string => Boolean(value))
         .join(' | ');
@@ -40,14 +39,8 @@ export const TokenCell = ({
                     <span className="gd-board-cell-gem" />
                 </span>
             </span>
-            <span
-                className={
-                    cell.selectionKind || cell.selectable
-                        ? 'gd-board-cell-state is-active'
-                        : 'gd-board-cell-state'
-                }
-            >
-                {footerLabel}
+            <span className="gd-board-cell-state">
+                {cell.selected ? '●' : cell.selectable ? '◎' : '—'}
             </span>
         </>
     );

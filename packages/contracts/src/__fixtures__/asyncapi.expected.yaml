@@ -371,8 +371,6 @@ components:
                 - modeSelection
                 - turnIdle
                 - gemSelection
-                - reserving
-                - buying
                 - privilege
                 - replay
                 - terminal
@@ -582,7 +580,7 @@ components:
           type: array
         engineVersion:
           enum:
-            - 2026.04-step7
+            - 2026.04-step8
           type: string
         eventLog:
           items:
@@ -637,8 +635,6 @@ components:
                       - modeSelection
                       - turnIdle
                       - gemSelection
-                      - reserving
-                      - buying
                       - privilege
                       - replay
                       - terminal
@@ -2552,7 +2548,7 @@ components:
             - "null"
         schemaVersion:
           enum:
-            - 6.0.0
+            - 7.0.0
           type: string
         sequence:
           minimum: 0
@@ -2817,14 +2813,6 @@ components:
             - type
           type: object
         - properties:
-            type:
-              enum:
-                - BEGIN_GEM_SELECTION
-              type: string
-          required:
-            - type
-          type: object
-        - properties:
             positionId:
               enum:
                 - r2c2
@@ -2919,14 +2907,6 @@ components:
             - positions
           type: object
         - properties:
-            type:
-              enum:
-                - BEGIN_RESERVE
-              type: string
-          required:
-            - type
-          type: object
-        - properties:
             goldPosition:
               enum:
                 - r2c2
@@ -3012,14 +2992,6 @@ components:
             - source
           type: object
         - properties:
-            type:
-              enum:
-                - BEGIN_BUY
-              type: string
-          required:
-            - type
-          type: object
-        - properties:
             source:
               oneOf:
                 - properties:
@@ -3069,14 +3041,6 @@ components:
           required:
             - type
             - source
-          type: object
-        - properties:
-            type:
-              enum:
-                - BEGIN_PRIVILEGE
-              type: string
-          required:
-            - type
           type: object
         - properties:
             positionId:
@@ -3363,8 +3327,6 @@ components:
                 - modeSelection
                 - turnIdle
                 - gemSelection
-                - reserving
-                - buying
                 - privilege
                 - replay
                 - terminal
@@ -4411,8 +4373,6 @@ components:
                 - modeSelection
                 - turnIdle
                 - gemSelection
-                - reserving
-                - buying
                 - privilege
                 - replay
                 - terminal
@@ -4622,7 +4582,7 @@ components:
           type: array
         engineVersion:
           enum:
-            - 2026.04-step7
+            - 2026.04-step8
           type: string
         eventLog:
           items:
@@ -4677,8 +4637,6 @@ components:
                       - modeSelection
                       - turnIdle
                       - gemSelection
-                      - reserving
-                      - buying
                       - privilege
                       - replay
                       - terminal
@@ -6592,7 +6550,7 @@ components:
             - "null"
         schemaVersion:
           enum:
-            - 6.0.0
+            - 7.0.0
           type: string
         sequence:
           minimum: 0
@@ -6786,14 +6744,6 @@ components:
                 - type
               type: object
             - properties:
-                type:
-                  enum:
-                    - BEGIN_GEM_SELECTION
-                  type: string
-              required:
-                - type
-              type: object
-            - properties:
                 positionId:
                   enum:
                     - r2c2
@@ -6888,14 +6838,6 @@ components:
                 - positions
               type: object
             - properties:
-                type:
-                  enum:
-                    - BEGIN_RESERVE
-                  type: string
-              required:
-                - type
-              type: object
-            - properties:
                 goldPosition:
                   enum:
                     - r2c2
@@ -6981,14 +6923,6 @@ components:
                 - source
               type: object
             - properties:
-                type:
-                  enum:
-                    - BEGIN_BUY
-                  type: string
-              required:
-                - type
-              type: object
-            - properties:
                 source:
                   oneOf:
                     - properties:
@@ -7038,14 +6972,6 @@ components:
               required:
                 - type
                 - source
-              type: object
-            - properties:
-                type:
-                  enum:
-                    - BEGIN_PRIVILEGE
-                  type: string
-              required:
-                - type
               type: object
             - properties:
                 positionId:
@@ -7340,14 +7266,6 @@ components:
                     - type
                   type: object
                 - properties:
-                    type:
-                      enum:
-                        - BEGIN_GEM_SELECTION
-                      type: string
-                  required:
-                    - type
-                  type: object
-                - properties:
                     positionId:
                       enum:
                         - r2c2
@@ -7442,14 +7360,6 @@ components:
                     - positions
                   type: object
                 - properties:
-                    type:
-                      enum:
-                        - BEGIN_RESERVE
-                      type: string
-                  required:
-                    - type
-                  type: object
-                - properties:
                     goldPosition:
                       enum:
                         - r2c2
@@ -7535,14 +7445,6 @@ components:
                     - source
                   type: object
                 - properties:
-                    type:
-                      enum:
-                        - BEGIN_BUY
-                      type: string
-                  required:
-                    - type
-                  type: object
-                - properties:
                     source:
                       oneOf:
                         - properties:
@@ -7592,14 +7494,6 @@ components:
                   required:
                     - type
                     - source
-                  type: object
-                - properties:
-                    type:
-                      enum:
-                        - BEGIN_PRIVILEGE
-                      type: string
-                  required:
-                    - type
                   type: object
                 - properties:
                     positionId:
@@ -7890,8 +7784,6 @@ components:
             - modeSelection
             - turnIdle
             - gemSelection
-            - reserving
-            - buying
             - privilege
             - replay
             - terminal
@@ -8025,14 +7917,6 @@ components:
                       - type
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_GEM_SELECTION
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       positionId:
                         enum:
                           - r2c2
@@ -8127,14 +8011,6 @@ components:
                       - positions
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_RESERVE
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       goldPosition:
                         enum:
                           - r2c2
@@ -8220,14 +8096,6 @@ components:
                       - source
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_BUY
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       source:
                         oneOf:
                           - properties:
@@ -8277,14 +8145,6 @@ components:
                     required:
                       - type
                       - source
-                    type: object
-                  - properties:
-                      type:
-                        enum:
-                          - BEGIN_PRIVILEGE
-                        type: string
-                    required:
-                      - type
                     type: object
                   - properties:
                       positionId:
@@ -8734,8 +8594,6 @@ components:
                     - modeSelection
                     - turnIdle
                     - gemSelection
-                    - reserving
-                    - buying
                     - privilege
                     - replay
                     - terminal
@@ -8945,7 +8803,7 @@ components:
               type: array
             engineVersion:
               enum:
-                - 2026.04-step7
+                - 2026.04-step8
               type: string
             eventLog:
               items:
@@ -9000,8 +8858,6 @@ components:
                           - modeSelection
                           - turnIdle
                           - gemSelection
-                          - reserving
-                          - buying
                           - privilege
                           - replay
                           - terminal
@@ -10636,7 +10492,7 @@ components:
                 - "null"
             schemaVersion:
               enum:
-                - 6.0.0
+                - 7.0.0
               type: string
             sequence:
               minimum: 0
@@ -10714,14 +10570,6 @@ components:
                       type:
                         enum:
                           - START_MATCH
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
-                      type:
-                        enum:
-                          - BEGIN_GEM_SELECTION
                         type: string
                     required:
                       - type
@@ -10821,14 +10669,6 @@ components:
                       - positions
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_RESERVE
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       goldPosition:
                         enum:
                           - r2c2
@@ -10914,14 +10754,6 @@ components:
                       - source
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_BUY
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       source:
                         oneOf:
                           - properties:
@@ -10971,14 +10803,6 @@ components:
                     required:
                       - type
                       - source
-                    type: object
-                  - properties:
-                      type:
-                        enum:
-                          - BEGIN_PRIVILEGE
-                        type: string
-                    required:
-                      - type
                     type: object
                   - properties:
                       positionId:
@@ -11429,8 +11253,6 @@ components:
                         - modeSelection
                         - turnIdle
                         - gemSelection
-                        - reserving
-                        - buying
                         - privilege
                         - replay
                         - terminal
@@ -11640,7 +11462,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step7
+                    - 2026.04-step8
                   type: string
                 eventLog:
                   items:
@@ -11695,8 +11517,6 @@ components:
                               - modeSelection
                               - turnIdle
                               - gemSelection
-                              - reserving
-                              - buying
                               - privilege
                               - replay
                               - terminal
@@ -13331,7 +13151,7 @@ components:
                     - "null"
                 schemaVersion:
                   enum:
-                    - 6.0.0
+                    - 7.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -13686,8 +13506,6 @@ components:
                         - modeSelection
                         - turnIdle
                         - gemSelection
-                        - reserving
-                        - buying
                         - privilege
                         - replay
                         - terminal
@@ -13897,7 +13715,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step7
+                    - 2026.04-step8
                   type: string
                 eventLog:
                   items:
@@ -13952,8 +13770,6 @@ components:
                               - modeSelection
                               - turnIdle
                               - gemSelection
-                              - reserving
-                              - buying
                               - privilege
                               - replay
                               - terminal
@@ -15588,7 +15404,7 @@ components:
                     - "null"
                 schemaVersion:
                   enum:
-                    - 6.0.0
+                    - 7.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -15666,14 +15482,6 @@ components:
                       type:
                         enum:
                           - START_MATCH
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
-                      type:
-                        enum:
-                          - BEGIN_GEM_SELECTION
                         type: string
                     required:
                       - type
@@ -15773,14 +15581,6 @@ components:
                       - positions
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_RESERVE
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       goldPosition:
                         enum:
                           - r2c2
@@ -15866,14 +15666,6 @@ components:
                       - source
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_BUY
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       source:
                         oneOf:
                           - properties:
@@ -15923,14 +15715,6 @@ components:
                     required:
                       - type
                       - source
-                    type: object
-                  - properties:
-                      type:
-                        enum:
-                          - BEGIN_PRIVILEGE
-                        type: string
-                    required:
-                      - type
                     type: object
                   - properties:
                       positionId:
@@ -16381,8 +16165,6 @@ components:
                         - modeSelection
                         - turnIdle
                         - gemSelection
-                        - reserving
-                        - buying
                         - privilege
                         - replay
                         - terminal
@@ -16592,7 +16374,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step7
+                    - 2026.04-step8
                   type: string
                 eventLog:
                   items:
@@ -16647,8 +16429,6 @@ components:
                               - modeSelection
                               - turnIdle
                               - gemSelection
-                              - reserving
-                              - buying
                               - privilege
                               - replay
                               - terminal
@@ -18283,7 +18063,7 @@ components:
                     - "null"
                 schemaVersion:
                   enum:
-                    - 6.0.0
+                    - 7.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -18638,8 +18418,6 @@ components:
                         - modeSelection
                         - turnIdle
                         - gemSelection
-                        - reserving
-                        - buying
                         - privilege
                         - replay
                         - terminal
@@ -18849,7 +18627,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step7
+                    - 2026.04-step8
                   type: string
                 eventLog:
                   items:
@@ -18904,8 +18682,6 @@ components:
                               - modeSelection
                               - turnIdle
                               - gemSelection
-                              - reserving
-                              - buying
                               - privilege
                               - replay
                               - terminal
@@ -20540,7 +20316,7 @@ components:
                     - "null"
                 schemaVersion:
                   enum:
-                    - 6.0.0
+                    - 7.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -21459,8 +21235,6 @@ components:
                 - modeSelection
                 - turnIdle
                 - gemSelection
-                - reserving
-                - buying
                 - privilege
                 - replay
                 - terminal
@@ -21670,7 +21444,7 @@ components:
           type: array
         engineVersion:
           enum:
-            - 2026.04-step7
+            - 2026.04-step8
           type: string
         eventLog:
           items:
@@ -21725,8 +21499,6 @@ components:
                       - modeSelection
                       - turnIdle
                       - gemSelection
-                      - reserving
-                      - buying
                       - privilege
                       - replay
                       - terminal
@@ -23361,7 +23133,7 @@ components:
             - "null"
         schemaVersion:
           enum:
-            - 6.0.0
+            - 7.0.0
           type: string
         sequence:
           minimum: 0
@@ -23894,14 +23666,6 @@ components:
                       - type
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_GEM_SELECTION
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       positionId:
                         enum:
                           - r2c2
@@ -23996,14 +23760,6 @@ components:
                       - positions
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_RESERVE
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       goldPosition:
                         enum:
                           - r2c2
@@ -24089,14 +23845,6 @@ components:
                       - source
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_BUY
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       source:
                         oneOf:
                           - properties:
@@ -24146,14 +23894,6 @@ components:
                     required:
                       - type
                       - source
-                    type: object
-                  - properties:
-                      type:
-                        enum:
-                          - BEGIN_PRIVILEGE
-                        type: string
-                    required:
-                      - type
                     type: object
                   - properties:
                       positionId:
@@ -24407,7 +24147,7 @@ components:
           type: array
         engineVersion:
           enum:
-            - 2026.04-step7
+            - 2026.04-step8
           type: string
         events:
           items:
@@ -24462,8 +24202,6 @@ components:
                       - modeSelection
                       - turnIdle
                       - gemSelection
-                      - reserving
-                      - buying
                       - privilege
                       - replay
                       - terminal
@@ -25514,8 +25252,6 @@ components:
                     - modeSelection
                     - turnIdle
                     - gemSelection
-                    - reserving
-                    - buying
                     - privilege
                     - replay
                     - terminal
@@ -25725,7 +25461,7 @@ components:
               type: array
             engineVersion:
               enum:
-                - 2026.04-step7
+                - 2026.04-step8
               type: string
             eventLog:
               items:
@@ -25780,8 +25516,6 @@ components:
                           - modeSelection
                           - turnIdle
                           - gemSelection
-                          - reserving
-                          - buying
                           - privilege
                           - replay
                           - terminal
@@ -27695,7 +27429,7 @@ components:
                 - "null"
             schemaVersion:
               enum:
-                - 6.0.0
+                - 7.0.0
               type: string
             sequence:
               minimum: 0
@@ -27759,7 +27493,7 @@ components:
           type: string
         schemaVersion:
           enum:
-            - 6.0.0
+            - 7.0.0
           type: string
         seed:
           minimum: 0
@@ -27815,14 +27549,6 @@ components:
                 type:
                   enum:
                     - START_MATCH
-                  type: string
-              required:
-                - type
-              type: object
-            - properties:
-                type:
-                  enum:
-                    - BEGIN_GEM_SELECTION
                   type: string
               required:
                 - type
@@ -27922,14 +27648,6 @@ components:
                 - positions
               type: object
             - properties:
-                type:
-                  enum:
-                    - BEGIN_RESERVE
-                  type: string
-              required:
-                - type
-              type: object
-            - properties:
                 goldPosition:
                   enum:
                     - r2c2
@@ -28015,14 +27733,6 @@ components:
                 - source
               type: object
             - properties:
-                type:
-                  enum:
-                    - BEGIN_BUY
-                  type: string
-              required:
-                - type
-              type: object
-            - properties:
                 source:
                   oneOf:
                     - properties:
@@ -28072,14 +27782,6 @@ components:
               required:
                 - type
                 - source
-              type: object
-            - properties:
-                type:
-                  enum:
-                    - BEGIN_PRIVILEGE
-                  type: string
-              required:
-                - type
               type: object
             - properties:
                 positionId:
@@ -28380,14 +28082,6 @@ components:
                           - type
                         type: object
                       - properties:
-                          type:
-                            enum:
-                              - BEGIN_GEM_SELECTION
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
                           positionId:
                             enum:
                               - r2c2
@@ -28482,14 +28176,6 @@ components:
                           - positions
                         type: object
                       - properties:
-                          type:
-                            enum:
-                              - BEGIN_RESERVE
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
                           goldPosition:
                             enum:
                               - r2c2
@@ -28575,14 +28261,6 @@ components:
                           - source
                         type: object
                       - properties:
-                          type:
-                            enum:
-                              - BEGIN_BUY
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
                           source:
                             oneOf:
                               - properties:
@@ -28632,14 +28310,6 @@ components:
                         required:
                           - type
                           - source
-                        type: object
-                      - properties:
-                          type:
-                            enum:
-                              - BEGIN_PRIVILEGE
-                            type: string
-                        required:
-                          - type
                         type: object
                       - properties:
                           positionId:
@@ -28893,7 +28563,7 @@ components:
               type: array
             engineVersion:
               enum:
-                - 2026.04-step7
+                - 2026.04-step8
               type: string
             events:
               items:
@@ -28948,8 +28618,6 @@ components:
                           - modeSelection
                           - turnIdle
                           - gemSelection
-                          - reserving
-                          - buying
                           - privilege
                           - replay
                           - terminal
@@ -30000,8 +29668,6 @@ components:
                         - modeSelection
                         - turnIdle
                         - gemSelection
-                        - reserving
-                        - buying
                         - privilege
                         - replay
                         - terminal
@@ -30211,7 +29877,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step7
+                    - 2026.04-step8
                   type: string
                 eventLog:
                   items:
@@ -30266,8 +29932,6 @@ components:
                               - modeSelection
                               - turnIdle
                               - gemSelection
-                              - reserving
-                              - buying
                               - privilege
                               - replay
                               - terminal
@@ -32181,7 +31845,7 @@ components:
                     - "null"
                 schemaVersion:
                   enum:
-                    - 6.0.0
+                    - 7.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -32245,7 +31909,7 @@ components:
               type: string
             schemaVersion:
               enum:
-                - 6.0.0
+                - 7.0.0
               type: string
             seed:
               minimum: 0
@@ -32308,14 +31972,6 @@ components:
                       type:
                         enum:
                           - START_MATCH
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
-                      type:
-                        enum:
-                          - BEGIN_GEM_SELECTION
                         type: string
                     required:
                       - type
@@ -32415,14 +32071,6 @@ components:
                       - positions
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_RESERVE
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       goldPosition:
                         enum:
                           - r2c2
@@ -32508,14 +32156,6 @@ components:
                       - source
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_BUY
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       source:
                         oneOf:
                           - properties:
@@ -32565,14 +32205,6 @@ components:
                     required:
                       - type
                       - source
-                    type: object
-                  - properties:
-                      type:
-                        enum:
-                          - BEGIN_PRIVILEGE
-                        type: string
-                    required:
-                      - type
                     type: object
                   - properties:
                       positionId:
@@ -33037,8 +32669,6 @@ components:
                         - modeSelection
                         - turnIdle
                         - gemSelection
-                        - reserving
-                        - buying
                         - privilege
                         - replay
                         - terminal
@@ -33248,7 +32878,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step7
+                    - 2026.04-step8
                   type: string
                 eventLog:
                   items:
@@ -33303,8 +32933,6 @@ components:
                               - modeSelection
                               - turnIdle
                               - gemSelection
-                              - reserving
-                              - buying
                               - privilege
                               - replay
                               - terminal
@@ -34939,7 +34567,7 @@ components:
                     - "null"
                 schemaVersion:
                   enum:
-                    - 6.0.0
+                    - 7.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -35294,8 +34922,6 @@ components:
                         - modeSelection
                         - turnIdle
                         - gemSelection
-                        - reserving
-                        - buying
                         - privilege
                         - replay
                         - terminal
@@ -35505,7 +35131,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step7
+                    - 2026.04-step8
                   type: string
                 eventLog:
                   items:
@@ -35560,8 +35186,6 @@ components:
                               - modeSelection
                               - turnIdle
                               - gemSelection
-                              - reserving
-                              - buying
                               - privilege
                               - replay
                               - terminal
@@ -37196,7 +36820,7 @@ components:
                     - "null"
                 schemaVersion:
                   enum:
-                    - 6.0.0
+                    - 7.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -37369,14 +36993,6 @@ components:
                           - type
                         type: object
                       - properties:
-                          type:
-                            enum:
-                              - BEGIN_GEM_SELECTION
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
                           positionId:
                             enum:
                               - r2c2
@@ -37471,14 +37087,6 @@ components:
                           - positions
                         type: object
                       - properties:
-                          type:
-                            enum:
-                              - BEGIN_RESERVE
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
                           goldPosition:
                             enum:
                               - r2c2
@@ -37564,14 +37172,6 @@ components:
                           - source
                         type: object
                       - properties:
-                          type:
-                            enum:
-                              - BEGIN_BUY
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
                           source:
                             oneOf:
                               - properties:
@@ -37621,14 +37221,6 @@ components:
                         required:
                           - type
                           - source
-                        type: object
-                      - properties:
-                          type:
-                            enum:
-                              - BEGIN_PRIVILEGE
-                            type: string
-                        required:
-                          - type
                         type: object
                       - properties:
                           positionId:
@@ -38093,8 +37685,6 @@ components:
                             - modeSelection
                             - turnIdle
                             - gemSelection
-                            - reserving
-                            - buying
                             - privilege
                             - replay
                             - terminal
@@ -38304,7 +37894,7 @@ components:
                       type: array
                     engineVersion:
                       enum:
-                        - 2026.04-step7
+                        - 2026.04-step8
                       type: string
                     eventLog:
                       items:
@@ -38359,8 +37949,6 @@ components:
                                   - modeSelection
                                   - turnIdle
                                   - gemSelection
-                                  - reserving
-                                  - buying
                                   - privilege
                                   - replay
                                   - terminal
@@ -39995,7 +39583,7 @@ components:
                         - "null"
                     schemaVersion:
                       enum:
-                        - 6.0.0
+                        - 7.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -40350,8 +39938,6 @@ components:
                             - modeSelection
                             - turnIdle
                             - gemSelection
-                            - reserving
-                            - buying
                             - privilege
                             - replay
                             - terminal
@@ -40561,7 +40147,7 @@ components:
                       type: array
                     engineVersion:
                       enum:
-                        - 2026.04-step7
+                        - 2026.04-step8
                       type: string
                     eventLog:
                       items:
@@ -40616,8 +40202,6 @@ components:
                                   - modeSelection
                                   - turnIdle
                                   - gemSelection
-                                  - reserving
-                                  - buying
                                   - privilege
                                   - replay
                                   - terminal
@@ -42252,7 +41836,7 @@ components:
                         - "null"
                     schemaVersion:
                       enum:
-                        - 6.0.0
+                        - 7.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -42357,14 +41941,6 @@ components:
                       - type
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_GEM_SELECTION
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       positionId:
                         enum:
                           - r2c2
@@ -42459,14 +42035,6 @@ components:
                       - positions
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_RESERVE
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       goldPosition:
                         enum:
                           - r2c2
@@ -42552,14 +42120,6 @@ components:
                       - source
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_BUY
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       source:
                         oneOf:
                           - properties:
@@ -42609,14 +42169,6 @@ components:
                     required:
                       - type
                       - source
-                    type: object
-                  - properties:
-                      type:
-                        enum:
-                          - BEGIN_PRIVILEGE
-                        type: string
-                    required:
-                      - type
                     type: object
                   - properties:
                       positionId:
@@ -43001,14 +42553,6 @@ components:
                               - type
                             type: object
                           - properties:
-                              type:
-                                enum:
-                                  - BEGIN_GEM_SELECTION
-                                type: string
-                            required:
-                              - type
-                            type: object
-                          - properties:
                               positionId:
                                 enum:
                                   - r2c2
@@ -43103,14 +42647,6 @@ components:
                               - positions
                             type: object
                           - properties:
-                              type:
-                                enum:
-                                  - BEGIN_RESERVE
-                                type: string
-                            required:
-                              - type
-                            type: object
-                          - properties:
                               goldPosition:
                                 enum:
                                   - r2c2
@@ -43196,14 +42732,6 @@ components:
                               - source
                             type: object
                           - properties:
-                              type:
-                                enum:
-                                  - BEGIN_BUY
-                                type: string
-                            required:
-                              - type
-                            type: object
-                          - properties:
                               source:
                                 oneOf:
                                   - properties:
@@ -43253,14 +42781,6 @@ components:
                             required:
                               - type
                               - source
-                            type: object
-                          - properties:
-                              type:
-                                enum:
-                                  - BEGIN_PRIVILEGE
-                                type: string
-                            required:
-                              - type
                             type: object
                           - properties:
                               positionId:
@@ -43725,8 +43245,6 @@ components:
                                 - modeSelection
                                 - turnIdle
                                 - gemSelection
-                                - reserving
-                                - buying
                                 - privilege
                                 - replay
                                 - terminal
@@ -43936,7 +43454,7 @@ components:
                           type: array
                         engineVersion:
                           enum:
-                            - 2026.04-step7
+                            - 2026.04-step8
                           type: string
                         eventLog:
                           items:
@@ -43991,8 +43509,6 @@ components:
                                       - modeSelection
                                       - turnIdle
                                       - gemSelection
-                                      - reserving
-                                      - buying
                                       - privilege
                                       - replay
                                       - terminal
@@ -45627,7 +45143,7 @@ components:
                             - "null"
                         schemaVersion:
                           enum:
-                            - 6.0.0
+                            - 7.0.0
                           type: string
                         sequence:
                           minimum: 0
@@ -45982,8 +45498,6 @@ components:
                                 - modeSelection
                                 - turnIdle
                                 - gemSelection
-                                - reserving
-                                - buying
                                 - privilege
                                 - replay
                                 - terminal
@@ -46193,7 +45707,7 @@ components:
                           type: array
                         engineVersion:
                           enum:
-                            - 2026.04-step7
+                            - 2026.04-step8
                           type: string
                         eventLog:
                           items:
@@ -46248,8 +45762,6 @@ components:
                                       - modeSelection
                                       - turnIdle
                                       - gemSelection
-                                      - reserving
-                                      - buying
                                       - privilege
                                       - replay
                                       - terminal
@@ -47884,7 +47396,7 @@ components:
                             - "null"
                         schemaVersion:
                           enum:
-                            - 6.0.0
+                            - 7.0.0
                           type: string
                         sequence:
                           minimum: 0
@@ -47990,14 +47502,6 @@ components:
                         - type
                       type: object
                     - properties:
-                        type:
-                          enum:
-                            - BEGIN_GEM_SELECTION
-                          type: string
-                      required:
-                        - type
-                      type: object
-                    - properties:
                         positionId:
                           enum:
                             - r2c2
@@ -48092,14 +47596,6 @@ components:
                         - positions
                       type: object
                     - properties:
-                        type:
-                          enum:
-                            - BEGIN_RESERVE
-                          type: string
-                      required:
-                        - type
-                      type: object
-                    - properties:
                         goldPosition:
                           enum:
                             - r2c2
@@ -48185,14 +47681,6 @@ components:
                         - source
                       type: object
                     - properties:
-                        type:
-                          enum:
-                            - BEGIN_BUY
-                          type: string
-                      required:
-                        - type
-                      type: object
-                    - properties:
                         source:
                           oneOf:
                             - properties:
@@ -48242,14 +47730,6 @@ components:
                       required:
                         - type
                         - source
-                      type: object
-                    - properties:
-                        type:
-                          enum:
-                            - BEGIN_PRIVILEGE
-                          type: string
-                      required:
-                        - type
                       type: object
                     - properties:
                         positionId:
@@ -48549,14 +48029,6 @@ components:
                           - type
                         type: object
                       - properties:
-                          type:
-                            enum:
-                              - BEGIN_GEM_SELECTION
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
                           positionId:
                             enum:
                               - r2c2
@@ -48651,14 +48123,6 @@ components:
                           - positions
                         type: object
                       - properties:
-                          type:
-                            enum:
-                              - BEGIN_RESERVE
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
                           goldPosition:
                             enum:
                               - r2c2
@@ -48744,14 +48208,6 @@ components:
                           - source
                         type: object
                       - properties:
-                          type:
-                            enum:
-                              - BEGIN_BUY
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
                           source:
                             oneOf:
                               - properties:
@@ -48801,14 +48257,6 @@ components:
                         required:
                           - type
                           - source
-                        type: object
-                      - properties:
-                          type:
-                            enum:
-                              - BEGIN_PRIVILEGE
-                            type: string
-                        required:
-                          - type
                         type: object
                       - properties:
                           positionId:
@@ -49259,8 +48707,6 @@ components:
                             - modeSelection
                             - turnIdle
                             - gemSelection
-                            - reserving
-                            - buying
                             - privilege
                             - replay
                             - terminal
@@ -49470,7 +48916,7 @@ components:
                       type: array
                     engineVersion:
                       enum:
-                        - 2026.04-step7
+                        - 2026.04-step8
                       type: string
                     eventLog:
                       items:
@@ -49525,8 +48971,6 @@ components:
                                   - modeSelection
                                   - turnIdle
                                   - gemSelection
-                                  - reserving
-                                  - buying
                                   - privilege
                                   - replay
                                   - terminal
@@ -51161,7 +50605,7 @@ components:
                         - "null"
                     schemaVersion:
                       enum:
-                        - 6.0.0
+                        - 7.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -51516,8 +50960,6 @@ components:
                             - modeSelection
                             - turnIdle
                             - gemSelection
-                            - reserving
-                            - buying
                             - privilege
                             - replay
                             - terminal
@@ -51727,7 +51169,7 @@ components:
                       type: array
                     engineVersion:
                       enum:
-                        - 2026.04-step7
+                        - 2026.04-step8
                       type: string
                     eventLog:
                       items:
@@ -51782,8 +51224,6 @@ components:
                                   - modeSelection
                                   - turnIdle
                                   - gemSelection
-                                  - reserving
-                                  - buying
                                   - privilege
                                   - replay
                                   - terminal
@@ -53418,7 +52858,7 @@ components:
                         - "null"
                     schemaVersion:
                       enum:
-                        - 6.0.0
+                        - 7.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -53495,14 +52935,6 @@ components:
                           type:
                             enum:
                               - START_MATCH
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
-                          type:
-                            enum:
-                              - BEGIN_GEM_SELECTION
                             type: string
                         required:
                           - type
@@ -53602,14 +53034,6 @@ components:
                           - positions
                         type: object
                       - properties:
-                          type:
-                            enum:
-                              - BEGIN_RESERVE
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
                           goldPosition:
                             enum:
                               - r2c2
@@ -53695,14 +53119,6 @@ components:
                           - source
                         type: object
                       - properties:
-                          type:
-                            enum:
-                              - BEGIN_BUY
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
                           source:
                             oneOf:
                               - properties:
@@ -53752,14 +53168,6 @@ components:
                         required:
                           - type
                           - source
-                        type: object
-                      - properties:
-                          type:
-                            enum:
-                              - BEGIN_PRIVILEGE
-                            type: string
-                        required:
-                          - type
                         type: object
                       - properties:
                           positionId:
@@ -54210,8 +53618,6 @@ components:
                             - modeSelection
                             - turnIdle
                             - gemSelection
-                            - reserving
-                            - buying
                             - privilege
                             - replay
                             - terminal
@@ -54421,7 +53827,7 @@ components:
                       type: array
                     engineVersion:
                       enum:
-                        - 2026.04-step7
+                        - 2026.04-step8
                       type: string
                     eventLog:
                       items:
@@ -54476,8 +53882,6 @@ components:
                                   - modeSelection
                                   - turnIdle
                                   - gemSelection
-                                  - reserving
-                                  - buying
                                   - privilege
                                   - replay
                                   - terminal
@@ -56112,7 +55516,7 @@ components:
                         - "null"
                     schemaVersion:
                       enum:
-                        - 6.0.0
+                        - 7.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -56467,8 +55871,6 @@ components:
                             - modeSelection
                             - turnIdle
                             - gemSelection
-                            - reserving
-                            - buying
                             - privilege
                             - replay
                             - terminal
@@ -56678,7 +56080,7 @@ components:
                       type: array
                     engineVersion:
                       enum:
-                        - 2026.04-step7
+                        - 2026.04-step8
                       type: string
                     eventLog:
                       items:
@@ -56733,8 +56135,6 @@ components:
                                   - modeSelection
                                   - turnIdle
                                   - gemSelection
-                                  - reserving
-                                  - buying
                                   - privilege
                                   - replay
                                   - terminal
@@ -58369,7 +57769,7 @@ components:
                         - "null"
                     schemaVersion:
                       enum:
-                        - 6.0.0
+                        - 7.0.0
                       type: string
                     sequence:
                       minimum: 0
@@ -58446,14 +57846,6 @@ components:
                           type:
                             enum:
                               - START_MATCH
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
-                          type:
-                            enum:
-                              - BEGIN_GEM_SELECTION
                             type: string
                         required:
                           - type
@@ -58553,14 +57945,6 @@ components:
                           - positions
                         type: object
                       - properties:
-                          type:
-                            enum:
-                              - BEGIN_RESERVE
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
                           goldPosition:
                             enum:
                               - r2c2
@@ -58646,14 +58030,6 @@ components:
                           - source
                         type: object
                       - properties:
-                          type:
-                            enum:
-                              - BEGIN_BUY
-                            type: string
-                        required:
-                          - type
-                        type: object
-                      - properties:
                           source:
                             oneOf:
                               - properties:
@@ -58703,14 +58079,6 @@ components:
                         required:
                           - type
                           - source
-                        type: object
-                      - properties:
-                          type:
-                            enum:
-                              - BEGIN_PRIVILEGE
-                            type: string
-                        required:
-                          - type
                         type: object
                       - properties:
                           positionId:
@@ -59160,8 +58528,6 @@ components:
                         - modeSelection
                         - turnIdle
                         - gemSelection
-                        - reserving
-                        - buying
                         - privilege
                         - replay
                         - terminal
@@ -59371,7 +58737,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step7
+                    - 2026.04-step8
                   type: string
                 eventLog:
                   items:
@@ -59426,8 +58792,6 @@ components:
                               - modeSelection
                               - turnIdle
                               - gemSelection
-                              - reserving
-                              - buying
                               - privilege
                               - replay
                               - terminal
@@ -61062,7 +60426,7 @@ components:
                     - "null"
                 schemaVersion:
                   enum:
-                    - 6.0.0
+                    - 7.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -61554,8 +60918,6 @@ components:
                 - modeSelection
                 - turnIdle
                 - gemSelection
-                - reserving
-                - buying
                 - privilege
                 - replay
                 - terminal
@@ -61765,7 +61127,7 @@ components:
           type: array
         engineVersion:
           enum:
-            - 2026.04-step7
+            - 2026.04-step8
           type: string
         eventLog:
           items:
@@ -61820,8 +61182,6 @@ components:
                       - modeSelection
                       - turnIdle
                       - gemSelection
-                      - reserving
-                      - buying
                       - privilege
                       - replay
                       - terminal
@@ -63456,7 +62816,7 @@ components:
             - "null"
         schemaVersion:
           enum:
-            - 6.0.0
+            - 7.0.0
           type: string
         sequence:
           minimum: 0
@@ -63521,14 +62881,6 @@ components:
                 type:
                   enum:
                     - START_MATCH
-                  type: string
-              required:
-                - type
-              type: object
-            - properties:
-                type:
-                  enum:
-                    - BEGIN_GEM_SELECTION
                   type: string
               required:
                 - type
@@ -63628,14 +62980,6 @@ components:
                 - positions
               type: object
             - properties:
-                type:
-                  enum:
-                    - BEGIN_RESERVE
-                  type: string
-              required:
-                - type
-              type: object
-            - properties:
                 goldPosition:
                   enum:
                     - r2c2
@@ -63721,14 +63065,6 @@ components:
                 - source
               type: object
             - properties:
-                type:
-                  enum:
-                    - BEGIN_BUY
-                  type: string
-              required:
-                - type
-              type: object
-            - properties:
                 source:
                   oneOf:
                     - properties:
@@ -63778,14 +63114,6 @@ components:
               required:
                 - type
                 - source
-              type: object
-            - properties:
-                type:
-                  enum:
-                    - BEGIN_PRIVILEGE
-                  type: string
-              required:
-                - type
               type: object
             - properties:
                 positionId:
@@ -64078,14 +63406,6 @@ components:
                       - type
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_GEM_SELECTION
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       positionId:
                         enum:
                           - r2c2
@@ -64180,14 +63500,6 @@ components:
                       - positions
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_RESERVE
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       goldPosition:
                         enum:
                           - r2c2
@@ -64273,14 +63585,6 @@ components:
                       - source
                     type: object
                   - properties:
-                      type:
-                        enum:
-                          - BEGIN_BUY
-                        type: string
-                    required:
-                      - type
-                    type: object
-                  - properties:
                       source:
                         oneOf:
                           - properties:
@@ -64330,14 +63634,6 @@ components:
                     required:
                       - type
                       - source
-                    type: object
-                  - properties:
-                      type:
-                        enum:
-                          - BEGIN_PRIVILEGE
-                        type: string
-                    required:
-                      - type
                     type: object
                   - properties:
                       positionId:
@@ -64669,10 +63965,80 @@ components:
         marketSlots:
           items:
             properties:
+              accentColor:
+                enum:
+                  - blue
+                  - white
+                  - green
+                  - black
+                  - red
+                  - pearl
+                  - gold
+                type:
+                  - string
+                  - "null"
+              bonusCount:
+                minimum: 0
+                type:
+                  - integer
+                  - "null"
+              bonusGem:
+                anyOf:
+                  - enum:
+                      - blue
+                      - white
+                      - green
+                      - black
+                      - red
+                    type: string
+                  - enum:
+                      - gold
+                    type: string
+                  - type: "null"
+                  - type: "null"
               cardId:
                 minLength: 1
                 type:
                   - string
+                  - "null"
+              cost:
+                properties:
+                  black:
+                    minimum: 0
+                    type: integer
+                  blue:
+                    minimum: 0
+                    type: integer
+                  gold:
+                    minimum: 0
+                    type: integer
+                  green:
+                    minimum: 0
+                    type: integer
+                  pearl:
+                    minimum: 0
+                    type: integer
+                  red:
+                    minimum: 0
+                    type: integer
+                  white:
+                    minimum: 0
+                    type: integer
+                required:
+                  - blue
+                  - white
+                  - green
+                  - black
+                  - red
+                  - pearl
+                  - gold
+                type:
+                  - object
+                  - "null"
+              crowns:
+                minimum: 0
+                type:
+                  - integer
                   - "null"
               level:
                 anyOf:
@@ -64695,6 +64061,11 @@ components:
                 type:
                   - string
                   - "null"
+              patternKey:
+                minLength: 1
+                type:
+                  - string
+                  - "null"
               reason:
                 minLength: 1
                 type:
@@ -64703,6 +64074,11 @@ components:
               ref:
                 minLength: 1
                 type: string
+              score:
+                minimum: 0
+                type:
+                  - integer
+                  - "null"
               selectableAsBuy:
                 type: boolean
               selectableAsReserve:
@@ -64739,6 +64115,13 @@ components:
               - selectableAsBuy
               - selectableAsReserve
               - reason
+              - score
+              - crowns
+              - bonusGem
+              - bonusCount
+              - cost
+              - accentColor
+              - patternKey
             type: object
           type: array
         playerZones:
@@ -64924,9 +64307,22 @@ components:
         royalOffers:
           items:
             properties:
+              accentKey:
+                minLength: 1
+                type:
+                  - string
+                  - "null"
+              crowns:
+                minimum: 0
+                type: integer
               label:
                 minLength: 1
                 type: string
+              patternKey:
+                minLength: 1
+                type:
+                  - string
+                  - "null"
               reason:
                 minLength: 1
                 type:
@@ -64935,13 +64331,26 @@ components:
               royalId:
                 minLength: 1
                 type: string
+              score:
+                minimum: 0
+                type: integer
               selectable:
                 type: boolean
+              tagLabel:
+                minLength: 1
+                type:
+                  - string
+                  - "null"
             required:
               - royalId
               - label
               - selectable
               - reason
+              - score
+              - crowns
+              - accentKey
+              - patternKey
+              - tagLabel
             type: object
           type: array
         runPanel:
@@ -65284,8 +64693,6 @@ components:
                         - modeSelection
                         - turnIdle
                         - gemSelection
-                        - reserving
-                        - buying
                         - privilege
                         - replay
                         - terminal
@@ -65495,7 +64902,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step7
+                    - 2026.04-step8
                   type: string
                 eventLog:
                   items:
@@ -65550,8 +64957,6 @@ components:
                               - modeSelection
                               - turnIdle
                               - gemSelection
-                              - reserving
-                              - buying
                               - privilege
                               - replay
                               - terminal
@@ -67186,7 +66591,7 @@ components:
                     - "null"
                 schemaVersion:
                   enum:
-                    - 6.0.0
+                    - 7.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -67541,8 +66946,6 @@ components:
                         - modeSelection
                         - turnIdle
                         - gemSelection
-                        - reserving
-                        - buying
                         - privilege
                         - replay
                         - terminal
@@ -67752,7 +67155,7 @@ components:
                   type: array
                 engineVersion:
                   enum:
-                    - 2026.04-step7
+                    - 2026.04-step8
                   type: string
                 eventLog:
                   items:
@@ -67807,8 +67210,6 @@ components:
                               - modeSelection
                               - turnIdle
                               - gemSelection
-                              - reserving
-                              - buying
                               - privilege
                               - replay
                               - terminal
@@ -69443,7 +68844,7 @@ components:
                     - "null"
                 schemaVersion:
                   enum:
-                    - 6.0.0
+                    - 7.0.0
                   type: string
                 sequence:
                   minimum: 0
@@ -69691,8 +69092,6 @@ components:
                     - modeSelection
                     - turnIdle
                     - gemSelection
-                    - reserving
-                    - buying
                     - privilege
                     - replay
                     - terminal
@@ -69902,7 +69301,7 @@ components:
               type: array
             engineVersion:
               enum:
-                - 2026.04-step7
+                - 2026.04-step8
               type: string
             eventLog:
               items:
@@ -69957,8 +69356,6 @@ components:
                           - modeSelection
                           - turnIdle
                           - gemSelection
-                          - reserving
-                          - buying
                           - privilege
                           - replay
                           - terminal
@@ -71593,7 +70990,7 @@ components:
                 - "null"
             schemaVersion:
               enum:
-                - 6.0.0
+                - 7.0.0
               type: string
             sequence:
               minimum: 0
@@ -71948,8 +71345,6 @@ components:
                     - modeSelection
                     - turnIdle
                     - gemSelection
-                    - reserving
-                    - buying
                     - privilege
                     - replay
                     - terminal
@@ -72159,7 +71554,7 @@ components:
               type: array
             engineVersion:
               enum:
-                - 2026.04-step7
+                - 2026.04-step8
               type: string
             eventLog:
               items:
@@ -72214,8 +71609,6 @@ components:
                           - modeSelection
                           - turnIdle
                           - gemSelection
-                          - reserving
-                          - buying
                           - privilege
                           - replay
                           - terminal
@@ -73850,7 +73243,7 @@ components:
                 - "null"
             schemaVersion:
               enum:
-                - 6.0.0
+                - 7.0.0
               type: string
             sequence:
               minimum: 0
@@ -73882,7 +73275,7 @@ defaultContentType: application/json
 info:
   description: Authoritative room-service WebSocket protocol with filtered snapshots and Step 02.5 effect lifecycle envelopes.
   title: Gem Duel Realtime Contracts
-  version: 6.0.0
+  version: 7.0.0
 operations:
   joinRoomSocket:
     action: send

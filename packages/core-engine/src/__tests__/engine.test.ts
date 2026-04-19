@@ -92,10 +92,13 @@ describe('core engine Step 04 classic rules', () => {
 
         for (const actor of [actorA, actorB]) {
             const positionId = findFirstTakeablePosition(readSnapshot(actor));
-            expect(dispatchCommand(actor, { type: 'BEGIN_GEM_SELECTION' }).ok).toBe(true);
             expect(
-                dispatchCommand(actor, { type: 'TAKE_TOKENS', positions: [positionId] }).ok
+                dispatchCommand(actor, {
+                    type: 'TAKE_TOKENS_ADD_POSITION',
+                    positionId,
+                }).ok
             ).toBe(true);
+            expect(dispatchCommand(actor, { type: 'TAKE_TOKENS_CONFIRM' }).ok).toBe(true);
         }
 
         const snapshotA = readSnapshot(actorA);
@@ -110,31 +113,20 @@ describe('core engine Step 04 classic rules', () => {
         const { actor } = createBootstrappedLocalActor(17);
         const firstPosition = findFirstTakeablePosition(readSnapshot(actor));
 
-        const beginTake = dispatchCommand(actor, { type: 'BEGIN_GEM_SELECTION' });
+        const beginTake = dispatchCommand(actor, {
+            type: 'TAKE_TOKENS_ADD_POSITION',
+            positionId: firstPosition,
+        });
         expect(beginTake.ok).toBe(true);
         if (!beginTake.ok) {
             return;
         }
         expect(beginTake.value.snapshot.pendingSelection).toEqual({
             action: 'TAKE_TOKENS',
-            selectedPositions: [],
-            maxSelections: 3,
-        });
-
-        const addPosition = dispatchCommand(actor, {
-            type: 'TAKE_TOKENS_ADD_POSITION',
-            positionId: firstPosition,
-        });
-        expect(addPosition.ok).toBe(true);
-        if (!addPosition.ok) {
-            return;
-        }
-        expect(addPosition.value.snapshot.pendingSelection).toEqual({
-            action: 'TAKE_TOKENS',
             selectedPositions: [firstPosition],
             maxSelections: 3,
         });
-        expect(addPosition.value.snapshot.eventLog.at(-1)).toMatchObject({
+        expect(beginTake.value.snapshot.eventLog.at(-1)).toMatchObject({
             type: 'selection.positionAdded',
             action: 'TAKE_TOKENS',
             positionId: firstPosition,
@@ -164,22 +156,16 @@ describe('core engine Step 04 classic rules', () => {
             privilegeSnapshot,
             makeTestPorts(17).ports
         );
-        const beginPrivilege = dispatchCommand(privilegeActor, { type: 'BEGIN_PRIVILEGE' });
+        const privilegePosition = findFirstTakeablePosition(readSnapshot(privilegeActor));
+        const beginPrivilege = dispatchCommand(privilegeActor, {
+            type: 'USE_PRIVILEGE_ADD_POSITION',
+            positionId: privilegePosition,
+        });
         expect(beginPrivilege.ok).toBe(true);
         if (!beginPrivilege.ok) {
             return;
         }
-
-        const privilegePosition = findFirstTakeablePosition(readSnapshot(privilegeActor));
-        const addPrivilege = dispatchCommand(privilegeActor, {
-            type: 'USE_PRIVILEGE_ADD_POSITION',
-            positionId: privilegePosition,
-        });
-        expect(addPrivilege.ok).toBe(true);
-        if (!addPrivilege.ok) {
-            return;
-        }
-        expect(addPrivilege.value.snapshot.pendingSelection).toEqual({
+        expect(beginPrivilege.value.snapshot.pendingSelection).toEqual({
             action: 'USE_PRIVILEGE',
             selectedPositions: [privilegePosition],
             maxSelections: 3,
@@ -197,7 +183,6 @@ describe('core engine Step 04 classic rules', () => {
     it('represents royal handoff through activeEffects without changing the public phase', () => {
         const { actor, forkNamespaces } = createRoyalMilestoneActor(9);
 
-        expect(dispatchCommand(actor, { type: 'BEGIN_BUY' }).ok).toBe(true);
         const buy = dispatchCommand(actor, {
             type: 'BUY_CARD',
             source: { kind: 'pyramid', level: 1, slot: 1 },
@@ -255,7 +240,6 @@ describe('core engine Step 04 classic rules', () => {
             expect(prematureSelect.error.code).toBe('ENGINE_PHASE_GUARD');
         }
 
-        expect(dispatchCommand(actor, { type: 'BEGIN_BUY' }).ok).toBe(true);
         const buy = dispatchCommand(actor, {
             type: 'BUY_CARD',
             source: { kind: 'pyramid', level: 1, slot: 1 },
@@ -265,7 +249,10 @@ describe('core engine Step 04 classic rules', () => {
             return;
         }
 
-        const blockedBuy = dispatchCommand(actor, { type: 'BEGIN_GEM_SELECTION' });
+        const blockedBuy = dispatchCommand(actor, {
+            type: 'TAKE_TOKENS_ADD_POSITION',
+            positionId: findFirstTakeablePosition(readSnapshot(actor)),
+        });
         expect(blockedBuy.ok).toBe(false);
         if (!blockedBuy.ok) {
             expect(blockedBuy.error.code).toBe('ENGINE_PHASE_GUARD');

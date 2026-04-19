@@ -139,7 +139,6 @@ describe('Step 07 run state and buff helpers', () => {
         ]);
 
         const buffActor = createMatchActorFromSnapshot(snapshot, ports);
-        expect(dispatchCommand(buffActor, { type: 'BEGIN_BUY' }).ok).toBe(true);
         const purchased = dispatchCommand(buffActor, {
             type: 'BUY_CARD',
             source: { kind: 'reserve', slotId: 'reserve-1' },

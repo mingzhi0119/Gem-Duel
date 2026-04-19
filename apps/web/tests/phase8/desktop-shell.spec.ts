@@ -2,7 +2,7 @@ import path from 'node:path';
 import { _electron as electron, expect, test, type ElectronApplication } from '@playwright/test';
 
 const PHASE8_SMOKE_SCENARIO = 'take-three-linked-gems';
-const PHASE8_SMOKE_HASH = 'fnv1a-32b1c890';
+const PHASE8_SMOKE_HASH = 'fnv1a-4901e416';
 const DESKTOP_APP_PATH = path.join(process.cwd(), 'apps', 'desktop');
 const DESKTOP_APP_ENV = Object.fromEntries(
     Object.entries(process.env).filter((entry): entry is [string, string] => entry[1] !== undefined)
@@ -43,6 +43,16 @@ const closeDesktopShell = async (electronApp: ElectronApplication | null) => {
     await electronApp.close();
 };
 
+const openArenaControls = async (page: Awaited<ReturnType<typeof waitForDesktopWindow>>) => {
+    await page.getByTestId('boardscene-controls-trigger').click();
+    await expect(page.getByTestId('boardscene-controls-panel')).toBeVisible();
+};
+
+const closeArenaControls = async (page: Awaited<ReturnType<typeof waitForDesktopWindow>>) => {
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('boardscene-controls-panel')).toBeHidden();
+};
+
 test.describe('Phase 8 desktop shell assembly', () => {
     test('Phase 8 row 1: desktop startup loads the embedded shared web shell over loopback HTTP', async () => {
         let electronApp: ElectronApplication | null = null;
@@ -50,11 +60,12 @@ test.describe('Phase 8 desktop shell assembly', () => {
         try {
             electronApp = await launchDesktopShell();
             const page = await waitForDesktopWindow(electronApp);
+            await page.waitForLoadState('networkidle');
 
-            await expect(page.getByTestId('runtime-shell-badge')).toContainText('Desktop Shell');
-            await expect(
-                page.locator('header').getByRole('link', { name: 'Local', exact: true })
-            ).toBeVisible();
+            await expect(page.getByRole('heading', { name: 'Gem Duel' })).toBeVisible();
+            await expect(page.locator('a[href="/play/classic"]')).toBeVisible();
+            await expect(page.locator('a[href="/play/roguelike"]')).toBeVisible();
+            await expect(page.locator('a[href="/rooms"]')).toBeVisible();
             await expect(
                 page.evaluate(
                     () =>
@@ -91,6 +102,7 @@ test.describe('Phase 8 desktop shell assembly', () => {
             await expect(page.getByTestId('player-zone-p1')).toBeVisible();
             await expect(page.getByTestId('player-zone-p2')).toBeVisible();
             await expect(page.getByTestId('boardscene-rail')).toBeVisible();
+            await openArenaControls(page);
             await expect(page.getByTestId('session-rail')).toBeVisible();
 
             await page.getByRole('radio', { name: 'Light' }).check();
@@ -101,6 +113,7 @@ test.describe('Phase 8 desktop shell assembly', () => {
                     resolvedTheme: 'light',
                 });
 
+            await closeArenaControls(page);
             await page.getByTestId('board-cell-r2c1').click();
             await page.getByTestId('board-cell-r2c2').click();
             await page.getByTestId('board-cell-r2c3').click();

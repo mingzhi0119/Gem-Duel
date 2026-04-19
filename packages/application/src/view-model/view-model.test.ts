@@ -83,9 +83,8 @@ describe('application view-model composition', () => {
             throw new Error('Expected local session creation to succeed.');
         }
 
-        expect(session.value.dispatch({ type: 'BEGIN_GEM_SELECTION' }).ok).toBe(true);
-        const afterBegin = session.value.viewModel(session.value.snapshot().context.currentPlayer);
-        const addAction = afterBegin.availableActions.find(
+        const initialView = session.value.viewModel(session.value.snapshot().context.currentPlayer);
+        const addAction = initialView.availableActions.find(
             (action) => action.command.type === 'TAKE_TOKENS_ADD_POSITION'
         );
 

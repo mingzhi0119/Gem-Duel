@@ -1,77 +1,51 @@
-import Link from 'next/link';
-import { ENGINE_VERSION, SCHEMA_VERSION } from '@gem-duel/contracts';
-import { Section } from '@gem-duel/ui';
+import { getUiMessages, PlayerEntryScene, resolveUiLocale } from '@gem-duel/ui';
+import { ProductEntryLinkCard } from './components/product-entry-link-card';
 
-export default function HomePage() {
+const appendLang = (href: string, locale: 'en' | 'zh') =>
+    locale === 'zh' ? `${href}${href.includes('?') ? '&' : '?'}lang=zh` : href;
+
+export default async function HomePage({
+    searchParams,
+}: {
+    searchParams?: Promise<{ lang?: string | string[] }>;
+}) {
+    const params = searchParams ? await searchParams : undefined;
+    const rawLang = Array.isArray(params?.lang) ? params?.lang[0] : params?.lang;
+    const locale = resolveUiLocale(rawLang);
+    const messages = getUiMessages(locale).playerEntry;
+
     return (
-        <>
-            <section className="gd-hero">
-                <div className="gd-panel">
-                    <p className="gd-muted">ZH</p>
-                    <h2>当前主页仍是验证壳，不是完整盘面 UI</h2>
-                    <p>
-                        当前仓库已完成重构工程边界收口，并提供本地、AI、在线与观战流程的
-                        deterministic validation shell；完整产品盘面与后续整改顺序已转入 full-board
-                        roadmap 跟踪。
-                    </p>
-                    <p className="gd-muted">EN</p>
-                    <p>
-                        This homepage currently exposes a deterministic validation shell for local,
-                        AI, online, and spectator flows. It reflects engineering closure rather than
-                        a player-complete board product, and the remaining product UI work is
-                        tracked in the full-board roadmap.
-                    </p>
-                    <div className="gd-action-list">
-                        <Link className="gd-link" href="/play/local">
-                            Launch Local Validation
-                        </Link>
-                        <Link className="gd-link" href="/play/run">
-                            Launch Roguelike Validation
-                        </Link>
-                        <Link className="gd-link" href="/rooms">
-                            Open Room Validation
-                        </Link>
-                        <Link className="gd-link" href="/rulebook">
-                            Read Rulebook Strategy
-                        </Link>
-                        <Link
-                            className="gd-link"
-                            href="https://github.com/mingzhi0119/Gem-Duel/blob/main/docs/10-architecture/full-board-ui-roadmap.md"
-                            rel="noreferrer"
-                            target="_blank"
-                        >
-                            Read Full-Board Roadmap
-                        </Link>
-                    </div>
-                </div>
-                <div className="gd-panel">
-                    <p className="gd-muted">Validation Metadata</p>
-                    <p>Schema Version: {SCHEMA_VERSION}</p>
-                    <p>Engine Version: {ENGINE_VERSION}</p>
-                    <p>
-                        These versions are shown as internal validation metadata while the default
-                        entrypoint remains a verification shell and not the final player-facing
-                        board UI.
-                    </p>
-                </div>
-            </section>
-
-            <Section title="Refactor Status">
-                <div className="gd-grid">
-                    <div className="gd-card">
-                        <strong>Apps</strong>
-                        <span>web / desktop / room-service</span>
-                    </div>
-                    <div className="gd-card">
-                        <strong>Packages</strong>
-                        <span>contracts / domain / core-engine / application / adapters / ui</span>
-                    </div>
-                    <div className="gd-card">
-                        <strong>Legacy</strong>
-                        <span>Legacy extracts now live in docs/99-legacy and git history</span>
-                    </div>
-                </div>
-            </Section>
-        </>
+        <PlayerEntryScene
+            variant="landing"
+            eyebrow={messages.homeEyebrow}
+            title={messages.homeTitle}
+            subtitle={<p>{messages.homeSubtitle}</p>}
+            footer={<span>{messages.homeFooterHint}</span>}
+        >
+            <ProductEntryLinkCard
+                href={appendLang('/play/classic', locale)}
+                title={messages.classicTitle}
+                summary={messages.classicSummary}
+                tone="classic"
+            />
+            <ProductEntryLinkCard
+                href={appendLang('/play/roguelike', locale)}
+                title={messages.roguelikeTitle}
+                summary={messages.roguelikeSummary}
+                tone="roguelike"
+                badge={
+                    <span className="gd-player-entry-card-badge is-roguelike">
+                        {messages.roguelikeBadge}
+                    </span>
+                }
+            />
+            <ProductEntryLinkCard
+                href={appendLang('/rooms', locale)}
+                title={messages.onlineTitle}
+                summary={messages.onlineSummary}
+                tone="online"
+                meta={<span className="gd-product-status-strip">{messages.onlineKicker}</span>}
+            />
+        </PlayerEntryScene>
     );
 }

@@ -56,7 +56,7 @@ describe('resolveAiTurns', () => {
     it('dispatches deterministic AI actions until control returns to p1', () => {
         const snapshots = [snapshotAt('p2', 4), snapshotAt('p2', 5), snapshotAt('p1', 6)];
         const actions = [
-            makeAction('ai-open', { type: 'BEGIN_GEM_SELECTION' }),
+            makeAction('ai-open', { type: 'TAKE_TOKENS_ADD_POSITION', positionId: 'r2c2' }),
             makeAction('ai-follow', { type: 'REPLENISH_BOARD' }),
         ];
         const dispatched: GameCommand[] = [];

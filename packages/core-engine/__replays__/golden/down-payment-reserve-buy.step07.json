@@ -1,16 +1,16 @@
 {
-    "schemaVersion": "6.0.0",
+    "schemaVersion": "7.0.0",
     "rulesetVersion": "2026.1",
-    "engineVersion": "2026.04-step7",
+    "engineVersion": "2026.04-step8",
     "seed": 32,
     "initialSnapshot": {
-        "schemaVersion": "6.0.0",
+        "schemaVersion": "7.0.0",
         "rulesetVersion": "2026.1",
-        "engineVersion": "2026.04-step7",
+        "engineVersion": "2026.04-step8",
         "visibility": "authoritative",
         "context": {
             "matchId": "match-1",
-            "schemaVersion": "6.0.0",
+            "schemaVersion": "7.0.0",
             "rulesetVersion": "2026.1",
             "seed": 32,
             "mode": "local",
@@ -637,6 +637,7 @@
         },
         "activeEffects": [],
         "effectPrompts": [],
+        "pendingSelection": null,
         "hiddenState": {
             "bag": [],
             "deckOrder": {
@@ -714,14 +715,6 @@
             "expectedSeq": 5,
             "issuedBy": "p1",
             "command": {
-                "type": "BEGIN_BUY"
-            }
-        },
-        {
-            "clientCommandId": "golden-command-2",
-            "expectedSeq": 7,
-            "issuedBy": "p1",
-            "command": {
                 "type": "BUY_CARD",
                 "source": {
                     "kind": "reserve",
@@ -752,16 +745,6 @@
             "privilegeRecipient": "p2"
         },
         {
-            "type": "turn.segmentChanged",
-            "segment": "mandatory",
-            "optionalStep": "done",
-            "pendingDiscardCount": 0
-        },
-        {
-            "type": "phase.changed",
-            "phase": "buying"
-        },
-        {
             "type": "card.bought",
             "player": "p1",
             "source": {
@@ -773,21 +756,17 @@
             "goldSpent": 0
         },
         {
-            "type": "phase.changed",
-            "phase": "turnIdle"
-        },
-        {
             "type": "turn.segmentChanged",
             "segment": "cleanup",
             "optionalStep": "done",
             "pendingDiscardCount": 0
         }
     ],
-    "finalStateHash": "fnv1a-9b927137",
+    "finalStateHash": "fnv1a-581d61a7",
     "resultSummary": {
         "winner": null,
         "reason": null,
-        "turns": 10,
-        "finalSeq": 10
+        "turns": 7,
+        "finalSeq": 7
     }
 }

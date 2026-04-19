@@ -7,6 +7,7 @@ import {
     useRef,
     useState,
     type FormEvent,
+    type ReactNode,
 } from 'react';
 import Link from 'next/link';
 import {
@@ -21,8 +22,14 @@ import {
     type UiActionDescriptor,
     type UiViewModel,
 } from '@gem-duel/contracts';
-import { BoardScene, Section } from '@gem-duel/ui';
+import { BoardScene, Section, getUiMessages, type UiLocale } from '@gem-duel/ui';
+import {
+    ActiveMatchShellFrame,
+    MatchSurfaceInteractionProvider,
+    useMatchSurfaceInteraction,
+} from '@/app/components/active-match-shell';
 import { SessionRail } from '@/app/components/session-rail';
+import { ProductBackLink } from '@/app/components/product-back-link';
 import { fetchRoomDetail } from '@/lib/browser-room-service';
 
 type BindingState = 'unbound' | 'player' | 'spectator';
@@ -45,7 +52,104 @@ const updateRoomRealtime = (
           }
         : null;
 
-export function RoomLiveClient({ roomId }: { roomId: string }) {
+const appendLang = (href: string, locale: UiLocale) =>
+    locale === 'zh' ? `${href}${href.includes('?') ? '&' : '?'}lang=zh` : href;
+
+function RoomLiveBoardSurface({
+    roomId,
+    locale,
+    room,
+    viewModel,
+    canSubmitActions,
+    boardNote,
+    lastError,
+    onAction,
+    onLeave,
+}: {
+    roomId: string;
+    locale: UiLocale;
+    room: RoomDetail | null;
+    viewModel: UiViewModel;
+    canSubmitActions: boolean;
+    boardNote: ReactNode;
+    lastError: string | null;
+    onAction: (action: UiActionDescriptor) => void;
+    onLeave: () => void;
+}) {
+    const interactions = useMatchSurfaceInteraction();
+    const backArenaLabel = getUiMessages(locale).onlineArena.backArenaLabel;
+
+    useEffect(() => {
+        if (lastError) {
+            interactions.announceMessage(lastError);
+        }
+    }, [interactions, lastError]);
+
+    const handleBoardAction = (action: UiActionDescriptor) => {
+        interactions.announceAction(action);
+        onAction(action);
+    };
+
+    return (
+        <ActiveMatchShellFrame surface="room">
+            <BoardScene
+                eyebrow="Online Room"
+                viewModel={viewModel}
+                currentFinalStateHash={null}
+                hashUnavailableLabel={
+                    room?.status === 'completed'
+                        ? 'Replay hash in replay view'
+                        : 'Authoritative live stream'
+                }
+                onSelect={canSubmitActions ? handleBoardAction : undefined}
+                note={boardNote}
+                error={lastError}
+                surface="room"
+                railLead={
+                    <>
+                        <div className="gd-player-entry-topbar">
+                            <ProductBackLink href={appendLang('/rooms', locale)}>
+                                {backArenaLabel}
+                            </ProductBackLink>
+                        </div>
+                        <SessionRail
+                            locale={locale}
+                            surface="room"
+                            sessionStatus={viewModel.sessionStatus}
+                            viewerRole={viewModel.viewerRole}
+                            currentFinalStateHash={null}
+                            hashUnavailableLabel={
+                                room?.status === 'completed'
+                                    ? 'Replay hash in replay view'
+                                    : 'Authoritative live stream'
+                            }
+                            presentation="inline"
+                        />
+                        <div className="gd-action-list">
+                            {room?.status === 'completed' ? (
+                                <Link
+                                    className="gd-link"
+                                    href={appendLang(`/replays/${roomId}`, locale)}
+                                >
+                                    Open Replay
+                                </Link>
+                            ) : null}
+                            <button
+                                type="button"
+                                className="gd-button gd-button-muted"
+                                onClick={onLeave}
+                            >
+                                Leave Stream
+                            </button>
+                        </div>
+                    </>
+                }
+            />
+        </ActiveMatchShellFrame>
+    );
+}
+
+export function RoomLiveClient({ roomId, locale }: { roomId: string; locale: UiLocale }) {
     const socketRef = useRef<WebSocket | null>(null);
     const commandCounterRef = useRef(0);
     const pendingBindingRef = useRef<PendingBinding>(null);
@@ -262,6 +366,8 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
         socketState === 'open' &&
         viewModel?.viewerRole === 'player' &&
         viewModel.snapshot.visibility === 'player';
+    const hasBoundViewer = binding !== 'unbound';
+    const backArenaLabel = getUiMessages(locale).onlineArena.backArenaLabel;
     const boardNote = viewModel ? (
         <p className="gd-muted">
             {viewModel.viewerRole === 'spectator'
@@ -272,8 +378,32 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
         </p>
     ) : null;
 
+    if (hasBoundViewer && viewModel) {
+        return (
+            <MatchSurfaceInteractionProvider surface="room">
+                <RoomLiveBoardSurface
+                    roomId={roomId}
+                    locale={locale}
+                    room={room}
+                    viewModel={viewModel}
+                    canSubmitActions={Boolean(canSubmitActions)}
+                    boardNote={boardNote}
+                    lastError={lastError}
+                    onAction={handleAction}
+                    onLeave={handleLeave}
+                />
+            </MatchSurfaceInteractionProvider>
+        );
+    }
+
     return (
-        <>
+        <div className="gd-route-stack gd-route-stack-match">
+            <div className="gd-player-entry-topbar">
+                <ProductBackLink href={appendLang('/rooms', locale)}>
+                    {backArenaLabel}
+                </ProductBackLink>
+            </div>
+
             <Section title={`Room ${roomId}`}>
                 <p className="gd-muted">
                     ZH: 该页面直接消费 room-service 的 viewer-filtered realtime stream，再由
@@ -310,11 +440,11 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
                     </div>
                 </div>
                 <div className="gd-action-list">
-                    <Link className="gd-link" href="/rooms">
+                    <Link className="gd-link" href={appendLang('/rooms', locale)}>
                         Back to Rooms
                     </Link>
                     {room?.status === 'completed' ? (
-                        <Link className="gd-link" href={`/replays/${roomId}`}>
+                        <Link className="gd-link" href={appendLang(`/replays/${roomId}`, locale)}>
                             Open Replay
                         </Link>
                     ) : null}
@@ -359,43 +489,12 @@ export function RoomLiveClient({ roomId }: { roomId: string }) {
                 {lastError ? <p className="gd-error">{lastError}</p> : null}
             </Section>
 
-            {viewModel ? (
-                <BoardScene
-                    eyebrow="Online Room"
-                    viewModel={viewModel}
-                    currentFinalStateHash={null}
-                    hashUnavailableLabel={
-                        room?.status === 'completed'
-                            ? 'Replay hash in replay view'
-                            : 'Authoritative live stream'
-                    }
-                    onSelect={canSubmitActions ? handleAction : undefined}
-                    note={boardNote}
-                    error={lastError}
-                    surface="room"
-                    railLead={
-                        <SessionRail
-                            locale="en"
-                            surface="room"
-                            sessionStatus={viewModel.sessionStatus}
-                            viewerRole={viewModel.viewerRole}
-                            currentFinalStateHash={null}
-                            hashUnavailableLabel={
-                                room?.status === 'completed'
-                                    ? 'Replay hash in replay view'
-                                    : 'Authoritative live stream'
-                            }
-                        />
-                    }
-                />
-            ) : (
-                <Section title="Realtime View">
-                    <p className="gd-muted">
-                        Load the room detail, then join as a player or spectator to start the live
-                        stream.
-                    </p>
-                </Section>
-            )}
-        </>
+            <Section title="Realtime View">
+                <p className="gd-muted">
+                    Load the room detail, then join as a player or spectator to start the live
+                    stream.
+                </p>
+            </Section>
+        </div>
     );
 }

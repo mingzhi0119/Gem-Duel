@@ -1,5 +1,44 @@
 import type { UiActionDescriptor, UiMarketSlot, VisibleSnapshot } from '@gem-duel/contracts';
 
+const getMarketPatternKey = (
+    card: NonNullable<VisibleSnapshot['pyramid'][number]['slots'][number]['card']>
+) => {
+    switch (card.ability) {
+        case 'again':
+            return 'chevrons';
+        case 'steal':
+            return 'diagonals';
+        case 'scroll':
+            return 'pillars';
+        case 'bonus_gem':
+            return 'facets';
+        case 'none':
+            return card.points >= 3 ? 'coins' : card.level === 3 ? 'grid' : 'pips';
+    }
+};
+
+const getMarketAccentColor = (
+    card: NonNullable<VisibleSnapshot['pyramid'][number]['slots'][number]['card']>
+) => {
+    if (card.printedBonusColor === null) {
+        return card.points >= 3 ? 'gold' : null;
+    }
+
+    return card.printedBonusColor;
+};
+
+const mapCardDisplay = (
+    card: NonNullable<VisibleSnapshot['pyramid'][number]['slots'][number]['card']> | null
+) => ({
+    score: card?.points ?? null,
+    crowns: card?.crowns ?? null,
+    bonusGem: card?.printedBonusColor ?? null,
+    bonusCount: card?.bonusCount ?? null,
+    cost: card ? structuredClone(card.cost) : null,
+    accentColor: card ? getMarketAccentColor(card) : null,
+    patternKey: card ? getMarketPatternKey(card) : null,
+});
+
 export const buildMarketSlots = (
     snapshot: VisibleSnapshot,
     availableActions: UiActionDescriptor[]
@@ -44,6 +83,7 @@ export const buildMarketSlots = (
             selectableAsBuy: buyPyramidRefs.has(`pyramid-${row.level}-${slot.slot}`),
             selectableAsReserve: reservePyramidRefs.has(`pyramid-${row.level}-${slot.slot}`),
             reason: null,
+            ...mapCardDisplay(slot.card),
         }))
     );
 
@@ -65,6 +105,7 @@ export const buildMarketSlots = (
             selectableAsBuy: false,
             selectableAsReserve: true,
             reason: null,
+            ...mapCardDisplay(null),
         });
     }
 
@@ -92,6 +133,7 @@ export const buildMarketSlots = (
                 selectableAsBuy: buyReserveRefs.has(ref),
                 selectableAsReserve: false,
                 reason: null,
+                ...mapCardDisplay(visibleReserve?.card ?? null),
             });
         }
     }

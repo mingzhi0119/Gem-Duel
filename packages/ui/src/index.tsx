@@ -23,6 +23,9 @@ export {
 export { AiTraceDrawer, type AiTraceCandidate, type AiTraceEntry } from './drawer/ai-trace-drawer';
 export { RoomTable } from './tables/room-table';
 export { BoardScene, type BoardSceneScenarioMeta, type BoardSceneSlots } from './views/board-scene';
+export { PlayerEntryScene } from './views/player-entry-scene';
+export { OnlineLobbyScene } from './views/online-lobby-scene';
+export { DraftChoiceScene } from './views/draft-choice-scene';
 export { MatchView } from './views/match-view';
 export { TerminalOverlay } from './views/terminal-overlay';
 export { PlaygroundSceneFrame } from './playground/scene-frame';

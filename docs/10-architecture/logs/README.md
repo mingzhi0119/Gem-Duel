@@ -2,7 +2,7 @@
 
 ## ZH
 
-本目录记录 `docs/10-architecture/full-board-ui-roadmap.md` 的各 Phase 落地日志、Phase 关闭后的 hardening wave 收口日志，以及并行 visual productization 轨道的 `visual-v*` 日志。
+本目录记录 `docs/10-architecture/full-board-ui-roadmap.md` 的各 Phase 落地日志、Phase 关闭后的 hardening wave 收口日志、并行 visual productization 轨道的 `visual-v*` 日志，以及后续 target-first play-interface 波次的独立落地日志。
 
 - 每次完成一个 roadmap phase，必须补对应日志，并把 roadmap 状态同步改为 `Completed` 或等价完成标记。
 - 日志应记录：日期、范围、落地结果、涉及文件、剩余风险与验证结果。
@@ -39,10 +39,16 @@
 - [`visual-v5-session-rail-theme-rules-restart.md`](./visual-v5-session-rail-theme-rules-restart.md): Visual V5 日志，记录 session rail 的 Save/Load 决策、只读 style pill、`Dark/Light/System` 主题切换、Rules/Restart 语义与双语/键盘验收
 - [`visual-v6-dark-tactical-drawers.md`](./visual-v6-dark-tactical-drawers.md): Visual V6 日志，记录 collapsed-by-default dark tactical drawers、统一 overlay/focus-trap shell、terminal 浮动入口与受控 visual rebaseline
 - [`visual-v7-release-ready-closure.md`](./visual-v7-release-ready-closure.md): Visual V7 日志，记录 visual baseline 冻结、Desktop parity 证据、顺序跑绿 `check-phase4-8` / `check-a11y` / `check-visual` 与最终收口摘要
+- [`../visual-productization-independent-audit.md`](../visual-productization-independent-audit.md): Visual V1–V7 独立审计签收日志，记录 invariant 反证、F-1 至 F-6 遗留发现与 Visual Hardening Wave 1 的 6 步执行建议
+- [`visual-hardening-wave-1-audit-followups.md`](./visual-hardening-wave-1-audit-followups.md): Visual Hardening Wave 1 收口日志，记录一次性关闭 F-1 至 F-6、light 主题抽样 baseline、PNG 压缩写入通道与 shell 抽层纪律说明
+- [`preview-ui-readonly-reference-guardrails.md`](./preview-ui-readonly-reference-guardrails.md): preview UI 只读参考治理日志，记录 `GemDuel-Dev/` 忽略、import-ban 与 tracker / plan / log 的同步收口
+- [`preview-ui-player-surface-productization.md`](./preview-ui-player-surface-productization.md): preview UI 玩家表面产品化日志，记录首页 / hub / online arena / run draft 的落地、shared shell 接线与 phase4-8 / a11y / visual 验收
+- [`preview-ui-single-screen-arena-refactor.md`](./preview-ui-single-screen-arena-refactor.md): preview UI 单屏 Arena 收口日志，记录 active-match/room/replay 的单屏壳、隐藏 controls overlay、display-only contract 扩展与受控 rebaseline
+- [`play-interface-target-first-landscape-refactor.md`](./play-interface-target-first-landscape-refactor.md): target-first play-interface 日志，记录横屏 full-bleed 壳、direct-trigger command surface、Step 07 golden replay 刷新与 `16:9` / `16:10` 视觉证据
 
 ## EN
 
-This directory stores landing logs for phases tracked in `docs/10-architecture/full-board-ui-roadmap.md`, post-phase hardening-wave closeout logs, and the parallel visual-productization `visual-v*` logs.
+This directory stores landing logs for phases tracked in `docs/10-architecture/full-board-ui-roadmap.md`, post-phase hardening-wave closeout logs, the parallel visual-productization `visual-v*` logs, and later standalone target-first play-interface waves.
 
 - Whenever a roadmap phase is completed, the matching log must be written and the roadmap status must be updated to `Completed` or an equivalent completion marker.
 - Logs should record the date, scope, landed results, touched files, remaining risks, and validation outcomes.
@@ -79,3 +85,9 @@ This directory stores landing logs for phases tracked in `docs/10-architecture/f
 - [`visual-v5-session-rail-theme-rules-restart.md`](./visual-v5-session-rail-theme-rules-restart.md): Visual V5 log for the session-rail Save/Load decision, the read-only style pill, `Dark/Light/System` theme switching, Rules/Restart semantics, and bilingual keyboard-accessible acceptance
 - [`visual-v6-dark-tactical-drawers.md`](./visual-v6-dark-tactical-drawers.md): Visual V6 log for the collapsed-by-default dark tactical drawers, the shared overlay/focus-trap shell, the floating terminal trigger, and the controlled visual rebaseline
 - [`visual-v7-release-ready-closure.md`](./visual-v7-release-ready-closure.md): Visual V7 log for the frozen visual baselines, Desktop parity evidence, the sequential green sweep of `check-phase4-8` / `check-a11y` / `check-visual`, and the final closeout summary
+- [`../visual-productization-independent-audit.md`](../visual-productization-independent-audit.md): Independent audit sign-off for V1–V7, capturing the invariant counter-proofs, findings F-1 through F-6, and the six-step Visual Hardening Wave 1 execution plan
+- [`visual-hardening-wave-1-audit-followups.md`](./visual-hardening-wave-1-audit-followups.md): Visual Hardening Wave 1 closeout log for the one-shot closure of F-1 through F-6, the light-theme sampling baseline, the PNG optimization write path, and the shell re-extraction discipline note
+- [`preview-ui-readonly-reference-guardrails.md`](./preview-ui-readonly-reference-guardrails.md): Governance log for the `GemDuel-Dev/` read-only preview reference, the ignore / import-ban guardrails, and the synchronized tracker / plan / log references
+- [`preview-ui-player-surface-productization.md`](./preview-ui-player-surface-productization.md): Closeout log for the preview UI player-surface productization across the homepage, hubs, online arena, run draft, shared-shell wiring, and phase4-8 / a11y / visual acceptance
+- [`preview-ui-single-screen-arena-refactor.md`](./preview-ui-single-screen-arena-refactor.md): Closeout log for the preview UI single-screen Arena wave across active-match / room / replay surfaces, the hidden controls overlay, the display-only contract expansion, and the controlled rebaseline
+- [`play-interface-target-first-landscape-refactor.md`](./play-interface-target-first-landscape-refactor.md): Closeout log for the target-first play-interface wave across the landscape full-bleed shell, the direct-trigger command surface, the Step 07 golden replay refresh, and the `16:9` / `16:10` desktop evidence

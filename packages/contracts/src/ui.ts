@@ -8,6 +8,7 @@ import {
     CardLevelSchema,
     GemColorSchema,
     PlayerIdSchema,
+    PrintedBonusColorSchema,
     ReserveSlotIdSchema,
 } from './shared/enums';
 
@@ -64,6 +65,13 @@ export const UiMarketSlotSchema = z.object({
     selectableAsBuy: z.boolean(),
     selectableAsReserve: z.boolean(),
     reason: z.string().min(1).nullable(),
+    score: z.number().int().min(0).nullable(),
+    crowns: z.number().int().min(0).nullable(),
+    bonusGem: PrintedBonusColorSchema,
+    bonusCount: z.number().int().min(0).nullable(),
+    cost: GemInventorySchema.nullable(),
+    accentColor: GemColorSchema.nullable(),
+    patternKey: z.string().min(1).nullable(),
 });
 
 export const UiPlayerZoneSchema = z.object({
@@ -85,6 +93,11 @@ export const UiRoyalOfferSchema = z.object({
     label: z.string().min(1),
     selectable: z.boolean(),
     reason: z.string().min(1).nullable(),
+    score: z.number().int().min(0),
+    crowns: z.number().int().min(0),
+    accentKey: z.string().min(1).nullable(),
+    patternKey: z.string().min(1).nullable(),
+    tagLabel: z.string().min(1).nullable(),
 });
 
 export const UiPromptSchema = z.object({

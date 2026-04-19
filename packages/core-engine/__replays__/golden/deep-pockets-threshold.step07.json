@@ -1,16 +1,16 @@
 {
-    "schemaVersion": "6.0.0",
+    "schemaVersion": "7.0.0",
     "rulesetVersion": "2026.1",
-    "engineVersion": "2026.04-step7",
+    "engineVersion": "2026.04-step8",
     "seed": 35,
     "initialSnapshot": {
-        "schemaVersion": "6.0.0",
+        "schemaVersion": "7.0.0",
         "rulesetVersion": "2026.1",
-        "engineVersion": "2026.04-step7",
+        "engineVersion": "2026.04-step8",
         "visibility": "authoritative",
         "context": {
             "matchId": "match-1",
-            "schemaVersion": "6.0.0",
+            "schemaVersion": "7.0.0",
             "rulesetVersion": "2026.1",
             "seed": 35,
             "mode": "local",
@@ -26,8 +26,8 @@
             },
             "turn": {
                 "turnNumber": 1,
-                "segment": "optional",
-                "optionalStep": "privilege",
+                "segment": "mandatory",
+                "optionalStep": "done",
                 "mandatoryActionTaken": false,
                 "pendingDiscardCount": 0
             }
@@ -513,7 +513,7 @@
                 "id": "p1",
                 "score": 0,
                 "crowns": 0,
-                "privileges": 1,
+                "privileges": 0,
                 "inventory": {
                     "blue": 11,
                     "white": 0,
@@ -619,6 +619,7 @@
         },
         "activeEffects": [],
         "effectPrompts": [],
+        "pendingSelection": null,
         "hiddenState": {
             "bag": [],
             "deckOrder": {
@@ -696,7 +697,8 @@
             "expectedSeq": 5,
             "issuedBy": "p1",
             "command": {
-                "type": "BEGIN_GEM_SELECTION"
+                "type": "TAKE_TOKENS_ADD_POSITION",
+                "positionId": "r2c2"
             }
         },
         {
@@ -704,8 +706,7 @@
             "expectedSeq": 7,
             "issuedBy": "p1",
             "command": {
-                "type": "TAKE_TOKENS",
-                "positions": ["r2c2"]
+                "type": "TAKE_TOKENS_CONFIRM"
             }
         }
     ],
@@ -731,14 +732,15 @@
             "privilegeRecipient": "p1"
         },
         {
-            "type": "turn.segmentChanged",
-            "segment": "mandatory",
-            "optionalStep": "done",
-            "pendingDiscardCount": 0
-        },
-        {
             "type": "phase.changed",
             "phase": "gemSelection"
+        },
+        {
+            "type": "selection.positionAdded",
+            "action": "TAKE_TOKENS",
+            "player": "p1",
+            "positionId": "r2c2",
+            "positions": ["r2c2"]
         },
         {
             "type": "tokens.taken",
@@ -758,7 +760,7 @@
             "pendingDiscardCount": 0
         }
     ],
-    "finalStateHash": "fnv1a-9dbab84f",
+    "finalStateHash": "fnv1a-a9b80a6c",
     "resultSummary": {
         "winner": null,
         "reason": null,

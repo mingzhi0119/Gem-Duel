@@ -10,6 +10,7 @@ const SCENES = [
 test.describe('phase 3 playground scenes', () => {
     for (const sceneId of SCENES) {
         test(sceneId, async ({ page }) => {
+            await page.setViewportSize({ width: 1600, height: 900 });
             await page.goto(`/playground/${sceneId}`);
             await page.waitForLoadState('networkidle');
 

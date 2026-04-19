@@ -24,6 +24,46 @@ const waitForBoard = async (page: Page) => {
     await expect(page.getByTestId('board-scene')).toBeVisible();
 };
 
+const openArenaControls = async (page: Page) => {
+    await page.getByTestId('boardscene-controls-trigger').click();
+    await expect(page.getByTestId('boardscene-controls-panel')).toBeVisible();
+};
+
+test('a11y: / home entry scene has no serious violations', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('heading', { name: 'Gem Duel' })).toBeVisible();
+    await expectNoSeriousA11yViolations(page, '/');
+});
+
+test('a11y: /play/classic hub scene has no serious violations', async ({ page }) => {
+    await page.goto('/play/classic');
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('heading', { name: 'Select Opponent' })).toBeVisible();
+    await expectNoSeriousA11yViolations(page, '/play/classic');
+});
+
+test('a11y: /play/roguelike hub scene has no serious violations', async ({ page }) => {
+    await page.goto('/play/roguelike');
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('heading', { name: 'Select Opponent' })).toBeVisible();
+    await expectNoSeriousA11yViolations(page, '/play/roguelike');
+});
+
+test('a11y: /rooms lobby scene has no serious violations', async ({ page }) => {
+    await page.goto('/rooms');
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('heading', { name: 'Online Arena' })).toBeVisible();
+    await expectNoSeriousA11yViolations(page, '/rooms');
+});
+
+test('a11y: /rulebook route has no serious violations', async ({ page }) => {
+    await page.goto('/rulebook');
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('heading', { name: 'Gem Duel Rulebook' })).toBeVisible();
+    await expectNoSeriousA11yViolations(page, '/rulebook');
+});
+
 test('a11y: /play/local board scene has no serious violations', async ({ page }) => {
     await page.goto('/play/local?scenario=take-three-linked-gems');
     await expect(page.getByTestId('phase4-interactive-ready')).toHaveCount(1);
@@ -34,6 +74,7 @@ test('a11y: /play/local board scene has no serious violations', async ({ page })
 test('a11y: /play/ai board scene has no serious violations', async ({ page }) => {
     await page.goto('/play/ai');
     await waitForBoard(page);
+    await openArenaControls(page);
     await page.getByTestId('ai-trace-drawer-trigger').click();
     await expect(page.getByTestId('ai-trace-drawer')).toBeVisible();
     await expectNoSeriousA11yViolations(page, '/play/ai');
@@ -41,12 +82,19 @@ test('a11y: /play/ai board scene has no serious violations', async ({ page }) =>
 
 test('a11y: /play/run board scene has no serious violations', async ({ page }) => {
     await page.goto('/play/run');
-    await expect(page.getByRole('heading', { name: 'Buff Draft' })).toBeVisible();
-    await page.getByRole('button', { name: 'double_agent' }).click();
+    await expect(page.getByRole('heading', { name: 'Choose a Starter Buff' })).toBeVisible();
+    await page.getByRole('button', { name: /double_agent/i }).click();
     await waitForBoard(page);
+    await openArenaControls(page);
     await page.getByTestId('run-sidecar-trigger').click();
     await expect(page.getByTestId('run-sidecar-drawer')).toBeVisible();
     await expectNoSeriousA11yViolations(page, '/play/run');
+});
+
+test('a11y: /play/run?mode=local draft scene has no serious violations', async ({ page }) => {
+    await page.goto('/play/run?mode=local');
+    await expect(page.getByRole('heading', { name: 'Choose a Starter Buff' })).toBeVisible();
+    await expectNoSeriousA11yViolations(page, '/play/run?mode=local');
 });
 
 test('a11y: /rooms/[roomId] bound player surface has no serious violations', async ({

@@ -91,7 +91,8 @@ export const createReplayBundleFixture = (): ReplayBundle => ({
             expectedSeq: 0,
             issuedBy: 'p1',
             command: {
-                type: 'BEGIN_GEM_SELECTION',
+                type: 'TAKE_TOKENS_ADD_POSITION',
+                positionId: 'r2c2',
             },
         },
     ],

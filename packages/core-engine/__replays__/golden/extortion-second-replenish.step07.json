@@ -1,16 +1,16 @@
 {
-    "schemaVersion": "6.0.0",
+    "schemaVersion": "7.0.0",
     "rulesetVersion": "2026.1",
-    "engineVersion": "2026.04-step7",
+    "engineVersion": "2026.04-step8",
     "seed": 33,
     "initialSnapshot": {
-        "schemaVersion": "6.0.0",
+        "schemaVersion": "7.0.0",
         "rulesetVersion": "2026.1",
-        "engineVersion": "2026.04-step7",
+        "engineVersion": "2026.04-step8",
         "visibility": "authoritative",
         "context": {
             "matchId": "match-1",
-            "schemaVersion": "6.0.0",
+            "schemaVersion": "7.0.0",
             "rulesetVersion": "2026.1",
             "seed": 33,
             "mode": "local",
@@ -621,6 +621,7 @@
         },
         "activeEffects": [],
         "effectPrompts": [],
+        "pendingSelection": null,
         "hiddenState": {
             "bag": ["blue"],
             "deckOrder": {
@@ -817,7 +818,7 @@
             "outcome": "resolved"
         }
     ],
-    "finalStateHash": "fnv1a-61c63f43",
+    "finalStateHash": "fnv1a-3c99b220",
     "resultSummary": {
         "winner": null,
         "reason": null,

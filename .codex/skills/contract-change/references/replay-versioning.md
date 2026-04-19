@@ -2,9 +2,11 @@
 
 ## Current Repo Truth
 
-- `SCHEMA_VERSION`: `3.0.0`
+- `SCHEMA_VERSION`: `7.0.0`
 - `RULESET_VERSION`: `2026.1`
+- `ENGINE_VERSION`: `2026.04-step8`
 - Current bundle implementation stores both `commands[]` and `events[]`.
+- 2026-04-19 removed `BEGIN_GEM_SELECTION`, `BEGIN_RESERVE`, `BEGIN_BUY`, and `BEGIN_PRIVILEGE` from the public command surface, so old `commands[]` streams that depend on those entries are not forward-compatible without migration.
 
 ## Frozen Governance Target
 

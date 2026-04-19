@@ -92,8 +92,69 @@ const tokenMap = {
     r4c4: 'pearl',
 } satisfies Partial<Record<BoardPositionId, GemColor>>;
 
+const createFixtureMarketSlot = (
+    slot: Pick<
+        UiMarketSlot,
+        | 'ref'
+        | 'zone'
+        | 'owner'
+        | 'level'
+        | 'slot'
+        | 'slotId'
+        | 'occupied'
+        | 'cardId'
+        | 'selectableAsBuy'
+        | 'selectableAsReserve'
+        | 'reason'
+    > &
+        Partial<
+            Pick<
+                UiMarketSlot,
+                | 'score'
+                | 'crowns'
+                | 'bonusGem'
+                | 'bonusCount'
+                | 'cost'
+                | 'accentColor'
+                | 'patternKey'
+            >
+        >
+): UiMarketSlot => ({
+    score: slot.occupied && slot.cardId ? (slot.level ?? 1) + 1 : null,
+    crowns: slot.level === 3 ? 1 : 0,
+    bonusGem: slot.level === 1 ? 'red' : slot.level === 2 ? 'green' : 'blue',
+    bonusCount: slot.occupied ? 1 : null,
+    cost:
+        slot.occupied && slot.level
+            ? {
+                  blue: slot.level,
+                  white: Math.max(slot.level - 1, 0),
+                  green: slot.level === 1 ? 1 : slot.level,
+                  black: slot.level === 3 ? 2 : 0,
+                  red: slot.level,
+                  pearl: slot.level === 3 ? 1 : 0,
+                  gold: 0,
+              }
+            : null,
+    accentColor: slot.level === 1 ? 'red' : slot.level === 2 ? 'green' : 'blue',
+    patternKey: slot.level === 1 ? 'veins' : slot.level === 2 ? 'chevrons' : 'strata',
+    ...slot,
+});
+
+const createFixtureRoyalOffer = (
+    offer: Pick<UiRoyalOffer, 'royalId' | 'label' | 'selectable' | 'reason'> &
+        Partial<Pick<UiRoyalOffer, 'score' | 'crowns' | 'accentKey' | 'patternKey' | 'tagLabel'>>
+): UiRoyalOffer => ({
+    score: 3,
+    crowns: 1,
+    accentKey: 'gold',
+    patternKey: 'royal-grid',
+    tagLabel: 'royal',
+    ...offer,
+});
+
 const selectionMarketSlots: UiMarketSlot[] = [
-    {
+    createFixtureMarketSlot({
         ref: 'pyramid-l1-s1',
         zone: 'pyramid',
         owner: null,
@@ -105,8 +166,9 @@ const selectionMarketSlots: UiMarketSlot[] = [
         selectableAsBuy: true,
         selectableAsReserve: true,
         reason: null,
-    },
-    {
+        accentColor: 'red',
+    }),
+    createFixtureMarketSlot({
         ref: 'pyramid-l1-s2',
         zone: 'pyramid',
         owner: null,
@@ -118,8 +180,9 @@ const selectionMarketSlots: UiMarketSlot[] = [
         selectableAsBuy: false,
         selectableAsReserve: true,
         reason: null,
-    },
-    {
+        accentColor: 'white',
+    }),
+    createFixtureMarketSlot({
         ref: 'pyramid-l2-s1',
         zone: 'pyramid',
         owner: null,
@@ -131,8 +194,9 @@ const selectionMarketSlots: UiMarketSlot[] = [
         selectableAsBuy: false,
         selectableAsReserve: false,
         reason: 'Need more gems',
-    },
-    {
+        accentColor: 'green',
+    }),
+    createFixtureMarketSlot({
         ref: 'reserve-p2-1',
         zone: 'reserve',
         owner: 'p2',
@@ -144,12 +208,17 @@ const selectionMarketSlots: UiMarketSlot[] = [
         selectableAsBuy: false,
         selectableAsReserve: false,
         reason: 'Opponent reserve remains hidden to this viewer',
-    },
+        bonusGem: null,
+        bonusCount: null,
+        cost: null,
+        accentColor: null,
+        patternKey: 'sealed',
+    }),
 ];
 
 const runMarketSlots: UiMarketSlot[] = [
     ...selectionMarketSlots,
-    {
+    createFixtureMarketSlot({
         ref: 'deck-l3',
         zone: 'deck',
         owner: null,
@@ -161,22 +230,33 @@ const runMarketSlots: UiMarketSlot[] = [
         selectableAsBuy: false,
         selectableAsReserve: true,
         reason: null,
-    },
+        bonusGem: null,
+        bonusCount: null,
+        cost: null,
+        accentColor: null,
+        patternKey: 'sealed',
+    }),
 ];
 
 const selectionRoyalOffers: UiRoyalOffer[] = [
-    {
+    createFixtureRoyalOffer({
         royalId: 'royal-sapphire-court',
         label: 'Sapphire Court',
         selectable: true,
         reason: null,
-    },
-    {
+        accentKey: 'sapphire',
+        patternKey: 'court-dots',
+        tagLabel: 'royal',
+    }),
+    createFixtureRoyalOffer({
         royalId: 'royal-ivory-audience',
         label: 'Ivory Audience',
         selectable: false,
         reason: 'Need one more crown',
-    },
+        accentKey: 'ivory',
+        patternKey: 'court-bars',
+        tagLabel: 'scroll',
+    }),
 ];
 
 const runPromptStack: UiPrompt[] = [
@@ -498,7 +578,7 @@ const spectatorSnapshot = createSpectatorSnapshot(
 );
 
 const runSnapshot = createPlayerSnapshot({
-    phase: 'buying',
+    phase: 'turnIdle',
     currentPlayer: 'p1',
     step: 41,
     mode: 'local',
@@ -553,37 +633,21 @@ const replayFixtureModel: ReplayDrawerModel = {
         },
         {
             index: 1,
-            label: 'BEGIN_GEM_SELECTION #1',
-            command: { command: { type: 'BEGIN_GEM_SELECTION' } },
-            snapshot: createPlayerSnapshot({
-                phase: 'gemSelection',
-                currentPlayer: 'p1',
-                step: 11,
-            }),
+            label: 'TAKE_TOKENS_ADD_POSITION #1',
+            command: { command: { type: 'TAKE_TOKENS_ADD_POSITION', positionId: 'r2c2' } },
+            snapshot: selectionSnapshot,
             snapshotHash: 'fixture-step-hash-1',
         },
         {
             index: 2,
-            label: 'TAKE_TOKENS_ADD_POSITION #2',
-            command: {
-                command: {
-                    type: 'TAKE_TOKENS_ADD_POSITION',
-                    positionId: 'r2c2',
-                },
-            },
-            snapshot: selectionSnapshot,
-            snapshotHash: 'fixture-step-hash-2',
-        },
-        {
-            index: 3,
-            label: 'TAKE_TOKENS_CONFIRM #3',
+            label: 'TAKE_TOKENS_CONFIRM #2',
             command: { command: { type: 'TAKE_TOKENS_CONFIRM' } },
             snapshot: createPlayerSnapshot({
-                phase: 'buying',
+                phase: 'turnIdle',
                 currentPlayer: 'p1',
                 step: 13,
             }),
-            snapshotHash: 'fixture-step-hash-3',
+            snapshotHash: 'fixture-step-hash-2',
         },
     ],
 };
@@ -603,9 +667,9 @@ const aiTraceFixture: AiTraceEntry[] = [
                 score: 338.4,
             },
             {
-                actionId: 'begin-privilege',
-                label: 'Begin Privilege',
-                commandType: 'BEGIN_PRIVILEGE',
+                actionId: 'use-privilege-r1c1',
+                label: 'Take privilege at r1c1',
+                commandType: 'USE_PRIVILEGE_ADD_POSITION',
                 score: 221.9,
             },
             {

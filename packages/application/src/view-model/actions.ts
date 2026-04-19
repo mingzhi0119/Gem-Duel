@@ -58,24 +58,6 @@ export const buildActions = (snapshot: GameSnapshot): UiActionDescriptor[] => {
 
     for (const commandType of getAllowedCommands(snapshot)) {
         switch (commandType) {
-            case 'BEGIN_GEM_SELECTION':
-                appendAction(snapshot, actions, 'begin-gem-selection', 'Begin Gem Selection', {
-                    type: 'BEGIN_GEM_SELECTION',
-                });
-                break;
-            case 'BEGIN_RESERVE':
-                appendAction(snapshot, actions, 'begin-reserve', 'Begin Reserve', {
-                    type: 'BEGIN_RESERVE',
-                });
-                break;
-            case 'BEGIN_BUY':
-                appendAction(snapshot, actions, 'begin-buy', 'Begin Buy', { type: 'BEGIN_BUY' });
-                break;
-            case 'BEGIN_PRIVILEGE':
-                appendAction(snapshot, actions, 'begin-privilege', 'Begin Privilege', {
-                    type: 'BEGIN_PRIVILEGE',
-                });
-                break;
             case 'REPLENISH_BOARD':
                 appendAction(snapshot, actions, 'replenish-board', 'Replenish Board', {
                     type: 'REPLENISH_BOARD',

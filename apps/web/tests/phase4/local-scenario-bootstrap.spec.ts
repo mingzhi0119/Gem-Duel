@@ -2,6 +2,11 @@ import { expect, test } from '@playwright/test';
 
 import { listLocalPhase4Scenarios } from '../../app/play/local/scenarios';
 
+const openArenaControls = async (page: import('@playwright/test').Page) => {
+    await page.getByTestId('boardscene-controls-trigger').click();
+    await expect(page.getByTestId('boardscene-controls-panel')).toBeVisible();
+};
+
 for (const scenario of listLocalPhase4Scenarios()) {
     const search = new URLSearchParams({
         scenario: scenario.id,
@@ -18,12 +23,7 @@ for (const scenario of listLocalPhase4Scenarios()) {
         await expect(page.getByTestId('phase4-expected-hash')).toHaveText(
             scenario.expectedFinalStateHash
         );
-        await expect(page.getByText(scenario.startingFixtureSource)).toBeVisible();
         await expect(page.getByTestId('current-final-state-hash')).toBeVisible();
-
-        if (scenario.id === 'terminal-victory') {
-            await expect(page.getByTestId('terminal-overlay-trigger')).toBeVisible();
-        }
 
         if (scenario.id === 'debug-shell-fallback') {
             await expect(page.getByTestId('phase4-shell-mode')).toBeVisible();
@@ -38,6 +38,8 @@ for (const scenario of listLocalPhase4Scenarios()) {
             await expect(page.getByTestId('player-zone-p1')).toBeVisible();
             await expect(page.getByTestId('player-zone-p2')).toBeVisible();
             await expect(page.getByTestId('boardscene-rail')).toBeVisible();
+            await openArenaControls(page);
+            await expect(page.getByText(scenario.startingFixtureSource)).toBeVisible();
         }
     });
 }

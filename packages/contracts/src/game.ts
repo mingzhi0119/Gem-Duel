@@ -59,9 +59,6 @@ export const GameCommandSchema = z.discriminatedUnion('type', [
         type: z.literal('START_MATCH'),
     }),
     z.object({
-        type: z.literal('BEGIN_GEM_SELECTION'),
-    }),
-    z.object({
         type: z.literal('TAKE_TOKENS_ADD_POSITION'),
         positionId: BoardPositionIdSchema,
     }),
@@ -76,22 +73,13 @@ export const GameCommandSchema = z.discriminatedUnion('type', [
         positions: z.array(BoardPositionIdSchema).min(1).max(3),
     }),
     z.object({
-        type: z.literal('BEGIN_RESERVE'),
-    }),
-    z.object({
         type: z.literal('RESERVE_CARD'),
         goldPosition: BoardPositionIdSchema,
         source: ReserveSourceSchema,
     }),
     z.object({
-        type: z.literal('BEGIN_BUY'),
-    }),
-    z.object({
         type: z.literal('BUY_CARD'),
         source: BuySourceSchema,
-    }),
-    z.object({
-        type: z.literal('BEGIN_PRIVILEGE'),
     }),
     z.object({
         type: z.literal('USE_PRIVILEGE_ADD_POSITION'),

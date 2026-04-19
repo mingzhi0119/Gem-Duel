@@ -160,7 +160,6 @@ const buildDownPaymentReplay = () => {
                 actor: createMatchActorFromSnapshot(snapshot, makeTestPorts(seed).ports),
             }),
             (record) => {
-                record({ type: 'BEGIN_BUY' });
                 record({
                     type: 'BUY_CARD',
                     source: { kind: 'reserve', slotId: 'reserve-1' },
@@ -233,11 +232,9 @@ const buildDoubleAgentReplay = () => {
                 actor: createMatchActorFromSnapshot(snapshot, makeTestPorts(seed).ports),
             }),
             (record) => {
-                record({ type: 'BEGIN_PRIVILEGE' });
-                record({
-                    type: 'USE_PRIVILEGE',
-                    positions: ['r2c2', 'r2c3'],
-                });
+                record({ type: 'USE_PRIVILEGE_ADD_POSITION', positionId: 'r2c2' });
+                record({ type: 'USE_PRIVILEGE_ADD_POSITION', positionId: 'r2c3' });
+                record({ type: 'USE_PRIVILEGE_CONFIRM' });
             }
         ),
     };
@@ -248,6 +245,14 @@ const buildDeepPocketsReplay = () => {
     const snapshot = createBootstrappedSnapshot(seed);
     snapshot.context.currentPlayer = 'p1';
     snapshot.context.flags = createGoldenFlags();
+    snapshot.context.turn = {
+        turnNumber: 1,
+        segment: 'mandatory',
+        optionalStep: 'done',
+        mandatoryActionTaken: false,
+        pendingDiscardCount: 0,
+    };
+    snapshot.players.p1.privileges = 0;
     snapshot.players.p1.inventory = {
         ...ZERO_INVENTORY,
         blue: 11,
@@ -263,11 +268,8 @@ const buildDeepPocketsReplay = () => {
                 actor: createMatchActorFromSnapshot(snapshot, makeTestPorts(seed).ports),
             }),
             (record) => {
-                record({ type: 'BEGIN_GEM_SELECTION' });
-                record({
-                    type: 'TAKE_TOKENS',
-                    positions: ['r2c2'],
-                });
+                record({ type: 'TAKE_TOKENS_ADD_POSITION', positionId: 'r2c2' });
+                record({ type: 'TAKE_TOKENS_CONFIRM' });
             }
         ),
     };

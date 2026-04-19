@@ -142,6 +142,23 @@ const nextMessageOfType = async <TType extends RoomWsMessage['type']>(
     }
 };
 
+const findActionCommand = <TType extends GameCommand['type']>(
+    actions: Array<{ command: GameCommand }>,
+    type: TType
+): Extract<GameCommand, { type: TType }> => {
+    const action = actions.find(
+        (
+            candidate
+        ): candidate is {
+            command: Extract<GameCommand, { type: TType }>;
+        } => candidate.command.type === type
+    );
+    if (!action) {
+        throw new Error(`Expected available action ${type}.`);
+    }
+    return action.command;
+};
+
 const createCompletingSession = (request: CreateRoomRequest): TypedResult<MatchSession> => {
     const seed = request.seed ?? 20260416;
     const base = createMatchSession(
@@ -320,7 +337,7 @@ describe('buildRoomServiceApp', () => {
             command: {
                 clientCommandId: 'cmd-unbound',
                 expectedSeq: room.snapshot!.sequence,
-                command: { type: 'BEGIN_GEM_SELECTION' },
+                command: { type: 'TAKE_TOKENS_ADD_POSITION', positionId: 'r2c2' },
             },
         });
         const unboundError = await unbound.nextMessage();
@@ -353,7 +370,7 @@ describe('buildRoomServiceApp', () => {
             command: {
                 clientCommandId: 'cmd-spectator',
                 expectedSeq: spectatorState.room.snapshot.sequence,
-                command: { type: 'BEGIN_GEM_SELECTION' },
+                command: { type: 'TAKE_TOKENS_ADD_POSITION', positionId: 'r2c2' },
             },
         });
         const spectatorError = await spectator.nextMessage();
@@ -388,7 +405,7 @@ describe('buildRoomServiceApp', () => {
             command: {
                 clientCommandId: 'cmd-waiting',
                 expectedSeq: roomState.room.snapshot.sequence,
-                command: { type: 'BEGIN_GEM_SELECTION' },
+                command: { type: 'TAKE_TOKENS_ADD_POSITION', positionId: 'r2c2' },
             },
         });
         const waitingError = await player.nextMessage();
@@ -419,6 +436,10 @@ describe('buildRoomServiceApp', () => {
         await p2.nextMessage();
         const p1ActiveState = await nextMessageOfType(p1, 'room.state');
         expect(p1ActiveState.room?.status).toBe('active');
+        const takeTokensCommand = findActionCommand(
+            p1ActiveState.room?.availableActions ?? [],
+            'TAKE_TOKENS_ADD_POSITION'
+        );
         spectator.send({
             type: 'room.watch',
             roomId: room.roomId,
@@ -434,9 +455,9 @@ describe('buildRoomServiceApp', () => {
             type: 'match.command',
             command: {
                 clientCommandId: 'cmd-1',
-                expectedSeq: p1State.room.snapshot.sequence,
+                expectedSeq: p1ActiveState.room!.snapshot!.sequence,
                 issuedBy: 'p2',
-                command: { type: 'BEGIN_GEM_SELECTION' },
+                command: takeTokensCommand,
             },
         });
 
@@ -474,9 +495,9 @@ describe('buildRoomServiceApp', () => {
             type: 'match.command',
             command: {
                 clientCommandId: 'cmd-1',
-                expectedSeq: p1State.room.snapshot.sequence,
+                expectedSeq: p1ActiveState.room!.snapshot!.sequence,
                 issuedBy: 'p2',
-                command: { type: 'BEGIN_GEM_SELECTION' },
+                command: takeTokensCommand,
             },
         });
         const duplicatePatch = await p1.nextMessage();
@@ -488,7 +509,7 @@ describe('buildRoomServiceApp', () => {
             command: {
                 clientCommandId: 'cmd-stale',
                 expectedSeq: p1State.room.snapshot.sequence,
-                command: { type: 'BEGIN_RESERVE' },
+                command: takeTokensCommand,
             },
         });
         const resync = await p1.nextMessage();
@@ -527,6 +548,10 @@ describe('buildRoomServiceApp', () => {
         await p2.nextMessage();
         const p1ActiveState = await nextMessageOfType(p1, 'room.state');
         expect(p1ActiveState.room?.status).toBe('active');
+        const takeTokensCommand = findActionCommand(
+            p1ActiveState.room?.availableActions ?? [],
+            'TAKE_TOKENS_ADD_POSITION'
+        );
         spectator.send({
             type: 'room.watch',
             roomId: room.roomId,
@@ -542,8 +567,8 @@ describe('buildRoomServiceApp', () => {
             type: 'match.command',
             command: {
                 clientCommandId: 'cmd-begin-selection',
-                expectedSeq: p1State.room.snapshot.sequence,
-                command: { type: 'BEGIN_GEM_SELECTION' },
+                expectedSeq: p1ActiveState.room!.snapshot!.sequence,
+                command: takeTokensCommand,
             },
         });
 
@@ -555,14 +580,16 @@ describe('buildRoomServiceApp', () => {
 
         expect(p1BeginPatch.type).toBe('match.patch');
         if (p1BeginPatch.type !== 'match.patch' || p1BeginPatch.snapshot.visibility !== 'player') {
-            throw new Error('Expected a player-scoped match.patch after BEGIN_GEM_SELECTION.');
+            throw new Error('Expected a player-scoped match.patch after direct token selection.');
         }
 
         const addPositionAction = p1BeginPatch.availableActions.find(
             (action) => action.command.type === 'TAKE_TOKENS_ADD_POSITION'
         );
         if (!addPositionAction || addPositionAction.command.type !== 'TAKE_TOKENS_ADD_POSITION') {
-            throw new Error('Expected TAKE_TOKENS_ADD_POSITION after BEGIN_GEM_SELECTION.');
+            throw new Error(
+                'Expected a follow-up TAKE_TOKENS_ADD_POSITION after direct token selection.'
+            );
         }
 
         p1.send({
@@ -590,10 +617,11 @@ describe('buildRoomServiceApp', () => {
             throw new Error('Expected player patch plus spectator observe after selection.');
         }
 
-        expect(p1SelectionPatch.snapshot.pendingSelection).toMatchObject({
-            action: 'TAKE_TOKENS',
-            selectedPositions: [addPositionAction.command.positionId],
-        });
+        expect(p1SelectionPatch.snapshot.pendingSelection?.action).toBe('TAKE_TOKENS');
+        expect(p1SelectionPatch.snapshot.pendingSelection?.selectedPositions).toEqual([
+            takeTokensCommand.positionId,
+            addPositionAction.command.positionId,
+        ]);
         expect(spectatorObserve.snapshot.pendingSelection).toBeNull();
         expect(spectatorObserve.availableActions).toEqual([]);
 
@@ -610,7 +638,7 @@ describe('buildRoomServiceApp', () => {
             command: {
                 clientCommandId: 'cmd-stale-after-selection',
                 expectedSeq: p1BeginPatch.snapshot.sequence,
-                command: { type: 'BEGIN_RESERVE' },
+                command: takeTokensCommand,
             },
         });
         const resync = await p1.nextMessage();
@@ -656,7 +684,7 @@ describe('buildRoomServiceApp', () => {
             command: {
                 clientCommandId: 'cmd-out-of-turn',
                 expectedSeq: p2State.room!.snapshot!.sequence,
-                command: { type: 'BEGIN_GEM_SELECTION' },
+                command: { type: 'TAKE_TOKENS_ADD_POSITION', positionId: 'r2c2' },
             },
         });
         const forbidden = await p2.nextMessage();
@@ -763,6 +791,10 @@ describe('buildRoomServiceApp', () => {
         await p2.nextMessage();
         const p1ActiveState = await nextMessageOfType(p1, 'room.state');
         expect(p1ActiveState.room?.status).toBe('active');
+        const takeTokensCommand = findActionCommand(
+            p1ActiveState.room?.availableActions ?? [],
+            'TAKE_TOKENS_ADD_POSITION'
+        );
 
         if (p1State.type !== 'room.state' || p1State.room?.snapshot?.visibility !== 'player') {
             throw new Error('Expected player room.state.');
@@ -772,8 +804,8 @@ describe('buildRoomServiceApp', () => {
             type: 'match.command',
             command: {
                 clientCommandId: 'cmd-finish',
-                expectedSeq: p1State.room.snapshot.sequence,
-                command: { type: 'BEGIN_GEM_SELECTION' },
+                expectedSeq: p1ActiveState.room!.snapshot!.sequence,
+                command: takeTokensCommand,
             },
         });
 

@@ -5,6 +5,36 @@ import type {
     VisibleSnapshot,
 } from '@gem-duel/contracts';
 
+const getRoyalPatternKey = (ability: VisibleSnapshot['royalSupply'][number]['ability']) => {
+    switch (ability) {
+        case 'again':
+            return 'chevrons';
+        case 'steal':
+            return 'diagonals';
+        case 'scroll':
+            return 'pillars';
+        case 'bonus_gem':
+            return 'facets';
+        case 'none':
+            return 'coins';
+    }
+};
+
+const getRoyalAccentKey = (ability: VisibleSnapshot['royalSupply'][number]['ability']) => {
+    switch (ability) {
+        case 'again':
+            return 'gold';
+        case 'steal':
+            return 'red';
+        case 'scroll':
+            return 'white';
+        case 'bonus_gem':
+            return 'green';
+        case 'none':
+            return 'royal';
+    }
+};
+
 export const buildPlayerZones = (
     snapshot: VisibleSnapshot,
     availableActions: UiActionDescriptor[]
@@ -42,5 +72,10 @@ export const buildRoyalOffers = (
         label: royal.label,
         selectable: selectableRoyalIds.has(royal.royalId),
         reason: null,
+        score: royal.points,
+        crowns: royal.crowns,
+        accentKey: getRoyalAccentKey(royal.ability),
+        patternKey: getRoyalPatternKey(royal.ability),
+        tagLabel: royal.ability === 'none' ? 'royal' : royal.ability,
     }));
 };

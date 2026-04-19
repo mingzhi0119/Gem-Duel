@@ -37,8 +37,8 @@ describe('contracts schemas', () => {
 
         expect(command.type).toBe('TAKE_TOKENS');
         expect(incremental.type).toBe('TAKE_TOKENS_ADD_POSITION');
-        expect(SCHEMA_VERSION).toBe('6.0.0');
-        expect(ENGINE_VERSION).toBe('2026.04-step7');
+        expect(SCHEMA_VERSION).toBe('7.0.0');
+        expect(ENGINE_VERSION).toBe('2026.04-step8');
     });
 
     it('projects authoritative snapshots into player-safe snapshots', () => {
@@ -107,15 +107,15 @@ describe('contracts schemas', () => {
             clientCommandId: 'cmd-1',
             expectedSeq: 4,
             issuedBy: 'p1',
-            command: { type: 'BEGIN_GEM_SELECTION' },
+            command: { type: 'TAKE_TOKENS_ADD_POSITION', positionId: 'r2c2' },
         });
         const snapshot = createAuthoritativeSnapshotFixture();
         const playerSnapshot = toPlayerSnapshot(snapshot, 'p1');
         const spectatorSnapshot = toSpectatorSnapshot(snapshot);
         const action = UiActionDescriptorSchema.parse({
-            id: 'begin-gem-selection',
-            label: 'Begin Gem Selection',
-            command: { type: 'BEGIN_GEM_SELECTION' },
+            id: 'take-add-r2c2',
+            label: 'Add red at r2c2',
+            command: { type: 'TAKE_TOKENS_ADD_POSITION', positionId: 'r2c2' },
         });
         playerSnapshot.pendingSelection = {
             action: 'TAKE_TOKENS',
@@ -163,7 +163,36 @@ describe('contracts schemas', () => {
                 selectionKind: null,
                 reason: null,
             })),
-            marketSlots: [],
+            marketSlots: [
+                {
+                    ref: 'pyramid-l1-s1',
+                    zone: 'pyramid',
+                    owner: null,
+                    level: 1,
+                    slot: 1,
+                    slotId: null,
+                    occupied: true,
+                    cardId: 'l1-ruby-merchant',
+                    selectableAsBuy: true,
+                    selectableAsReserve: true,
+                    reason: null,
+                    score: 1,
+                    crowns: 0,
+                    bonusGem: 'red',
+                    bonusCount: 1,
+                    cost: {
+                        blue: 1,
+                        white: 0,
+                        green: 1,
+                        black: 0,
+                        red: 1,
+                        pearl: 0,
+                        gold: 0,
+                    },
+                    accentColor: 'red',
+                    patternKey: 'veins',
+                },
+            ],
             playerZones: [
                 {
                     playerId: 'p1',
@@ -192,7 +221,19 @@ describe('contracts schemas', () => {
                     royalCount: playerSnapshot.players.p2.royals.length,
                 },
             ],
-            royalOffers: [],
+            royalOffers: [
+                {
+                    royalId: 'royal-sapphire-court',
+                    label: 'Sapphire Court',
+                    selectable: true,
+                    reason: null,
+                    score: 3,
+                    crowns: 1,
+                    accentKey: 'sapphire',
+                    patternKey: 'court-dots',
+                    tagLabel: 'royal',
+                },
+            ],
             promptStack: [],
             selectionDraft: {
                 model: 'pending-command',
@@ -208,12 +249,24 @@ describe('contracts schemas', () => {
 
         expect(replay.engineVersion).toBe(ENGINE_VERSION);
         expect(roomDetail.availableActions).toEqual([]);
-        expect(patch.availableActions[0]?.id).toBe('begin-gem-selection');
+        expect(patch.availableActions[0]?.id).toBe('take-add-r2c2');
         expect(patch.roomStatus).toBe('active');
         expect(uiViewModel.viewerRole).toBe('player');
         expect(uiViewModel.snapshot.pendingSelection).toMatchObject({
             action: 'TAKE_TOKENS',
             selectedPositions: ['r2c2'],
+        });
+        expect(uiViewModel.marketSlots[0]).toMatchObject({
+            score: 1,
+            bonusGem: 'red',
+            accentColor: 'red',
+            patternKey: 'veins',
+        });
+        expect(uiViewModel.royalOffers[0]).toMatchObject({
+            score: 3,
+            crowns: 1,
+            accentKey: 'sapphire',
+            patternKey: 'court-dots',
         });
     });
 

@@ -28,6 +28,7 @@ apps/room-service/dist/
 packages/*/dist/
 out/
 tmp/
+GemDuel-Dev/
 GEMINI.md
 FUTURE_OPTIMIZATIONS.md
 

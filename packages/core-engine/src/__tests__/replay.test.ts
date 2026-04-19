@@ -114,7 +114,6 @@ describe('replay helpers', () => {
             return result;
         };
 
-        recordedDispatch({ type: 'BEGIN_BUY' });
         recordedDispatch({ type: 'BUY_CARD', source: { kind: 'pyramid', level: 1, slot: 1 } });
         recordedDispatch({ type: 'SELECT_ROYAL', royalId: 'royal-3pts' });
 

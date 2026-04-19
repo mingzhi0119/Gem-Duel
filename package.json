@@ -58,6 +58,7 @@
         "husky": "^9.1.7",
         "lint-staged": "^16.2.0",
         "prettier": "^3.6.2",
+        "sharp": "0.34.5",
         "tsx": "^4.20.6",
         "turbo": "^2.5.8",
         "typescript": "^5.9.3",

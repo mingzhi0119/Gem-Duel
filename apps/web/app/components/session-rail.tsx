@@ -92,6 +92,7 @@ export function SessionRail({
     viewerRole,
     currentFinalStateHash,
     hashUnavailableLabel,
+    presentation = 'drawer',
 }: {
     locale: UiLocale;
     surface: 'play' | 'room' | 'replay';
@@ -99,6 +100,7 @@ export function SessionRail({
     viewerRole: UiViewerRole;
     currentFinalStateHash?: string | null;
     hashUnavailableLabel: string;
+    presentation?: 'drawer' | 'inline';
 }) {
     const messages = getUiMessages(locale).sessionRail;
     const [themeMode, setThemeMode] = useState<ShellThemeMode>(DEFAULT_SHELL_THEME_MODE);
@@ -140,106 +142,110 @@ export function SessionRail({
     const actionLabel = surface === 'play' ? messages.restartLabel : messages.reloadLabel;
     const actionNote = surface === 'play' ? messages.restartNote : messages.reloadNote;
 
-    return (
-        <SidecarDrawer title={messages.title}>
-            <div className="gd-session-rail" data-testid="session-rail">
-                <section className="gd-session-rail-section">
-                    <div className="gd-session-rail-section-header">
-                        <strong>{messages.summaryTitle}</strong>
+    const railBody = (
+        <div className="gd-session-rail" data-testid="session-rail">
+            <section className="gd-session-rail-section">
+                <div className="gd-session-rail-section-header">
+                    <strong>{messages.summaryTitle}</strong>
+                </div>
+                <dl className="gd-session-rail-summary">
+                    <div className="gd-session-rail-summary-row">
+                        <dt>{messages.statusLabel}</dt>
+                        <dd data-testid="session-rail-status">
+                            {getStatusLabel(sessionStatus, messages)}
+                        </dd>
                     </div>
-                    <dl className="gd-session-rail-summary">
-                        <div className="gd-session-rail-summary-row">
-                            <dt>{messages.statusLabel}</dt>
-                            <dd data-testid="session-rail-status">
-                                {getStatusLabel(sessionStatus, messages)}
-                            </dd>
-                        </div>
-                        <div className="gd-session-rail-summary-row">
-                            <dt>{messages.viewerLabel}</dt>
-                            <dd>{getViewerLabel(viewerRole, messages)}</dd>
-                        </div>
-                        <div className="gd-session-rail-summary-row">
-                            <dt>{messages.surfaceLabel}</dt>
-                            <dd>{getSurfaceLabel(surface, messages)}</dd>
-                        </div>
-                        <div className="gd-session-rail-summary-row">
-                            <dt>{messages.hashLabel}</dt>
-                            <dd>
-                                <code data-testid="session-rail-hash">
-                                    {currentFinalStateHash ?? hashUnavailableLabel}
-                                </code>
-                            </dd>
-                        </div>
-                    </dl>
-                </section>
+                    <div className="gd-session-rail-summary-row">
+                        <dt>{messages.viewerLabel}</dt>
+                        <dd>{getViewerLabel(viewerRole, messages)}</dd>
+                    </div>
+                    <div className="gd-session-rail-summary-row">
+                        <dt>{messages.surfaceLabel}</dt>
+                        <dd>{getSurfaceLabel(surface, messages)}</dd>
+                    </div>
+                    <div className="gd-session-rail-summary-row">
+                        <dt>{messages.hashLabel}</dt>
+                        <dd>
+                            <code data-testid="session-rail-hash">
+                                {currentFinalStateHash ?? hashUnavailableLabel}
+                            </code>
+                        </dd>
+                    </div>
+                </dl>
+            </section>
 
-                <section className="gd-session-rail-section">
-                    <fieldset className="gd-session-rail-fieldset">
-                        <legend className="gd-session-rail-section-header">
-                            <strong>{messages.themeTitle}</strong>
-                        </legend>
-                        <div className="gd-session-rail-choice-grid">
-                            {SHELL_THEME_MODES.map((mode) => (
-                                <label
-                                    key={mode}
-                                    className={
-                                        themeMode === mode
-                                            ? 'gd-session-rail-choice is-selected'
-                                            : 'gd-session-rail-choice'
-                                    }
-                                    data-testid={`session-rail-theme-${mode}`}
-                                >
-                                    <input
-                                        type="radio"
-                                        name={`gd-session-theme-${surface}`}
-                                        value={mode}
-                                        checked={themeMode === mode}
-                                        onChange={() => handleThemeChange(mode)}
-                                    />
-                                    <span>{getThemeLabel(mode, messages)}</span>
-                                </label>
-                            ))}
-                        </div>
-                    </fieldset>
-                </section>
+            <section className="gd-session-rail-section">
+                <fieldset className="gd-session-rail-fieldset">
+                    <legend className="gd-session-rail-section-header">
+                        <strong>{messages.themeTitle}</strong>
+                    </legend>
+                    <div className="gd-session-rail-choice-grid">
+                        {SHELL_THEME_MODES.map((mode) => (
+                            <label
+                                key={mode}
+                                className={
+                                    themeMode === mode
+                                        ? 'gd-session-rail-choice is-selected'
+                                        : 'gd-session-rail-choice'
+                                }
+                                data-testid={`session-rail-theme-${mode}`}
+                            >
+                                <input
+                                    type="radio"
+                                    name={`gd-session-theme-${surface}`}
+                                    value={mode}
+                                    checked={themeMode === mode}
+                                    onChange={() => handleThemeChange(mode)}
+                                />
+                                <span>{getThemeLabel(mode, messages)}</span>
+                            </label>
+                        ))}
+                    </div>
+                </fieldset>
+            </section>
 
-                <section className="gd-session-rail-section">
-                    <div className="gd-session-rail-section-header">
-                        <strong>{messages.styleTitle}</strong>
-                    </div>
-                    <div className="gd-session-rail-style-card" data-testid="session-rail-style">
-                        <strong>{messages.styleCurrentLabel}</strong>
-                        <span className="gd-muted">{messages.styleLockedNote}</span>
-                        <span className="gd-shell-badge">{styleDefinition.id}</span>
-                    </div>
-                </section>
+            <section className="gd-session-rail-section">
+                <div className="gd-session-rail-section-header">
+                    <strong>{messages.styleTitle}</strong>
+                </div>
+                <div className="gd-session-rail-style-card" data-testid="session-rail-style">
+                    <span className="gd-muted">{messages.styleStatusLabel}</span>
+                    <strong>{messages.styleCurrentLabel}</strong>
+                    <span className="gd-shell-badge">{styleDefinition.id}</span>
+                </div>
+            </section>
 
-                <section className="gd-session-rail-section">
-                    <div className="gd-session-rail-section-header">
-                        <strong>{messages.rulesLabel}</strong>
-                    </div>
-                    <div className="gd-session-rail-actions">
-                        <Link
-                            href="/rulebook"
-                            className="gd-link"
-                            data-testid="session-rail-rules"
-                            prefetch={false}
-                        >
-                            {messages.rulesLabel}
-                        </Link>
-                        <button
-                            type="button"
-                            className="gd-button gd-button-muted"
-                            data-testid="session-rail-restart"
-                            onClick={handleRestart}
-                        >
-                            {actionLabel}
-                        </button>
-                    </div>
-                    <p className="gd-muted">{messages.rulesNote}</p>
-                    <p className="gd-muted">{actionNote}</p>
-                </section>
-            </div>
-        </SidecarDrawer>
+            <section className="gd-session-rail-section">
+                <div className="gd-session-rail-section-header">
+                    <strong>{messages.rulesLabel}</strong>
+                </div>
+                <div className="gd-session-rail-actions">
+                    <Link
+                        href="/rulebook"
+                        className="gd-link"
+                        data-testid="session-rail-rules"
+                        prefetch={false}
+                    >
+                        {messages.rulesLabel}
+                    </Link>
+                    <button
+                        type="button"
+                        className="gd-button gd-button-muted"
+                        data-testid="session-rail-restart"
+                        onClick={handleRestart}
+                    >
+                        {actionLabel}
+                    </button>
+                </div>
+                <p className="gd-muted">{messages.rulesNote}</p>
+                <p className="gd-muted">{actionNote}</p>
+            </section>
+        </div>
     );
+
+    if (presentation === 'inline') {
+        return railBody;
+    }
+
+    return <SidecarDrawer title={messages.title}>{railBody}</SidecarDrawer>;
 }

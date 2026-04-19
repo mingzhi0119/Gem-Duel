@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { createAiMatchSession } from '../sessions/match';
 
 const PHASE5_AI_ROUTE_SEED = 20260416;
-const PHASE5_AI_EXPECTED_FINAL_STATE_HASH = 'fnv1a-4b6da5bc';
-const PHASE5_AI_EXPECTED_TRACE_LENGTH = 101;
+const PHASE5_AI_EXPECTED_FINAL_STATE_HASH = 'fnv1a-5233a769';
+const PHASE5_AI_EXPECTED_TRACE_LENGTH = 80;
 
 const BASE_FLAGS = {
     roguelike: false,
@@ -51,7 +51,7 @@ describe('application AI orchestration', () => {
         expect(runA.aiTrace()).toEqual(runB.aiTrace());
         expect(runA.aiTrace()).toHaveLength(PHASE5_AI_EXPECTED_TRACE_LENGTH);
         expect(runA.aiTrace()[0]).toMatchObject({
-            chosenCommandType: 'BEGIN_GEM_SELECTION',
+            chosenCommandType: 'USE_PRIVILEGE_ADD_POSITION',
         });
         expect(runA.replay().finalStateHash).toBe(PHASE5_AI_EXPECTED_FINAL_STATE_HASH);
         expect(runA.aiTrace()).toEqual(runB.aiTrace());

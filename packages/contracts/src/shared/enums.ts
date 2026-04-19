@@ -31,8 +31,8 @@ import {
     VICTORY_REASONS,
 } from '@gem-duel/domain';
 
-export const SCHEMA_VERSION = '6.0.0';
-export const ENGINE_VERSION = '2026.04-step7';
+export const SCHEMA_VERSION = '7.0.0';
+export const ENGINE_VERSION = '2026.04-step8';
 
 export const PlayerIdSchema = z.enum(PLAYER_IDS);
 export const GameModeSchema = z.enum(GAME_MODES);

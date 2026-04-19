@@ -19,6 +19,7 @@
 - Keep `apps/web/app/api/*` limited to BFF, translation, aggregation, and orchestration; never place match resolution there. `apps/web/app/api/*` 只做 BFF、转换、聚合与编排，不得放对局裁决。
 - Keep online authority in `apps/room-service`, but match truth must still come from the shared `packages/core-engine`. 在线权威放在 `apps/room-service`，但对局真相仍必须来自共享的 `packages/core-engine`。
 - Treat legacy implementation history as read-only reference only through `docs/99-legacy/` and git history: never import it, never copy it verbatim, never promote it into active architecture. 仅可通过 `docs/99-legacy/` 与 git 历史把旧实现当作只读参考：禁止 import、禁止整段照抄、禁止直接升级为现行实现。
+- Treat `GemDuel-Dev/` as a gitignored, read-only preview reference: inspect it for layout / interaction / motion ideas only, but never modify files inside it, never import from it, and never copy code verbatim into active architecture. 将 `GemDuel-Dev/` 视为已忽略的只读预览参考：只可借鉴布局 / 交互 / 动效思路，禁止修改其中文件、禁止 import、禁止逐字搬运到现行架构。
 - Keep hard constraints bilingual with English first, while identifiers, schema fields, error codes, event names, and commit conventions stay English-only. 硬约束保持双语且英文在前；标识符、schema 字段、错误码、事件名与 commit 规范只用英文。
 - Update the tracker, the matching step log, and the change boundary together whenever a rebuild step meaningfully changes. 任一重构步骤发生实质变化时，必须同步更新 tracker、对应 step log 与提交边界。
 
@@ -57,6 +58,7 @@
 ## NEVER DO / 禁止
 
 - Never reintroduce imports or verbatim code copy from pre-rebuild history into the active architecture. 禁止把重构前历史中的 import 或逐字代码复制重新带回现行架构。
+- Never modify, import, or verbatim copy from `GemDuel-Dev/`; it is a read-only preview reference and must stay ignored. 禁止修改、import 或逐字复制 `GemDuel-Dev/`；它是只读预览参考，必须保持忽略状态。
 - Never add hidden random sources such as `Math.random()`, `Date.now()`, `new Date()`, `performance.now()`, `lodash.shuffle`, `lodash.sample`, `lodash.sampleSize`, `array-shuffle`, `crypto.randomBytes`, or `Array.prototype.sort(() => Math.random() - 0.5)`. 禁止引入任何隐藏随机源，包括 `Math.random()`、`Date.now()`、`new Date()`、`performance.now()`、`lodash.shuffle`、`lodash.sample`、`lodash.sampleSize`、`array-shuffle`、`crypto.randomBytes` 与 `Array.prototype.sort(() => Math.random() - 0.5)`。
 - Never add game-rule logic to `apps/web/app/api/*`. 禁止在 `apps/web/app/api/*` 中加入游戏规则逻辑。
 - Never fork or reimplement `packages/core-engine` inside `apps/room-service`; only add authentication, persistence, broadcasting, idempotency, and rate limiting there. 禁止在 `apps/room-service` 中 fork 或重写 `packages/core-engine`；这里只允许增加认证、持久化、广播、幂等与限流。

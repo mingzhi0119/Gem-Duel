@@ -124,14 +124,6 @@ export const scoreAiAction = (
             const card = getReserveCardLabel(snapshot, command);
             return 150 + (card?.level ?? command.source.level) * 12 + tieBreaker;
         }
-        case 'BEGIN_BUY':
-            return 140 + tieBreaker;
-        case 'BEGIN_GEM_SELECTION':
-            return 120 + tieBreaker;
-        case 'BEGIN_RESERVE':
-            return 100 + tieBreaker;
-        case 'BEGIN_PRIVILEGE':
-            return 90 + tieBreaker;
         case 'REPLENISH_BOARD':
             return 40 + tieBreaker;
         case 'DISCARD_TOKEN':

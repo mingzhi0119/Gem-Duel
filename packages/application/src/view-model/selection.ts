@@ -108,15 +108,6 @@ export const buildSelectionDraft = (snapshot: VisibleSnapshot): UiSelectionDraft
                 goldPosition: null,
                 remainingSelections: getVisiblePrivilegePositionCap(snapshot),
             };
-        case 'reserving':
-            return {
-                model: 'pending-command',
-                commandType: 'RESERVE_CARD',
-                effectId: null,
-                selectedBoardPositions: [],
-                goldPosition: null,
-                remainingSelections: 1,
-            };
         default:
             return null;
     }

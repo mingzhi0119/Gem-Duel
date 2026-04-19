@@ -239,7 +239,9 @@ const validateCommandPayload = (
         case 'TAKE_TOKENS_ADD_POSITION': {
             const pendingSelection = getTakeTokensPendingSelection(snapshot);
             if (!pendingSelection) {
-                return createPendingSelectionError(command.type);
+                return snapshot.context.phase === 'turnIdle'
+                    ? validateTokenLine(snapshot, [command.positionId])
+                    : createPendingSelectionError(command.type);
             }
             if (pendingSelection.selectedPositions.includes(command.positionId)) {
                 return createRuleGuardError(
@@ -279,7 +281,9 @@ const validateCommandPayload = (
         case 'USE_PRIVILEGE_ADD_POSITION': {
             const pendingSelection = getUsePrivilegePendingSelection(snapshot);
             if (!pendingSelection) {
-                return createPendingSelectionError(command.type);
+                return snapshot.context.phase === 'turnIdle'
+                    ? validateUsePrivilegePositions(snapshot, [command.positionId])
+                    : createPendingSelectionError(command.type);
             }
             if (pendingSelection.selectedPositions.includes(command.positionId)) {
                 return createRuleGuardError(
@@ -431,10 +435,6 @@ export const getAllowedCommands = (snapshot: GameSnapshot): GameCommand['type'][
                 'TAKE_TOKENS_CANCEL',
             ];
         }
-        case 'reserving':
-            return ['RESERVE_CARD'];
-        case 'buying':
-            return ['BUY_CARD'];
         case 'privilege': {
             const pendingSelection = getUsePrivilegePendingSelection(snapshot);
             return [
@@ -476,7 +476,7 @@ export const getAllowedCommands = (snapshot: GameSnapshot): GameCommand['type'][
                 optionalStep === 'privilege' &&
                 canUsePrivilege(snapshot)
             ) {
-                commands.unshift('BEGIN_PRIVILEGE');
+                commands.unshift('USE_PRIVILEGE_ADD_POSITION');
             }
             if (
                 segment === 'optional' &&
@@ -485,14 +485,19 @@ export const getAllowedCommands = (snapshot: GameSnapshot): GameCommand['type'][
             ) {
                 commands.unshift('REPLENISH_BOARD');
             }
-            if ((segment === 'optional' || segment === 'mandatory') && canTakeTokens(snapshot)) {
-                commands.unshift('BEGIN_GEM_SELECTION');
+            if (
+                (segment === 'mandatory' ||
+                    (segment === 'optional' &&
+                        (optionalStep !== 'privilege' || !canUsePrivilege(snapshot)))) &&
+                canTakeTokens(snapshot)
+            ) {
+                commands.unshift('TAKE_TOKENS_ADD_POSITION');
             }
             if ((segment === 'optional' || segment === 'mandatory') && canReserveCard(snapshot)) {
-                commands.unshift('BEGIN_RESERVE');
+                commands.unshift('RESERVE_CARD');
             }
             if ((segment === 'optional' || segment === 'mandatory') && canBuyCard(snapshot)) {
-                commands.unshift('BEGIN_BUY');
+                commands.unshift('BUY_CARD');
             }
             return [...new Set(commands)];
         }
@@ -504,13 +509,10 @@ export const canDispatchCommand = (snapshot: GameSnapshot, command: GameCommand)
     (snapshot.context.phase === 'gemSelection' && command.type === 'TAKE_TOKENS') ||
     (snapshot.context.phase === 'privilege' && command.type === 'USE_PRIVILEGE');
 
-const beginMandatoryPhase = (
-    snapshot: GameSnapshot,
-    phase: 'gemSelection' | 'reserving' | 'buying'
-) => {
+const startPendingSelection = (snapshot: GameSnapshot, phase: 'gemSelection' | 'privilege') => {
     applyTurnState(snapshot, {
-        segment: 'mandatory',
-        optionalStep: 'done',
+        segment: phase === 'privilege' ? 'optional' : 'mandatory',
+        optionalStep: phase === 'privilege' ? 'privilege' : 'done',
     });
     setPhase(snapshot, phase);
 };
@@ -569,15 +571,15 @@ const handleCommand = (snapshot: GameSnapshot, command: GameCommand, ports: Engi
             return snapshot;
         case 'START_MATCH':
             throw new Error('START_MATCH is handled by runtime bootstrap.');
-        case 'BEGIN_GEM_SELECTION':
-            beginMandatoryPhase(snapshot, 'gemSelection');
-            snapshot.pendingSelection = {
-                action: 'TAKE_TOKENS',
-                selectedPositions: [],
-                maxSelections: 3,
-            };
-            return snapshot;
         case 'TAKE_TOKENS_ADD_POSITION':
+            if (!getTakeTokensPendingSelection(snapshot)) {
+                startPendingSelection(snapshot, 'gemSelection');
+                snapshot.pendingSelection = {
+                    action: 'TAKE_TOKENS',
+                    selectedPositions: [],
+                    maxSelections: 3,
+                };
+            }
             appendPendingSelectionPosition(snapshot, 'TAKE_TOKENS', command.positionId);
             return snapshot;
         case 'TAKE_TOKENS_CONFIRM': {
@@ -661,9 +663,6 @@ const handleCommand = (snapshot: GameSnapshot, command: GameCommand, ports: Engi
             });
             return continueTurnFlow(updated, ports);
         }
-        case 'BEGIN_RESERVE':
-            beginMandatoryPhase(snapshot, 'reserving');
-            return snapshot;
         case 'RESERVE_CARD': {
             const player = getCurrentPlayerState(snapshot);
             const reservedCard = removeReserveSourceCard(snapshot, command.source);
@@ -693,9 +692,6 @@ const handleCommand = (snapshot: GameSnapshot, command: GameCommand, ports: Engi
             });
             return continueTurnFlow(snapshot, ports);
         }
-        case 'BEGIN_BUY':
-            beginMandatoryPhase(snapshot, 'buying');
-            return snapshot;
         case 'BUY_CARD': {
             const player = getCurrentPlayerState(snapshot);
             const priced = calculateBuyPayment(snapshot, command.source);
@@ -736,15 +732,18 @@ const handleCommand = (snapshot: GameSnapshot, command: GameCommand, ports: Engi
                 ports
             );
         }
-        case 'BEGIN_PRIVILEGE':
-            setPhase(snapshot, 'privilege');
-            snapshot.pendingSelection = {
-                action: 'USE_PRIVILEGE',
-                selectedPositions: [],
-                maxSelections: getPrivilegePositionCap(snapshot, snapshot.context.currentPlayer),
-            };
-            return snapshot;
         case 'USE_PRIVILEGE_ADD_POSITION':
+            if (!getUsePrivilegePendingSelection(snapshot)) {
+                startPendingSelection(snapshot, 'privilege');
+                snapshot.pendingSelection = {
+                    action: 'USE_PRIVILEGE',
+                    selectedPositions: [],
+                    maxSelections: getPrivilegePositionCap(
+                        snapshot,
+                        snapshot.context.currentPlayer
+                    ),
+                };
+            }
             appendPendingSelectionPosition(snapshot, 'USE_PRIVILEGE', command.positionId);
             return snapshot;
         case 'USE_PRIVILEGE_CONFIRM': {

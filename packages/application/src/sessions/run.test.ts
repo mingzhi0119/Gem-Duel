@@ -4,8 +4,8 @@ import { createRunSession } from './run';
 
 const PHASE5_RUN_ROUTE_SEED = 20260417;
 const PHASE5_RUN_EXPECTED_STARTER_BUFF = 'down_payment';
-const PHASE5_RUN_EXPECTED_FINAL_STATE_HASH = 'fnv1a-5bc41868';
-const PHASE5_RUN_EXPECTED_AI_TRACE_LENGTH = 115;
+const PHASE5_RUN_EXPECTED_FINAL_STATE_HASH = 'fnv1a-eac08cb5';
+const PHASE5_RUN_EXPECTED_AI_TRACE_LENGTH = 76;
 
 const playFirstRunMatchToTerminal = (seed: number) => {
     const run = createRunSession({
